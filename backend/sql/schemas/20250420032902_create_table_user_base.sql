@@ -1,0 +1,22 @@
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE
+    IF NOT EXISTS `ecommerce_go_user_base` (
+        `id` VARCHAR(36) NOT NULL COMMENT 'ID',
+        `account` VARCHAR(255) NOT NULL COMMENT 'account: email or SMS',
+        `password` VARCHAR(60) NOT NULL COMMENT 'password',
+        `login_time` BIGINT UNSIGNED NOT NULL COMMENT 'login time',
+        `logout_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'logout time',
+        `login_ip` VARCHAR(45) NOT NULL COMMENT 'login IP',
+        `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
+        `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `unique_user_base_account` (`account`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'user base table';
+
+-- +goose StatementEnd
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS `ecommerce_go_user_base`;
+
+-- +goose StatementEnd

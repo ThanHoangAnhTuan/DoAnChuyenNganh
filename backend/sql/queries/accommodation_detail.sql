@@ -1,0 +1,73 @@
+-- name: CreateAccommodationDetail :exec
+INSERT INTO
+    `ecommerce_go_accommodation_detail` (
+        `id`,
+        `accommodation_id`,
+        `accommodation_type`,
+        `number_of_guests`,
+        `number_of_beds`,
+        `facilities`,
+        `available_rooms`,
+        `price`,
+        `created_at`,
+        `updated_at`
+    )
+VALUES
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+-- name: GetAccommodationDetail :one
+SELECT
+    `id`,
+    `accommodation_id`,
+    `accommodation_type`,
+    `number_of_guests`,
+    `number_of_beds`,
+    `facilities`,
+    `available_rooms`,
+    `price`,
+    `created_at`,
+    `updated_at`
+FROM
+    `ecommerce_go_accommodation_detail`
+WHERE
+    `id` = ?
+    and `accommodation_id` = ?;
+
+-- name: GetAccommodationDetails :many
+SELECT
+    `id`,
+    `accommodation_id`,
+    `accommodation_type`,
+    `number_of_guests`,
+    `number_of_beds`,
+    `facilities`,
+    `available_rooms`,
+    `price`,
+    `created_at`,
+    `updated_at`
+FROM
+    `ecommerce_go_accommodation_detail`
+WHERE
+    `accommodation_id` = ?;
+
+-- name: UpdateAccommodationDetail :exec
+UPDATE `ecommerce_go_accommodation_detail`
+SET
+    `accommodation_type` = ?,
+    `number_of_guests` = ?,
+    `number_of_beds` = ?,
+    `facilities` = ?,
+    `available_rooms` = ?,
+    `price` = ?,
+    `updated_at` = ?
+WHERE
+    `id` = ?
+    and `accommodation_id` = ?;
+
+-- name: DeleteAccommodationDetails :exec
+UPDATE `ecommerce_go_accommodation_detail`
+SET
+    `is_deleted` = 1
+WHERE
+    `id` = ?
+    and `accommodation_id` = ?;
