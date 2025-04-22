@@ -1,3 +1,4 @@
 docs
 production.yaml
 .vscode/
+*.log
