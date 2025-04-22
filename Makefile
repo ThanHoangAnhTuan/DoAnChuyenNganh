@@ -1,23 +1,19 @@
-# Makefile for the first time setup of the project
-run-docker-build:
-	$(MAKE) -C backend docker_build
+docker-build:
+	$(MAKE) -C backend docker-build
 
-run-db-up:
-	$(MAKE) -C backend db_up
+docker-up:
+	$(MAKE) -C backend docker-up
 
-run-npm-init:
-	$(MAKE) -C frontend npm_init
+db-up:
+	$(MAKE) -C backend db-up
 
-run-golang:
+npm-init:
+	$(MAKE) -C frontend npm-init
+
+backend:
 	$(MAKE) -C backend dev
 
-run-angular:
+frontend:
 	$(MAKE) -C frontend dev
 
-# Makefile for the next time setup of the project
-run-docker-up:
-	$(MAKE) -C backend docker_up
-
-run: run-golang && run-angular
-
-.PHONY: build backend frontend run
+.PHONY: build backend frontend npm-init

@@ -62,3 +62,15 @@
 {"level":"INFO","time":"2025-04-21T20:09:04.927+0700","caller":"initializer/run.go:15","msg":"Config","ok":"success"}
 {"level":"INFO","time":"2025-04-21T20:09:04.927+0700","caller":"initializer/mysql.init.go:25","msg":"InitMysql success"}
 {"level":"INFO","time":"2025-04-21T20:09:04.940+0700","caller":"initializer/redis.init.go:25","msg":"InitRedis success"}
+{"level":"INFO","time":"2025-04-22T11:19:28.417+0700","caller":"initializer/run.go:15","msg":"Config","ok":"success"}
+{"level":"INFO","time":"2025-04-22T11:19:28.417+0700","caller":"initializer/mysql.init.go:25","msg":"InitMysql success"}
+{"level":"INFO","time":"2025-04-22T11:19:28.436+0700","caller":"initializer/redis.init.go:25","msg":"InitRedis success"}
+{"level":"INFO","time":"2025-04-22T11:22:31.624+0700","caller":"initializer/run.go:15","msg":"Config","ok":"success"}
+{"level":"INFO","time":"2025-04-22T11:22:31.625+0700","caller":"initializer/mysql.init.go:25","msg":"InitMysql success"}
+{"level":"INFO","time":"2025-04-22T11:22:31.644+0700","caller":"initializer/redis.init.go:25","msg":"InitRedis success"}
+{"level":"INFO","time":"2025-04-22T11:26:25.143+0700","caller":"initializer/run.go:15","msg":"Config","ok":"success"}
+{"level":"INFO","time":"2025-04-22T11:26:25.144+0700","caller":"initializer/mysql.init.go:25","msg":"InitMysql success"}
+{"level":"INFO","time":"2025-04-22T11:26:25.164+0700","caller":"initializer/redis.init.go:25","msg":"InitRedis success"}
+{"level":"INFO","time":"2025-04-22T11:27:59.761+0700","caller":"initializer/run.go:15","msg":"Config","ok":"success"}
+{"level":"INFO","time":"2025-04-22T11:27:59.762+0700","caller":"initializer/mysql.init.go:25","msg":"InitMysql success"}
+{"level":"INFO","time":"2025-04-22T11:27:59.779+0700","caller":"initializer/redis.init.go:25","msg":"InitRedis success"}

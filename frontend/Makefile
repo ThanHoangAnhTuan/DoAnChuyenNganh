@@ -1,4 +1,4 @@
-npm_init:
+npm-init:
 	npm install
 
 dev:

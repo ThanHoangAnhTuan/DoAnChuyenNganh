@@ -5,25 +5,31 @@
 ### 1. To start docker, run
 
 ```bash
-make run-docker-build
+make docker-build
 ```
 
 ### 2. To start database, run
 
 ```bash
-make run-db-up
+make db-up
 ```
 
 ### 3. Install dependencies npm, run
 
 ```bash
-make run-npm-init
+make npm-init
 ```
 
-### 4. To start project, run
+### 4. To start project backend, run
 
 ```bash
-make run
+make backend
+```
+
+### 5. To start project frontend, run
+
+```bash
+make frontend
 ```
 
 ## The next time run project
@@ -31,11 +37,17 @@ make run
 ### 1. To run docker, run
 
 ```bash
-make run-docker-up
+make docker-up
 ```
 
-### 2. To start project, run
+### 2. To start project backend, run
 
 ```bash
-make run
+make backend
+```
+
+### 3. To start project frontend, run
+
+```bash
+make frontend
 ```

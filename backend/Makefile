@@ -7,37 +7,37 @@ GOOSE_DRIVER := mysql
 dev:
 	go run ./cmd/${APP_NAME}/
 
-docker_up:
+docker-up:
 	docker-compose -p ecommerce_go up -d
 
-docker_down:
+docker-down:
 	docker-compose -p ecommerce_go down
 
-docker_build:
+docker-build:
 	docker-compose -p ecommerce_go up --build -d
 
 wire:
 	wire ./internal/wire/
 
 # goose migration
-create_migration:
+create-migration:
 	@goose -dir $(GOOSE_MIGRATION_DIR) create $(name) sql
 
-db_up:
+db-up:
 	@GOOSE_DRIVER=$(GOOSE_DRIVER) GOOSE_DBSTRING=$(GOOSE_DBSTRING) goose -dir $(GOOSE_MIGRATION_DIR) up
 
-db_down:
+db-down:
 	@GOOSE_DRIVER=$(GOOSE_DRIVER) GOOSE_DBSTRING=$(GOOSE_DBSTRING) goose -dir $(GOOSE_MIGRATION_DIR) down
 
-db_reset:
+db-reset:
 	@GOOSE_DRIVER=$(GOOSE_DRIVER) GOOSE_DBSTRING=$(GOOSE_DBSTRING) goose -dir $(GOOSE_MIGRATION_DIR) reset
 
-sql_gen:
+sql-gen:
 	sqlc generate
 
 swagger:
 	swag init -g cmd/server/main.go -o docs
 
-.PHONY: dev docker_up docker_down docker_build wire db_up db_down db_reset
+.PHONY: dev docker-up docker-down docker-build wire db-up db-down db-reset
   
 .PHONY: air
