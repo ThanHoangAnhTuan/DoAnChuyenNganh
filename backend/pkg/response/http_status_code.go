@@ -5,8 +5,10 @@ const (
 	ErrCodeSaveDataFailed       = 20001
 	ErrCodeUpdateDataFailed     = 20002
 	ErrCodeMarshalFailed        = 20003
-	ErrCodeCreateJWTTokenFailed = 20004
-	ErrCodeParamsInvalid        = 20005
+	ErrCodeUnMarshalFailed      = 20004
+	ErrCodeCreateJWTTokenFailed = 20005
+	ErrCodeParamsInvalid        = 20006
+	ErrCodeUnauthorized         = 20007
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -37,9 +39,25 @@ const (
 	ErrCodeInvalidAuthorizationFormat = 70002
 	ErrCodeInvalidToken               = 70003
 
-	// test
+	// accommodation
 	ErrCodeCreateAccommodationFailed  = 80001
 	ErrCodeCreateAccommodationSuccess = 80002
+	ErrCodeManagerNotFound            = 80003
+	ErrCodeGetAccommodationsFailed    = 80004
+	ErrCodeGetAccommodationSuccess    = 80005
+	ErrCodeGetAccommodationFailed     = 80006
+	ErrCodeAccommodationNotFound      = 80007
+	ErrCodeUpdateAccommodationSuccess = 80008
+	ErrCodeUpdateAccommodationFailed  = 80009
+	ErrCodeDeleteAccommodationFailed  = 80010
+	ErrCodeDeleteAccommodationSuccess = 80011
+
+	// file
+	ErrCodeOpenFileFailed  = 90001
+	ErrCodeReadFileFailed  = 90002
+	ErrCodeInvalidFileType = 90003
+	ErrCodeSaveFileSuccess = 90004
+	ErrCodeSaveFileFailed  = 90005
 )
 
 var message = map[int]string{
@@ -47,8 +65,10 @@ var message = map[int]string{
 	ErrCodeSaveDataFailed:       "Save data failed",
 	ErrCodeUpdateDataFailed:     "Update data failed",
 	ErrCodeMarshalFailed:        "Marshal failed",
+	ErrCodeUnMarshalFailed:      "Unmarshal failed",
 	ErrCodeCreateJWTTokenFailed: "Create JWT token failed",
 	ErrCodeParamsInvalid:        "Params invalid",
+	ErrCodeUnauthorized:         "Unauthorized",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",
@@ -79,7 +99,23 @@ var message = map[int]string{
 	ErrCodeInvalidAuthorizationFormat: "Invalid authorization format",
 	ErrCodeInvalidToken:               "Invalid token",
 
-	// test
+	// accommodation
 	ErrCodeCreateAccommodationFailed:  "Create accommodation failed",
 	ErrCodeCreateAccommodationSuccess: "Create accommodation successfully",
+	ErrCodeGetAccommodationsFailed:    "Get accommodations failed",
+	ErrCodeManagerNotFound:            "Manager not found",
+	ErrCodeGetAccommodationSuccess:    "Get accommodations successfully",
+	ErrCodeGetAccommodationFailed:     "Get accommodation failed",
+	ErrCodeAccommodationNotFound:      "Accommodation not found",
+	ErrCodeUpdateAccommodationSuccess: "Update accommodation successfully",
+	ErrCodeUpdateAccommodationFailed:  "Update accommodation failed",
+	ErrCodeDeleteAccommodationFailed:  "Delete accommodation failed",
+	ErrCodeDeleteAccommodationSuccess: "Delete accommodation successfully",
+
+	// file
+	ErrCodeOpenFileFailed:  "Open file failed",
+	ErrCodeReadFileFailed:  "Read file failed",
+	ErrCodeInvalidFileType: "Invalid file type",
+	ErrCodeSaveFileSuccess: "Save file successfully",
+	ErrCodeSaveFileFailed:  "Save file failed",
 }

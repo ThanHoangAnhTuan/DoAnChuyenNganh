@@ -9,6 +9,23 @@ import (
 	"context"
 )
 
+const checkUserManagerExistsByID = `-- name: CheckUserManagerExistsByID :one
+SELECT
+    COUNT(*)
+FROM
+    ` + "`" + `ecommerce_go_user_manager` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+func (q *Queries) CheckUserManagerExistsByID(ctx context.Context, id string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, checkUserManagerExistsByID, id)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createUserManage = `-- name: CreateUserManage :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_user_manager` + "`" + ` (
@@ -52,20 +69,4 @@ WHERE
 func (q *Queries) DeleteUserManager(ctx context.Context, account string) error {
 	_, err := q.db.ExecContext(ctx, deleteUserManager, account)
 	return err
-}
-
-const getUserManager = `-- name: GetUserManager :one
-SELECT
-    ` + "`" + `account` + "`" + `
-FROM
-    ` + "`" + `ecommerce_go_user_manager` + "`" + `
-WHERE
-    ` + "`" + `account` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0
-`
-
-func (q *Queries) GetUserManager(ctx context.Context, account string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getUserManager, account)
-	err := row.Scan(&account)
-	return account, err
 }

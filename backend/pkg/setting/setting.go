@@ -1,13 +1,18 @@
 package setting
 
 type Config struct {
-	Server ServerSetting `mapstructure:"server"`
-	Logger LoggerSetting `mapstructure:"logger"`
-	Mysql  MysqlSetting  `mapstructure:"mysql"`
-	Redis  RedisSetting  `mapstructure:"redis"`
-	Kafka  KafkaSetting  `mapstructure:"kafka"`
-	Email  EmailSetting  `mapstructure:"email"`
-	JWT    JWTSetting    `mapstructure:"jwt"`
+	Server   ServerSetting `mapstructure:"server"`
+	Logger   LoggerSetting `mapstructure:"logger"`
+	Mysql    MysqlSetting  `mapstructure:"mysql"`
+	Redis    RedisSetting  `mapstructure:"redis"`
+	Kafka    KafkaSetting  `mapstructure:"kafka"`
+	Email    EmailSetting  `mapstructure:"email"`
+	JWT      JWTSetting    `mapstructure:"jwt"`
+	Frontend Frontend      `mapstructure:"frontend"`
+}
+
+type Frontend struct {
+	Url string `mapstructure:"url"`
 }
 
 type ServerSetting struct {

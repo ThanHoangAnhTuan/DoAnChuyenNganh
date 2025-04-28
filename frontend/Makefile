@@ -1,5 +1,5 @@
-npm-init:
+npm-install:
 	npm install
 
 dev:
-	npm start
+	ng s -o

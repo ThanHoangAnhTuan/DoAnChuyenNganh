@@ -12,6 +12,8 @@ CREATE TABLE
         `birthday` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'birthday',
         `email` VARCHAR(255) NOT NULL DEFAULT "" COMMENT 'email',
         `is_authentication` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'authentication status: 0-not authenticated, 1-pending ,2-authenticated',
+        `is_verified` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is verified: 0 - unverified, 1 - verified',
+        `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `created_at` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'updated at',
         PRIMARY KEY (`id`),

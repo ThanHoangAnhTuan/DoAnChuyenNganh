@@ -27,11 +27,12 @@ INSERT INTO
         `login_time`,
         `login_ip`,
         `logout_time`,
+        `is_verified`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: LoginUserBase :exec
 UPDATE `ecommerce_go_user_base`

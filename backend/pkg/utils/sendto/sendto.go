@@ -38,7 +38,7 @@ func SendEmailOTP(to []string, templateName string, templateData map[string]inte
 
 func getEmailTemplate(templateName string, templateData map[string]interface{}) (string, error) {
 	htmlTemplate := new(bytes.Buffer)
-	t := template.Must(template.New(templateName).ParseFiles("templates/email/" + templateName))
+	t := template.Must(template.New(templateName).ParseFiles("templates_custom/email/" + templateName))
 	err := t.Execute(htmlTemplate, templateData)
 	if err != nil {
 		return "", err

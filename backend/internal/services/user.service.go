@@ -9,10 +9,10 @@ import (
 // TODO: Refactor interface
 type (
 	IUserLogin interface {
-		Register(ctx context.Context, in *vo.RegisterInput) (codeResult int, err error)
-		VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeResult int, out *vo.VerifyOTPOutput, err error)
-		UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeResult int, err error)
-		Login(ctx context.Context, in *vo.LoginInput) (codeResult int, out *vo.LoginOutput, err error)
+		Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error)
+		VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error)
+		UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error)
+		Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error)
 	}
 
 	IUserInfo interface {
@@ -22,22 +22,12 @@ type (
 	IUserAdmin interface {
 		RemoveUser(ctx context.Context) error
 	}
-
-	ITest interface {
-		// admin
-		LoginAdmin(ctx context.Context, in *vo.LoginInput) (codeResult int, out *vo.LoginOutput, err error)
-
-		// accommodation
-		GetAccommodations(ctx context.Context)
-		CreateAccommodation(ctx context.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error)
-	}
 )
 
 var (
 	localUserAdmin IUserAdmin
 	localUserLogin IUserLogin
 	localUserInfo  IUserInfo
-	test           ITest
 )
 
 func UserAdmin() IUserAdmin {
@@ -71,15 +61,4 @@ func UserInfo() IUserInfo {
 
 func InitUserInfo(i IUserInfo) {
 	localUserInfo = i
-}
-
-func Test() ITest {
-	if test == nil {
-		panic("Implement test not found for interface ITest")
-	}
-	return test
-}
-
-func InitTest(i ITest) {
-	test = i
 }

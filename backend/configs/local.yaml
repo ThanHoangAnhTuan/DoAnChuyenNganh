@@ -2,6 +2,8 @@ server:
   port: 8080
   mode: dev
   driverName: mysql
+frontend:
+  url: http://localhost:4200
 logger:
   logLevel: debug
   fileName: "./storage/logs/server.log"

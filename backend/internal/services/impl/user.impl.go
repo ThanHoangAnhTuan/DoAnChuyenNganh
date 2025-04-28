@@ -29,7 +29,7 @@ type UserLoginImpl struct {
 }
 
 // Register implements services.IUserLogin.
-func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeResult int, err error) {
+func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error) {
 	// !input: email, type, purpose
 	// !1. validate email
 	if !validate.IsValidEmail(in.VerifyKey) {
@@ -129,7 +129,7 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 }
 
 // VerifyOTP implements services.IUserLogin.
-func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeResult int, out *vo.VerifyOTPOutput, err error) {
+func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error) {
 	out = &vo.VerifyOTPOutput{}
 
 	// !1. hash email
@@ -169,7 +169,7 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 }
 
 // UpdatePasswordRegister implements services.IUserLogin.
-func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeResult int, err error) {
+func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error) {
 	// !1. get info otp by key hash
 	infoOTP, err := u.sqlc.GetUserVerified(ctx, in.Token)
 	if err != nil {
@@ -191,6 +191,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 	userBase.Password = hashPassword
 	now := utiltime.GetTimeNow()
 	userBase.CreatedAt = now
+	userBase.IsVerified = 1
 	userBase.UpdatedAt = now
 	userBase.LoginTime = now
 	userBase.LogoutTime = 0
@@ -220,7 +221,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 }
 
 // Login implements services.IUserLogin.
-func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeResult int, out *vo.LoginOutput, err error) {
+func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
 	out = &vo.LoginOutput{}
 
 	// !1. get user info

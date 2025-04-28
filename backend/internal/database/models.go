@@ -277,14 +277,12 @@ type EcommerceGoAccommodation struct {
 	ManagerID string
 	// name
 	Name string
+	// country
+	Country string
 	// city
 	City string
-	// city
-	Provine string
 	// district
 	District string
-	// images
-	Images string
 	// description
 	Description string
 	// facilities
@@ -297,6 +295,12 @@ type EcommerceGoAccommodation struct {
 	PropertySurroundings json.RawMessage
 	// rules
 	Rules string
+	// image
+	Image string
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -325,6 +329,10 @@ type EcommerceGoAccommodationDetail struct {
 	Price string
 	// discount ID
 	DiscountID sql.NullString
+	// collection images
+	CollectionImages string
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
 	IsDeleted uint8
 	// created at
@@ -445,14 +453,16 @@ type EcommerceGoUserAdmin struct {
 	Account string
 	// password
 	Password string
-	// is deleted: 0 - not deleted; 1 - deleted
-	IsDeleted uint8
 	// login time
 	LoginTime uint64
 	// logout time
 	LogoutTime uint64
 	// login IP
 	LoginIp string
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -473,6 +483,10 @@ type EcommerceGoUserBase struct {
 	LogoutTime uint64
 	// login IP
 	LoginIp string
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -501,6 +515,10 @@ type EcommerceGoUserInfo struct {
 	Email string
 	// authentication status: 0-not authenticated, 1-pending ,2-authenticated
 	IsAuthentication uint8
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -517,14 +535,16 @@ type EcommerceGoUserManager struct {
 	UserName string
 	// password
 	Password string
-	// is deleted: 0 - not deleted; 1 - deleted
-	IsDeleted uint8
 	// login time
 	LoginTime uint64
 	// logout time
 	LogoutTime uint64
 	// login IP
 	LoginIp string
+	// is verified: 0 - unverified, 1 - verified
+	IsVerified uint8
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at

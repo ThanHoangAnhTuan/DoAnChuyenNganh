@@ -18,11 +18,12 @@ INSERT INTO
         ` + "`" + `login_time` + "`" + `,
         ` + "`" + `login_ip` + "`" + `,
         ` + "`" + `logout_time` + "`" + `,
+        ` + "`" + `is_verified` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type AddUserBaseParams struct {
@@ -32,6 +33,7 @@ type AddUserBaseParams struct {
 	LoginTime  uint64
 	LoginIp    string
 	LogoutTime uint64
+	IsVerified uint8
 	CreatedAt  uint64
 	UpdatedAt  uint64
 }
@@ -44,6 +46,7 @@ func (q *Queries) AddUserBase(ctx context.Context, arg AddUserBaseParams) error 
 		arg.LoginTime,
 		arg.LoginIp,
 		arg.LogoutTime,
+		arg.IsVerified,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)

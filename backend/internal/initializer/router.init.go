@@ -3,6 +3,7 @@ package initializer
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/middlewares"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers"
 )
 
@@ -17,9 +18,15 @@ func InitRouter() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
 	}
+
+	r.Use(middlewares.CorsMiddleware())
+
+	r.Static("/uploads/", "./storage/uploads")
+
 	adminRouter := routers.RouterGroupApp.Admin
 	userRouter := routers.RouterGroupApp.User
 	managerRouter := routers.RouterGroupApp.Manager
+	accommodationRouter := routers.RouterGroupApp.Accommodation
 
 	MainGroup := r.Group("api/v1")
 	{
@@ -30,6 +37,9 @@ func InitRouter() *gin.Engine {
 	}
 	{
 		managerRouter.InitManagerGroup(MainGroup)
+	}
+	{
+		accommodationRouter.InitAccommodationRouter(MainGroup)
 	}
 	return r
 }

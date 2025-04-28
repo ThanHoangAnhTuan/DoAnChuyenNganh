@@ -8,6 +8,8 @@ CREATE TABLE
         `login_time` BIGINT UNSIGNED NOT NULL COMMENT 'login time',
         `logout_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'logout time',
         `login_ip` VARCHAR(45) NOT NULL COMMENT 'login IP',
+        `is_verified` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is verified: 0 - unverified, 1 - verified',
+        `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),

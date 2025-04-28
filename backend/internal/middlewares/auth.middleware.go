@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -8,6 +9,10 @@ import (
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
 )
+
+type contextKey string
+
+const UserIDKey contextKey = "userId"
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -38,7 +43,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			c := context.WithValue(ctx.Request.Context(), UserIDKey, claims["sub"])
 			ctx.Set("userId", claims["sub"])
+			ctx.Request = ctx.Request.WithContext(c)
 		} else {
 			response.ErrorResponse(ctx, response.ErrCodeInvalidToken)
 			ctx.Abort()

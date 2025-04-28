@@ -15,11 +15,11 @@ INSERT INTO
     ` + "`" + `ecommerce_go_accommodation` + "`" + ` (
         ` + "`" + `id` + "`" + `,
         ` + "`" + `manager_id` + "`" + `,
+        ` + "`" + `country` + "`" + `,
         ` + "`" + `name` + "`" + `,
         ` + "`" + `city` + "`" + `,
-        ` + "`" + `provine` + "`" + `,
         ` + "`" + `district` + "`" + `,
-        ` + "`" + `images` + "`" + `,
+        ` + "`" + `image` + "`" + `,
         ` + "`" + `description` + "`" + `,
         ` + "`" + `facilities` + "`" + `,
         ` + "`" + `gg_map` + "`" + `,
@@ -35,11 +35,11 @@ VALUES
 type CreateAccommodationParams struct {
 	ID                   string
 	ManagerID            string
+	Country              string
 	Name                 string
 	City                 string
-	Provine              string
 	District             string
-	Images               string
+	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -53,11 +53,11 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 	_, err := q.db.ExecContext(ctx, createAccommodation,
 		arg.ID,
 		arg.ManagerID,
+		arg.Country,
 		arg.Name,
 		arg.City,
-		arg.Provine,
 		arg.District,
-		arg.Images,
+		arg.Image,
 		arg.Description,
 		arg.Facilities,
 		arg.GgMap,
@@ -65,6 +65,210 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 		arg.Rules,
 		arg.CreatedAt,
 		arg.UpdatedAt,
+	)
+	return err
+}
+
+const deleteAccommodation = `-- name: DeleteAccommodation :exec
+UPDATE
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+SET
+    ` + "`" + `is_deleted` + "`" + ` = 1,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type DeleteAccommodationParams struct {
+	UpdatedAt uint64
+	ID        string
+}
+
+func (q *Queries) DeleteAccommodation(ctx context.Context, arg DeleteAccommodationParams) error {
+	_, err := q.db.ExecContext(ctx, deleteAccommodation, arg.UpdatedAt, arg.ID)
+	return err
+}
+
+const getAccommodationById = `-- name: GetAccommodationById :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `manager_id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `image` + "`" + `,
+    ` + "`" + `description` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `property_surroundings` + "`" + `,
+    ` + "`" + `rules` + "`" + `,
+    ` + "`" + `rating` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ? AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type GetAccommodationByIdRow struct {
+	ID                   string
+	ManagerID            string
+	Country              string
+	Name                 string
+	City                 string
+	District             string
+	Image                string
+	Description          string
+	Facilities           json.RawMessage
+	GgMap                string
+	PropertySurroundings json.RawMessage
+	Rules                string
+	Rating               uint8
+}
+
+func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccommodationByIdRow, error) {
+	row := q.db.QueryRowContext(ctx, getAccommodationById, id)
+	var i GetAccommodationByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.ManagerID,
+		&i.Country,
+		&i.Name,
+		&i.City,
+		&i.District,
+		&i.Image,
+		&i.Description,
+		&i.Facilities,
+		&i.GgMap,
+		&i.PropertySurroundings,
+		&i.Rules,
+		&i.Rating,
+	)
+	return i, err
+}
+
+const getAccommodations = `-- name: GetAccommodations :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `manager_id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `image` + "`" + `,
+    ` + "`" + `description` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `property_surroundings` + "`" + `,
+    ` + "`" + `rules` + "`" + `,
+    ` + "`" + `rating` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type GetAccommodationsRow struct {
+	ID                   string
+	ManagerID            string
+	Country              string
+	Name                 string
+	City                 string
+	District             string
+	Image                string
+	Description          string
+	Facilities           json.RawMessage
+	GgMap                string
+	PropertySurroundings json.RawMessage
+	Rules                string
+	Rating               uint8
+}
+
+func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAccommodations)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAccommodationsRow
+	for rows.Next() {
+		var i GetAccommodationsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ManagerID,
+			&i.Country,
+			&i.Name,
+			&i.City,
+			&i.District,
+			&i.Image,
+			&i.Description,
+			&i.Facilities,
+			&i.GgMap,
+			&i.PropertySurroundings,
+			&i.Rules,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateAccommodation = `-- name: UpdateAccommodation :exec
+UPDATE
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+SET
+    ` + "`" + `country` + "`" + ` = ?,
+    ` + "`" + `name` + "`" + ` = ?,
+    ` + "`" + `city` + "`" + ` = ?,
+    ` + "`" + `district` + "`" + ` = ?,
+    ` + "`" + `image` + "`" + ` = ?,
+    ` + "`" + `description` + "`" + ` = ?,
+    ` + "`" + `facilities` + "`" + ` = ?,
+    ` + "`" + `gg_map` + "`" + ` = ?,
+    ` + "`" + `property_surroundings` + "`" + ` = ?,
+    ` + "`" + `rules` + "`" + ` = ?,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ? AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type UpdateAccommodationParams struct {
+	Country              string
+	Name                 string
+	City                 string
+	District             string
+	Image                string
+	Description          string
+	Facilities           json.RawMessage
+	GgMap                string
+	PropertySurroundings json.RawMessage
+	Rules                string
+	UpdatedAt            uint64
+	ID                   string
+}
+
+func (q *Queries) UpdateAccommodation(ctx context.Context, arg UpdateAccommodationParams) error {
+	_, err := q.db.ExecContext(ctx, updateAccommodation,
+		arg.Country,
+		arg.Name,
+		arg.City,
+		arg.District,
+		arg.Image,
+		arg.Description,
+		arg.Facilities,
+		arg.GgMap,
+		arg.PropertySurroundings,
+		arg.Rules,
+		arg.UpdatedAt,
+		arg.ID,
 	)
 	return err
 }

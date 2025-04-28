@@ -10,13 +10,13 @@ INSERT INTO
 VALUES
     (?, ?, ?, ?, ?);
 
--- name: GetUserManager :one
+-- name: CheckUserManagerExistsByID :one
 SELECT
-    `account`
+    COUNT(*)
 FROM
     `ecommerce_go_user_manager`
 WHERE
-    `account` = ?
+    `id` = ?
     AND `is_deleted` = 0;
 
 -- name: DeleteUserManager :exec

@@ -10,5 +10,5 @@ import (
 func InitInterface() {
 	queries := database.New(global.Mysql)
 	services.InitUserLogin(impl.NewUserLoginImpl(queries))
-	services.InitTest(impl.NewTestImpl(queries))
+	services.InitAccommodation(impl.NewAccommodationImpl(queries))
 }
