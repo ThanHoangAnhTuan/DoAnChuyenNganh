@@ -15,7 +15,6 @@ import {
     facilitiesToSnakeCase,
     propertySurroundsToSnakeCase,
 } from '../shared/utils/case-converters';
-import { flatMap } from 'lodash';
 
 @Injectable({
     providedIn: 'root',
