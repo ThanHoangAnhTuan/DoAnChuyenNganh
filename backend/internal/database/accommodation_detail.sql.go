@@ -15,9 +15,9 @@ INSERT INTO
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` (
         ` + "`" + `id` + "`" + `,
         ` + "`" + `accommodation_id` + "`" + `,
-        ` + "`" + `accommodation_type` + "`" + `,
-        ` + "`" + `number_of_guests` + "`" + `,
-        ` + "`" + `number_of_beds` + "`" + `,
+        ` + "`" + `name` + "`" + `,
+        ` + "`" + `guests` + "`" + `,
+        ` + "`" + `beds` + "`" + `,
         ` + "`" + `facilities` + "`" + `,
         ` + "`" + `available_rooms` + "`" + `,
         ` + "`" + `price` + "`" + `,
@@ -29,25 +29,25 @@ VALUES
 `
 
 type CreateAccommodationDetailParams struct {
-	ID                string
-	AccommodationID   string
-	AccommodationType string
-	NumberOfGuests    uint8
-	NumberOfBeds      uint8
-	Facilities        json.RawMessage
-	AvailableRooms    uint8
-	Price             string
-	CreatedAt         uint64
-	UpdatedAt         uint64
+	ID              string
+	AccommodationID string
+	Name            string
+	Guests          uint8
+	Beds            json.RawMessage
+	Facilities      json.RawMessage
+	AvailableRooms  uint8
+	Price           string
+	CreatedAt       uint64
+	UpdatedAt       uint64
 }
 
 func (q *Queries) CreateAccommodationDetail(ctx context.Context, arg CreateAccommodationDetailParams) error {
 	_, err := q.db.ExecContext(ctx, createAccommodationDetail,
 		arg.ID,
 		arg.AccommodationID,
-		arg.AccommodationType,
-		arg.NumberOfGuests,
-		arg.NumberOfBeds,
+		arg.Name,
+		arg.Guests,
+		arg.Beds,
 		arg.Facilities,
 		arg.AvailableRooms,
 		arg.Price,
@@ -80,9 +80,9 @@ const getAccommodationDetail = `-- name: GetAccommodationDetail :one
 SELECT
     ` + "`" + `id` + "`" + `,
     ` + "`" + `accommodation_id` + "`" + `,
-    ` + "`" + `accommodation_type` + "`" + `,
-    ` + "`" + `number_of_guests` + "`" + `,
-    ` + "`" + `number_of_beds` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `guests` + "`" + `,
+    ` + "`" + `beds` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `,
@@ -101,16 +101,16 @@ type GetAccommodationDetailParams struct {
 }
 
 type GetAccommodationDetailRow struct {
-	ID                string
-	AccommodationID   string
-	AccommodationType string
-	NumberOfGuests    uint8
-	NumberOfBeds      uint8
-	Facilities        json.RawMessage
-	AvailableRooms    uint8
-	Price             string
-	CreatedAt         uint64
-	UpdatedAt         uint64
+	ID              string
+	AccommodationID string
+	Name            string
+	Guests          uint8
+	Beds            json.RawMessage
+	Facilities      json.RawMessage
+	AvailableRooms  uint8
+	Price           string
+	CreatedAt       uint64
+	UpdatedAt       uint64
 }
 
 func (q *Queries) GetAccommodationDetail(ctx context.Context, arg GetAccommodationDetailParams) (GetAccommodationDetailRow, error) {
@@ -119,9 +119,9 @@ func (q *Queries) GetAccommodationDetail(ctx context.Context, arg GetAccommodati
 	err := row.Scan(
 		&i.ID,
 		&i.AccommodationID,
-		&i.AccommodationType,
-		&i.NumberOfGuests,
-		&i.NumberOfBeds,
+		&i.Name,
+		&i.Guests,
+		&i.Beds,
 		&i.Facilities,
 		&i.AvailableRooms,
 		&i.Price,
@@ -135,9 +135,9 @@ const getAccommodationDetails = `-- name: GetAccommodationDetails :many
 SELECT
     ` + "`" + `id` + "`" + `,
     ` + "`" + `accommodation_id` + "`" + `,
-    ` + "`" + `accommodation_type` + "`" + `,
-    ` + "`" + `number_of_guests` + "`" + `,
-    ` + "`" + `number_of_beds` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `guests` + "`" + `,
+    ` + "`" + `beds` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `,
@@ -150,16 +150,16 @@ WHERE
 `
 
 type GetAccommodationDetailsRow struct {
-	ID                string
-	AccommodationID   string
-	AccommodationType string
-	NumberOfGuests    uint8
-	NumberOfBeds      uint8
-	Facilities        json.RawMessage
-	AvailableRooms    uint8
-	Price             string
-	CreatedAt         uint64
-	UpdatedAt         uint64
+	ID              string
+	AccommodationID string
+	Name            string
+	Guests          uint8
+	Beds            json.RawMessage
+	Facilities      json.RawMessage
+	AvailableRooms  uint8
+	Price           string
+	CreatedAt       uint64
+	UpdatedAt       uint64
 }
 
 func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID string) ([]GetAccommodationDetailsRow, error) {
@@ -174,9 +174,9 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 		if err := rows.Scan(
 			&i.ID,
 			&i.AccommodationID,
-			&i.AccommodationType,
-			&i.NumberOfGuests,
-			&i.NumberOfBeds,
+			&i.Name,
+			&i.Guests,
+			&i.Beds,
 			&i.Facilities,
 			&i.AvailableRooms,
 			&i.Price,
@@ -199,9 +199,9 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 const updateAccommodationDetail = `-- name: UpdateAccommodationDetail :exec
 UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 SET
-    ` + "`" + `accommodation_type` + "`" + ` = ?,
-    ` + "`" + `number_of_guests` + "`" + ` = ?,
-    ` + "`" + `number_of_beds` + "`" + ` = ?,
+    ` + "`" + `name` + "`" + ` = ?,
+    ` + "`" + `guests` + "`" + ` = ?,
+    ` + "`" + `beds` + "`" + ` = ?,
     ` + "`" + `facilities` + "`" + ` = ?,
     ` + "`" + `available_rooms` + "`" + ` = ?,
     ` + "`" + `price` + "`" + ` = ?,
@@ -212,22 +212,22 @@ WHERE
 `
 
 type UpdateAccommodationDetailParams struct {
-	AccommodationType string
-	NumberOfGuests    uint8
-	NumberOfBeds      uint8
-	Facilities        json.RawMessage
-	AvailableRooms    uint8
-	Price             string
-	UpdatedAt         uint64
-	ID                string
-	AccommodationID   string
+	Name            string
+	Guests          uint8
+	Beds            json.RawMessage
+	Facilities      json.RawMessage
+	AvailableRooms  uint8
+	Price           string
+	UpdatedAt       uint64
+	ID              string
+	AccommodationID string
 }
 
 func (q *Queries) UpdateAccommodationDetail(ctx context.Context, arg UpdateAccommodationDetailParams) error {
 	_, err := q.db.ExecContext(ctx, updateAccommodationDetail,
-		arg.AccommodationType,
-		arg.NumberOfGuests,
-		arg.NumberOfBeds,
+		arg.Name,
+		arg.Guests,
+		arg.Beds,
 		arg.Facilities,
 		arg.AvailableRooms,
 		arg.Price,

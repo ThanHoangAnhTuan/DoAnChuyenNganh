@@ -20,7 +20,7 @@ type CreateAccommodationInput struct {
 	District             string                  `form:"district"`
 	Image                []*multipart.FileHeader `form:"image"`
 	Description          string                  `form:"description"`
-	Facilities           Facilities              `form:"-"`
+	Facilities           Facilities              `form:"facilities"`
 	GoogleMap            string                  `form:"google_map"`
 	PropertySurroundings PropertySurroundings    `form:"property_surrounds"`
 	Rules                string                  `form:"rules"`
@@ -66,7 +66,7 @@ type UpdateAccommodationInput struct {
 	District             string                  `form:"district"`
 	Image                []*multipart.FileHeader `form:"image"`
 	Description          string                  `form:"description"`
-	Facilities           Facilities              `form:"-"`
+	Facilities           Facilities              `form:"facilities"`
 	GoogleMap            string                  `form:"google_map"`
 	PropertySurroundings PropertySurroundings    `form:"property_surrounds"`
 	Rules                string                  `form:"rules"`

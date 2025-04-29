@@ -3,9 +3,9 @@ INSERT INTO
     `ecommerce_go_accommodation_detail` (
         `id`,
         `accommodation_id`,
-        `accommodation_type`,
-        `number_of_guests`,
-        `number_of_beds`,
+        `name`,
+        `guests`,
+        `beds`,
         `facilities`,
         `available_rooms`,
         `price`,
@@ -19,9 +19,9 @@ VALUES
 SELECT
     `id`,
     `accommodation_id`,
-    `accommodation_type`,
-    `number_of_guests`,
-    `number_of_beds`,
+    `name`,
+    `guests`,
+    `beds`,
     `facilities`,
     `available_rooms`,
     `price`,
@@ -37,9 +37,9 @@ WHERE
 SELECT
     `id`,
     `accommodation_id`,
-    `accommodation_type`,
-    `number_of_guests`,
-    `number_of_beds`,
+    `name`,
+    `guests`,
+    `beds`,
     `facilities`,
     `available_rooms`,
     `price`,
@@ -53,9 +53,9 @@ WHERE
 -- name: UpdateAccommodationDetail :exec
 UPDATE `ecommerce_go_accommodation_detail`
 SET
-    `accommodation_type` = ?,
-    `number_of_guests` = ?,
-    `number_of_beds` = ?,
+    `name` = ?,
+    `guests` = ?,
+    `beds` = ?,
     `facilities` = ?,
     `available_rooms` = ?,
     `price` = ?,

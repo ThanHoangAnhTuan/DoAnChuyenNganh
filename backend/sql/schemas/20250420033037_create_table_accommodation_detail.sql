@@ -4,11 +4,10 @@ CREATE TABLE
     IF NOT EXISTS `ecommerce_go_accommodation_detail` (
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `accommodation_id` VARCHAR(36) NOT NULL COMMENT 'accommodation ID',
-        `accommodation_type` VARCHAR(255) NOT NULL COMMENT 'accommodation type',
-        `number_of_guests` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'number of guests',
-        `number_of_beds` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'number of beds',
-        `images` VARCHAR(255) NOT NULL DEFAULT "" COMMENT 'images',
-        `facilities` JSON NOT NULL COMMENT 'facilities', -- coi lai
+        `name` VARCHAR(255) NOT NULL COMMENT 'accommodation type',
+        `guests` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'number of guests',
+        `beds` JSON NOT NULL COMMENT 'number of beds',
+        `facilities` JSON NOT NULL COMMENT 'facilities',
         `available_rooms` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'available rooms',
         `price` DECIMAL(10, 2) NOT NULL COMMENT 'price',
         `discount_id` VARCHAR(36) COMMENT 'discount ID',

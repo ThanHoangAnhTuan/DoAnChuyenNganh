@@ -314,13 +314,11 @@ type EcommerceGoAccommodationDetail struct {
 	// accommodation ID
 	AccommodationID string
 	// accommodation type
-	AccommodationType string
+	Name string
 	// number of guests
-	NumberOfGuests uint8
+	Guests uint8
 	// number of beds
-	NumberOfBeds uint8
-	// images
-	Images string
+	Beds json.RawMessage
 	// facilities
 	Facilities json.RawMessage
 	// available rooms

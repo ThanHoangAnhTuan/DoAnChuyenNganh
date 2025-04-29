@@ -13,6 +13,7 @@ type (
 		CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeStatus int, out *vo.CreateAccommodationOutput, err error)
 		UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommodationInput) (codeResult int, out *vo.UpdateAccommodationOutput, err error)
 		DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error)
+		GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error)
 	}
 )
 

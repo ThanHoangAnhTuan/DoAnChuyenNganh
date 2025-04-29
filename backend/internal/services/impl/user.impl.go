@@ -28,7 +28,6 @@ type UserLoginImpl struct {
 	sqlc *database.Queries
 }
 
-// Register implements services.IUserLogin.
 func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error) {
 	// !input: email, type, purpose
 	// !1. validate email
@@ -128,7 +127,6 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 	return response.ErrCodeRegisterSuccess, nil
 }
 
-// VerifyOTP implements services.IUserLogin.
 func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error) {
 	out = &vo.VerifyOTPOutput{}
 
@@ -168,7 +166,6 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 	return response.ErrCodeVerifyOTPSuccess, out, nil
 }
 
-// UpdatePasswordRegister implements services.IUserLogin.
 func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error) {
 	// !1. get info otp by key hash
 	infoOTP, err := u.sqlc.GetUserVerified(ctx, in.Token)
@@ -220,7 +217,6 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 	return response.ErrCodeUpdatePasswordRegisterSuccess, nil
 }
 
-// Login implements services.IUserLogin.
 func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
 	out = &vo.LoginOutput{}
 

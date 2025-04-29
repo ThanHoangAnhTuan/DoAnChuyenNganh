@@ -11,6 +11,11 @@ import {
     DeleteAccommodationResponse,
 } from '../models/accommodation.model';
 import { environment } from '../../environments/environment';
+import {
+    facilitiesToSnakeCase,
+    propertySurroundsToSnakeCase,
+} from '../shared/utils/case-converters';
+import { flatMap } from 'lodash';
 
 @Injectable({
     providedIn: 'root',
@@ -30,22 +35,27 @@ export class AccommodationService {
         accommodation: CreateAccommodation
     ): Observable<CreateAccommodationResponse> {
         const formData = new FormData();
-        console.log(accommodation.facilities);
         formData.append('name', accommodation.name);
         formData.append('country', accommodation.country);
         formData.append('city', accommodation.city);
         formData.append('district', accommodation.district);
         formData.append('description', accommodation.description);
-        formData.append('facilities', JSON.stringify(accommodation.facilities));
+        formData.append(
+            'facilities',
+            JSON.stringify(facilitiesToSnakeCase(accommodation.facilities))
+        );
         formData.append('google_map', accommodation.googleMap);
         formData.append(
-            'propertySurrounds',
-            JSON.stringify(accommodation.propertySurrounds)
+            'property_surrounds',
+            JSON.stringify(
+                propertySurroundsToSnakeCase(accommodation.propertySurrounds)
+            )
         );
         formData.append('rules', accommodation.rules);
         accommodation.image.forEach((file) => {
             formData.append('image', file, file.name);
         });
+        console.log(Object.fromEntries(formData.entries()));
         return this.http.post<CreateAccommodationResponse>(
             this.apiUrl + 'create-accommodation',
             formData
@@ -62,16 +72,22 @@ export class AccommodationService {
         formData.append('city', accommodation.city);
         formData.append('district', accommodation.district);
         formData.append('description', accommodation.description);
-        formData.append('facilities', JSON.stringify(accommodation.facilities));
+        formData.append(
+            'facilities',
+            JSON.stringify(facilitiesToSnakeCase(accommodation.facilities))
+        );
         formData.append('google_map', accommodation.googleMap);
         formData.append(
-            'propertySurrounds',
-            JSON.stringify(accommodation.propertySurrounds)
+            'property_surrounds',
+            JSON.stringify(
+                propertySurroundsToSnakeCase(accommodation.propertySurrounds)
+            )
         );
         formData.append('rules', accommodation.rules);
         accommodation.image.forEach((file) => {
             formData.append('image', file, file.name);
         });
+        console.log(Object.fromEntries(formData.entries()));
         return this.http.put<UpdateAccommodationResponse>(
             this.apiUrl + 'update-accommodation',
             formData
@@ -79,6 +95,8 @@ export class AccommodationService {
     }
 
     deleteAccommodation(id: string): Observable<DeleteAccommodationResponse> {
-        return this.http.delete<DeleteAccommodationResponse>(this.apiUrl + 'delete-accommodation/' + id);
+        return this.http.delete<DeleteAccommodationResponse>(
+            this.apiUrl + 'delete-accommodation/' + id
+        );
     }
 }

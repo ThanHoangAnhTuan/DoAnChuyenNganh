@@ -1,55 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { AccommodationService } from './services/accommodation.service';
-import {
-    Accommodation,
-    CreateAccommodation,
-    UpdateAccommodation,
-} from './models/accommodation.model';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { Dialog } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CheckboxModule, Checkbox } from 'primeng/checkbox';
-import { FileUpload } from 'primeng/fileupload';
-import { CommonModule } from '@angular/common';
-import { BadgeModule } from 'primeng/badge';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { TuiRoot } from "@taiga-ui/core";
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import {TuiButton} from '@taiga-ui/core';
+import { Accommodation, CreateAccommodation, UpdateAccommodation } from "./models/accommodation.model";
+import { FormControl, FormGroup } from "@angular/forms";
+import { AccommodationService } from "./services/accommodation.service";
 
 @Component({
-    selector: 'app-root',
-    imports: [
-        AutoCompleteModule,
-        TableModule,
-        ButtonModule,
-        Dialog,
-        InputTextModule,
-        Checkbox,
-        ReactiveFormsModule,
-        CheckboxModule,
-        FileUpload,
-        CommonModule,
-        BadgeModule,
-        ToastModule,
-        CommonModule,
-    ],
-    providers: [MessageService],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css',
+  selector: 'app-root',
+  imports: [RouterOutlet, TuiRoot, TuiButton],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
+
+export class AppComponent implements OnInit{
     accommodations!: Accommodation[];
     dialogCreate: boolean = false;
     dialogUpdate: boolean = false;
-
-    customUpload = {
-        progressbar: {
-            height: '0px',
-        },
-    };
-
     files: File[] = [];
     isOldImage: boolean = false;
     idAccommodation: string = '';
@@ -57,8 +25,6 @@ export class AppComponent implements OnInit {
     oldImageType: string = '';
     baseUrl: string = 'http://localhost:8080/uploads/';
     edittedImage: boolean = false;
-
-    @ViewChild('fileUploader') fileUploader!: FileUpload;
 
     acommodationForm = new FormGroup({
         name: new FormControl(''),
@@ -156,13 +122,11 @@ export class AppComponent implements OnInit {
         this.oldImageName = '';
         this.oldImageType = '';
         this.files = [];
-        this.fileUploader.clear()
     }
 
     showDialogUpdate(accommodation: Accommodation) {
         this.acommodationForm.reset();
         this.files = [];
-        this.fileUploader.clear()
         this.acommodationForm.setValue({
             name: accommodation.name,
             country: accommodation.country,
@@ -281,3 +245,4 @@ export class AppComponent implements OnInit {
         });
     }
 }
+

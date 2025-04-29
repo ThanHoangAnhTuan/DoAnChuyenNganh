@@ -21,11 +21,51 @@ type AccommodationImpl struct {
 	sqlc *database.Queries
 }
 
+// GetAccommodationsByManager implements services.IAccommodation.
+func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
+	out = make([]*vo.GetAccommodations, 0)
+	userID := "1"
+	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations by manager: %s", err)
+	}
+
+	for _, accommodation := range accommodations {
+
+		facilities := vo.Facilities{}
+		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		propertySurroundings := vo.PropertySurroundings{}
+		if err := json.Unmarshal(accommodation.PropertySurroundings, &propertySurroundings); err != nil {
+			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+		}
+
+		out = append(out, &vo.GetAccommodations{
+			Id:                   accommodation.ID,
+			Name:                 accommodation.Name,
+			Country:              accommodation.Country,
+			City:                 accommodation.City,
+			District:             accommodation.District,
+			Description:          accommodation.Description,
+			Image:                accommodation.Image,
+			ManagerId:            accommodation.ManagerID,
+			Rating:               strconv.Itoa(int(accommodation.Rating)),
+			Facilities:           facilities,
+			GoogleMap:            accommodation.GgMap,
+			PropertySurroundings: propertySurroundings,
+			Rules:                accommodation.Rules,
+		})
+	}
+	return response.ErrCodeGetAccommodationSuccess, out, nil
+}
+
 // DeleteAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
 	// !. get userId from context
 	// userID := ctx.Value("userId").(string)
-	userID := "8ae3a3b6-db41-4dad-9ef2-57386a049c49"
+	userID := "1"
 	if userID == "" {
 		return response.ErrCodeUnauthorized, fmt.Errorf("userId not found in context")
 	}
@@ -71,7 +111,7 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	out = &vo.UpdateAccommodationOutput{}
 	// !. get userId from context
 	// userID, exists := ctx.Get("userId")
-	userID := "8ae3a3b6-db41-4dad-9ef2-57386a049c49"
+	userID := "1"
 	// if !exists {
 	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	// }
@@ -212,7 +252,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	out = &vo.CreateAccommodationOutput{}
 	// !1. check manager exists in database
 	// userID, exists := ctx.Get("userId")
-	userID := "8ae3a3b6-db41-4dad-9ef2-57386a049c49"
+	userID := "1"
 
 	// if !exists {
 	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")

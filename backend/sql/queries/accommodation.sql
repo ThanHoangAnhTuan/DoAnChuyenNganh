@@ -37,7 +37,27 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0;
+    `is_deleted` = 0 and `is_verified` = 1;
+
+-- name: GetAccommodationsByManager :many
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `image`,
+    `description`,
+    `facilities`,
+    `gg_map`,
+    `property_surroundings`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `is_deleted` = 0 AND  `manager_id` = ?;
 
 -- name: GetAccommodationById :one
 SELECT

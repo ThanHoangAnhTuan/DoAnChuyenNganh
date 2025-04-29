@@ -165,7 +165,7 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `is_deleted` + "`" + ` = 0
+    ` + "`" + `is_deleted` + "`" + ` = 0 and ` + "`" + `is_verified` + "`" + ` = 1
 `
 
 type GetAccommodationsRow struct {
@@ -193,6 +193,80 @@ func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow
 	var items []GetAccommodationsRow
 	for rows.Next() {
 		var i GetAccommodationsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ManagerID,
+			&i.Country,
+			&i.Name,
+			&i.City,
+			&i.District,
+			&i.Image,
+			&i.Description,
+			&i.Facilities,
+			&i.GgMap,
+			&i.PropertySurroundings,
+			&i.Rules,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAccommodationsByManager = `-- name: GetAccommodationsByManager :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `manager_id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `image` + "`" + `,
+    ` + "`" + `description` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `property_surroundings` + "`" + `,
+    ` + "`" + `rules` + "`" + `,
+    ` + "`" + `rating` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `is_deleted` + "`" + ` = 0 AND  ` + "`" + `manager_id` + "`" + ` = ?
+`
+
+type GetAccommodationsByManagerRow struct {
+	ID                   string
+	ManagerID            string
+	Country              string
+	Name                 string
+	City                 string
+	District             string
+	Image                string
+	Description          string
+	Facilities           json.RawMessage
+	GgMap                string
+	PropertySurroundings json.RawMessage
+	Rules                string
+	Rating               uint8
+}
+
+func (q *Queries) GetAccommodationsByManager(ctx context.Context, managerID string) ([]GetAccommodationsByManagerRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAccommodationsByManager, managerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAccommodationsByManagerRow
+	for rows.Next() {
+		var i GetAccommodationsByManagerRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.ManagerID,
