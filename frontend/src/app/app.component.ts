@@ -5,10 +5,11 @@ import {TuiButton} from '@taiga-ui/core';
 import { Accommodation, CreateAccommodation, UpdateAccommodation } from "./models/accommodation.model";
 import { FormControl, FormGroup } from "@angular/forms";
 import { AccommodationService } from "./services/accommodation.service";
+import { HomePageComponent } from "./views/home-page/home-page.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TuiRoot, TuiButton],
+  imports: [RouterOutlet, TuiRoot, TuiButton, HomePageComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

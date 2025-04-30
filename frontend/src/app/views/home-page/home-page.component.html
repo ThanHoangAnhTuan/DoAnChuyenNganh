@@ -1,0 +1,108 @@
+<main class="main">
+    <!-- Top Trending Places -->
+    <div class="trending-places-container">
+        <p class="trending-title">Điểm đến đang thịnh hành</p>
+        <p class="trending-subtitle">Các lựa chọn phổ biến nhất cho du khách từ Việt Nam</p>
+
+        <div class="trending-content">
+            <!-- <div class="trending-place">
+                <img src="city/ho-chi-minh-city.jpg" alt="trending place 1" class="trending-image" />
+                <p class="text-in-image">
+                    TP. Hồ Chí Minh
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div>
+            <div class="trending-place">
+                <img src="city/ha-noi.jpg" alt="trending place 2" class="trending-image" />
+                <p class="text-in-image">
+                    Hà Nội
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div>
+            <div class="trending-place">
+                <img src="city/da-nang.jpg" alt="trending place 3" class="trending-image" />
+                <p class="text-in-image">
+                    Đà Nẵng
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div>
+            <div class="trending-place">
+                <img src="city/vung-tau.jpg" alt="trending place 4" class="trending-image" />
+                <p class="text-in-image">
+                    Vũng Tàu
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div>
+            <div class="trending-place">
+                <img src="city/da-lat.jpg" alt="trending place 5" class="trending-image" />
+                <p class="text-in-image">
+                    Đà Lạt
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div> -->
+
+            <div class="trending-place" *ngFor="let place of trendinPlaces">
+                <img src="trending-places/{{ place.image }}" alt="{{ place.alt }}" class="trending-image">
+                <p class="text-in-image">
+                    {{ place.name }}
+                    <img src="flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Place Type List -->
+    <div class="place-type-container">
+        <p class="place-type-title">Tìm theo loại chỗ nghỉ</p>
+
+        <div tuiCarouselButtons class="place-type-carousel-container">
+            <button iconStart="@tui.chevron-left" tuiIconButton type="button" (click)="placeTypeCarousel.prev()"
+                class="carousel-prev-button">
+                Previous
+            </button>
+
+            <tui-carousel [draggable]="true" [itemsCount]="showPlaceTypeList" [(index)]="placeTypeIndex" #placeTypeCarousel
+                class="carousel">
+                <ng-container *ngFor="let place of places; let i = index">
+                    <div *tuiItem draggable="false" class="place-type-item" [class.item_active]="i === placeTypeIndex + 1">
+                        <img alt="place.name" src="place-type/{{ place.image }}" class="place-type-image" />
+                        <div class="place-type-name">{{ place.name }}</div>
+                    </div>
+                </ng-container>
+            </tui-carousel>
+
+            <button iconStart="@tui.chevron-right" tuiIconButton type="button" (click)="placeTypeCarousel.next()"
+                class="carousel-next-button">
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- Explore Places -->
+    <div class="explore-places-container">
+        <p class="explore-title">Khám phá Việt Nam</p>
+        <p class="explore-subtitle">Các điểm đến phổ biến này có nhiều điều chờ đón bạn</p>
+
+        <div tuiCarouselButtons class="explore-carousel-container">
+            <button iconStart="@tui.chevron-left" tuiIconButton type="button" (click)="explorePlacesCarousel.prev()"
+                class="carousel-prev-button">
+                Previous
+            </button>
+
+            <tui-carousel [draggable]="true" [itemsCount]="6" [(index)]="explorePlaceIndex" #explorePlacesCarousel
+                class="explore-content">
+                <ng-container *ngFor="let place of explorePaces; let i = index">
+                    <div *tuiItem draggable="false" class="explore-item" [class.item_active]="i === explorePlaceIndex + 1">
+                        <img alt="place.name" src="explore-places/{{ place.image }}" class="explore-image" />
+                        <div class="explore-place-name">{{ place.name }}</div>
+                    </div>
+                </ng-container>
+            </tui-carousel>
+
+            <button iconStart="@tui.chevron-right" tuiIconButton type="button" (click)="explorePlacesCarousel.next()"
+                class="carousel-next-button">
+                Next
+            </button>
+        </div>
+    </div>
+</main>
