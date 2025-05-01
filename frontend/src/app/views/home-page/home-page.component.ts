@@ -16,6 +16,7 @@ export class HomePageComponent {
   explorePaces: any[] =[];
   windowWidth: number = 0;
   showPlaceTypeList: number = 0;
+  showExplorePlacesList: number = 0;
   
   protected placeTypeIndex = 0;
   protected explorePlaceIndex = 0;
@@ -83,14 +84,21 @@ export class HomePageComponent {
   updatePlacesVisibility() {
     if (this.windowWidth >= 1700) {
       this.showPlaceTypeList = 5;
+    } else if (this.windowWidth >= 1400) {
+      this.showPlaceTypeList = 5;
+      this.showExplorePlacesList = 6;
     } else if (this.windowWidth >= 1025) {
       this.showPlaceTypeList = 4;
+      this.showExplorePlacesList = 5;
     } else if (this.windowWidth >= 800) {
       this.showPlaceTypeList = 3;
+      this.showExplorePlacesList = 4;
     } else if (this.windowWidth >= 500) {
       this.showPlaceTypeList = 2;
+      this.showExplorePlacesList = 3;
     } else {
       this.showPlaceTypeList = 1;
+      this.showExplorePlacesList = 2;
     }
   }
 }

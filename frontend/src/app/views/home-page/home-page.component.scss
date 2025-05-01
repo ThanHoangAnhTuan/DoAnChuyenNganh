@@ -2,7 +2,7 @@
 $font-family-base: sans-serif;
 $color-gray: gray;
 $color-white: white;
-$card-border-radius: 2%;
+$card-border-radius: 5%;
 $box-shadow-image: 2px 2px 4px rgba(0, 0, 0, 0.5);
 $box-shadow-button: 2px 2px 4px rgba(0, 0, 0, 0.2);
 $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
@@ -52,6 +52,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
   object-fit: cover;
 }
 
+@mixin base-image {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 5%;
+}
+
 @mixin trending-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -77,46 +83,62 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
   }
 }
 
+@mixin section-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+@mixin section-subtitle {
+  color: $color-gray;
+  font-size: 15px;
+  margin: 5px 0 0 0;
+}
+
+@mixin section-container {
+  margin-top: 30px;
+}
+
+@mixin carousel-container {
+  position: relative;
+  padding-top: 20px;
+}
+
+@mixin image-text-overlay {
+  @include position-absolute(null, null, 20px, 10px);
+  color: $color-white;
+  @include text-shadow;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 // Common Styles
 .main {
   margin: 0 auto;
   font-family: $font-family-base;
 
-  // trending places
-  .trending-places-container {
-    .trending-title {
-      font-weight: bold;
-      margin: 0;
-    }
-
-    .trending-subtitle {
-      color: $color-gray;
-      margin: 5px 0 0 0;
-    }
-
-    .text-in-image {
-      @include position-absolute(0, null, null, 10px);
-      color: $color-white;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      @include text-shadow;
-    }
-
-    .trending-flag {
-      width: 20px;
-      height: auto;
-      box-shadow: $box-shadow-image;
-    }
+  // Shared section styling
+  .section-title {
+    @include section-title;
   }
 
-  // place type
-  .place-type-container {
-    .place-type-title {
-      margin: 0;
-      font-weight: bold;
-    }
+  .section-subtitle {
+    @include section-subtitle;
+  }
+
+  .text-in-image {
+    @include position-absolute(0, null, null, 10px);
+    color: $color-white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    @include text-shadow;
+  }
+
+  .trending-flag {
+    width: 20px;
+    height: auto;
+    box-shadow: $box-shadow-image;
   }
 }
 
@@ -132,8 +154,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
     margin: 0 0 30px 0;
     margin-right: -16px;
 
+    .trending-title {
+      @include section-title;
+    }
+
     .trending-subtitle {
-      font-size: 15px;
+      @include section-subtitle;
     }
 
     .trending-content {
@@ -167,8 +193,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
 
   // place type
   .place-type-container {
+    .place-type-title {
+      @include section-title;
+    }
+
     .place-type-carousel-container {
-      position: relative;
+      @include carousel-container;
       margin: 0 -10px;
 
       .place-type-item {
@@ -177,22 +207,53 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
         position: relative;
 
         .place-type-image {
-          border-radius: 5%;
-          cursor: pointer;
-          width: 100%;
+          @include base-image;
           height: 200px;
         }
 
         .place-type-name {
-          @include position-absolute(null, null, 20px, 10px);
-          color: $color-white;
-          @include text-shadow;
-          font-size: 20px;
-          font-weight: bold;
-          margin-top: 3%;
+          @include image-text-overlay;
         }
       }
 
+      .carousel-prev-button,
+      .carousel-next-button {
+        display: none;
+      }
+    }
+  }
+
+  // explore places
+  .explore-places-container {
+    @include section-container;
+  
+    .explore-title {
+      @include section-title;
+      font-size: 20px;
+    }
+  
+    .explore-subtitle {
+      @include section-subtitle;
+    }
+  
+    .explore-carousel-container {
+      @include carousel-container;
+      margin: 0 0 0 -10px;
+
+      .explore-item {
+        margin: 0 -20px 0 -10px;
+        position: relative;
+
+        .explore-image {
+          @include base-image;
+          height: 165px;
+        }
+      
+        .explore-place-name {
+          @include image-text-overlay;
+        }
+      }
+    
       .carousel-prev-button,
       .carousel-next-button {
         display: none;
@@ -212,8 +273,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
   .trending-places-container {
     margin: 0 0 30px 0;
 
+    .trending-title {
+      @include section-title;
+    }
+
     .trending-subtitle {
-      font-size: 15px;
+      @include section-subtitle;
     }
 
     .trending-content {
@@ -256,8 +321,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
 
   // place type
   .place-type-container {
+    .place-type-title {
+      @include section-title;
+    }
+
     .place-type-carousel-container {
-      position: relative;
+      @include carousel-container;
       margin: 0 -10px;
 
       .place-type-item {
@@ -266,19 +335,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
         position: relative;
 
         .place-type-image {
-          border-radius: 5%;
-          cursor: pointer;
-          width: 100%;
+          @include base-image;
           height: 200px;
         }
 
         .place-type-name {
-          @include position-absolute(null, null, 20px, 10px);
-          color: $color-white;
-          @include text-shadow;
-          font-size: 20px;
-          font-weight: bold;
-          margin-top: 3%;
+          @include image-text-overlay;
         }
       }
 
@@ -290,6 +352,48 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
       .carousel-next-button {
         @include carousel-button;
         right: 0;
+      }
+    }
+  }
+
+  // explore places
+  .explore-places-container {
+    @include section-container;
+  
+    .explore-title {
+      @include section-title;
+    }
+  
+    .explore-subtitle {
+      @include section-subtitle;
+    }
+  
+    .explore-carousel-container {
+      @include carousel-container;
+      margin: 0 0 0 -10px;
+
+      .explore-item {
+        margin: 0 -20px 0 -10px;
+        position: relative;
+
+        .explore-image {
+          @include base-image;
+          height: 165px;
+        }
+      
+        .explore-place-name {
+          @include image-text-overlay;
+        }
+      }
+    
+      .carousel-prev-button {
+        @include carousel-button;
+        left: -10px;
+      }
+    
+      .carousel-next-button {
+        @include carousel-button;
+        right: -15px;
       }
     }
   }
@@ -306,8 +410,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
   .trending-places-container {
     margin: 0 0 30px 0;
 
+    .trending-title {
+      @include section-title;
+    }
+
     .trending-subtitle {
-      font-size: 15px;
+      @include section-subtitle;
       margin: 10px 0 0 0;
     }
 
@@ -351,8 +459,12 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
 
   // place type
   .place-type-container {
+    .place-type-title {
+      @include section-title;
+    }
+
     .place-type-carousel-container {
-      position: relative;
+      @include carousel-container;
       margin: 0 -10px;
 
       .place-type-item {
@@ -360,9 +472,7 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
         margin: 0 -10px;
 
         .place-type-image {
-          border-radius: 5%;
-          cursor: pointer;
-          width: 100%;
+          @include base-image;
           height: 200px;
         }
 
@@ -384,68 +494,48 @@ $hover-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
       }
     }
   }
-}
 
+  // explore places
+  .explore-places-container {
+    margin-top: 40px;
+  
+    .explore-title {
+      @include section-title;
+      font-size: 25px;
+    }
+  
+    .explore-subtitle {
+      @include section-subtitle;
+    }
+  
+    .explore-carousel-container {
+      @include carousel-container;
+      margin: 0 0 0 -10px;
 
-.explore-places-container {
-  margin-top: 40px;
+      .explore-item {
+        margin: 0 -20px 0 -10px;
 
-  .explore-title {
-    font-size: 25px;
-    font-weight: bold;
-    margin: 0;
-  }
-
-  .explore-subtitle {
-    font-size: 15px;
-    color: gray;
-    margin: 5px 0 0 0;
-  }
-
-  .explore-carousel-container {
-    margin: 0 0 0 -10px;
-    position: relative;
-    padding-top: 20px;
-  }
-
-  .explore-item {
-    margin: 0 -20px 0 -10px;
-  }
-
-  .explore-image {
-    width: 100%;
-    height: 165px;
-    cursor: pointer;
-    border-radius: 5%;
-  }
-
-  .explore-place-name {
-    font-size: 15px;
-    font-weight: bold;
-    margin-top: 3%;
-  }
-
-  .carousel-prev-button {
-    position: absolute;
-    top: 50%;
-    left: -10px;
-    transform: translateY(-50%);
-    background-color: white;
-    border-radius: 50%;
-    padding: 0.5rem;
-    z-index: 1;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .carousel-next-button {
-    position: absolute;
-    top: 50%;
-    right: -15px;
-    transform: translateY(-50%);
-    background-color: white;
-    border-radius: 50%;
-    padding: 0.5rem;
-    z-index: 1;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        .explore-image {
+          @include base-image;
+          height: 165px;
+        }
+      
+        .explore-place-name {
+          font-size: 15px;
+          font-weight: bold;
+          margin-top: 3%;
+        }
+      }
+    
+      .carousel-prev-button {
+        @include carousel-button;
+        left: -10px;
+      }
+    
+      .carousel-next-button {
+        @include carousel-button;
+        right: -15px;
+      }
+    }
   }
 }
