@@ -1,0 +1,24 @@
+<div class="search-box">
+  <div class="place-picker">
+    <tui-combo-box
+      [tuiTextfieldCleaner]="true"
+      [(ngModel)]="country"
+    >
+      Country
+      <tui-data-list-wrapper
+        *tuiDataList
+        [items]="countries | tuiFilterByInput"
+      />
+    </tui-combo-box>
+  </div>
+  <div class="date-picker">
+    <tui-input-date-range [formControl]="control">Choose dates</tui-input-date-range>
+  </div>
+  <div class="search-button">
+    <button size="l"
+            tuiButton
+            type="button"
+    >Search
+    </button>
+  </div>
+</div>
