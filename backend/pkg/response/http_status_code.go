@@ -9,6 +9,9 @@ const (
 	ErrCodeCreateJWTTokenFailed = 20005
 	ErrCodeParamsInvalid        = 20006
 	ErrCodeUnauthorized         = 20007
+	ErrCodeForbidden            = 20008
+	ErrCodeValidatorNotFound    = 20009
+	ErrCodeValidator            = 20010
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -16,6 +19,7 @@ const (
 	ErrCodeOTPAlreadyExists   = 30003
 	ErrCodeSendEmailFailed    = 30004
 	ErrCodeRegisterSuccess    = 30005
+	ErrCodeRegisterFailed     = 30006
 
 	// verify otp
 	ErrCodeOTPNotExists           = 40001
@@ -23,6 +27,7 @@ const (
 	ErrCodeGetInfoOTPFailed       = 40003
 	ErrCodeUpdateUserVerifyFailed = 40004
 	ErrCodeVerifyOTPSuccess       = 40005
+	ErrCodeOTPAlreadyVerified     = 40006
 
 	// update password register
 	ErrCodeOTPNotVerified                = 50001
@@ -52,12 +57,29 @@ const (
 	ErrCodeDeleteAccommodationFailed  = 80010
 	ErrCodeDeleteAccommodationSuccess = 80011
 
+	// accommodation detail
+	ErrCodeCreateAccommodationDetailFailed  = 90001
+	ErrCodeCreateAccommodationDetailSuccess = 90002
+	ErrCodeGetAccommodationDetailsFailed    = 90004
+	ErrCodeGetAccommodationDetailsSuccess   = 90005
+	ErrCodeGetAccommodationDetailFailed     = 90006
+	ErrCodeAccommodationDetailNotFound      = 90007
+	ErrCodeUpdateAccommodationDetailSuccess = 90008
+	ErrCodeUpdateAccommodationDetailFailed  = 90009
+	ErrCodeDeleteAccommodationDetailFailed  = 90010
+	ErrCodeDeleteAccommodationDetailSuccess = 90011
+
 	// file
-	ErrCodeOpenFileFailed  = 90001
-	ErrCodeReadFileFailed  = 90002
-	ErrCodeInvalidFileType = 90003
-	ErrCodeSaveFileSuccess = 90004
-	ErrCodeSaveFileFailed  = 90005
+	ErrCodeOpenFileFailed   = 100001
+	ErrCodeReadFileFailed   = 100002
+	ErrCodeInvalidFileType  = 100003
+	ErrCodeSaveFileSuccess  = 100004
+	ErrCodeSaveFileFailed   = 100005
+	ErrCodeGetFilesFailed   = 100006
+	ErrCodeDeleteFileFailed = 100007
+
+	// manager
+	ErrCodeUpdateManagerFailed = 110001
 )
 
 var message = map[int]string{
@@ -69,6 +91,9 @@ var message = map[int]string{
 	ErrCodeCreateJWTTokenFailed: "Create JWT token failed",
 	ErrCodeParamsInvalid:        "Params invalid",
 	ErrCodeUnauthorized:         "Unauthorized",
+	ErrCodeForbidden:            "You do not have permission to access this resource.",
+	ErrCodeValidatorNotFound:    "Validator not found",
+	ErrCodeValidator:            "Validator error",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",
@@ -76,6 +101,7 @@ var message = map[int]string{
 	ErrCodeOTPAlreadyExists:   "OTP already exists",
 	ErrCodeSendEmailFailed:    "Send email failed",
 	ErrCodeRegisterSuccess:    "Register successfully",
+	ErrCodeRegisterFailed:     "Register failed",
 
 	// verify otp
 	ErrCodeOTPNotExists:           "OTP not exists",
@@ -83,6 +109,7 @@ var message = map[int]string{
 	ErrCodeGetInfoOTPFailed:       "Get info OTP failed",
 	ErrCodeUpdateUserVerifyFailed: "Update user verify failed",
 	ErrCodeVerifyOTPSuccess:       "Verify OTP successfully",
+	ErrCodeOTPAlreadyVerified:     "OTP already verified",
 
 	// update password register
 	ErrCodeOTPNotVerified:                "OTP not verified",
@@ -112,10 +139,27 @@ var message = map[int]string{
 	ErrCodeDeleteAccommodationFailed:  "Delete accommodation failed",
 	ErrCodeDeleteAccommodationSuccess: "Delete accommodation successfully",
 
+	// accommodation detail
+	ErrCodeCreateAccommodationDetailFailed:  "Create accommodation details failed",
+	ErrCodeCreateAccommodationDetailSuccess: "Create accommodation details successfully",
+	ErrCodeGetAccommodationDetailsFailed:    "Get accommodation details failed",
+	ErrCodeGetAccommodationDetailsSuccess:   "Get accommodation details successfully",
+	ErrCodeGetAccommodationDetailFailed:     "Get accommodation details failed",
+	ErrCodeAccommodationDetailNotFound:      "Accommodation details not found",
+	ErrCodeUpdateAccommodationDetailSuccess: "Update accommodation detail successfully",
+	ErrCodeUpdateAccommodationDetailFailed:  "Update accommodation detail failed",
+	ErrCodeDeleteAccommodationDetailFailed:  "Delete accommodation detail failed",
+	ErrCodeDeleteAccommodationDetailSuccess: "Delete accommodation detail successfully",
+
 	// file
-	ErrCodeOpenFileFailed:  "Open file failed",
-	ErrCodeReadFileFailed:  "Read file failed",
-	ErrCodeInvalidFileType: "Invalid file type",
-	ErrCodeSaveFileSuccess: "Save file successfully",
-	ErrCodeSaveFileFailed:  "Save file failed",
+	ErrCodeOpenFileFailed:   "Open file failed",
+	ErrCodeReadFileFailed:   "Read file failed",
+	ErrCodeInvalidFileType:  "Invalid file type",
+	ErrCodeSaveFileSuccess:  "Save file successfully",
+	ErrCodeSaveFileFailed:   "Save file failed",
+	ErrCodeGetFilesFailed:   "Get files failed",
+	ErrCodeDeleteFileFailed: "Delete file failed",
+
+	// manager
+	ErrCodeUpdateManagerFailed: "Update manager failed",
 }

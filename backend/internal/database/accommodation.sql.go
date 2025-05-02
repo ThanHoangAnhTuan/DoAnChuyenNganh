@@ -10,6 +10,25 @@ import (
 	"encoding/json"
 )
 
+const checkAccommodationExists = `-- name: CheckAccommodationExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_accommodation` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+    )
+`
+
+func (q *Queries) CheckAccommodationExists(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkAccommodationExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createAccommodation = `-- name: CreateAccommodation :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_accommodation` + "`" + ` (
@@ -70,8 +89,7 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 }
 
 const deleteAccommodation = `-- name: DeleteAccommodation :exec
-UPDATE
-    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+UPDATE ` + "`" + `ecommerce_go_accommodation` + "`" + `
 SET
     ` + "`" + `is_deleted` + "`" + ` = 1,
     ` + "`" + `updated_at` + "`" + ` = ?
@@ -107,7 +125,8 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `id` + "`" + ` = ? AND ` + "`" + `is_deleted` + "`" + ` = 0
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type GetAccommodationByIdRow struct {
@@ -165,7 +184,7 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `is_deleted` + "`" + ` = 0 and ` + "`" + `is_verified` + "`" + ` = 1
+    ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type GetAccommodationsRow struct {
@@ -239,7 +258,8 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `is_deleted` + "`" + ` = 0 AND  ` + "`" + `manager_id` + "`" + ` = ?
+    ` + "`" + `is_deleted` + "`" + ` = 0
+    AND ` + "`" + `manager_id` + "`" + ` = ?
 `
 
 type GetAccommodationsByManagerRow struct {
@@ -296,8 +316,7 @@ func (q *Queries) GetAccommodationsByManager(ctx context.Context, managerID stri
 }
 
 const updateAccommodation = `-- name: UpdateAccommodation :exec
-UPDATE
-    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+UPDATE ` + "`" + `ecommerce_go_accommodation` + "`" + `
 SET
     ` + "`" + `country` + "`" + ` = ?,
     ` + "`" + `name` + "`" + ` = ?,
@@ -311,7 +330,8 @@ SET
     ` + "`" + `rules` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
-    ` + "`" + `id` + "`" + ` = ? AND ` + "`" + `is_deleted` + "`" + ` = 0
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type UpdateAccommodationParams struct {

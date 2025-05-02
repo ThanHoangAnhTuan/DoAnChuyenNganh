@@ -37,7 +37,7 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0 and `is_verified` = 1;
+    `is_deleted` = 0;
 
 -- name: GetAccommodationsByManager :many
 SELECT
@@ -57,7 +57,8 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0 AND  `manager_id` = ?;
+    `is_deleted` = 0
+    AND `manager_id` = ?;
 
 -- name: GetAccommodationById :one
 SELECT
@@ -77,11 +78,11 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `id` = ? AND `is_deleted` = 0;
+    `id` = ?
+    AND `is_deleted` = 0;
 
 -- name: UpdateAccommodation :exec
-UPDATE
-    `ecommerce_go_accommodation`
+UPDATE `ecommerce_go_accommodation`
 SET
     `country` = ?,
     `name` = ?,
@@ -95,13 +96,24 @@ SET
     `rules` = ?,
     `updated_at` = ?
 WHERE
-    `id` = ? AND `is_deleted` = 0;
+    `id` = ?
+    AND `is_deleted` = 0;
 
 -- name: DeleteAccommodation :exec
-UPDATE
-    `ecommerce_go_accommodation`
+UPDATE `ecommerce_go_accommodation`
 SET
     `is_deleted` = 1,
     `updated_at` = ?
 WHERE
     `id` = ?;
+
+-- name: CheckAccommodationExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_accommodation`
+        WHERE
+            `id` = ?
+    );

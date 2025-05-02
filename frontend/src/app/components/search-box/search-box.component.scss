@@ -1,0 +1,52 @@
+/*desktop*/
+.search-box {
+  margin: 5px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  .place-picker {
+    width: 250px;
+    margin: 5px;
+  }
+
+  .date-picker {
+    width: 250px;
+    margin: 5px;
+  }
+
+  .search-button {
+    margin: 5px;
+  }
+}
+
+/*tablet*/
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+  .search-box {
+
+  }
+}
+
+/*\mobile*/
+@media screen and (max-width: 768px) {
+  .search-box {
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .place-picker {
+      width: 100%;
+      margin: 5px;
+    }
+
+    .date-picker {
+      width: 100%;
+      margin: 5px;
+    }
+
+    .search-button {
+      margin: 5px;
+    }
+  }
+}

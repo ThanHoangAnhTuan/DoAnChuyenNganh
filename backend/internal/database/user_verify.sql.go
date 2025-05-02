@@ -9,6 +9,24 @@ import (
 	"context"
 )
 
+const checkUserVerifiedOTP = `-- name: CheckUserVerifiedOTP :one
+SELECT EXISTS (
+    SELECT
+    1
+    FROM
+        ` + "`" + `ecommerce_go_user_verify` + "`" + `
+    WHERE
+        ` + "`" + `verify_key` + "`" + ` = ? and ` + "`" + `is_verified` + "`" + ` = 1
+)
+`
+
+func (q *Queries) CheckUserVerifiedOTP(ctx context.Context, verifyKey string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserVerifiedOTP, verifyKey)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createUserVerify = `-- name: CreateUserVerify :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_user_verify` + "`" + ` (
@@ -64,7 +82,7 @@ FROM
     ` + "`" + `ecommerce_go_user_verify` + "`" + `
 WHERE
     ` + "`" + `key_hash` + "`" + ` = ?
-    AND ` + "`" + `is_verified` + "`" + ` = 0
+LIMIT 1
 `
 
 type GetUserUnverifyRow struct {
