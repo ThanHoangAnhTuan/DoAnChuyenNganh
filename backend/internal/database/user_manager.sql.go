@@ -9,9 +9,28 @@ import (
 	"context"
 )
 
+const checkUserManagerExistsByEmail = `-- name: CheckUserManagerExistsByEmail :one
+SELECT EXISTS (
+    SELECT
+        1
+    FROM
+        ` + "`" + `ecommerce_go_user_manager` + "`" + `
+    WHERE
+        ` + "`" + `account` + "`" + ` = ?
+        AND ` + "`" + `is_deleted` + "`" + ` = 0
+)
+`
+
+func (q *Queries) CheckUserManagerExistsByEmail(ctx context.Context, account string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserManagerExistsByEmail, account)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const checkUserManagerExistsByID = `-- name: CheckUserManagerExistsByID :one
 SELECT
-    COUNT(*)
+    COUNT(*) as count
 FROM
     ` + "`" + `ecommerce_go_user_manager` + "`" + `
 WHERE
@@ -68,5 +87,82 @@ WHERE
 
 func (q *Queries) DeleteUserManager(ctx context.Context, account string) error {
 	_, err := q.db.ExecContext(ctx, deleteUserManager, account)
+	return err
+}
+
+const getUserManager = `-- name: GetUserManager :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `account` + "`" + `,
+    ` + "`" + `user_name` + "`" + `,
+    ` + "`" + `password` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_manager` + "`" + `
+WHERE
+    ` + "`" + `account` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type GetUserManagerRow struct {
+	ID       string
+	Account  string
+	UserName string
+	Password string
+}
+
+func (q *Queries) GetUserManager(ctx context.Context, account string) (GetUserManagerRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserManager, account)
+	var i GetUserManagerRow
+	err := row.Scan(
+		&i.ID,
+		&i.Account,
+		&i.UserName,
+		&i.Password,
+	)
+	return i, err
+}
+
+const isAccommodationDetailBelongsToManager = `-- name: IsAccommodationDetailBelongsToManager :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_manager` + "`" + ` m
+            JOIN ` + "`" + `ecommerce_go_accommodation` + "`" + ` a ON m.id = a.manager_id
+            JOIN ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` ad ON a.id = ad.accommodation_id
+        WHERE
+            m.id = ?
+            AND ad.id = ?
+    )
+`
+
+type IsAccommodationDetailBelongsToManagerParams struct {
+	ID   string
+	ID_2 string
+}
+
+func (q *Queries) IsAccommodationDetailBelongsToManager(ctx context.Context, arg IsAccommodationDetailBelongsToManagerParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isAccommodationDetailBelongsToManager, arg.ID, arg.ID_2)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const updateUserManagerLogin = `-- name: UpdateUserManagerLogin :exec
+UPDATE ` + "`" + `ecommerce_go_user_manager` + "`" + `
+SET
+    ` + "`" + `login_time` + "`" + ` = ?
+WHERE
+    ` + "`" + `account` + "`" + ` = ?
+`
+
+type UpdateUserManagerLoginParams struct {
+	LoginTime uint64
+	Account   string
+}
+
+func (q *Queries) UpdateUserManagerLogin(ctx context.Context, arg UpdateUserManagerLoginParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserManagerLogin, arg.LoginTime, arg.Account)
 	return err
 }

@@ -7,8 +7,28 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 )
+
+const checkAccommodationDetailExists = `-- name: CheckAccommodationDetailExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+    )
+`
+
+func (q *Queries) CheckAccommodationDetailExists(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkAccommodationDetailExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
 
 const createAccommodationDetail = `-- name: CreateAccommodationDetail :exec
 INSERT INTO
@@ -63,16 +83,10 @@ SET
     ` + "`" + `is_deleted` + "`" + ` = 1
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    and ` + "`" + `accommodation_id` + "`" + ` = ?
 `
 
-type DeleteAccommodationDetailsParams struct {
-	ID              string
-	AccommodationID string
-}
-
-func (q *Queries) DeleteAccommodationDetails(ctx context.Context, arg DeleteAccommodationDetailsParams) error {
-	_, err := q.db.ExecContext(ctx, deleteAccommodationDetails, arg.ID, arg.AccommodationID)
+func (q *Queries) DeleteAccommodationDetails(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteAccommodationDetails, id)
 	return err
 }
 
@@ -138,6 +152,7 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `guests` + "`" + `,
     ` + "`" + `beds` + "`" + `,
+    ` + "`" + `discount_id` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `,
@@ -155,6 +170,7 @@ type GetAccommodationDetailsRow struct {
 	Name            string
 	Guests          uint8
 	Beds            json.RawMessage
+	DiscountID      sql.NullString
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
 	Price           string
@@ -177,6 +193,7 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 			&i.Name,
 			&i.Guests,
 			&i.Beds,
+			&i.DiscountID,
 			&i.Facilities,
 			&i.AvailableRooms,
 			&i.Price,

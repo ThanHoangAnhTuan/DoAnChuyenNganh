@@ -1,34 +1,34 @@
 package vo
 
 type RegisterInput struct {
-	VerifyKey     string `json:"verify_key"`
-	VerifyType    int    `json:"verify_type"`
-	VerifyPurpose string `json:"verify_purpose"`
+	VerifyKey     string `json:"verify_key" validate:"required"`
+	VerifyType    int    `json:"verify_type" validate:"required"`
+	VerifyPurpose string `json:"verify_purpose" validate:"required"`
 }
 
 type VerifyOTPInput struct {
-	VerifyKey  string `json:"verify_key"`
-	VerifyCode string `json:"verify_code"`
+	VerifyKey  string `json:"verify_key" validate:"required"`
+	VerifyCode string `json:"verify_code" validate:"required"`
 }
 
 type VerifyOTPOutput struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
 }
 
 type UpdatePasswordRegisterInput struct {
-	Token    string `json:"token"`
-	Password string `json:"password"`
+	Token    string `json:"token" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type UpdatePasswordRegisterOutput struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" validate:"required"`
 }
 
 type LoginInput struct {
-	UserAccount  string `json:"account"`
-	UserPassword string `json:"password"`
+	UserAccount  string `json:"account" validate:"required"`
+	UserPassword string `json:"password" validate:"required"`
 }
 
 type LoginOutput struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
 }

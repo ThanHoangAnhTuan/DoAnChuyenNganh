@@ -1,11 +1,9 @@
 package utils
 
 import (
+	"context"
 	"fmt"
-	"mime/multipart"
-	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -22,12 +20,17 @@ func GenerateCliTokenUUID(userId string) string {
 	return userId + "clitoken" + uuidString
 }
 
-func SaveImagesToLocal(ctx *gin.Context, files *multipart.FileHeader) (string, error) {
-	ext := filepath.Ext(files.Filename)
-	newFilename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-	err := ctx.SaveUploadedFile(files, "./uploads/"+newFilename)
-	if err != nil {
-		return "", err
+func GetUserIDFromGin(ctx *gin.Context) (string, bool) {
+	id, ok := ctx.Get("userId")
+	if !ok {
+		return "", false
 	}
-	return newFilename, nil
+	uid, ok := id.(string)
+	return uid, ok
+}
+
+func GetUserIDFromContext(c context.Context) (string, bool) {
+	id := c.Value("userId")
+	uid, ok := id.(string)
+	return uid, ok
 }

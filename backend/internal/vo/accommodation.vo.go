@@ -14,16 +14,16 @@ type PropertySurroundings struct {
 }
 
 type CreateAccommodationInput struct {
-	Name                 string                  `form:"name"`
-	Country              string                  `form:"country"`
-	City                 string                  `form:"city"`
-	District             string                  `form:"district"`
-	Image                []*multipart.FileHeader `form:"image"`
-	Description          string                  `form:"description"`
-	Facilities           Facilities              `form:"facilities"`
-	GoogleMap            string                  `form:"google_map"`
-	PropertySurroundings PropertySurroundings    `form:"property_surrounds"`
-	Rules                string                  `form:"rules"`
+	Name                 string                `form:"name" validate:"required"`
+	Country              string                `form:"country" validate:"required"`
+	City                 string                `form:"city" validate:"required"`
+	District             string                `form:"district" validate:"required"`
+	Image                *multipart.FileHeader `form:"image" validate:"required"`
+	Description          string                `form:"description" validate:"required"`
+	Facilities           Facilities            `form:"facilities" validate:"required"`
+	GoogleMap            string                `form:"google_map" validate:"required"`
+	PropertySurroundings PropertySurroundings  `form:"property_surrounds" validate:"required"`
+	Rules                string                `form:"rules" validate:"required"`
 }
 
 type CreateAccommodationOutput struct {
@@ -59,17 +59,17 @@ type GetAccommodations struct {
 }
 
 type UpdateAccommodationInput struct {
-	Id                   string                  `form:"id"`
-	Name                 string                  `form:"name"`
-	Country              string                  `form:"country"`
-	City                 string                  `form:"city"`
-	District             string                  `form:"district"`
-	Image                []*multipart.FileHeader `form:"image"`
-	Description          string                  `form:"description"`
-	Facilities           Facilities              `form:"facilities"`
-	GoogleMap            string                  `form:"google_map"`
-	PropertySurroundings PropertySurroundings    `form:"property_surrounds"`
-	Rules                string                  `form:"rules"`
+	Id                   string                `form:"id" validate:"required"`
+	Name                 string                `form:"name"`
+	Country              string                `form:"country"`
+	City                 string                `form:"city"`
+	District             string                `form:"district"`
+	Image                *multipart.FileHeader `form:"image"`
+	Description          string                `form:"description"`
+	Facilities           Facilities            `form:"facilities"`
+	GoogleMap            string                `form:"google_map"`
+	PropertySurroundings PropertySurroundings  `form:"property_surrounds"`
+	Rules                string                `form:"rules"`
 }
 
 type UpdateAccommodationOutput struct {
@@ -89,5 +89,5 @@ type UpdateAccommodationOutput struct {
 }
 
 type DeleteAccommodationInput struct {
-	Id string `json:"id"`
+	Id string `json:"id" validate:"required"`
 }
