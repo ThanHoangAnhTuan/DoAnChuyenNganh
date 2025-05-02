@@ -25,7 +25,7 @@ FROM
     `ecommerce_go_user_verify`
 WHERE
     `key_hash` = ?
-    AND `is_verified` = 0;
+LIMIT 1;
 
 -- name: GetUserVerified :one
 SELECT
@@ -48,3 +48,13 @@ SET
     `updated_at` = ?
 WHERE
     `key_hash` = ?;
+
+-- name: CheckUserVerifiedOTP :one
+SELECT EXISTS (
+    SELECT
+    1
+    FROM
+        `ecommerce_go_user_verify`
+    WHERE
+        `verify_key` = ? and `is_verified` = 1
+);

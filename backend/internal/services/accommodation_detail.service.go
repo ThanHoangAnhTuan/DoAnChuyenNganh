@@ -9,11 +9,10 @@ import (
 
 type (
 	IAccommodationDetail interface {
-		GetAccommodationDetails(ctx context.Context) (codeStatus int, out []*vo.GetAccommodationDetails, err error)
+		GetAccommodationDetails(ctx context.Context, in *vo.GetAccommodationDetailsInput) (codeStatus int, out []*vo.GetAccommodationDetailsOutput, err error)
 		CreateAccommodationDetail(ctx *gin.Context, in *vo.CreateAccommodationDetailInput) (codeStatus int, out *vo.CreateAccommodationDetailOutput, err error)
 		UpdateAccommodationDetail(ctx *gin.Context, in *vo.UpdateAccommodationDetailInput) (codeResult int, out *vo.UpdateAccommodationDetailOutput, err error)
 		DeleteAccommodationDetail(ctx context.Context, in *vo.DeleteAccommodationDetailInput) (codeResult int, err error)
-		GetAccommodationDetailsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodationDetails, err error)
 	}
 )
 

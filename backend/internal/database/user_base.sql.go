@@ -54,19 +54,21 @@ func (q *Queries) AddUserBase(ctx context.Context, arg AddUserBaseParams) error 
 }
 
 const checkUserBaseExists = `-- name: CheckUserBaseExists :one
+SELECT EXISTS (
 SELECT
-    COUNT(*)
+    1
 FROM
     ` + "`" + `ecommerce_go_user_base` + "`" + `
 WHERE
     ` + "`" + `account` + "`" + ` = ?
+)
 `
 
-func (q *Queries) CheckUserBaseExists(ctx context.Context, account string) (int64, error) {
+func (q *Queries) CheckUserBaseExists(ctx context.Context, account string) (bool, error) {
 	row := q.db.QueryRowContext(ctx, checkUserBaseExists, account)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
 
 const getUserBaseByAccount = `-- name: GetUserBaseByAccount :one
