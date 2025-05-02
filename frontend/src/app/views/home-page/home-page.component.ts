@@ -13,11 +13,11 @@ import { TuiButton } from '@taiga-ui/core';
 
 export class HomePageComponent {
   trendinPlaces: any[] = [];
-  explorePaces: any[] =[];
+  explorePaces: any[] = [];
   windowWidth: number = 0;
   showPlaceTypeList: number = 0;
   showExplorePlacesList: number = 0;
-  
+
   protected placeTypeIndex = 0;
   protected explorePlaceIndex = 0;
 
@@ -72,25 +72,35 @@ export class HomePageComponent {
     ]
 
     this.windowWidth = window.innerWidth;
-    this.updatePlacesVisibility();
+    this.updateCarouselVisibility();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.windowWidth = window.innerWidth;
-    this.updatePlacesVisibility();
+    this.updateCarouselVisibility();
   }
 
-  updatePlacesVisibility() {
-    if (this.windowWidth >= 1700) {
-      this.showPlaceTypeList = 5;
-    } else if (this.windowWidth >= 1400) {
+  updateCarouselVisibility() {
+    if (this.windowWidth >= 2500) {
+      this.showPlaceTypeList = 7;
+      this.showExplorePlacesList = 8;
+    } else if (this.windowWidth >= 2300) {
+      this.showPlaceTypeList = 6;
+      this.showExplorePlacesList = 7;
+    } else if (this.windowWidth >= 1800) {
       this.showPlaceTypeList = 5;
       this.showExplorePlacesList = 6;
     } else if (this.windowWidth >= 1025) {
       this.showPlaceTypeList = 4;
       this.showExplorePlacesList = 5;
-    } else if (this.windowWidth >= 800) {
+    } else if (this.windowWidth >= 1000) {
+      this.showPlaceTypeList = 5;
+      this.showExplorePlacesList = 6;
+    } else if (this.windowWidth >= 850) {
+      this.showPlaceTypeList = 4;
+      this.showExplorePlacesList = 5;
+    } else if (this.windowWidth >= 750) {
       this.showPlaceTypeList = 3;
       this.showExplorePlacesList = 4;
     } else if (this.windowWidth >= 500) {
