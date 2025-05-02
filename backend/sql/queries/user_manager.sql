@@ -10,9 +10,41 @@ INSERT INTO
 VALUES
     (?, ?, ?, ?, ?);
 
+-- name: UpdateUserManagerLogin :exec
+UPDATE `ecommerce_go_user_manager`
+SET
+    `login_time` = ?
+WHERE
+    `account` = ?;
+
+
+-- name: GetUserManager :one
+SELECT
+    `id`,
+    `account`,
+    `user_name`,
+    `password`
+FROM
+    `ecommerce_go_user_manager`
+WHERE
+    `account` = ?
+    AND `is_deleted` = 0;
+
+-- name: CheckUserManagerExistsByEmail :one
+SELECT EXISTS (
+    SELECT
+        1
+    FROM
+        `ecommerce_go_user_manager`
+    WHERE
+        `account` = ?
+        AND `is_deleted` = 0
+);
+
+
 -- name: CheckUserManagerExistsByID :one
 SELECT
-    COUNT(*)
+    COUNT(*) as count
 FROM
     `ecommerce_go_user_manager`
 WHERE
@@ -25,3 +57,17 @@ SET
     `is_deleted` = 1
 WHERE
     `account` = ?;
+
+-- name: IsAccommodationDetailBelongsToManager :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_manager` m
+            JOIN `ecommerce_go_accommodation` a ON m.id = a.manager_id
+            JOIN `ecommerce_go_accommodation_detail` ad ON a.id = ad.accommodation_id
+        WHERE
+            m.id = ?
+            AND ad.id = ?
+    );

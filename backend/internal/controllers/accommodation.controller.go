@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -17,9 +19,27 @@ type CAccommodation struct {
 }
 
 func (c *CAccommodation) CreateAccommodation(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("Validation not found")
+		global.Logger.Error("Validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
 	var params vo.CreateAccommodationInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		fmt.Printf("CreateAccommodation binding error: %s\n", err.Error())
+		global.Logger.Error("CreateAccommodation binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("CreateAccommodation validation error: %s\n", err.Error())
+		global.Logger.Error("CreateAccommodation validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
@@ -27,7 +47,7 @@ func (c *CAccommodation) CreateAccommodation(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("CreateAccommodation error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
@@ -42,7 +62,7 @@ func (c *CAccommodation) GetAccommodations(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("GetAccommodations error: %s\n", err.Error())
 		global.Logger.Error("GetAccommodations error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
@@ -52,9 +72,27 @@ func (c *CAccommodation) GetAccommodations(ctx *gin.Context) {
 }
 
 func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("Validation not found")
+		global.Logger.Error("Validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
 	var params vo.UpdateAccommodationInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		fmt.Printf("UpdateAccommodation binding error: %s\n", err.Error())
+		global.Logger.Error("UpdateAccommodation binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("UpdateAccommodation validation error: %s\n", err.Error())
+		global.Logger.Error("UpdateAccommodation validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
@@ -62,7 +100,7 @@ func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("UpdateAccommodation error: %s\n", err.Error())
 		global.Logger.Error("UpdateAccommodation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
@@ -73,26 +111,46 @@ func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
 }
 
 func (c *CAccommodation) DeleteAccommodation(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("Validation not found")
+		global.Logger.Error("Validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
 	var params vo.DeleteAccommodationInput
 
 	id := ctx.Param("id")
 	if id == "" {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		fmt.Printf("DeleteAccommodation binding error")
+		global.Logger.Error("DeleteAccommodation binding error")
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("DeleteAccommodation validation error: %s\n", err.Error())
+		global.Logger.Error("DeleteAccommodation validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		return
+	}
+
 	params.Id = id
 
 	codeStatus, err := services.Accommodation().DeleteAccommodation(ctx, &params)
 	if err != nil {
 		fmt.Printf("DeleteAccommodation error: %s\n", err.Error())
 		global.Logger.Error("DeleteAccommodation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("DeleteAccommodation success: userId:%s\taccommodationId:%s\n", "1", params.Id)
+	userId, _ := utils.GetUserIDFromGin(ctx)
+
+	fmt.Printf("DeleteAccommodation success: userId:%s\taccommodationId:%s\n", userId, params.Id)
 	global.Logger.Info("DeleteAccommodation success: ",
-		zap.String("info", fmt.Sprintf("userId:%s\taccommodationId:%s", "1", params.Id)))
+		zap.String("info", fmt.Sprintf("userId:%s\taccommodationId:%s", userId, params.Id)))
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
@@ -101,7 +159,7 @@ func (c *CAccommodation) GetAccommodationsByManager(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("GetAccommodationsByManager error: %s\n", err.Error())
 		global.Logger.Error("GetAccommodationsByManager error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 

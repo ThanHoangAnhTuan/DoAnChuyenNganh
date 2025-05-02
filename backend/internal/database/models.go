@@ -327,8 +327,6 @@ type EcommerceGoAccommodationDetail struct {
 	Price string
 	// discount ID
 	DiscountID sql.NullString
-	// collection images
-	CollectionImages string
 	// is verified: 0 - unverified, 1 - verified
 	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
@@ -357,6 +355,22 @@ type EcommerceGoDiscount struct {
 	IsDeleted uint8
 	// 0 - inactivated; 1 - activated
 	IsActive uint8
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
+// accommodation detail image table
+type EcommerceGoImage struct {
+	// ID
+	ID string
+	// accommodation detail ID
+	AccommodationDetailID string
+	// image
+	Image string
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -457,8 +471,6 @@ type EcommerceGoUserAdmin struct {
 	LogoutTime uint64
 	// login IP
 	LoginIp string
-	// is verified: 0 - unverified, 1 - verified
-	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
 	IsDeleted uint8
 	// created at
@@ -513,8 +525,6 @@ type EcommerceGoUserInfo struct {
 	Email string
 	// authentication status: 0-not authenticated, 1-pending ,2-authenticated
 	IsAuthentication uint8
-	// is verified: 0 - unverified, 1 - verified
-	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
 	IsDeleted uint8
 	// created at
@@ -539,8 +549,6 @@ type EcommerceGoUserManager struct {
 	LogoutTime uint64
 	// login IP
 	LoginIp string
-	// is verified: 0 - unverified, 1 - verified
-	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
 	IsDeleted uint8
 	// created at

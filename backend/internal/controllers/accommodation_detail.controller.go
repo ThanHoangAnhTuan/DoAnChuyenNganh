@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -17,9 +19,23 @@ type CAccommodationDetail struct {
 }
 
 func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
 	var params vo.CreateAccommodationDetailInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		fmt.Printf("CreateAccommodationDetail error: %s\n", err.Error())
+		global.Logger.Error("CreateAccommodationDetail error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
@@ -27,22 +43,50 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("CreateAccommodationDetail error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodationDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CreateAccommodationDetail success: manager: %s\taccommodation detail: %s\n", data.ManagerId, data.Id)
+	userId, _ := utils.GetUserIDFromGin(ctx)
+
+	fmt.Printf("CreateAccommodationDetail success: manager: %s\taccommodation detail: %s\n", userId, data.Id)
 	global.Logger.Info("CreateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager:%s\taccommodation detail:%s", data.ManagerId, data.Id)))
+		zap.String("info", fmt.Sprintf("manager:%s\taccommodation detail:%s", userId, data.Id)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
-	codeStatus, data, err := services.AccommodationDetail().GetAccommodationDetails(ctx)
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("Validation not found")
+		global.Logger.Error("Validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.GetAccommodationDetailsInput
+	id := ctx.Param("id")
+	if id == "" {
+		fmt.Printf("GetAccommodationDetails binding error")
+		global.Logger.Error("GetAccommodationDetails binding error")
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("GetAccommodationDetails validation error: %s\n", err.Error())
+		global.Logger.Error("GetAccommodationDetails validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		return
+	}
+	params.AccommodationId = id
+
+	codeStatus, data, err := services.AccommodationDetail().GetAccommodationDetails(ctx, &params)
 	if err != nil {
 		fmt.Printf("GetAccommodationDetails error: %s\n", err.Error())
 		global.Logger.Error("GetAccommodationDetails error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
@@ -52,9 +96,23 @@ func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 }
 
 func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
 	var params vo.UpdateAccommodationDetailInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		fmt.Printf("UpdateAccommodationDetail error: %s\n", err.Error())
+		global.Logger.Error("UpdateAccommodationDetail error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
@@ -62,22 +120,36 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("UpdateAccommodationDetail error: %s\n", err.Error())
 		global.Logger.Error("UpdateAccommodationDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("UpdateAccommodationDetail success: manager%s\taccommodation detail:%s\n", data.ManagerId, data.Id)
+	userId, _ := utils.GetUserIDFromGin(ctx)
+
+	fmt.Printf("UpdateAccommodationDetail success: manager%s\taccommodation detail:%s\n", userId, data.Id)
 	global.Logger.Info("UpdateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager%s\taccommodation detail:%s", data.ManagerId, data.Id)))
+		zap.String("info", fmt.Sprintf("manager%s\taccommodation detail:%s", userId, data.Id)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
 	var params vo.DeleteAccommodationDetailInput
 
 	id := ctx.Param("id")
 	if id == "" {
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid)
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 	params.Id = id
@@ -86,27 +158,14 @@ func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("DeleteAccommodationDetail error: %s\n", err.Error())
 		global.Logger.Error("DeleteAccommodationDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("DeleteAccommodationDetail success: userId:%s\taccommodation detail id:%s\n", "1", params.Id)
+	userId, _ := utils.GetUserIDFromGin(ctx)
+
+	fmt.Printf("DeleteAccommodationDetail success: userId:%s\taccommodation detail id:%s\n", userId, params.Id)
 	global.Logger.Info("DeleteAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("userId:%s\taccommodation detail id:%s", "1", params.Id)))
+		zap.String("info", fmt.Sprintf("userId:%s\taccommodation detail id:%s", userId, params.Id)))
 	response.SuccessResponse(ctx, codeStatus, nil)
-}
-
-func (c *CAccommodationDetail) GetAccommodationDetailsByManager(ctx *gin.Context) {
-	codeStatus, data, err := services.AccommodationDetail().GetAccommodationDetailsByManager(ctx)
-	if err != nil {
-		fmt.Printf("GetAccommodationDetailsByManager error: %s\n", err.Error())
-		global.Logger.Error("GetAccommodationDetailsByManager error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus)
-		return
-	}
-
-	fmt.Printf("GetAccommodationDetailsByManager success: %s\n", "Get accommodation details by manager success")
-	global.Logger.Info("GetAccommodationDetailsByManager success: ",
-		zap.String("info", "Get accommodation details by manager success"))
-	response.SuccessResponse(ctx, codeStatus, data)
 }

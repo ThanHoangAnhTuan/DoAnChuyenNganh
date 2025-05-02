@@ -12,7 +12,6 @@ CREATE TABLE
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),
-        UNIQUE KEY `unique_user_verify_verify_key` (`verify_key`),
         UNIQUE KEY `unique_user_verify_verify_key_otp` (`verify_key`, `otp`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'user verify table';
 

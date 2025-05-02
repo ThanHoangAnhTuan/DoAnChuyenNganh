@@ -1,10 +1,12 @@
 -- name: CheckUserBaseExists :one
+SELECT EXISTS (
 SELECT
-    COUNT(*)
+    1
 FROM
     `ecommerce_go_user_base`
 WHERE
-    `account` = ?;
+    `account` = ?
+);
 
 -- name: GetUserBaseByAccount :one 
 SELECT

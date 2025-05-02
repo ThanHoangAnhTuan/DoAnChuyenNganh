@@ -40,6 +40,7 @@ SELECT
     `name`,
     `guests`,
     `beds`,
+    `discount_id`,
     `facilities`,
     `available_rooms`,
     `price`,
@@ -69,5 +70,15 @@ UPDATE `ecommerce_go_accommodation_detail`
 SET
     `is_deleted` = 1
 WHERE
-    `id` = ?
-    and `accommodation_id` = ?;
+    `id` = ?;
+
+-- name: CheckAccommodationDetailExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_accommodation_detail`
+        WHERE
+            `id` = ?
+    );

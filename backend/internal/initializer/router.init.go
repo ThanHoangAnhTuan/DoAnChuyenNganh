@@ -20,6 +20,7 @@ func InitRouter() *gin.Engine {
 	}
 
 	r.Use(middlewares.CorsMiddleware())
+	r.Use(middlewares.ValidatorMiddleware())
 
 	r.Static("/uploads/", "./storage/uploads")
 

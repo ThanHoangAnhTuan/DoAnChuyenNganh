@@ -28,7 +28,7 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/assets/images/city_pictures"
+                "input": "src/assets/images"
               },
               {
                 "glob": "**/*",

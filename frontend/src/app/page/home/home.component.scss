@@ -1,0 +1,403 @@
+img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.main {
+    margin: 0 auto;
+    padding: 5% 14% 10% 14%;
+    font-size: 25px;
+    font-family: sans-serif;
+
+    // trending places
+    .trending-places-container {
+        margin: 0 0 20px 0;
+
+        .trending-title {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .trending-subtitle {
+            color: gray;
+            font-size: 15px;
+            margin-top: 1%;
+        }
+
+        .trending-content {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            grid-column-gap: 0px;
+            grid-row-gap: 0px;
+            margin-top: 20px;
+
+            .trending-place {
+                position: relative;
+                display: inline-block;
+                cursor: pointer;
+                height: 300px;
+                border-radius: 5%;
+                overflow: hidden;
+
+                .trending-image {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: box-shadow 0.3s ease;
+                }
+
+                // pseudo-element
+                &::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+                    transition: box-shadow 0.2s ease;
+                    pointer-events: none;
+                    border-radius: 2%;
+                }
+
+                &:hover::after {
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2),
+                        inset 0 30px 20px -8px rgba(0, 0, 0, 0.2);
+                }
+
+                .text-in-image {
+                    position: absolute;
+                    top: 0;
+                    left: 10px;
+                    color: white;
+                    font-weight: bold;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 7);
+                }
+
+                .trending-flag {
+                    width: 20px;
+                    height: auto;
+                    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                }
+            }
+
+            .trending-place:nth-child(1) {
+                grid-area: 1 / 1 / 3 / 4;
+                margin-right: 10px;
+            }
+            .trending-place:nth-child(2) {
+                grid-area: 1 / 4 / 3 / 7;
+                margin-left: 10px;
+            }
+            .trending-place:nth-child(3) {
+                grid-area: 3 / 1 / 5 / 3;
+                margin: 10px 10px 0px 0px;
+            }
+            .trending-place:nth-child(4) {
+                grid-area: 3 / 3 / 5 / 5;
+                margin: 10px 10px 0px 10px;
+            }
+            .trending-place:nth-child(5) {
+                grid-area: 3 / 5 / 5 / 7;
+                margin: 10px 0px 0px 10px;
+            }
+        }
+    }
+
+    // place type
+    .place-type-container {
+        .place-type-title {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .place-type-carousel-container {
+            position: relative;
+            margin: 0 -10px 0 -10px;
+
+            .place-type-item {
+                padding-top: 20px;
+                margin: 0 -10px 0 -10px;
+
+                .place-type-image {
+                    border-radius: 5%;
+                    cursor: pointer;
+                    width: 100%;
+                    height: 200px;
+                }
+
+                .place-type-name {
+                    font-size: 15px;
+                    font-weight: bold;
+                    margin-top: 3%;
+                }
+            }
+
+            .carousel-prev-button {
+                position: absolute;
+                top: 50%;
+                left: -10px;
+                transform: translateY(-50%);
+                background-color: white;
+                border-radius: 50%;
+                padding: 0.5rem;
+                z-index: 1;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .carousel-next-button {
+                position: absolute;
+                top: 50%;
+                right: -10px;
+                transform: translateY(-50%);
+                background-color: white;
+                border-radius: 50%;
+                padding: 0.5rem;
+                z-index: 1;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+
+    // explore places
+    .explore-places-container {
+        margin-top: 20px;
+
+        .explore-title {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .explore-subtitle {
+            font-size: 15px;
+            color: gray;
+            margin: 5px 0 0 0;
+        }
+
+        .explore-carousel-container {
+            margin: 0 0 0 -10px;
+            position: relative;
+            padding-top: 20px;
+
+            .explore-item {
+                margin: 0 -20px 0 -10px;
+
+                .explore-image {
+                    width: 100%;
+                    height: 165px;
+                    cursor: pointer;
+                    border-radius: 5%;
+                }
+
+                .explore-place-name {
+                    font-size: 15px;
+                    font-weight: bold;
+                    margin-top: 3%;
+                }
+            }
+
+            .carousel-prev-button {
+                position: absolute;
+                top: 50%;
+                left: -10px;
+                transform: translateY(-50%);
+                background-color: white;
+                border-radius: 50%;
+                padding: 0.5rem;
+                z-index: 1;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .carousel-next-button {
+                position: absolute;
+                top: 50%;
+                right: -20px;
+                transform: translateY(-50%);
+                background-color: white;
+                border-radius: 50%;
+                padding: 0.5rem;
+                z-index: 1;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .main {
+        padding: 5% 2% 5% 2%;
+        font-size: 20px;
+
+        // trending places
+        .trending-places-container {
+            margin-right: -3.5%;
+            margin-bottom: 30px;
+
+            .trending-content {
+                display: flex;
+                flex-direction: row;
+                scroll-snap-type: x mandatory;
+                overflow-x: auto;
+                gap: 16px;
+                padding-right: 10px;
+
+                .trending-place {
+                    flex: 0 0 auto;
+                    border-radius: 2%;
+                    scroll-snap-align: start;
+                    margin: 0 !important;
+                    width: 400px;
+                    height: 250px !important;
+
+                    .text-in-image {
+                        bottom: 20px;
+                        transform: translateY(50%);
+                        left: 20px;
+                        gap: 10px;
+                    }
+                }
+            }
+
+            .trending-content::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        // place type
+        .place-type-container {
+            .place-type-title {
+                margin-top: -10px;
+            }
+
+            .place-type-carousel-container {
+                .place-type-item {
+                    position: relative;
+
+                    .place-type-image {
+                        height: 200px;
+                    }
+
+                    .place-type-name {
+                        position: absolute;
+                        bottom: 20px;
+                        left: 20px;
+                        color: white;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 7);
+                    }
+                }
+
+                .carousel-prev-button,
+                .carousel-next-button {
+                    display: none;
+                }
+            }
+        }
+
+        // explore places
+        .explore-places-container {
+            .explore-carousel-container {
+                .explore-item {
+                    position: relative;
+                    height: 150px;
+
+                    .explore-image {
+                        height: 100% !important;
+                    }
+
+                    .explore-place-name {
+                        position: absolute;
+                        bottom: 20px;
+                        left: 10px;
+                        color: white;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 7);
+                    }
+                }
+
+                .carousel-prev-button,
+                .carousel-next-button {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .main {
+        padding: 5% 16px 5% 16px;
+        font-size: 20px;
+
+        // trending places
+        .trending-places-container {
+            .trending-content {
+                .trending-place {
+                    height: 200px !important;
+                }
+            }
+        }
+
+        // place type
+        .place-type-container {
+            .place-type-carousel-container {
+                .place-type-item {
+                    padding-top: 0 !important;
+                    margin-top: 20px !important;
+                    position: relative;
+
+                    .place-type-image {
+                        height: 150px !important;
+                    }
+
+                    .place-type-name {
+                        position: absolute;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        text-align: center;
+                        color: white;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 7);
+                    }
+                }
+
+                .carousel-prev-button,
+                .carousel-next-button {
+                    top: 55% !important;
+                }
+            }
+        }
+
+        // explore places
+        .explore-places-container {
+            .explore-carousel-container {
+                .explore-item {
+                    position: relative;
+                    height: 100px;
+
+                    .explore-image {
+                        height: 100% !important;
+                    }
+
+                    .explore-place-name {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        text-align: center;
+                        color: white;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 7);
+                    }
+                }
+
+                .carousel-prev-button,
+                .carousel-next-button {
+                    top: 60% !important;
+                }
+            }
+        }
+    }
+}

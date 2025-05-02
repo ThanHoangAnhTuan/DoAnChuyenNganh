@@ -6,14 +6,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"mime/multipart"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
-	saveimages "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/save_images"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
 )
 
@@ -23,8 +24,14 @@ type AccommodationImpl struct {
 
 // GetAccommodationsByManager implements services.IAccommodation.
 func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
-	out = make([]*vo.GetAccommodations, 0)
-	userID := "1"
+	out = []*vo.GetAccommodations{}
+
+	val := ctx.Value("userId")
+	userID, ok := val.(string)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+	}
+
 	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations by manager: %s", err)
@@ -64,9 +71,9 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 // DeleteAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
 	// !. get userId from context
-	// userID := ctx.Value("userId").(string)
-	userID := "1"
-	if userID == "" {
+	val := ctx.Value("userId")
+	userID, ok := val.(string)
+	if !ok {
 		return response.ErrCodeUnauthorized, fmt.Errorf("userId not found in context")
 	}
 
@@ -110,11 +117,11 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommodationInput) (codeResult int, out *vo.UpdateAccommodationOutput, err error) {
 	out = &vo.UpdateAccommodationOutput{}
 	// !. get userId from context
-	// userID, exists := ctx.Get("userId")
-	userID := "1"
-	// if !exists {
-	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
-	// }
+	val := ctx.Value("userId")
+	userID, ok := val.(string)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+	}
 
 	// !. check manager exists in database
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
@@ -151,14 +158,16 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	if err != nil {
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
 	}
-	var images []string
-	if len(in.Image) == 0 {
-		images = append(images, accommodation.Image)
+
+	pathToUpdateImage := ""
+	if in.Image == nil {
+		pathToUpdateImage = accommodation.Image
 	} else {
-		images, err = saveimages.SaveImages(ctx, in.Image)
+		saveImagePaths, err := services.Image().UploadImages(ctx, []*multipart.FileHeader{in.Image})
 		if err != nil {
-			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save images: %s", err)
+			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image failed: %s", err)
 		}
+		pathToUpdateImage = saveImagePaths[0]
 	}
 
 	err = t.sqlc.UpdateAccommodation(ctx, database.UpdateAccommodationParams{
@@ -170,7 +179,7 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		Description:          in.Description,
 		Facilities:           facilitiesJSON,
 		PropertySurroundings: propertySurroundingsJSON,
-		Image:                images[0],
+		Image:                pathToUpdateImage,
 		GgMap:                in.GoogleMap,
 		Rules:                in.Rules,
 		UpdatedAt:            now,
@@ -188,21 +197,11 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	out.District = in.District
 	out.Description = in.Description
 
-	var facilities vo.Facilities
-	if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
-	}
-
-	var propertySurroundings vo.PropertySurroundings
-	if err := json.Unmarshal(accommodation.PropertySurroundings, &propertySurroundings); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
-	}
-
-	out.Facilities = facilities
+	out.Facilities = in.Facilities
 	out.GoogleMap = in.GoogleMap
-	out.PropertySurroundings = propertySurroundings
+	out.PropertySurroundings = in.PropertySurroundings
 	out.Rules = in.Rules
-	out.Image = images[0]
+	out.Image = pathToUpdateImage
 	out.Rating = strconv.Itoa(int(accommodation.Rating))
 
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
@@ -217,7 +216,6 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 	}
 
 	for _, accommodation := range accommodations {
-
 		facilities := vo.Facilities{}
 		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
@@ -250,14 +248,15 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 // CreateAccommodation implements services.ITest.
 func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error) {
 	out = &vo.CreateAccommodationOutput{}
-	// !1. check manager exists in database
-	// userID, exists := ctx.Get("userId")
-	userID := "1"
+	// !. check manager exists in database
+	val := ctx.Value("userId")
+	userID, ok := val.(string)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+	}
 
-	// if !exists {
-	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
-	// }
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -279,22 +278,12 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
 	}
 
-	var images []string
-	if len(in.Image) > 0 {
-		images, err = saveimages.SaveImages(ctx, in.Image)
-		if err != nil {
-			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save images: %s", err)
-		}
+	saveImagePaths, err := services.Image().UploadImages(ctx, []*multipart.FileHeader{in.Image})
+	if err != nil {
+		return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image failed: %s", err)
 	}
 
-	var imageToUse string
-	if len(images) > 0 {
-		imageToUse = images[0]
-	} else {
-		imageToUse = ""
-	}
-
-	// !2. create accommodation
+	// !. create accommodation
 	err = t.sqlc.CreateAccommodation(ctx, database.CreateAccommodationParams{
 		ID:                   id,
 		ManagerID:            userID,
@@ -305,7 +294,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		Description:          in.Description,
 		Facilities:           facilitiesJSON,
 		PropertySurroundings: propertySurroundingsJSON,
-		Image:                imageToUse,
+		Image:                saveImagePaths[0],
 		GgMap:                in.GoogleMap,
 		Rules:                in.Rules,
 		CreatedAt:            now,
@@ -334,7 +323,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	out.GoogleMap = in.GoogleMap
 	out.Rules = in.Rules
 	out.Rating = "0"
-	out.Image = imageToUse
+	out.Image = saveImagePaths[0]
 
 	return response.ErrCodeCreateAccommodationSuccess, out, nil
 }

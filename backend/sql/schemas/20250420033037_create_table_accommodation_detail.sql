@@ -11,7 +11,6 @@ CREATE TABLE
         `available_rooms` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'available rooms',
         `price` DECIMAL(10, 2) NOT NULL COMMENT 'price',
         `discount_id` VARCHAR(36) COMMENT 'discount ID',
-        `collection_images` CHAR(24) NOT NULL COMMENT 'collection images',
         `is_verified` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is verified: 0 - unverified, 1 - verified',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
