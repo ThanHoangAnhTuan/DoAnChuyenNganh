@@ -1,0 +1,291 @@
+.main {
+    margin: 0 auto;
+    padding: 20px 14%;
+    font-size: 25px;
+    font-family: sans-serif;
+    min-height: 100vh;
+
+    .accommodation-detail-container {
+        .accommodation-detail-card {
+            .accommodation-detail-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+
+                .accommodation-detail-title {
+                    font-weight: bold;
+                    margin: 0;
+                }
+
+                .btn-group {
+                    display: flex;
+                    gap: 16px;
+                    height: 40px;
+                    align-items: center;
+
+                    .order-btn {
+                        background-color: #006ce4;
+                        color: white;
+                        border: none;
+                        border-radius: 10%;
+                        height: 100%;
+                        width: 100px;
+                        font-size: 14px;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .accommodation-address-container {
+                display: flex;
+                align-items: end;
+                gap: 5px;
+                margin: 10px 0;
+
+                .location-icon {
+                    height: 25px;
+                }
+
+                .accommodation-address {
+                    margin: 0;
+                    font-size: 15px;
+                }
+            }
+
+            .image-review-map-container {
+                display: flex;
+                height: 500px;
+
+                .accommodation-image-container {
+                    width: 75%;
+                    padding: 1% 0.5% 0 0;
+                    display: grid;
+                    grid-template-columns: repeat(15, 1fr);
+                    grid-template-rows: repeat(8, 1fr);
+                    grid-column-gap: 5px;
+                    grid-row-gap: 5px;
+
+                    .accommodation-image {
+                        .accommodation-image-item {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 2%;
+                            object-fit: fill;
+                        }
+                    }
+
+                    .accommodation-image:nth-child(1) {
+                        grid-area: 1 / 1 / 7 / 11;
+                    }
+                    .accommodation-image:nth-child(2) {
+                        grid-area: 1 / 11 / 4 / 16;
+                    }
+                    .accommodation-image:nth-child(3) {
+                        grid-area: 4 / 11 / 7 / 16;
+                    }
+                    .accommodation-image:nth-child(4) {
+                        grid-area: 7 / 1 / 9 / 4;
+                    }
+                    .accommodation-image:nth-child(5) {
+                        grid-area: 7 / 4 / 9 / 7;
+                    }
+                    .accommodation-image:nth-child(6) {
+                        grid-area: 7 / 7 / 9 / 10;
+                    }
+                    .accommodation-image:nth-child(7) {
+                        grid-area: 7 / 10 / 9 / 13;
+                    }
+                    .accommodation-image:nth-child(8) {
+                        grid-area: 7 / 13 / 9 / 16;
+                        position: relative;
+                    }
+                    .accommodation-image:nth-child(8)::after {
+                        content: "See More";
+                        position: absolute;
+                        top: 0;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        text-align: center;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        color: white;
+                        font-size: 16px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 2%;
+                    }
+                }
+
+                .accommodation-review-map-container {
+                    width: 25%;
+                    padding: 1% 0 0 0.5%;
+
+                    .accommodation-review-container {
+                        height: 60%;
+                        border: 1px solid rgba(0, 0, 0, 0.2);
+                        border-radius: 2%;
+                        overflow: hidden;
+
+                        .rating-score {
+                            height: 20%;
+                            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                        }
+
+                        .comment {
+                            height: 60%;
+                            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                        }
+
+                        .service-staff-score {
+                            height: 20%;
+                        }
+                    }
+                    .accommodation-google-map-container {
+                        position: relative;
+                        height: 40%;
+                        padding-top: 5%;
+
+                        .google-map {
+                            height: 94%;
+                            width: 100%;
+                            border-radius: 2%;
+                        }
+
+                        .google-map-overlay {
+                            position: absolute;
+                            display: flex;
+                            flex-direction: column;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 100%;
+                            align-items: center;
+
+                            .google-map-overlay-icon {
+                                height: 50px;
+                            }
+
+                            .google-map-overlay-button {
+                                background-color: #006ce4;
+                                color: white;
+                                border: none;
+                                border-radius: 10%;
+                                padding: 10px;
+                                width: 60%;
+                                font-size: 15px;
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .description-facilities-highlight-container {
+                display: flex;
+                height: 500px;
+                margin-top: 20px;
+
+                .accommodation-description-facilities-container {
+                    width: 73%;
+
+                    .description-container {
+                        padding-right: 7%;
+                        .description-content {
+                            font-size: 15px;
+                            color: rgba(0, 0, 0, 0.7);
+                        }
+                    }
+                    
+                    .open-street-map {
+                        font-size: 12px;
+                        margin: 10px 0 0 0;
+                        color: gray;
+                    }
+
+                    .facilities-container {
+                        .facilities-title {
+                            font-size: 16px;
+                            font-weight: bold;
+                        }
+
+                        .facilities-content {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 16px;
+
+                            .facility-item {
+                                display: flex;
+                                gap: 8px;
+                            }
+
+                            .facility-name {
+                                font-size: 14px;
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+
+                .accommodation-highlight-container {
+                    width: 27%;
+                    height: 45%;
+                    padding: 20px 15px;
+                    background-color: #f0f6ff;
+                    border-radius: 2%;
+                    
+                    .hightlight-first-title {
+                        font-weight: bold;
+                        margin: 0;
+                        font-size: 16px;
+                    }
+
+                    .hightlight-second-title {
+                        font-weight: bold;
+                        margin: 10px 0;
+                        font-size: 14px;
+                    }
+
+                    .hightlight-content-container {
+                        display: flex;
+                        gap: 10px;
+
+                        .pin-heart-icon {
+                            height: 20px;
+                            width: 20px;
+                        }
+                        
+                        .hightlight-content {
+                            margin: 0;
+                            font-size: 13px;
+                            color: gray;
+                        }
+                    }
+
+                    .hightlight-order-button {
+                        background-color: #126cd3;
+                        color: white;
+                        font-weight: bold;
+                        width: 100%;
+                        height: 40px;
+                        margin-top: 20px;
+                        border: none;
+                        border-radius: 5%;
+                    }
+
+                    .hightlight-favourite-button {
+                        background-color: white;
+                        color: #0057b8;
+                        font-weight: bold;
+                        width: 100%;
+                        height: 40px;
+                        margin: 20px 0;
+                        border: 1px solid #0057b8;
+                        border-radius: 5%;
+                    }
+                }
+            }
+        }
+    }
+}

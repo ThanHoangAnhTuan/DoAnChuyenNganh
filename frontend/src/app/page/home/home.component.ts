@@ -4,15 +4,16 @@ import { NgFor } from '@angular/common';
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { TuiCarousel, TuiCarouselComponent } from '@taiga-ui/kit';
 import { TuiButton } from '@taiga-ui/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  imports: [NgFor, TuiCarousel, TuiButton, TuiCarouselComponent, SearchBoxComponent, NavbarComponent],
+  imports: [NgFor, TuiCarousel, TuiButton, TuiCarouselComponent, SearchBoxComponent, NavbarComponent, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-    trendinPlaces: any[] = [];
+  trendinPlaces: any[] = [];
   explorePaces: any[] = [];
   windowWidth: number = 0;
   showPlaceTypeList: number = 0;

@@ -18,7 +18,7 @@ export const routes: Routes = [
         component: AccommodationComponent,
     },
     {
-        path: 'manager/accommodation/detail',
+        path: 'manager/accommodation/detail/:name',
         component: AccommodationDetailComponent,
     },
     {

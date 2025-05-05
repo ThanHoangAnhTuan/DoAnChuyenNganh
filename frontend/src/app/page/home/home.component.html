@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<img src="city_pictures/banner.png" alt="banner" class="banner" />
+<img src="images/city_pictures/banner.png" alt="banner" class="banner" />
 <app-search-box></app-search-box>
 
 <main class="main">
@@ -10,19 +10,12 @@
             Các lựa chọn phổ biến nhất cho du khách từ Việt Nam
         </p>
         <div class="trending-content">
-            <div class="trending-place" *ngFor="let place of trendinPlaces">
-                <img
-                    src="trending-places/{{ place.image }}"
-                    alt="{{ place.alt }}"
-                    class="trending-image"
-                />
+            <div class="trending-place" *ngFor="let place of trendinPlaces"
+                [routerLink]="['/manager/accommodation/detail', place.name]">
+                <img src="images/trending-places/{{ place.image }}" alt="{{ place.alt }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}
-                    <img
-                        src="flags/vn.png"
-                        alt="vietnamese flag"
-                        class="trending-flag"
-                    />
+                    <img src="images/flags/vn.png" alt="vietnamese flag" class="trending-flag" />
                 </p>
             </div>
         </div>
@@ -33,47 +26,24 @@
         <p class="place-type-title">Tìm theo loại chỗ nghỉ</p>
 
         <div tuiCarouselButtons class="place-type-carousel-container">
-            <button
-                iconStart="@tui.chevron-left"
-                tuiIconButton
-                type="button"
-                (click)="placeTypeCarousel.prev()"
-                class="carousel-prev-button"
-            >
+            <button iconStart="@tui.chevron-left" tuiIconButton type="button" (click)="placeTypeCarousel.prev()"
+                class="carousel-prev-button">
                 Previous
             </button>
 
-            <tui-carousel
-                [draggable]="true"
-                [itemsCount]="showPlaceTypeList"
-                [(index)]="placeTypeIndex"
-                #placeTypeCarousel
-                class="carousel"
-            >
+            <tui-carousel [draggable]="false" [itemsCount]="showPlaceTypeList" [(index)]="placeTypeIndex"
+                #placeTypeCarousel class="carousel">
                 <ng-container *ngFor="let place of places; let i = index">
-                    <div
-                        *tuiItem
-                        draggable="false"
-                        class="place-type-item"
-                        [class.item_active]="i === placeTypeIndex + 1"
-                    >
-                        <img
-                            alt="place.name"
-                            src="place-type/{{ place.image }}"
-                            class="place-type-image"
-                        />
+                    <div *tuiItem draggable="false" class="place-type-item"
+                        [class.item_active]="i === placeTypeIndex + 1">
+                        <img alt="place.name" src="images/place-type/{{ place.image }}" class="place-type-image" />
                         <div class="place-type-name">{{ place.name }}</div>
                     </div>
                 </ng-container>
             </tui-carousel>
 
-            <button
-                iconStart="@tui.chevron-right"
-                tuiIconButton
-                type="button"
-                (click)="placeTypeCarousel.next()"
-                class="carousel-next-button"
-            >
+            <button iconStart="@tui.chevron-right" tuiIconButton type="button" (click)="placeTypeCarousel.next()"
+                class="carousel-next-button">
                 Next
             </button>
         </div>
@@ -87,47 +57,24 @@
         </p>
 
         <div tuiCarouselButtons class="explore-carousel-container">
-            <button
-                iconStart="@tui.chevron-left"
-                tuiIconButton
-                type="button"
-                (click)="explorePlacesCarousel.prev()"
-                class="carousel-prev-button"
-            >
+            <button iconStart="@tui.chevron-left" tuiIconButton type="button" (click)="explorePlacesCarousel.prev()"
+                class="carousel-prev-button">
                 Previous
             </button>
 
-            <tui-carousel
-                [draggable]="true"
-                [itemsCount]="showExplorePlacesList"
-                [(index)]="explorePlaceIndex"
-                #explorePlacesCarousel
-                class="explore-content"
-            >
+            <tui-carousel [draggable]="false" [itemsCount]="showExplorePlacesList" [(index)]="explorePlaceIndex"
+                #explorePlacesCarousel class="explore-content">
                 <ng-container *ngFor="let place of explorePaces; let i = index">
-                    <div
-                        *tuiItem
-                        draggable="false"
-                        class="explore-item"
-                        [class.item_active]="i === explorePlaceIndex + 1"
-                    >
-                        <img
-                            alt="place.name"
-                            src="explore-places/{{ place.image }}"
-                            class="explore-image"
-                        />
+                    <div *tuiItem draggable="false" class="explore-item"
+                        [class.item_active]="i === explorePlaceIndex + 1">
+                        <img alt="place.name" src="images/explore-places/{{ place.image }}" class="explore-image" />
                         <div class="explore-place-name">{{ place.name }}</div>
                     </div>
                 </ng-container>
             </tui-carousel>
 
-            <button
-                iconStart="@tui.chevron-right"
-                tuiIconButton
-                type="button"
-                (click)="explorePlacesCarousel.next()"
-                class="carousel-next-button"
-            >
+            <button iconStart="@tui.chevron-right" tuiIconButton type="button" (click)="explorePlacesCarousel.next()"
+                class="carousel-next-button">
                 Next
             </button>
         </div>
