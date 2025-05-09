@@ -11,7 +11,7 @@
         </p>
         <div class="trending-content">
             <div class="trending-place" *ngFor="let place of trendinPlaces"
-                [routerLink]="['/manager/accommodation/detail', place.name]">
+                [routerLink]="['/search/accommodation', place.name]">
                 <img src="images/trending-places/{{ place.image }}" alt="{{ place.alt }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}

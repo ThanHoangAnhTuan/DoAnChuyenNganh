@@ -1,291 +1,517 @@
+// Ctrl + K rồi nhấn Ctrl + 0 để thu gọn tất cả
+// Ctrl + K rồi nhấn Ctrl + J để mở rộng tất cả
+
 .main {
     margin: 0 auto;
     padding: 20px 14%;
     font-size: 25px;
     font-family: sans-serif;
-    min-height: 100vh;
+    overflow-x: hidden;
 
-    .accommodation-detail-container {
-        .accommodation-detail-card {
-            .accommodation-detail-header {
+    .accommodation-detail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+
+        .accommodation-detail-title {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            height: 40px;
+            align-items: center;
+
+            .share-icon {
+                cursor: pointer;
+                padding: 10px;
+                border-radius: 50%;
+                overflow: visible;
+            }
+
+            .share-icon:hover {
+                background-color: rgba($color: gray, $alpha: 0.2);
+            }
+
+            .order-btn {
+                background-color: #006ce4;
+                color: white;
+                border: none;
+                border-radius: 10%;
+                height: 100%;
+                width: 100px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .order-btn:hover {
+                background-color: #0364d2;
+            }
+        }
+    }
+
+    .accommodation-address-container {
+        display: flex;
+        align-items: end;
+        gap: 5px;
+        margin: 10px 0;
+
+        .accommodation-address {
+            margin: 0;
+            font-size: 15px;
+        }
+    }
+
+    .image-review-map-container {
+        display: flex;
+        height: 500px;
+
+        .accommodation-image-container {
+            width: 75%;
+            padding: 1% 0.5% 0 0;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            grid-column-gap: 5px;
+            grid-row-gap: 5px;
+
+            .accommodation-image {
+                .accommodation-image-item {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 2%;
+                    object-fit: fill;
+                    cursor: pointer;
+                }
+            }
+
+            .accommodation-image:nth-child(1) {
+                grid-area: 1 / 1 / 7 / 11;
+            }
+            .accommodation-image:nth-child(2) {
+                grid-area: 1 / 11 / 4 / 16;
+            }
+            .accommodation-image:nth-child(3) {
+                grid-area: 4 / 11 / 7 / 16;
+            }
+            .accommodation-image:nth-child(4) {
+                grid-area: 7 / 1 / 9 / 4;
+            }
+            .accommodation-image:nth-child(5) {
+                grid-area: 7 / 4 / 9 / 7;
+            }
+            .accommodation-image:nth-child(6) {
+                grid-area: 7 / 7 / 9 / 10;
+            }
+            .accommodation-image:nth-child(7) {
+                grid-area: 7 / 10 / 9 / 13;
+            }
+            .accommodation-image:nth-child(8) {
+                grid-area: 7 / 13 / 9 / 16;
+                position: relative;
+            }
+            .accommodation-image:nth-child(8)::after {
+                content: "See More";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                text-align: center;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                pointer-events: none;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
-                width: 100%;
+                justify-content: center;
+                border-radius: 2%;
+            }
+        }
 
-                .accommodation-detail-title {
-                    font-weight: bold;
-                    margin: 0;
+        .accommodation-review-map-container {
+            width: 25%;
+            padding: 1% 0 0 0.5%;
+
+            .accommodation-review-container {
+                height: 60%;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                border-radius: 2%;
+                overflow: hidden;
+
+                .rating-score {
+                    height: 20%;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
                 }
 
-                .btn-group {
+                .comment {
+                    height: 60%;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                }
+
+                .service-staff-score {
+                    height: 20%;
+                }
+            }
+
+            .accommodation-google-map-container {
+                position: relative;
+                height: 40%;
+                padding-top: 5%;
+                cursor: pointer;
+
+                .google-map {
+                    height: 94%;
+                    width: 100%;
+                    border-radius: 2%;
+                    border: 0;
+                }
+
+                .google-map-overlay {
+                    position: absolute;
                     display: flex;
-                    gap: 16px;
-                    height: 40px;
+                    flex-direction: column;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 100%;
                     align-items: center;
 
-                    .order-btn {
+                    .google-map-overlay-icon {
+                        height: 50px;
+                    }
+
+                    .google-map-overlay-button {
                         background-color: #006ce4;
                         color: white;
                         border: none;
                         border-radius: 10%;
-                        height: 100%;
-                        width: 100px;
-                        font-size: 14px;
+                        padding: 10px;
+                        width: 60%;
+                        font-size: 15px;
                         cursor: pointer;
                     }
                 }
             }
+        }
+    }
 
-            .accommodation-address-container {
-                display: flex;
-                align-items: end;
-                gap: 5px;
-                margin: 10px 0;
+    .description-facilities-highlight-container {
+        display: flex;
+        height: 500px;
+        margin-top: 20px;
 
-                .location-icon {
-                    height: 25px;
+        .accommodation-description-facilities-container {
+            width: 73%;
+
+            .description-container {
+                padding-right: 7%;
+
+                .description-title {
+                    display: none;
                 }
 
-                .accommodation-address {
-                    margin: 0;
+                .description-content {
                     font-size: 15px;
+                    color: rgba(0, 0, 0, 0.7);
                 }
             }
 
-            .image-review-map-container {
-                display: flex;
-                height: 500px;
+            .open-street-map {
+                font-size: 12px;
+                margin: 10px 0 0 0;
+                color: gray;
+            }
 
-                .accommodation-image-container {
-                    width: 75%;
-                    padding: 1% 0.5% 0 0;
-                    display: grid;
-                    grid-template-columns: repeat(15, 1fr);
-                    grid-template-rows: repeat(8, 1fr);
-                    grid-column-gap: 5px;
-                    grid-row-gap: 5px;
+            .facilities-container {
+                .facilities-title {
+                    font-size: 16px;
+                    font-weight: bold;
+                }
 
-                    .accommodation-image {
-                        .accommodation-image-item {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 2%;
-                            object-fit: fill;
-                        }
-                    }
+                .facilities-content {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 16px;
 
-                    .accommodation-image:nth-child(1) {
-                        grid-area: 1 / 1 / 7 / 11;
-                    }
-                    .accommodation-image:nth-child(2) {
-                        grid-area: 1 / 11 / 4 / 16;
-                    }
-                    .accommodation-image:nth-child(3) {
-                        grid-area: 4 / 11 / 7 / 16;
-                    }
-                    .accommodation-image:nth-child(4) {
-                        grid-area: 7 / 1 / 9 / 4;
-                    }
-                    .accommodation-image:nth-child(5) {
-                        grid-area: 7 / 4 / 9 / 7;
-                    }
-                    .accommodation-image:nth-child(6) {
-                        grid-area: 7 / 7 / 9 / 10;
-                    }
-                    .accommodation-image:nth-child(7) {
-                        grid-area: 7 / 10 / 9 / 13;
-                    }
-                    .accommodation-image:nth-child(8) {
-                        grid-area: 7 / 13 / 9 / 16;
-                        position: relative;
-                    }
-                    .accommodation-image:nth-child(8)::after {
-                        content: "See More";
-                        position: absolute;
-                        top: 0;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        text-align: center;
-                        background-color: rgba(0, 0, 0, 0.5);
-                        color: white;
-                        font-size: 16px;
-                        cursor: pointer;
+                    .facility-item {
                         display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 2%;
+                        gap: 8px;
                     }
-                }
 
-                .accommodation-review-map-container {
-                    width: 25%;
-                    padding: 1% 0 0 0.5%;
-
-                    .accommodation-review-container {
-                        height: 60%;
-                        border: 1px solid rgba(0, 0, 0, 0.2);
-                        border-radius: 2%;
-                        overflow: hidden;
-
-                        .rating-score {
-                            height: 20%;
-                            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                        }
-
-                        .comment {
-                            height: 60%;
-                            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                        }
-
-                        .service-staff-score {
-                            height: 20%;
-                        }
-                    }
-                    .accommodation-google-map-container {
-                        position: relative;
-                        height: 40%;
-                        padding-top: 5%;
-
-                        .google-map {
-                            height: 94%;
-                            width: 100%;
-                            border-radius: 2%;
-                        }
-
-                        .google-map-overlay {
-                            position: absolute;
-                            display: flex;
-                            flex-direction: column;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            width: 100%;
-                            align-items: center;
-
-                            .google-map-overlay-icon {
-                                height: 50px;
-                            }
-
-                            .google-map-overlay-button {
-                                background-color: #006ce4;
-                                color: white;
-                                border: none;
-                                border-radius: 10%;
-                                padding: 10px;
-                                width: 60%;
-                                font-size: 15px;
-                                cursor: pointer;
-                            }
-                        }
+                    .facility-name {
+                        font-size: 14px;
+                        margin: 0;
                     }
                 }
             }
+        }
 
-            .description-facilities-highlight-container {
+        .accommodation-highlight-container {
+            width: 27%;
+            height: 45%;
+            padding: 20px 15px;
+            background-color: #f0f6ff;
+            border-radius: 2%;
+
+            .hightlight-first-title {
+                font-weight: bold;
+                margin: 0;
+                font-size: 16px;
+            }
+
+            .hightlight-second-title {
+                font-weight: bold;
+                margin: 10px 0;
+                font-size: 14px;
+            }
+
+            .hightlight-content-container {
                 display: flex;
+                gap: 10px;
+
+                .pin-heart-icon {
+                    height: 20px;
+                    width: 20px;
+                }
+
+                .hightlight-content {
+                    margin: 0;
+                    font-size: 13px;
+                    color: gray;
+                }
+            }
+
+            .hightlight-order-button {
+                background-color: #126cd3;
+                color: white;
+                font-weight: bold;
+                width: 100%;
+                height: 40px;
+                margin-top: 20px;
+                border: none;
+                border-radius: 5%;
+                cursor: pointer;
+            }
+
+            .hightlight-favourite-button {
+                background-color: white;
+                color: #0057b8;
+                font-weight: bold;
+                width: 100%;
+                height: 40px;
+                margin: 20px 0;
+                border: 1px solid #0057b8;
+                border-radius: 5%;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .main {
+        padding: 5% 16px;
+
+        .accommodation-detail-header {
+            .accommodation-detail-title {
+                font-weight: bold;
+                margin: 0;
+            }
+
+            .btn-group {
+                display: none !important;
+            }
+        }
+
+        .accommodation-address-container {
+            align-items: start !important;
+        }
+
+        .image-review-map-container {
+            display: block;
+            height: auto;
+
+            .accommodation-image-container {
+                width: 100%;
+                padding-top: 1%;
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+                grid-column-gap: 5px;
+                grid-row-gap: 5px;
+
+                .accommodation-image {
+                    .accommodation-image-item {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 2%;
+                        object-fit: fill;
+                        cursor: pointer;
+                    }
+                }
+
+                .accommodation-image:nth-child(1) {
+                    grid-area: 1 / 1 / 3 / 4;
+                }
+                .accommodation-image:nth-child(2) {
+                    grid-area: 1 / 4 / 3 / 7;
+                }
+                .accommodation-image:nth-child(3) {
+                    grid-area: 3 / 1 / 5 / 3;
+                }
+                .accommodation-image:nth-child(4) {
+                    grid-area: 3 / 3 / 5 / 5;
+                }
+                .accommodation-image:nth-child(5) {
+                    grid-area: 3 / 5 / 5 / 7;
+                    position: relative;
+                }
+                .accommodation-image:nth-child(6),
+                .accommodation-image:nth-child(7),
+                .accommodation-image:nth-child(8) {
+                    display: none;
+                }
+                .accommodation-image:nth-child(5)::after {
+                    content: "See More";
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    color: white;
+                    font-size: 16px;
+                    cursor: pointer;
+                    pointer-events: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 2%;
+                }
+            }
+
+            .accommodation-review-map-container {
+                width: 100%;
+                padding-top: 1%;
                 height: 500px;
+                display: flex;
+                flex: 1;
+                flex-direction: column-reverse;
                 margin-top: 20px;
 
-                .accommodation-description-facilities-container {
-                    width: 73%;
+                .accommodation-google-map-container {
+                    margin: 0 -16px;
+                    display: block;
+                    padding: 0;
 
-                    .description-container {
-                        padding-right: 7%;
-                        .description-content {
-                            font-size: 15px;
-                            color: rgba(0, 0, 0, 0.7);
-                        }
+                    .google-map-overlay {
+                        display: none;
                     }
-                    
-                    .open-street-map {
-                        font-size: 12px;
-                        margin: 10px 0 0 0;
+                }
+            }
+        }
+
+        .description-facilities-highlight-container {
+            height: auto;
+
+            .accommodation-description-facilities-container {
+                width: 100%;
+
+                .description-container {
+                    .description-title {
+                        display: block;
+                        margin: 0;
+                        font-weight: bold;
+                    }
+
+                    .description-content-container {
+                        padding: 0;
+                        overflow: hidden;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        transition: all 0.3s ease;
+                    }
+
+                    .description-content-container.collapsed {
+                        -webkit-line-clamp: 3;
+                        line-clamp: 3;
+                    }
+
+                    .see-more-button {
                         color: gray;
+                        margin: 10px 0 0 0;
+                        font-size: 15px;
+                    }
+                }
+
+                .open-street-map {
+                    display: none;
+                }
+
+                .facilities-container {
+                    margin-top: 10px;
+
+                    .facilities-title {
+                        font-size: 20px;
                     }
 
-                    .facilities-container {
-                        .facilities-title {
-                            font-size: 16px;
-                            font-weight: bold;
-                        }
+                    .facilities-content {
+                        display: flex;
+                        flex-direction: row;
+                        scroll-snap-type: x mandatory;
+                        overflow-x: auto;
+                        flex-wrap: nowrap;
+                        gap: 20px;
 
-                        .facilities-content {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 16px;
+                        .facility-item {
+                            flex: 0 0 auto;
+                            flex-direction: column;
+                            text-align: center;
+                            align-items: center;
 
-                            .facility-item {
-                                display: flex;
-                                gap: 8px;
+                            .facility-icon {
+                                width: 30px;
+                                background-color: #f8f4e3;
+                                padding: 10px;
+                                border-radius: 50%;
                             }
 
                             .facility-name {
-                                font-size: 14px;
-                                margin: 0;
+                                width: 100px; /* hoặc auto phù hợp layout */
+                                height: auto;
+                                line-height: 1.2em; /* chiều cao 1 dòng */
+                                white-space: normal; /* cho phép xuống dòng */
+                                word-break: break-word; /* xuống dòng khi cần */
                             }
                         }
                     }
-                }
 
-                .accommodation-highlight-container {
-                    width: 27%;
-                    height: 45%;
-                    padding: 20px 15px;
-                    background-color: #f0f6ff;
-                    border-radius: 2%;
-                    
-                    .hightlight-first-title {
-                        font-weight: bold;
-                        margin: 0;
-                        font-size: 16px;
-                    }
-
-                    .hightlight-second-title {
-                        font-weight: bold;
-                        margin: 10px 0;
-                        font-size: 14px;
-                    }
-
-                    .hightlight-content-container {
-                        display: flex;
-                        gap: 10px;
-
-                        .pin-heart-icon {
-                            height: 20px;
-                            width: 20px;
-                        }
-                        
-                        .hightlight-content {
-                            margin: 0;
-                            font-size: 13px;
-                            color: gray;
-                        }
-                    }
-
-                    .hightlight-order-button {
-                        background-color: #126cd3;
-                        color: white;
-                        font-weight: bold;
-                        width: 100%;
-                        height: 40px;
-                        margin-top: 20px;
-                        border: none;
-                        border-radius: 5%;
-                    }
-
-                    .hightlight-favourite-button {
-                        background-color: white;
-                        color: #0057b8;
-                        font-weight: bold;
-                        width: 100%;
-                        height: 40px;
-                        margin: 20px 0;
-                        border: 1px solid #0057b8;
-                        border-radius: 5%;
+                    .facilities-content::-webkit-scrollbar {
+                        display: none;
                     }
                 }
             }
+
+            .accommodation-highlight-container {
+                display: none;
+            }
+        }
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .main {
+        padding: 5% 16px;
+
+        .description-title {
+            display: none;
         }
     }
 }

@@ -9,14 +9,50 @@
             "city": "Hồ Chí Minh",
             "country": "Việt Nam",
             "images": [
-                "images/accommodation-detail/cubicity-de-tham/cubicity1.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity2.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity3.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity4.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity5.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity6.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity7.jpg",
-                "images/accommodation-detail/cubicity-de-tham/cubicity8.jpg"
+                "images/accommodations/cubicity-de-tham/cubicity1.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity2.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity3.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity4.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity5.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity6.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity7.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity8.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity9.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity10.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity11.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity12.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity13.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity14.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity15.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity16.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity17.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity18.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity19.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity20.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity21.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity22.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity23.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity24.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity25.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity26.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity27.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity28.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity29.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity30.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity31.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity32.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity33.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity34.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity35.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity36.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity37.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity38.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity39.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity40.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity41.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity42.jpg",
+                "images/accommodations/cubicity-de-tham/cubicity43.jpg"
+
             ],
             "descriptions": [
                 "Nằm tại vị trí thuận tiện ở trung tâm TP. Hồ Chí Minh, Cubicity De Tham cách Bảo tàng Mỹ thuật 9 phút đi bộ và Chợ Bến Thành 1.1 km. Ngoài sân hiên, khách sạn 2 sao này còn có các phòng với điều hòa được trang bị Wi-Fi miễn phí, trong đó mỗi phòng đều có phòng tắm riêng. Chỗ nghỉ này cung cấp bếp chung, dịch vụ phòng và phòng giữ hành lý cho khách.",
@@ -65,8 +101,39 @@
                     "name": "Máy pha trà/cà phê trong tất cả các phòng",
                     "path": "M 0.75 24 h 22.5 a 0.75 0.75 0 0 0 0 -1.5 H 0.75 a 0.75 0.75 0 0 0 0 1.5 M 24 2.25 A 2.25 2.25 0 0 0 21.75 0 H 4.5 a 2.25 2.25 0 0 0 -2.25 2.25 v 6 A 2.25 2.25 0 0 0 4.5 10.5 H 12 a 0.75 0.75 0 0 1 0.75 0.75 v 12 c 0 0.414 0.336 0.75 0.75 0.75 h 9.75 a 0.75 0.75 0 0 0 0.75 -0.75 Z m -1.5 0 v 21 l 0.75 -0.75 H 13.5 l 0.75 0.75 v -12 A 2.25 2.25 0 0 0 12 9 H 4.5 a 0.75 0.75 0 0 1 -0.75 -0.75 v -6 a 0.75 0.75 0 0 1 0.75 -0.75 h 17.25 a 0.75 0.75 0 0 1 0.75 0.75 M 18.75 24 h 4.5 a 0.75 0.75 0 0 0 0.75 -0.75 v -10.5 a 0.75 0.75 0 0 0 -0.75 -0.75 h -3 A 2.25 2.25 0 0 0 18 14.25 v 9 c 0 0.414 0.336 0.75 0.75 0.75 m 0 -1.5 l 0.75 0.75 v -9 a 0.75 0.75 0 0 1 0.75 -0.75 h 3 l -0.75 -0.75 v 10.5 l 0.75 -0.75 Z M 6 9.75 v 3 a 0.75 0.75 0 0 0 1.5 0 v -3 a 0.75 0.75 0 0 0 -1.5 0 m 2.25 -4.5 a 0.75 0.75 0 1 1 -1.5 0 a 0.75 0.75 0 0 1 1.5 0 m 1.5 0 a 2.25 2.25 0 1 0 -4.5 0 a 2.25 2.25 0 0 0 4.5 0 m 13.5 -0.75 h -4.5 a 0.75 0.75 0 0 0 0 1.5 h 4.5 a 0.75 0.75 0 0 0 0 -1.5 m 0 3 h -4.5 a 0.75 0.75 0 0 0 0 1.5 h 4.5 a 0.75 0.75 0 0 0 0 -1.5 M 2.344 18 c 0 0.866 0.012 1.295 0.069 1.833 C 2.69 22.437 4.003 24 6.844 24 c 2.234 0 3.38 -1.189 3.977 -3.297 c 0.057 -0.203 0.11 -0.411 0.168 -0.66 l 0.136 -0.599 c 0.029 -0.126 0.054 -0.228 0.077 -0.32 a 1.5 1.5 0 0 0 -1.454 -1.874 H 3.094 a 0.75 0.75 0 0 0 -0.75 0.75 m 1.5 0 l -0.75 0.75 h 6.655 c -0.027 0.107 -0.054 0.22 -0.086 0.357 l -0.135 0.595 c -0.053 0.229 -0.1 0.415 -0.15 0.592 c -0.434 1.53 -1.085 2.206 -2.534 2.206 c -1.97 0 -2.736 -0.912 -2.94 -2.825 c -0.05 -0.47 -0.06 -0.861 -0.06 -1.675 m -0.75 -0.75 a 3 3 0 0 0 -3 3 a 0.75 0.75 0 0 0 1.5 0 a 1.5 1.5 0 0 1 1.5 -1.5 a 0.75 0.75 0 0 0 0 -1.5"
                 }
-            ],
-            "rating": 8
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Tamundi Alley Homestay- Dragon Teeth- The Old Quarter Ha NoiMở trong cửa sổ mới",
+            "city":"Hà Nội",
+            "images": [
+                "images/accommodations/tamundi-alley-homestay/room1.jpg"
+            ]
+        },
+        {
+            "id": 3,
+            "name": "MOONLIT Suites Hotel by Luxe Paradise",
+            "city":"Hà Nội",
+            "images": [
+                "images/accommodations/tamundi-alley-homestay/room1.jpg"
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Thao's Home Dictrict 4",
+            "city":"Hồ Chí Minh",
+            "images": [
+                "images/accommodations/thao's-home-district-4/room1.jpg"
+            ]
+        },
+        {
+            "id": 5,
+            "name": "7 Apartment",
+            "city":"Hồ Chí Minh",
+            "images": [
+                "images/accommodations/7-apartment/room1.jpg"
+            ]
         }
     ]
 }

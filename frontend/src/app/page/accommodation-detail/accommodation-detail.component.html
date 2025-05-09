@@ -1,100 +1,123 @@
+<app-navbar />
+<app-search-box />
+
 <main class="main">
-    <div class="accommodation-detail-container">
-        <div *ngFor="let detail of accommodationDetail" class="accommodation-detail-card">
-            <div class="accommodation-detail-header">
-                <p class="accommodation-detail-title">{{ detail.name }}</p>
-                <div class="btn-group">
-                    <input tuiLike="var(--tui-status)" type="checkbox" />
-                    <button class="order-btn">Đặt ngay</button>
+    <div class="accommodation-detail-header">
+        <p class="accommodation-detail-title">{{ accommodation.name }}</p>
+        <div class="btn-group">
+            <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
+            <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="share-icon"
+                title="Chia sẻ thông tin chỗ nghỉ này">
+                <path
+                    d="M 8.25 11.25 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 m 12 -5.25 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 m -1.5 12 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 M 9.018 10.59 l 6.508 -2.531 a 0.75 0.75 0 0 0 -0.544 -1.398 L 8.474 9.192 a 0.75 0.75 0 1 0 0.544 1.398 m -0.748 3.009 l 6.79 3.395 a 0.75 0.75 0 1 0 0.67 -1.342 l -6.79 -3.395 a 0.75 0.75 0 1 0 -0.67 1.342"
+                    fill="rgb(0 107 227)" title="Chia sẻ thông tin chỗ nghỉ này" />
+            </svg>
+            <button class="order-btn">Đặt ngay</button>
+        </div>
+    </div>
+
+    <div class="accommodation-address-container">
+        <svg viewBox="0 0 24 24" width="20" fill="currentColor">
+            <path
+                d="M 12 0 a 8.01 8.01 0 0 0 -8 8 c 0 3.51 5 12.025 7.148 15.524 A 1 1 0 0 0 12 24 a 0.99 0.99 0 0 0 0.852 -0.477 C 15 20.026 20 11.514 20 8 a 8.01 8.01 0 0 0 -8 -8 m 0 11.5 A 3.5 3.5 0 1 1 15.5 8 a 3.5 3.5 0 0 1 -3.5 3.5"
+                fill="#006ce4" />
+        </svg>
+        <p class="accommodation-address">{{ accommodation.addressNumber }}, {{ accommodation.street }}, {{
+            accommodation.district }},
+            {{ accommodation.city }}, {{
+            accommodation.country }}</p>
+    </div>
+
+    <div class="image-review-map-container">
+        <div class="accommodation-image-container">
+            <div class="accommodation-image" *ngFor="let image of accommodation.images.slice(0, 8); let i = index">
+                <img [src]="image" alt="accommodation image {{ i + 1 }}" class="accommodation-image-item"
+                    (click)="openModal()" />
+            </div>
+
+            <app-image-list-modal [accommodationName]="accommodation.name" [show]="isModalOpen" (close)="closeModal()"
+                *ngIf="isModalOpen" />
+        </div>
+
+        <div class="accommodation-review-map-container">
+            <div class="accommodation-review-container">
+                <div class="rating-score">
+                    <div></div>
+                </div>
+
+                <div class="comment">
+
+                </div>
+
+                <div class="service-staff-score">
+
                 </div>
             </div>
 
-            <div class="accommodation-address-container">
-                <img src="icons/location.svg" alt="location icon" class="location-icon" />
-                <p class="accommodation-address">{{ detail.addressNumber }}, {{ detail.street }}, {{ detail.district }},
-                    {{ detail.city }}, {{
-                    detail.country }}</p>
-            </div>
-
-            <div class="image-review-map-container">
-                <div class="accommodation-image-container">
-                    <div class="accommodation-image" *ngFor="let image of detail.images">
-                        <img [src]="image" alt="accommodation image" class="accommodation-image-item" />
-                    </div>
-                </div>
-
-                <div class="accommodation-review-map-container">
-                    <div class="accommodation-review-container">
-                        <div class="rating-score">
-                            <div></div>
-                        </div>
-
-                        <div class="comment">
-
-                        </div>
-
-                        <div class="service-staff-score">
-
-                        </div>
-                    </div>
-
-                    <div class="accommodation-google-map-container">
-                        <img src="https://www.ionos.com/digitalguide/fileadmin/DigitalGuide/Screenshots_2023/google-my-maps.png"
-                            alt="google map" class="google-map" />
-                        <div class="google-map-overlay">
-                            <img src="icons/location.svg" alt="location icon" class="google-map-overlay-icon" />
-                            <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="description-facilities-highlight-container">
-                <div class="accommodation-description-facilities-container">
-                    <div class="description-container" *ngFor="let description of detail.descriptions">
-                        <p class="description-content">{{ description }}</p>
-                    </div>
-
-                    <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng ©
-                        OpenStreetMap</p>
-
-                    <div class="facilities-container">
-                        <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
-
-                        <div class="facilities-content">
-                            <div *ngFor="let facility of detail.facilities">
-                                <div class="facility-item">
-                                    <svg viewBox="0 0 24 24" width="20" fill="currentColor">
-                                        <path [attr.d]="facility.path" fill="#008234" />
-                                    </svg>
-                                    <p class="facility-name">{{ facility.name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accommodation-highlight-container">
-                    <p class="hightlight-first-title">Điểm nổi bật của chỗ nghỉ</p>
-                    <p class="hightlight-second-title">Hoàn hảo cho kỳ nghỉ 1 đêm!</p>
-
-                    <div class="hightlight-content-container">
-                        <img src="icons/pin-heart.svg" alt="pin heart icon" class="pin-heart-icon" />
-                        <p class="hightlight-content">
-                            Nằm ngay trung tâm TP. Hồ Chí Minh, khách sạn này có điểm vị trí tuyệt vời 10,0
-                        </p>
-                    </div>
-
-                    <button class="hightlight-order-button">Đặt ngay</button>
-                    <button class="hightlight-favourite-button">
-                        <tui-icon icon="@tui.heart" [style.color]="'var(--tui-background-accent-1)'" />
-                        Lưu chỗ nghỉ
-                    </button>
+            <div class="accommodation-google-map-container"
+                (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.557169179431!2d106.69526517480476!3d10.768571589379736!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fbafd84e059%3A0x629cbf7d0faaee10!2sCubicity%20Metro%20House!5e0!3m2!1sen!2s!4v1746451957768!5m2!1sen!2s"
+                    class="google-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <div class="google-map-overlay">
+                    <img src="icons/detail-icon/location.svg" alt="location icon" class="google-map-overlay-icon" />
+                    <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>
                 </div>
             </div>
+        </div>
 
-            <!-- <p>{{ detail.description }}</p> -->
+    </div>
+
+    <div class="description-facilities-highlight-container">
+        <div class="accommodation-description-facilities-container">
+            <div class="description-container">
+                <p class="description-title">Miêu tả</p>
+                <div class="description-content-container" [class.collapsed]="!showFull">
+                    <div class="description-content" *ngFor="let description of accommodation.descriptions">
+                        <p>{{ description }}</p>
+                    </div>
+                </div>
+                <p (click)="toggleDescription()" *ngIf="isMobile" class="see-more-button">
+                    {{ showFull ? 'Thu gọn' : 'Xem thêm' }}
+                </p>
+            </div>
+
+            <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng ©
+                OpenStreetMap</p>
+
+            <div class="facilities-container">
+                <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
+
+                <div class="facilities-content">
+                    <div *ngFor="let facility of accommodation.facilities">
+                        <div class="facility-item">
+                            <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="facility-icon">
+                                <path [attr.d]="facility.path" fill="#008234" />
+                            </svg>
+                            <p class="facility-name">{{ facility.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accommodation-highlight-container">
+            <p class="hightlight-first-title">Điểm nổi bật của chỗ nghỉ</p>
+            <p class="hightlight-second-title">Hoàn hảo cho kỳ nghỉ 1 đêm!</p>
+
+            <div class="hightlight-content-container">
+                <img src="icons/detail-icon/pin-heart.svg" alt="pin heart icon" class="pin-heart-icon" />
+                <p class="hightlight-content">
+                    Nằm ngay trung tâm TP. Hồ Chí Minh, khách sạn này có điểm vị trí tuyệt vời 10,0
+                </p>
+            </div>
+
+            <button class="hightlight-order-button">Đặt ngay</button>
+            <button class="hightlight-favourite-button">
+                <tui-icon icon="@tui.heart" [style.color]="'var(--tui-background-accent-1)'" />
+                Lưu chỗ nghỉ
+            </button>
         </div>
     </div>
 </main>
