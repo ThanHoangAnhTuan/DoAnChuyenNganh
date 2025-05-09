@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
@@ -75,7 +75,7 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           in.Price,
+		Price:           strconv.FormatFloat(in.Price, 'f', 2, 64),
 		CreatedAt:       now,
 		UpdatedAt:       now,
 	}
@@ -84,37 +84,15 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		return response.ErrCodeCreateAccommodationDetailFailed, nil, fmt.Errorf("error for create accommodation details: %s", err)
 	}
 
-	// TODO: save image
-	saveImagePaths, err := services.Image().UploadImages(ctx, in.Images)
-	if err != nil {
-		return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image to disk failed: %s", err)
-	}
-
-	for _, path := range saveImagePaths {
-		imageId := uuid.New().String()
-		now := utiltime.GetTimeNow()
-		err := a.sqlc.SaveImage(ctx, database.SaveImageParams{
-			ID:                    imageId,
-			AccommodationDetailID: accommodationDetailId,
-			Image:                 path,
-			CreatedAt:             now,
-			UpdatedAt:             now,
-		})
-		if err != nil {
-			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image to db failed: %s", err)
-		}
-	}
-
 	out.Id = accommodationDetailId
 	out.AccommodationId = in.AccommodationId
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
-	out.Images = saveImagePaths
 	out.DiscountId = in.DiscountId
 	out.Facilities = in.Facilities
 	out.Guests = in.Guests
 	out.Name = in.Name
-	out.Price = in.Price
+	out.Price = strconv.FormatFloat(in.Price, 'f', 2, 64)
 	return response.ErrCodeCreateAccommodationDetailSuccess, out, nil
 }
 
@@ -183,23 +161,10 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, i
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
-		// TODO: get images
-		images, err := a.sqlc.GetImages(ctx, accommodationDetail.ID)
-		if err != nil {
-			return response.ErrCodeGetFilesFailed, nil, fmt.Errorf("error for get images failed: %s", err)
-		}
-
-		var imagesName []string
-
-		for _, imageName := range images {
-			imagesName = append(imagesName, imageName.Image)
-		}
-
 		out = append(out, &vo.GetAccommodationDetailsOutput{
 			Id:              accommodationDetail.ID,
 			AccommodationId: accommodationDetail.AccommodationID,
 			Name:            accommodationDetail.Name,
-			Images:          imagesName,
 			Guests:          accommodationDetail.Guests,
 			Beds:            beds,
 			Facilities:      facilities,
@@ -269,7 +234,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           in.Price,
+		Price:           strconv.FormatFloat(in.Price, 'f', 2, 64),
 		UpdatedAt:       now,
 		ID:              in.Id,
 		AccommodationID: in.AccommodationId,
@@ -279,64 +244,15 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		return response.ErrCodeUpdateAccommodationDetailFailed, nil, fmt.Errorf("error for update accommodation detail failed: %s", err)
 	}
 
-	// TODO: update images
-	// TODO: get all images of accommodation detail
-	images, err := a.sqlc.GetImages(ctx, in.Id)
-	if err != nil {
-		return response.ErrCodeGetFilesFailed, nil, fmt.Errorf("error for get image failed: %s", err)
-	}
-
-	// TODO: delete image
-	isDelete := false
-	for _, image := range images {
-		for _, oldImage := range in.OldImages {
-			if oldImage == image.Image {
-				isDelete = true
-				break
-			}
-		}
-		if !isDelete {
-			err := a.sqlc.DeleteImage(ctx, image.ID)
-			if err != nil {
-				return response.ErrCodeDeleteFileFailed, nil, fmt.Errorf("error for get image failed: %s", err)
-			}
-		}
-	}
-
-	// TODO: add new image
-	saveImagePaths, err := services.Image().UploadImages(ctx, in.Images)
-	if err != nil {
-		return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image to disk failed: %s", err)
-	}
-
-	for _, path := range saveImagePaths {
-		imageId := uuid.New().String()
-		now := utiltime.GetTimeNow()
-		err := a.sqlc.SaveImage(ctx, database.SaveImageParams{
-			ID:                    imageId,
-			AccommodationDetailID: in.Id,
-			Image:                 path,
-			CreatedAt:             now,
-			UpdatedAt:             now,
-		})
-		if err != nil {
-			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image to db failed: %s", err)
-		}
-	}
-
-	// TODO: return new update images
-	updatedImage := append(in.OldImages, saveImagePaths...)
-
 	out.AccommodationId = in.AccommodationId
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
-	out.Images = updatedImage
 	out.DiscountId = in.DiscountId
 	out.Facilities = in.Facilities
 	out.Guests = in.Guests
 	out.Id = in.Id
 	out.Name = in.Name
-	out.Price = in.Price
+	out.Price = strconv.FormatFloat(in.Price, 'f', 2, 64)
 	return response.ErrCodeUpdateAccommodationDetailSuccess, out, nil
 }
 

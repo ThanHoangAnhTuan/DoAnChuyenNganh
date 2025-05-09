@@ -18,9 +18,9 @@ func (ur *AccommodationRouter) InitAccommodationRouter(Router *gin.RouterGroup) 
 	userRouterPrivate := Router.Group("/accommodation")
 	userRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
-		userRouterPrivate.GET("/get-accommodations-by-manager-id", controllers.Accommodation.GetAccommodationsByManager)
-		userRouterPrivate.POST("create-accommodation", controllers.Accommodation.CreateAccommodation)
-		userRouterPrivate.PUT("update-accommodation", controllers.Accommodation.UpdateAccommodation)
-		userRouterPrivate.DELETE("delete-accommodation/:id", controllers.Accommodation.DeleteAccommodation)
+		userRouterPrivate.GET("/get-accommodations-by-manager", controllers.Accommodation.GetAccommodationsByManager)
+		userRouterPrivate.POST("/create-accommodation", controllers.Accommodation.CreateAccommodation)
+		userRouterPrivate.PUT("/update-accommodation", controllers.Accommodation.UpdateAccommodation)
+		userRouterPrivate.DELETE("/delete-accommodation/:id", controllers.Accommodation.DeleteAccommodation)
 	}
 }

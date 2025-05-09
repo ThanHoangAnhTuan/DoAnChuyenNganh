@@ -18,8 +18,8 @@ func (ur *AccommodationDetailRouter) InitAccommodationDetailRouter(Router *gin.R
 	userRouterPrivate := Router.Group("/accommodation-detail")
 	userRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
-		userRouterPrivate.POST("create-accommodation-detail", controllers.AccommodationDetail.CreateAccommodationDetail)
-		userRouterPrivate.PUT("update-accommodation-detail", controllers.AccommodationDetail.UpdateAccommodationDetail)
-		userRouterPrivate.DELETE("delete-accommodation-detail/:id", controllers.AccommodationDetail.DeleteAccommodationDetail)
+		userRouterPrivate.POST("/create-accommodation-detail", controllers.AccommodationDetail.CreateAccommodationDetail)
+		userRouterPrivate.PUT("/update-accommodation-detail", controllers.AccommodationDetail.UpdateAccommodationDetail)
+		userRouterPrivate.DELETE("/delete-accommodation-detail/:id", controllers.AccommodationDetail.DeleteAccommodationDetail)
 	}
 }

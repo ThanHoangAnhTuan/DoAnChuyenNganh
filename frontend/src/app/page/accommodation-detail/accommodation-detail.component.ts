@@ -1,11 +1,407 @@
-import { Component } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    inject,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import {
+    Accommodation,
+    CreateAccommodation,
+    Facilities,
+    PropertySurroundings,
+    UpdateAccommodation,
+} from '../../models/accommodation.model';
+import { TUI_EDITOR_DEFAULT_TOOLS, TuiEditor } from '@taiga-ui/editor';
+import {
+    TuiAppearance,
+    TuiButton,
+    TuiDataList,
+    TuiDialogService,
+    TuiGroup,
+    TuiIcon,
+    TuiTextfield,
+} from '@taiga-ui/core';
+import {
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
+import { AccommodationService } from '../../services/accommodation.service';
+import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AccommodationDetailService } from '../../services/accommodation-detail.service';
+import {
+    AccommodationDetails,
+    AccommodationSelect,
+    CreateAccommodationDetails,
+    DiscountSelect,
+    UpdateAccommodationDetails,
+} from '../../models/accommodation-detail.model';
+import { TuiTable } from '@taiga-ui/addon-table';
+import { TuiInputModule } from '@taiga-ui/legacy';
+import { TuiCardLarge } from '@taiga-ui/layout';
+import {
+    TuiCarousel,
+    TuiCheckbox,
+    TuiChevron,
+    TuiFiles,
+    TuiInputNumber,
+    TuiSelect,
+} from '@taiga-ui/kit';
+import { TuiContext } from '@taiga-ui/cdk';
 
 @Component({
-  selector: 'app-accommodation-detail',
-  imports: [],
-  templateUrl: './accommodation-detail.component.html',
-  styleUrl: './accommodation-detail.component.scss'
+    selector: 'app-accommodation-detail',
+    imports: [
+        TuiTable,
+        TuiIcon,
+        TuiButton,
+        TuiInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TuiTextfield,
+        TuiAppearance,
+        TuiCardLarge,
+        TuiFiles,
+        // TuiEditor,
+        TuiGroup,
+        TuiCheckbox,
+        RouterLink,
+        TuiInputNumber,
+        TuiDataList,
+        TuiSelect,
+        TuiChevron,
+        TuiCarousel,
+    ],
+    templateUrl: './accommodation-detail.component.html',
+    styleUrl: './accommodation-detail.component.scss',
 })
-export class AccommodationDetailComponent {
+export class AccommodationDetailComponent implements OnInit {
+    protected indexCarousel = 0;
+    protected accommodationDetails!: AccommodationDetails[];
+    protected columns: string[] = [
+        'ID',
+        'Name',
+        'Guests',
+        'Single Bed',
+        'Double Bed',
+        'Large Double Bed',
+        'Extra Large Double Bed',
+        'Wifi',
+        'TV',
+        'Air Condition',
+        'Available Rooms',
+        'Price',
+        'Image',
+        'Accommodation',
+        'Discount',
+        'Action',
+    ];
+    protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
+    // protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
+    protected idAccommodationDetailUpdating = '';
 
+    private readonly dialogs = inject(TuiDialogService);
+
+    protected formAccommodationDetail = new FormGroup({
+        name: new FormControl<string | ''>('', Validators.required),
+        guests: new FormControl<number | 0>(0),
+        singleBed: new FormControl<number | 0>(0),
+        doubleBed: new FormControl<number | 0>(0),
+        largeDoubleBed: new FormControl<number | 0>(0),
+        extraLargeDoubleBed: new FormControl<number | 0>(0),
+        price: new FormControl<number | 0>(0),
+        wifi: new FormControl<boolean | false>(false),
+        airCondition: new FormControl<boolean | false>(false),
+        tv: new FormControl<boolean | false>(false),
+        availableRooms: new FormControl<number | 0>(0),
+        // images: new FormControl<File[] | []>([], [this.maxFilesLength(20)]),
+        accommodationId: new FormControl<string | ''>('', Validators.required),
+        discountId: new FormControl<string | ''>(''),
+    });
+
+    resetFormAccommodationDetail = {
+        accommodationId: '',
+        airCondition: false,
+        availableRooms: 0,
+        discountId: '',
+        doubleBed: 0,
+        extraLargeDoubleBed: 0,
+        guests: 0,
+        largeDoubleBed: 0,
+        name: '',
+        price: 0,
+        singleBed: 0,
+        tv: false,
+        wifi: false,
+    };
+
+    // protected multiImagePreview: string[] | null = null;
+    // protected oldImage: string | null = null;
+
+    // @ViewChild('multiFileInput')
+    // multiFileInput!: ElementRef<HTMLInputElement>;
+    protected accommodations!: Accommodation[];
+
+    protected accommodationItems: readonly AccommodationSelect[] = [];
+
+    constructor(
+        private route: ActivatedRoute,
+        private accommodationDetailService: AccommodationDetailService,
+        private accommodationService: AccommodationService
+    ) {}
+
+    ngOnInit() {
+        this.route.params.subscribe((params) => {
+            this.accommodationDetailService
+                .getAccommodationDetails(params['id'])
+                .subscribe((response) => {
+                    this.accommodationDetails = response.data;
+                });
+        });
+
+        this.accommodationService.getAccommodations().subscribe((response) => {
+            this.accommodationItems = response.data.map((item) => ({
+                id: item.id,
+                name: item.name,
+            }));
+        });
+    }
+
+    // protected onMultiFileSelected(files: File[]): void {
+    //     this.multiImagePreview = [];
+
+    //     for (const file of files) {
+    //         const reader = new FileReader();
+    //         reader.onload = () => {
+    //             this.multiImagePreview?.push(reader.result as string);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // }
+
+    // protected onRemove(index: number): void {
+    //     if (
+    //         this.multiImagePreview &&
+    //         index >= 0 &&
+    //         index < this.multiImagePreview.length
+    //     ) {
+    //         this.multiImagePreview.splice(index, 1);
+    //     }
+
+    //     const currentFiles = this.formAccommodationDetail.get('images')
+    //         ?.value as File[];
+    //     if (currentFiles && currentFiles.length > index) {
+    //         const updatedFiles = currentFiles.filter((_, i) => i !== index);
+
+    //         this.formAccommodationDetail
+    //             .get('images')
+    //             ?.setValue(updatedFiles.length ? updatedFiles : null);
+
+    //         // Đặt lại trạng thái nếu không còn file
+    //         if (updatedFiles.length === 0) {
+    //             this.formAccommodationDetail.get('images')?.markAsPristine();
+    //             this.formAccommodationDetail.get('images')?.markAsUntouched();
+    //         }
+    //     }
+    // }
+
+    protected openDialogCreate(content: PolymorpheusContent): void {
+        this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+
+        console.log(this.formAccommodationDetail.get('wifi')?.value);
+
+        // this.multiImagePreview = [];
+        // this.oldImage = null;
+        this.dialogs
+            .open(content, {
+                label: 'Create Accommodation Detail',
+            })
+            .subscribe({
+                complete: () => {
+                    this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+                },
+            });
+    }
+
+    // protected maxFilesLength(maxLength: number): ValidatorFn {
+    //     const stringErr = `Error: maximum limit - ${maxLength} files for upload`;
+
+    //     return ({ value }: AbstractControl) => {
+    //         if (!value || !Array.isArray(value)) {
+    //             return null;
+    //         }
+
+    //         return value.length > maxLength
+    //             ? { maxLength: new TuiValidationError(stringErr) }
+    //             : null;
+    //     };
+    // }
+
+    protected openDialogUpdate(
+        content: PolymorpheusContent,
+        accommodationDetail: AccommodationDetails
+    ) {
+        this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+
+        this.formAccommodationDetail.patchValue({
+            name: accommodationDetail.name,
+            accommodationId: accommodationDetail.accommodation_id,
+            availableRooms: accommodationDetail.available_rooms,
+            discountId: accommodationDetail.discount_id,
+
+            doubleBed: accommodationDetail.beds.double_bed,
+            singleBed: accommodationDetail.beds.single_bed,
+            largeDoubleBed: accommodationDetail.beds.large_double_bed,
+            extraLargeDoubleBed:
+                accommodationDetail.beds.extra_large_double_bed,
+            airCondition: accommodationDetail.facilities.air_condition,
+            wifi: accommodationDetail.facilities.wifi,
+            tv: accommodationDetail.facilities.tv,
+            guests: accommodationDetail.guests,
+            price: accommodationDetail.price,
+        });
+
+        this.idAccommodationDetailUpdating = accommodationDetail.id;
+
+        this.dialogs
+            .open(content, {
+                label: 'Update Accommodation',
+            })
+            .subscribe({
+                complete: () => {
+                    this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+                },
+            });
+    }
+
+    // protected getDescription(html: string): SafeHtml {
+    //     return this.sanitizer.bypassSecurityTrustHtml(html);
+    // }
+
+    protected createAccommodationDetail() {
+        const accommodationDetail: CreateAccommodationDetails = {
+            name: this.formAccommodationDetail.get('name')?.value || '',
+            guests: this.formAccommodationDetail.get('guests')?.value || 0,
+            beds: {
+                single_bed:
+                    this.formAccommodationDetail.get('singleBed')?.value || 0,
+                double_bed:
+                    this.formAccommodationDetail.get('doubleBed')?.value || 0,
+                large_double_bed:
+                    this.formAccommodationDetail.get('largeDoubleBed')?.value ||
+                    0,
+                extra_large_double_bed:
+                    this.formAccommodationDetail.get('extraLargeDoubleBed')
+                        ?.value || 0,
+            },
+            facilities: {
+                wifi: this.formAccommodationDetail.get('wifi')?.value || false,
+                air_condition:
+                    this.formAccommodationDetail.get('airCondition')?.value ||
+                    false,
+                tv: this.formAccommodationDetail.get('tv')?.value || false,
+            },
+            available_rooms:
+                this.formAccommodationDetail.get('availableRooms')?.value || 0,
+            price: this.formAccommodationDetail.get('price')?.value || 0,
+            accommodation_id:
+                this.formAccommodationDetail.get('accommodationId')?.value ||
+                '',
+            discount_id:
+                this.formAccommodationDetail.get('discountId')?.value || '',
+        };
+
+        if (this.formAccommodationDetail.invalid) {
+            this.formAccommodationDetail.markAllAsTouched();
+            return;
+        }
+
+        this.accommodationDetailService
+            .createAccommodationDetail(accommodationDetail)
+            .subscribe((response) => {
+                this.accommodationDetails.push(response.data);
+            });
+    }
+
+    protected updateAccommodationDetail() {
+        const accommodationDetail: UpdateAccommodationDetails = {
+            id: this.idAccommodationDetailUpdating,
+            accommodation_id:
+                this.formAccommodationDetail.get('accommodationId')?.value ||
+                '',
+            name: this.formAccommodationDetail.get('name')?.value || '',
+            available_rooms:
+                this.formAccommodationDetail.get('availableRooms')?.value || 0,
+            beds: {
+                single_bed:
+                    this.formAccommodationDetail.get('singleBed')?.value || 0,
+                double_bed:
+                    this.formAccommodationDetail.get('doubleBed')?.value || 0,
+                large_double_bed:
+                    this.formAccommodationDetail.get('largeDoubleBed')?.value ||
+                    0,
+                extra_large_double_bed:
+                    this.formAccommodationDetail.get('extraLargeDoubleBed')
+                        ?.value || 0,
+            },
+            facilities: {
+                air_condition:
+                    this.formAccommodationDetail.get('airCondition')?.value ||
+                    false,
+                tv: this.formAccommodationDetail.get('tv')?.value || false,
+                wifi: this.formAccommodationDetail.get('wifi')?.value || false,
+            },
+            discount_id:
+                this.formAccommodationDetail.get('discountId')?.value || '',
+            guests: this.formAccommodationDetail.get('guests')?.value || 0,
+            price: this.formAccommodationDetail.get('price')?.value || 0,
+        };
+
+        this.accommodationDetailService
+            .updateAccommodationDetail(accommodationDetail)
+            .subscribe((response) => {
+                this.accommodationDetails = this.accommodationDetails.map(
+                    (accommodationDetail) => {
+                        if (accommodationDetail.id === response.data.id) {
+                            return response.data;
+                        } else {
+                            return accommodationDetail;
+                        }
+                    }
+                );
+            });
+    }
+
+    // protected deleteAccommodation(id: string) {
+    //     this.accommodationService
+    //         .deleteAccommodation(id)
+    //         .subscribe((response) => {
+    //             this.accommodations = this.accommodations.filter(
+    //                 (accommodation) => accommodation.id !== id
+    //             );
+    //         });
+    // }
+
+    protected readonly contentAccommodation: PolymorpheusContent<
+        TuiContext<string | null>
+    > = ({ $implicit: id }) =>
+        this.accommodationItems.find((item) => item.id === id)?.name ?? '';
+
+    protected readonly discountItems: readonly DiscountSelect[] = [
+        // {id: 42, name: 'John Cleese'},
+        // {id: 237, name: 'Eric Idle'},
+        // {id: 666, name: 'Michael Palin'},
+        // {id: 123, name: 'Terry Gilliam'},
+        // {id: 777, name: 'Terry Jones'},
+        // {id: 999, name: 'Graham Chapman'},
+    ];
+
+    protected readonly contentDiscount: PolymorpheusContent<
+        TuiContext<string | null>
+    > = ({ $implicit: id }) =>
+        this.discountItems.find((item) => item.id === id)?.name ?? '';
 }

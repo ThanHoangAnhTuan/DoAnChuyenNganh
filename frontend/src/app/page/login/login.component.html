@@ -1,0 +1,43 @@
+<main>
+    <div class="login-container">
+        <h1 class="login-title">Login</h1>
+
+        <form [formGroup]="formLogin" class="form">
+            <div class="input-group">
+                <tui-textfield>
+                    <label tuiLabel>Account</label>
+                    <input formControlName="account" tuiTextfield type="text" />
+                </tui-textfield>
+                @if(formLogin.get('account')?.invalid &&
+                formLogin.get('account')?.touched) {
+                <div>
+                    <small class="text-red-500">Account is required</small>
+                </div>
+                }
+            </div>
+            <div class="input-group">
+                <tui-textfield>
+                    <label tuiLabel>Password</label>
+                    <input
+                        formControlName="password"
+                        tuiTextfield
+                        type="password"
+                    />
+                    <tui-icon tuiPassword />
+                </tui-textfield>
+                @if(formLogin.get('password')?.invalid &&
+                formLogin.get('password')?.touched) {
+                <div>
+                    <small class="text-red-500">Password is required</small>
+                </div>
+                }
+            </div>
+        </form>
+
+        <div class="forgot-password">
+            <a href="#">Forgot password?</a>
+        </div>
+
+        <button class="login-button" (click)="handleLogin()">LOGIN</button>
+    </div>
+</main>

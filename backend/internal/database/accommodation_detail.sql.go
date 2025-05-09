@@ -106,7 +106,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    and ` + "`" + `accommodation_id` + "`" + ` = ?
+    and ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
 `
 
 type GetAccommodationDetailParams struct {
@@ -161,7 +161,7 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
-    ` + "`" + `accommodation_id` + "`" + ` = ?
+    ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
 `
 
 type GetAccommodationDetailsRow struct {
@@ -225,7 +225,7 @@ SET
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    and ` + "`" + `accommodation_id` + "`" + ` = ?
+    and ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
 `
 
 type UpdateAccommodationDetailParams struct {

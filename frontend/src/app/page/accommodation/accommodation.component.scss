@@ -13,3 +13,20 @@
 .mr-8 {
     margin-right: 8px;
 }
+
+.image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.text-red-500 {
+    color: red;
+}
+
+.text-nowrap {
+    text-wrap: nowrap;
+}

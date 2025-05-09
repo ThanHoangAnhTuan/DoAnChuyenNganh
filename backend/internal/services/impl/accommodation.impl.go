@@ -6,13 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"mime/multipart"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
@@ -50,13 +48,13 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 		}
 
 		out = append(out, &vo.GetAccommodations{
-			Id:                   accommodation.ID,
-			Name:                 accommodation.Name,
-			Country:              accommodation.Country,
-			City:                 accommodation.City,
-			District:             accommodation.District,
-			Description:          accommodation.Description,
-			Image:                accommodation.Image,
+			Id:          accommodation.ID,
+			Name:        accommodation.Name,
+			Country:     accommodation.Country,
+			City:        accommodation.City,
+			District:    accommodation.District,
+			Description: accommodation.Description,
+			// Image:                accommodation.Image,
 			ManagerId:            accommodation.ManagerID,
 			Rating:               strconv.Itoa(int(accommodation.Rating)),
 			Facilities:           facilities,
@@ -159,17 +157,6 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
 	}
 
-	pathToUpdateImage := ""
-	if in.Image == nil {
-		pathToUpdateImage = accommodation.Image
-	} else {
-		saveImagePaths, err := services.Image().UploadImages(ctx, []*multipart.FileHeader{in.Image})
-		if err != nil {
-			return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image failed: %s", err)
-		}
-		pathToUpdateImage = saveImagePaths[0]
-	}
-
 	err = t.sqlc.UpdateAccommodation(ctx, database.UpdateAccommodationParams{
 		ID:                   accommodation.ID,
 		Name:                 in.Name,
@@ -179,7 +166,6 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		Description:          in.Description,
 		Facilities:           facilitiesJSON,
 		PropertySurroundings: propertySurroundingsJSON,
-		Image:                pathToUpdateImage,
 		GgMap:                in.GoogleMap,
 		Rules:                in.Rules,
 		UpdatedAt:            now,
@@ -201,7 +187,6 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	out.GoogleMap = in.GoogleMap
 	out.PropertySurroundings = in.PropertySurroundings
 	out.Rules = in.Rules
-	out.Image = pathToUpdateImage
 	out.Rating = strconv.Itoa(int(accommodation.Rating))
 
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
@@ -233,7 +218,6 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 			City:                 accommodation.City,
 			District:             accommodation.District,
 			Description:          accommodation.Description,
-			Image:                accommodation.Image,
 			ManagerId:            accommodation.ManagerID,
 			Rating:               strconv.Itoa(int(accommodation.Rating)),
 			Facilities:           facilities,
@@ -256,9 +240,8 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	}
 
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
-
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if manager == 0 {
@@ -278,11 +261,6 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
 	}
 
-	saveImagePaths, err := services.Image().UploadImages(ctx, []*multipart.FileHeader{in.Image})
-	if err != nil {
-		return response.ErrCodeSaveFileFailed, nil, fmt.Errorf("error for save image failed: %s", err)
-	}
-
 	// !. create accommodation
 	err = t.sqlc.CreateAccommodation(ctx, database.CreateAccommodationParams{
 		ID:                   id,
@@ -294,7 +272,6 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		Description:          in.Description,
 		Facilities:           facilitiesJSON,
 		PropertySurroundings: propertySurroundingsJSON,
-		Image:                saveImagePaths[0],
 		GgMap:                in.GoogleMap,
 		Rules:                in.Rules,
 		CreatedAt:            now,
@@ -323,7 +300,6 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	out.GoogleMap = in.GoogleMap
 	out.Rules = in.Rules
 	out.Rating = "0"
-	out.Image = saveImagePaths[0]
 
 	return response.ErrCodeCreateAccommodationSuccess, out, nil
 }

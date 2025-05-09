@@ -10,6 +10,7 @@ import (
 
 type payload struct {
 	jwt.RegisteredClaims
+	Role string `json:"role,omitempty"`
 }
 
 func GenerateTokenJWT(payload jwt.Claims) (string, error) {
@@ -17,7 +18,7 @@ func GenerateTokenJWT(payload jwt.Claims) (string, error) {
 	return token.SignedString([]byte(global.Config.JWT.Api_secret))
 }
 
-func CreateToken(uuidToken string) (string, error) {
+func CreateToken(uuidToken string, role string) (string, error) {
 	timeEx := global.Config.JWT.JWT_Expiration
 	if timeEx == "" {
 		timeEx = "1h"
@@ -37,5 +38,6 @@ func CreateToken(uuidToken string) (string, error) {
 			Issuer:    "thantuan",
 			Subject:   uuidToken,
 		},
+		Role: role,
 	})
 }

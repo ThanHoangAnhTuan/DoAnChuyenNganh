@@ -38,7 +38,6 @@ INSERT INTO
         ` + "`" + `name` + "`" + `,
         ` + "`" + `city` + "`" + `,
         ` + "`" + `district` + "`" + `,
-        ` + "`" + `image` + "`" + `,
         ` + "`" + `description` + "`" + `,
         ` + "`" + `facilities` + "`" + `,
         ` + "`" + `gg_map` + "`" + `,
@@ -48,7 +47,7 @@ INSERT INTO
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateAccommodationParams struct {
@@ -58,7 +57,6 @@ type CreateAccommodationParams struct {
 	Name                 string
 	City                 string
 	District             string
-	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -76,7 +74,6 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 		arg.Name,
 		arg.City,
 		arg.District,
-		arg.Image,
 		arg.Description,
 		arg.Facilities,
 		arg.GgMap,
@@ -115,7 +112,6 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `city` + "`" + `,
     ` + "`" + `district` + "`" + `,
-    ` + "`" + `image` + "`" + `,
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
@@ -136,7 +132,6 @@ type GetAccommodationByIdRow struct {
 	Name                 string
 	City                 string
 	District             string
-	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -155,7 +150,6 @@ func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccom
 		&i.Name,
 		&i.City,
 		&i.District,
-		&i.Image,
 		&i.Description,
 		&i.Facilities,
 		&i.GgMap,
@@ -174,7 +168,6 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `city` + "`" + `,
     ` + "`" + `district` + "`" + `,
-    ` + "`" + `image` + "`" + `,
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
@@ -194,7 +187,6 @@ type GetAccommodationsRow struct {
 	Name                 string
 	City                 string
 	District             string
-	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -219,7 +211,6 @@ func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow
 			&i.Name,
 			&i.City,
 			&i.District,
-			&i.Image,
 			&i.Description,
 			&i.Facilities,
 			&i.GgMap,
@@ -248,7 +239,6 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `city` + "`" + `,
     ` + "`" + `district` + "`" + `,
-    ` + "`" + `image` + "`" + `,
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
@@ -269,7 +259,6 @@ type GetAccommodationsByManagerRow struct {
 	Name                 string
 	City                 string
 	District             string
-	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -294,7 +283,6 @@ func (q *Queries) GetAccommodationsByManager(ctx context.Context, managerID stri
 			&i.Name,
 			&i.City,
 			&i.District,
-			&i.Image,
 			&i.Description,
 			&i.Facilities,
 			&i.GgMap,
@@ -322,7 +310,6 @@ SET
     ` + "`" + `name` + "`" + ` = ?,
     ` + "`" + `city` + "`" + ` = ?,
     ` + "`" + `district` + "`" + ` = ?,
-    ` + "`" + `image` + "`" + ` = ?,
     ` + "`" + `description` + "`" + ` = ?,
     ` + "`" + `facilities` + "`" + ` = ?,
     ` + "`" + `gg_map` + "`" + ` = ?,
@@ -339,7 +326,6 @@ type UpdateAccommodationParams struct {
 	Name                 string
 	City                 string
 	District             string
-	Image                string
 	Description          string
 	Facilities           json.RawMessage
 	GgMap                string
@@ -355,7 +341,6 @@ func (q *Queries) UpdateAccommodation(ctx context.Context, arg UpdateAccommodati
 		arg.Name,
 		arg.City,
 		arg.District,
-		arg.Image,
 		arg.Description,
 		arg.Facilities,
 		arg.GgMap,

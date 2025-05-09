@@ -295,8 +295,6 @@ type EcommerceGoAccommodation struct {
 	PropertySurroundings json.RawMessage
 	// rules
 	Rules string
-	// image
-	Image string
 	// is verified: 0 - unverified, 1 - verified
 	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
@@ -337,6 +335,34 @@ type EcommerceGoAccommodationDetail struct {
 	UpdatedAt uint64
 }
 
+// accommodation detail image table
+type EcommerceGoAccommodationDetailImage struct {
+	// ID
+	ID string
+	// accommodation detail ID
+	AccommodationDetailID string
+	// image
+	Image string
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
+// accommodation image table
+type EcommerceGoAccommodationImage struct {
+	// ID
+	ID string
+	// accommodation ID
+	AccommodationID string
+	// image
+	Image string
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
 // discount table
 type EcommerceGoDiscount struct {
 	// ID
@@ -355,22 +381,6 @@ type EcommerceGoDiscount struct {
 	IsDeleted uint8
 	// 0 - inactivated; 1 - activated
 	IsActive uint8
-	// created at
-	CreatedAt uint64
-	// updated at
-	UpdatedAt uint64
-}
-
-// accommodation detail image table
-type EcommerceGoImage struct {
-	// ID
-	ID string
-	// accommodation detail ID
-	AccommodationDetailID string
-	// image
-	Image string
-	// is deleted: 0 - not deleted; 1 - deleted
-	IsDeleted uint8
 	// created at
 	CreatedAt uint64
 	// updated at

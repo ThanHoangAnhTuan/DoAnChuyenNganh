@@ -27,8 +27,8 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 
 	var params vo.CreateAccommodationDetailInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateAccommodationDetail error: %s\n", err.Error())
-		global.Logger.Error("CreateAccommodationDetail error: ", zap.String("error", err.Error()))
+		fmt.Printf("CreateAccommodationDetail binding error: %s\n", err.Error())
+		global.Logger.Error("CreateAccommodationDetail binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
@@ -104,8 +104,8 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	var params vo.UpdateAccommodationDetailInput
 	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UpdateAccommodationDetail error: %s\n", err.Error())
-		global.Logger.Error("UpdateAccommodationDetail error: ", zap.String("error", err.Error()))
+		fmt.Printf("UpdateAccommodationDetail binding error: %s\n", err.Error())
+		global.Logger.Error("UpdateAccommodationDetail binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
@@ -140,19 +140,20 @@ func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 	}
 
 	var params vo.DeleteAccommodationDetailInput
-
-	id := ctx.Param("id")
-	if id == "" {
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		fmt.Printf("DeleteAccommodationDetail binding error: %s\n", err.Error())
+		global.Logger.Error("DeleteAccommodationDetail binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
+		fmt.Printf("DeleteAccommodationDetail validation error: %s\n", err.Error())
+		global.Logger.Error("DeleteAccommodationDetail validation error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
-	params.Id = id
 
 	codeStatus, err := services.AccommodationDetail().DeleteAccommodationDetail(ctx, &params)
 	if err != nil {

@@ -1,5 +1,11 @@
-import { Component, inject, Injector, OnInit } from '@angular/core';
-import { NgForOf, AsyncPipe, NgIf } from '@angular/common';
+import {
+    Component,
+    ElementRef,
+    inject,
+    Injector,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -18,17 +24,6 @@ import {
     UpdateAccommodation,
 } from '../../models/accommodation.model';
 
-import {
-    finalize,
-    map,
-    Observable,
-    of,
-    retry,
-    Subject,
-    switchMap,
-    timer,
-} from 'rxjs';
-
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiIcon,
@@ -40,12 +35,7 @@ import {
 } from '@taiga-ui/core';
 import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule } from '@taiga-ui/legacy';
-import {
-    TuiConfirmService,
-    TuiFileLike,
-    TuiFiles,
-    TuiCheckbox,
-} from '@taiga-ui/kit';
+import { TuiConfirmService, TuiFiles, TuiCheckbox } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import {
@@ -54,11 +44,11 @@ import {
     TUI_EDITOR_EXTENSIONS,
     TuiEditor,
 } from '@taiga-ui/editor';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-accommodation',
     imports: [
-        NgForOf,
         TuiTable,
         TuiIcon,
         TuiButton,
@@ -68,12 +58,11 @@ import {
         TuiTextfield,
         TuiAppearance,
         TuiCardLarge,
-        AsyncPipe,
-        NgIf,
         TuiFiles,
         TuiEditor,
         TuiGroup,
         TuiCheckbox,
+        RouterLink,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -115,64 +104,34 @@ export class AccommodationComponent implements OnInit {
         'Restaurant',
         'Bar',
         'Action',
+        'Show Accommodation Detail',
     ];
-    protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
-    protected value = '';
-    readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
+    // protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
+    protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
     protected idAccommodationUpdating = '';
 
-    private readonly confirm = inject(TuiConfirmService);
     private readonly dialogs = inject(TuiDialogService);
 
-    protected readonly formCreate = new FormGroup({
-        name: new FormControl(''),
-        city: new FormControl(''),
-        country: new FormControl(''),
-        district: new FormControl(''),
-        image: new FormControl<TuiFileLike | null>(null, Validators.required),
-        description: new FormControl(''),
+    protected formAccommodation = new FormGroup({
+        name: new FormControl('', Validators.required),
+        city: new FormControl('', Validators.required),
+        country: new FormControl('', Validators.required),
+        district: new FormControl('', Validators.required),
+        description: new FormControl('', Validators.required),
         wifi: new FormControl(false),
         airCondition: new FormControl(false),
         tv: new FormControl(false),
-        googleMap: new FormControl(''),
+        googleMap: new FormControl('', Validators.required),
         restaurant: new FormControl(false),
         bar: new FormControl(false),
-        rules: new FormControl(''),
+        rules: new FormControl('', Validators.required),
     });
 
-    protected readonly formUpdate = new FormGroup({
-        name: new FormControl(''),
-        city: new FormControl(''),
-        country: new FormControl(''),
-        district: new FormControl(''),
-        image: new FormControl<TuiFileLike | null>(null, Validators.required),
-        description: new FormControl(''),
-        rating: new FormControl(''),
-        wifi: new FormControl(false),
-        airCondition: new FormControl(false),
-        tv: new FormControl(false),
-        googleMap: new FormControl(''),
-        restaurant: new FormControl(false),
-        bar: new FormControl(false),
-        rules: new FormControl(''),
-    });
+    // protected singleImagePreview: string | null = null;
+    // protected oldImage: string[] | null = null;
 
-    protected readonly failedFiles$ = new Subject<TuiFileLike | null>();
-    protected readonly loadingFiles$ = new Subject<TuiFileLike | null>();
-    protected readonly loadedFiles$ = this.formCreate
-        .get('image')!
-        .valueChanges.pipe(switchMap((file) => this.processFile(file)));
-
-    protected readonly previewUrl$ = this.loadedFiles$.pipe(
-        map((file) => {
-            if (!file) {
-                return null;
-            }
-
-            const objectUrl = URL.createObjectURL(file as File);
-            return this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-        })
-    );
+    // @ViewChild('singleFileInput')
+    // singleFileInput!: ElementRef<HTMLInputElement>;
 
     constructor(
         private accommodationService: AccommodationService,
@@ -185,14 +144,48 @@ export class AccommodationComponent implements OnInit {
         });
     }
 
+    // protected onSingleFileSelected(event: Event): void {
+    //     const input = event.target as HTMLInputElement;
+    //     if (input.files && input.files.length > 0) {
+    //         const file = input.files[0];
+    //         this.formAccommodation.get('image')?.setValue(file);
+
+    //         const reader = new FileReader();
+    //         reader.onload = () => {
+    //             this.removeOldImage();
+    //             this.singleImagePreview = reader.result as string;
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // }
+
+    // protected removeSingleImage(): void {
+    //     this.formAccommodation.get('image')?.reset();
+    //     this.singleImagePreview = null;
+    //     this.resetSingleFileInput();
+    // }
+
+    // protected removeOldImage(): void {
+    //     this.oldImage = null;
+    // }
+
+    // protected resetSingleFileInput(): void {
+    //     if (this.singleFileInput) {
+    //         this.singleFileInput.nativeElement.value = '';
+    //     }
+    // }
+
     protected openDialogCreate(content: PolymorpheusContent): void {
+        this.formAccommodation.reset();
+        // this.singleImagePreview = null
+        // this.oldImage = null
         this.dialogs
             .open(content, {
                 label: 'Create Accommodation',
             })
             .subscribe({
                 complete: () => {
-                    this.formCreate.reset();
+                    this.formAccommodation.reset();
                 },
             });
     }
@@ -201,19 +194,22 @@ export class AccommodationComponent implements OnInit {
         content: PolymorpheusContent,
         accommodation: Accommodation
     ) {
-        this.formUpdate.patchValue({
+        this.formAccommodation.reset();
+        // this.singleImagePreview = null
+        // this.oldImage = null
+
+        this.formAccommodation.patchValue({
             name: accommodation.name,
             city: accommodation.city,
             country: accommodation.country,
             district: accommodation.district,
             description: accommodation.description,
-            rating: accommodation.rating,
             wifi: accommodation.facilities.wifi,
-            airCondition: accommodation.facilities.airCondition,
+            airCondition: accommodation.facilities.air_condition,
             tv: accommodation.facilities.tv,
-            googleMap: accommodation.googleMap,
-            restaurant: accommodation.propertySurrounds.restaurant,
-            bar: accommodation.propertySurrounds.bar,
+            googleMap: accommodation.google_map,
+            restaurant: accommodation.property_surrounds.restaurant,
+            bar: accommodation.property_surrounds.bar,
             rules: accommodation.rules,
         });
 
@@ -225,7 +221,7 @@ export class AccommodationComponent implements OnInit {
             })
             .subscribe({
                 complete: () => {
-                    this.formUpdate.reset();
+                    this.formAccommodation.reset();
                 },
             });
     }
@@ -234,71 +230,32 @@ export class AccommodationComponent implements OnInit {
         return this.sanitizer.bypassSecurityTrustHtml(html);
     }
 
-    protected removeFile(): void {
-        this.formCreate.get('image')!.setValue(null);
-    }
-
-    protected processFile(
-        file: TuiFileLike | null
-    ): Observable<TuiFileLike | null> {
-        this.failedFiles$.next(null);
-
-        if (this.formCreate.get('image')!.invalid || !file) {
-            return of(null);
-        }
-
-        this.loadingFiles$.next(file);
-
-        return timer(1000).pipe(
-            map(() => {
-                return file;
-            }),
-            finalize(() => this.loadingFiles$.next(null))
-        );
-    }
-
-    protected get imageControl(): FormControl {
-        return this.formCreate.get('image') as FormControl;
-    }
-
-    async addDefaultImage(url: string): Promise<TuiFileLike> {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], url, { type: blob.type });
-        return {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            src: URL.createObjectURL(file),
-        };
-    }
-
     protected createAccommodation() {
-        const facilities: Facilities = {
-            airCondition: this.formCreate.get('airCondition')?.value || false,
-            tv: this.formCreate.get('tv')?.value || false,
-            wifi: this.formCreate.get('wifi')?.value || false,
-        };
-
-        const propertySurrounds: PropertySurroundings = {
-            bar: this.formCreate.get('bar')?.value || false,
-            restaurant: this.formCreate.get('restaurant')?.value || false,
-        };
-
-        const file = this.formCreate.get('image')?.value;
-
         const accommodation: CreateAccommodation = {
-            name: this.formCreate.get('name')?.value || '',
-            city: this.formCreate.get('city')?.value || '',
-            country: this.formCreate.get('country')?.value || '',
-            description: this.formCreate.get('description')?.value || '',
-            district: this.formCreate.get('district')?.value || '',
-            facilities: facilities,
-            googleMap: this.formCreate.get('googleMap')?.value || '',
-            image: file ? [file as File] : [],
-            propertySurrounds: propertySurrounds,
-            rules: this.formCreate.get('rules')?.value || '',
+            name: this.formAccommodation.get('name')?.value || '',
+            city: this.formAccommodation.get('city')?.value || '',
+            country: this.formAccommodation.get('country')?.value || '',
+            description: this.formAccommodation.get('description')?.value || '',
+            district: this.formAccommodation.get('district')?.value || '',
+            facilities: {
+                air_condition:
+                    this.formAccommodation.get('airCondition')?.value || false,
+                tv: this.formAccommodation.get('tv')?.value || false,
+                wifi: this.formAccommodation.get('wifi')?.value || false,
+            },
+            google_map: this.formAccommodation.get('googleMap')?.value || '',
+            property_surrounds: {
+                bar: this.formAccommodation.get('bar')?.value || false,
+                restaurant:
+                    this.formAccommodation.get('restaurant')?.value || false,
+            },
+            rules: this.formAccommodation.get('rules')?.value || '',
         };
+
+        if (this.formAccommodation.invalid) {
+            this.formAccommodation.markAllAsTouched();
+            return;
+        }
 
         this.accommodationService
             .createAccommodation(accommodation)
@@ -308,34 +265,27 @@ export class AccommodationComponent implements OnInit {
     }
 
     protected updateAccommodation() {
-        const facilities: Facilities = {
-            airCondition: this.formUpdate.get('airCondition')?.value || false,
-            tv: this.formUpdate.get('tv')?.value || false,
-            wifi: this.formUpdate.get('wifi')?.value || false,
-        };
-
-        const propertySurrounds: PropertySurroundings = {
-            bar: this.formUpdate.get('bar')?.value || false,
-            restaurant: this.formUpdate.get('restaurant')?.value || false,
-        };
-
-        const file = this.formUpdate.get('image')?.value;
-
         const accommodation: UpdateAccommodation = {
             id: this.idAccommodationUpdating,
-            name: this.formUpdate.get('name')?.value || '',
-            city: this.formUpdate.get('city')?.value || '',
-            country: this.formUpdate.get('country')?.value || '',
-            description: this.formUpdate.get('description')?.value || '',
-            district: this.formUpdate.get('district')?.value || '',
-            facilities: facilities,
-            googleMap: this.formUpdate.get('googleMap')?.value || '',
-            image: file ? [file as File] : [],
-            propertySurrounds: propertySurrounds,
-            rules: this.formUpdate.get('rules')?.value || '',
+            name: this.formAccommodation.get('name')?.value || '',
+            city: this.formAccommodation.get('city')?.value || '',
+            country: this.formAccommodation.get('country')?.value || '',
+            description: this.formAccommodation.get('description')?.value || '',
+            district: this.formAccommodation.get('district')?.value || '',
+            facilities: {
+                air_condition:
+                    this.formAccommodation.get('airCondition')?.value || false,
+                tv: this.formAccommodation.get('tv')?.value || false,
+                wifi: this.formAccommodation.get('wifi')?.value || false,
+            },
+            google_map: this.formAccommodation.get('googleMap')?.value || '',
+            property_surrounds: {
+                bar: this.formAccommodation.get('bar')?.value || false,
+                restaurant:
+                    this.formAccommodation.get('restaurant')?.value || false,
+            },
+            rules: this.formAccommodation.get('rules')?.value || '',
         };
-
-        console.log(accommodation);
 
         this.accommodationService
             .updateAccommodation(accommodation)
@@ -353,12 +303,10 @@ export class AccommodationComponent implements OnInit {
     }
 
     protected deleteAccommodation(id: string) {
-        this.accommodationService
-            .deleteAccommodation(id)
-            .subscribe((response) => {
-                this.accommodations = this.accommodations.filter(
-                    (accommodation) => accommodation.id !== id
-                );
-            });
+        this.accommodationService.deleteAccommodation(id).subscribe((_) => {
+            this.accommodations = this.accommodations.filter(
+                (accommodation) => accommodation.id !== id
+            );
+        });
     }
 }

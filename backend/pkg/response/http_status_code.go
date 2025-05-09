@@ -57,6 +57,12 @@ const (
 	ErrCodeDeleteAccommodationFailed  = 80010
 	ErrCodeDeleteAccommodationSuccess = 80011
 
+	// accommodation image
+	ErrCodeGetAccommodationImagesFailed    = 800012
+	ErrCodeGetAccommodationImagesSuccess   = 800013
+	ErrCodeDeleteAccommodationImagesFailed = 800014
+	ErrCodeSaveAccommodationImagesFailed   = 800015
+
 	// accommodation detail
 	ErrCodeCreateAccommodationDetailFailed  = 90001
 	ErrCodeCreateAccommodationDetailSuccess = 90002
@@ -69,17 +75,25 @@ const (
 	ErrCodeDeleteAccommodationDetailFailed  = 90010
 	ErrCodeDeleteAccommodationDetailSuccess = 90011
 
+	// accommodation detail image
+	ErrCodeGetAccommodationDetailImagesFailed    = 900012
+	ErrCodeGetAccommodationDetailImagesSuccess   = 900013
+	ErrCodeDeleteAccommodationDetailImagesFailed = 900014
+	ErrCodeSaveAccommodationDetailImagesFailed   = 900015
+
 	// file
-	ErrCodeOpenFileFailed   = 100001
-	ErrCodeReadFileFailed   = 100002
-	ErrCodeInvalidFileType  = 100003
-	ErrCodeSaveFileSuccess  = 100004
-	ErrCodeSaveFileFailed   = 100005
-	ErrCodeGetFilesFailed   = 100006
-	ErrCodeDeleteFileFailed = 100007
+	ErrCodeOpenFileFailed     = 100001
+	ErrCodeReadFileFailed     = 100002
+	ErrCodeInvalidFileType    = 100003
+	ErrCodeGetFilesFailed     = 100006
+	ErrCodeDeleteFileFailed   = 100007
+	ErrCodeCreateFolderFailed = 100008
+	ErrCodeUploadFileSuccess  = 100009
+	ErrCodeUploadFileFailed   = 100010
 
 	// manager
 	ErrCodeUpdateManagerFailed = 110001
+	ErrCodeGetManagerFailed    = 110002
 )
 
 var message = map[int]string{
@@ -139,6 +153,12 @@ var message = map[int]string{
 	ErrCodeDeleteAccommodationFailed:  "Delete accommodation failed",
 	ErrCodeDeleteAccommodationSuccess: "Delete accommodation successfully",
 
+	// accommodation image
+	ErrCodeGetAccommodationImagesFailed:    "Get images of accommodation failed",
+	ErrCodeDeleteAccommodationImagesFailed: "Delete images of accommodation failed",
+	ErrCodeGetAccommodationImagesSuccess:   "Get images of accommodation success",
+	ErrCodeSaveAccommodationImagesFailed:   "Save images of accommodation failed",
+
 	// accommodation detail
 	ErrCodeCreateAccommodationDetailFailed:  "Create accommodation details failed",
 	ErrCodeCreateAccommodationDetailSuccess: "Create accommodation details successfully",
@@ -151,15 +171,23 @@ var message = map[int]string{
 	ErrCodeDeleteAccommodationDetailFailed:  "Delete accommodation detail failed",
 	ErrCodeDeleteAccommodationDetailSuccess: "Delete accommodation detail successfully",
 
+	// accommodation detail image
+	ErrCodeGetAccommodationDetailImagesFailed:    "Get images of accommodation detail failed",
+	ErrCodeDeleteAccommodationDetailImagesFailed: "Delete images of accommodation detail failed",
+	ErrCodeGetAccommodationDetailImagesSuccess:   "Get images of accommodation detail success",
+	ErrCodeSaveAccommodationDetailImagesFailed:   "Save images of accommodation detail failed",
+
 	// file
-	ErrCodeOpenFileFailed:   "Open file failed",
-	ErrCodeReadFileFailed:   "Read file failed",
-	ErrCodeInvalidFileType:  "Invalid file type",
-	ErrCodeSaveFileSuccess:  "Save file successfully",
-	ErrCodeSaveFileFailed:   "Save file failed",
-	ErrCodeGetFilesFailed:   "Get files failed",
-	ErrCodeDeleteFileFailed: "Delete file failed",
+	ErrCodeOpenFileFailed:     "Open file failed",
+	ErrCodeReadFileFailed:     "Read file failed",
+	ErrCodeInvalidFileType:    "Invalid file type",
+	ErrCodeGetFilesFailed:     "Get files failed",
+	ErrCodeDeleteFileFailed:   "Delete file failed",
+	ErrCodeCreateFolderFailed: "Create folder failed",
+	ErrCodeUploadFileSuccess:  "Upload files success",
+	ErrCodeUploadFileFailed:   "Upload files failed",
 
 	// manager
 	ErrCodeUpdateManagerFailed: "Update manager failed",
+	ErrCodeGetManagerFailed:    "Get manager failed",
 }

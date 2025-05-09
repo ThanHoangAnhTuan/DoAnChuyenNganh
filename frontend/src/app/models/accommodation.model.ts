@@ -1,7 +1,7 @@
 // get accommodations
 export interface Facilities {
     wifi: boolean;
-    airCondition: boolean;
+    air_condition: boolean;
     tv: boolean;
 }
 
@@ -12,17 +12,16 @@ export interface PropertySurroundings {
 
 export interface Accommodation {
     id: string;
-    managerId: string;
+    manager_id: string;
     name: string;
     city: string;
     country: string;
     district: string;
-    image: string;
     description: string;
     rating: string;
     facilities: Facilities;
-    googleMap: string;
-    propertySurrounds: PropertySurroundings;
+    google_map: string;
+    property_surrounds: PropertySurroundings;
     rules: string;
 }
 
@@ -40,10 +39,9 @@ export interface CreateAccommodation {
     district: string;
     description: string;
     facilities: Facilities;
-    googleMap: string;
-    propertySurrounds: PropertySurroundings;
+    google_map: string;
+    property_surrounds: PropertySurroundings;
     rules: string;
-    image: File[];
 }
 
 export interface CreateAccommodationResponse {
@@ -61,10 +59,9 @@ export interface UpdateAccommodation {
     district: string;
     description: string;
     facilities: Facilities;
-    googleMap: string;
-    propertySurrounds: PropertySurroundings;
+    google_map: string;
+    property_surrounds: PropertySurroundings;
     rules: string;
-    image: File[];
 }
 export interface UpdateAccommodationResponse {
     data: Accommodation;
@@ -76,4 +73,20 @@ export interface DeleteAccommodationResponse {
     data: null;
     code: number;
     message: string;
+}
+
+// manager
+export interface ManagerLoginInput{
+    account: string
+    password: string
+}
+
+export interface ManagerLoginOutput{
+    code: number,
+    message: string,
+    data: {
+        token: string,
+        account: string,
+        userName: string
+    }
 }

@@ -1,7 +1,0 @@
-POST http://localhost:8080/v1/user/register
-Content-Type: application/json
-
-{
-    "email": "honghan@gmail.com",
-    "purpose": "TEST_USER"
-}

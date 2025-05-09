@@ -65,7 +65,7 @@ func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) 
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save manager info to redis failed: %s", err)
 	}
 
-	out.Token, err = auth.CreateToken(userManager.ID)
+	out.Token, err = auth.CreateToken(userManager.ID, global.Manager)
 	if err != nil {
 		return response.ErrCodeCreateJWTTokenFailed, nil, fmt.Errorf("error for create token failed: %s", err)
 	}

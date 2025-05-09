@@ -7,7 +7,6 @@ INSERT INTO
         `name`,
         `city`,
         `district`,
-        `image`,
         `description`,
         `facilities`,
         `gg_map`,
@@ -17,7 +16,7 @@ INSERT INTO
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetAccommodations :many
 SELECT
@@ -27,7 +26,6 @@ SELECT
     `name`,
     `city`,
     `district`,
-    `image`,
     `description`,
     `facilities`,
     `gg_map`,
@@ -47,7 +45,6 @@ SELECT
     `name`,
     `city`,
     `district`,
-    `image`,
     `description`,
     `facilities`,
     `gg_map`,
@@ -68,7 +65,6 @@ SELECT
     `name`,
     `city`,
     `district`,
-    `image`,
     `description`,
     `facilities`,
     `gg_map`,
@@ -88,7 +84,6 @@ SET
     `name` = ?,
     `city` = ?,
     `district` = ?,
-    `image` = ?,
     `description` = ?,
     `facilities` = ?,
     `gg_map` = ?,

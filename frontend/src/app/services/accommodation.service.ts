@@ -11,10 +11,6 @@ import {
     DeleteAccommodationResponse,
 } from '../models/accommodation.model';
 import { environment } from '../../environments/environment';
-import {
-    facilitiesToSnakeCase,
-    propertySurroundsToSnakeCase,
-} from '../shared/utils/case-converters';
 
 @Injectable({
     providedIn: 'root',
@@ -26,70 +22,62 @@ export class AccommodationService {
 
     getAccommodations(): Observable<GetAccommodationResponse> {
         return this.http.get<GetAccommodationResponse>(
-            this.apiUrl + 'get-accommodations'
+            this.apiUrl + 'get-accommodations-by-manager'
         );
     }
 
     createAccommodation(
         accommodation: CreateAccommodation
     ): Observable<CreateAccommodationResponse> {
-        const formData = new FormData();
-        formData.append('name', accommodation.name);
-        formData.append('country', accommodation.country);
-        formData.append('city', accommodation.city);
-        formData.append('district', accommodation.district);
-        formData.append('description', accommodation.description);
-        formData.append(
-            'facilities',
-            JSON.stringify(facilitiesToSnakeCase(accommodation.facilities))
-        );
-        formData.append('google_map', accommodation.googleMap);
-        formData.append(
-            'property_surrounds',
-            JSON.stringify(
-                propertySurroundsToSnakeCase(accommodation.propertySurrounds)
-            )
-        );
-        formData.append('rules', accommodation.rules);
-        accommodation.image.forEach((file) => {
-            formData.append('image', file, file.name);
-        });
-        console.log(Object.fromEntries(formData.entries()));
+        const newAccommodation: CreateAccommodation = {
+            name: accommodation.name,
+            city: accommodation.city,
+            country: accommodation.country,
+            description: accommodation.description,
+            district: accommodation.district,
+            facilities: {
+                air_condition: accommodation.facilities.air_condition,
+                tv: accommodation.facilities.tv,
+                wifi: accommodation.facilities.wifi,
+            },
+            google_map: accommodation.google_map,
+            property_surrounds: {
+                bar: accommodation.property_surrounds.bar,
+                restaurant: accommodation.property_surrounds.restaurant,
+            },
+            rules: accommodation.rules,
+        };
         return this.http.post<CreateAccommodationResponse>(
             this.apiUrl + 'create-accommodation',
-            formData
+            newAccommodation
         );
     }
 
     updateAccommodation(
         accommodation: UpdateAccommodation
     ): Observable<UpdateAccommodationResponse> {
-        const formData = new FormData();
-        formData.append('id', accommodation.id.toString());
-        formData.append('name', accommodation.name);
-        formData.append('country', accommodation.country);
-        formData.append('city', accommodation.city);
-        formData.append('district', accommodation.district);
-        formData.append('description', accommodation.description);
-        formData.append(
-            'facilities',
-            JSON.stringify(facilitiesToSnakeCase(accommodation.facilities))
-        );
-        formData.append('google_map', accommodation.googleMap);
-        formData.append(
-            'property_surrounds',
-            JSON.stringify(
-                propertySurroundsToSnakeCase(accommodation.propertySurrounds)
-            )
-        );
-        formData.append('rules', accommodation.rules);
-        accommodation.image.forEach((file) => {
-            formData.append('image', file, file.name);
-        });
-        console.log(Object.fromEntries(formData.entries()));
+        const newAccommodation: UpdateAccommodation = {
+            id: accommodation.id,
+            name: accommodation.name,
+            city: accommodation.city,
+            country: accommodation.country,
+            description: accommodation.description,
+            district: accommodation.district,
+            facilities: {
+                air_condition: accommodation.facilities.air_condition,
+                tv: accommodation.facilities.tv,
+                wifi: accommodation.facilities.wifi,
+            },
+            google_map: accommodation.google_map,
+            property_surrounds: {
+                bar: accommodation.property_surrounds.bar,
+                restaurant: accommodation.property_surrounds.restaurant,
+            },
+            rules: accommodation.rules,
+        };
         return this.http.put<UpdateAccommodationResponse>(
             this.apiUrl + 'update-accommodation',
-            formData
+            newAccommodation
         );
     }
 

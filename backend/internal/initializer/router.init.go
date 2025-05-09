@@ -29,6 +29,7 @@ func InitRouter() *gin.Engine {
 	managerRouter := routers.RouterGroupApp.Manager
 	accommodationRouter := routers.RouterGroupApp.Accommodation
 	accommodationDetailRouter := routers.RouterGroupApp.AccommodationDetail
+	imageRouter := routers.RouterGroupApp.Image
 
 	MainGroup := r.Group("api/v1")
 	{
@@ -45,6 +46,9 @@ func InitRouter() *gin.Engine {
 	}
 	{
 		accommodationDetailRouter.InitAccommodationDetailRouter(MainGroup)
+	}
+	{
+		imageRouter.InitImageRouter(MainGroup)
 	}
 	return r
 }

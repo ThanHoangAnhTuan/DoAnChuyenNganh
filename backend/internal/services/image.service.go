@@ -1,29 +1,28 @@
 package services
 
 import (
-	"mime/multipart"
-
 	"github.com/gin-gonic/gin"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 )
 
 type (
-	IImage interface {
-		UploadImages(ctx *gin.Context, images []*multipart.FileHeader) (savedImagePaths []string, err error)
+	IUploadImage interface {
+		UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error)
 		DeleteImage(ctx *gin.Context, fileName string) (err error)
 	}
 )
 
 var (
-	localImage IImage
+	localUploadImage IUploadImage
 )
 
-func Image() IImage {
-	if localImage == nil {
-		panic("Implement localImage not found for interface IImage")
+func UploadImage() IUploadImage {
+	if localUploadImage == nil {
+		panic("Implement localUploadImage not found for interface IUploadImage")
 	}
-	return localImage
+	return localUploadImage
 }
 
-func InitImage(i IImage) {
-	localImage = i
+func InitImage(i IUploadImage) {
+	localUploadImage = i
 }
