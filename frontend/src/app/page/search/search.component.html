@@ -1,3 +1,6 @@
+<app-navbar />
+<app-search-box />
+
 <main class="main">
     <div class="google-map-container">
         <iframe
@@ -19,18 +22,20 @@
     </div>
 
     <div class="search-results-container">
-        <p class="title">{{ searchCity }}</p>
+        <p class="title">{{ cityName }}: tìm thấy {{ accommodations.length }} chỗ nghỉ</p>
 
         <div class="accommodation-container" *ngFor="let accommodation of accommodations">
             <div class="accommodation-item">
                 <div *ngFor="let image of accommodation.images.slice(0, 1)" class="accommodation-image-container">
                     <img [src]="image" [alt]="accommodation.name" class="accommodation-image"
-                        [routerLink]="['/search/accommodation/detail', accommodation.name]">
+                        [routerLink]="['/search/accommodation/detail']"
+                        [queryParams]="{ id: accommodation.id, name: accommodation.name }">
                     <input tuiLike="var(--tui-status-negative)" type="checkbox" class="favourite-button" />
                 </div>
 
                 <div class="accommodation-content">
-                    <p class="accommodation-name" [routerLink]="['/search/accommodation/detail', accommodation.name]">{{
+                    <p class="accommodation-name" [routerLink]="['/search/accommodation/detail']"
+                        [queryParams]="{ id: accommodation.id, name: accommodation.name }">{{
                         accommodation.name }}</p>
                 </div>
             </div>

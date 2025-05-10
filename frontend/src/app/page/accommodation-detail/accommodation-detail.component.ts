@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, Injector, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AccommodationDetailService } from '../../services/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
@@ -16,10 +16,12 @@ import SearchBoxComponent from "../../components/search-box/search-box.component
 })
 export class AccommodationDetailComponent implements OnInit {
   accommodation: any;
+  accommodationId: string = '';
+  accommodationName: string = '';
   isModalOpen: boolean = false;
   windowWidth: number = 0;
-  showFull = false;
-  isMobile = false;
+  showFull: boolean = false;
+  isMobile: boolean = false;
 
   constructor(private accommodationDetailService: AccommodationDetailService, private route: ActivatedRoute) {
     this.windowWidth = window.innerWidth;
@@ -33,13 +35,16 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const name = this.route.snapshot.paramMap.get('name');
+    this.route.queryParams.subscribe(params => {
+      this.accommodationId = params['id'];
+      this.accommodationName = params['name'];
 
-    if (name) {
-      this.getAccommodationByName(name);
-    } else {
-      console.error('City param is missing in URL');
-    }
+      if (this.accommodationId != null && this.accommodationId !== '') {
+        this.getAccommodationByName(this.accommodationName);
+      } else {
+        console.error('City param is missing in URL');
+      }
+    });
   };
 
   getAccommodationByName(name: string) {
@@ -61,7 +66,7 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   updateDescription() {
-    if(this.windowWidth <= 768) {
+    if (this.windowWidth <= 768) {
       this.showFull = false;
       this.isMobile = true
     } else {

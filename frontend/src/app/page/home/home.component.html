@@ -10,9 +10,9 @@
             Các lựa chọn phổ biến nhất cho du khách từ Việt Nam
         </p>
         <div class="trending-content">
-            <div class="trending-place" *ngFor="let place of trendinPlaces"
-                [routerLink]="['/search/accommodation', place.name]">
-                <img src="images/trending-places/{{ place.image }}" alt="{{ place.alt }}" class="trending-image" />
+            <div class="trending-place" *ngFor="let place of trendingPlaces" [routerLink]="['/search/accommodation']"
+                [queryParams]="{ id: place.id, name: place.name }">
+                <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}
                     <img src="images/flags/vn.png" alt="vietnamese flag" class="trending-flag" />

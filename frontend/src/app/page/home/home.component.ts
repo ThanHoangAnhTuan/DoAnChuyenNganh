@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  trendinPlaces: any[] = [];
+  trendingPlaces: any[] = [];
   explorePaces: any[] = [];
   windowWidth: number = 0;
   showPlaceTypeList: number = 0;
@@ -46,12 +46,12 @@ export class HomeComponent {
   ];
 
   constructor() {
-    this.trendinPlaces = [
-      { name: 'Hồ Chí Minh', image: 'ho-chi-minh-city.jpg', alt: 'trending place 1' },
-      { name: 'Hà Nội', image: 'ha-noi.jpg', alt: 'trending place 2' },
-      { name: 'Đà Nẵng', image: 'da-nang.jpg', alt: 'trending place 3' },
-      { name: 'Đà Lạt', image: 'da-lat.jpg', alt: 'trending place 4' },
-      { name: 'Vũng Tàu', image: 'vung-tau.jpg', alt: 'trending place 5' },
+    this.trendingPlaces = [
+      { id: 1 ,name: 'Hồ Chí Minh', image: 'ho-chi-minh-city.jpg' },
+      { id: 2, name: 'Hà Nội', image: 'ha-noi.jpg' },
+      { id: 3, name: 'Đà Nẵng', image: 'da-nang.jpg' },
+      { id: 4, name: 'Đà Lạt', image: 'da-lat.jpg' },
+      { id: 5, name: 'Vũng Tàu', image: 'vung-tau.jpg' },
     ];
 
     this.explorePaces = [
