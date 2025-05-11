@@ -1,237 +1,244 @@
 <main>
-    <button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
+    <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="openDialogCreate(createForm)"
+    >
         New
     </button>
 
-<table tuiTable class="table" [columns]="columns" [style.width.%]="100">
-    <thead>
-        <tr tuiThGroup></tr>
-    </thead>
-    <tbody tuiTbody>
-        @for(accommodation of accommodations; track accommodation.id) {
-        <tr tuiTr>
-            <td *tuiCell="'ID'" tuiTd>
-                {{ accommodation.id }}
-            </td>
-            <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
-                {{ accommodation.manager_id }}
-            </td>
-            <td *tuiCell="'Name'" tuiTd>
-                {{ accommodation.name }}
-            </td>
-            <td *tuiCell="'City'" tuiTd>
-                {{ accommodation.city }}
-            </td>
-            <td *tuiCell="'Country'" tuiTd>
-                {{ accommodation.country }}
-            </td>
-            <td *tuiCell="'District'" tuiTd>
-                {{ accommodation.district }}
-            </td>
-            <td *tuiCell="'Image'" tuiTd>
-                <a
-                    class="button"
-                    target="_blank"
-                    [routerLink]="[
-                        '/manager/accommodation/',
-                        accommodation.id,
-                        'images'
-                    ]"
-                    >Quản lý hình ảnh</a
-                >
-            </td>
-            <td
-                *tuiCell="'Description'"
-                tuiTd
-                [innerHTML]="getDescription(accommodation.description)"
-            ></td>
-
-            <td *tuiCell="'Rating'" tuiTd>
-                {{ accommodation.rating }}
-            </td>
-            <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
-                {{ accommodation.google_map }}
-            </td>
-            <td *tuiCell="'Rules'" tuiTd>
-                {{ accommodation.rules }}
-            </td>
-
-            <td *tuiCell="'Wifi'" tuiTd>
-                @if (accommodation.facilities.wifi) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td class="text-nowrap" *tuiCell="'Air Condition'" tuiTd>
-                @if (accommodation.facilities.air_condition) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td *tuiCell="'TV'" tuiTd>
-                @if (accommodation.facilities.tv) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td *tuiCell="'Restaurant'" tuiTd>
-                @if (accommodation.property_surrounds.restaurant) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td *tuiCell="'Bar'" tuiTd>
-                @if (accommodation.property_surrounds.bar) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td *tuiCell="'Action'" tuiTd>
-                <span tuiStatus style="display: flex">
-                    <button
-                        appearance="primary"
-                        iconStart="@tui.pencil"
-                        size="xs"
-                        tuiIconButton
-                        type="button"
-                        [style.border-radius.%]="100"
-                        [style.background]="'white'"
-                        [style.color]="'blue'"
-                        (click)="openDialogUpdate(updateForm, accommodation)"
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+        <tbody tuiTbody>
+            @for(accommodation of accommodations; track accommodation.id) {
+            <tr tuiTr>
+                <td *tuiCell="'ID'" tuiTd>
+                    {{ accommodation.id }}
+                </td>
+                <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
+                    {{ accommodation.manager_id }}
+                </td>
+                <td *tuiCell="'Name'" tuiTd>
+                    {{ accommodation.name }}
+                </td>
+                <td *tuiCell="'City'" tuiTd>
+                    {{ accommodation.city }}
+                </td>
+                <td *tuiCell="'Country'" tuiTd>
+                    {{ accommodation.country }}
+                </td>
+                <td *tuiCell="'District'" tuiTd>
+                    {{ accommodation.district }}
+                </td>
+                <td *tuiCell="'Image'" tuiTd>
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
+                            '/manager/accommodation/',
+                            accommodation.id,
+                            'images'
+                        ]"
+                        >Quản lý hình ảnh</a
                     >
-                        Edit
-                    </button>
-                    <button
-                        appearance="action"
-                        iconStart="@tui.trash"
-                        size="xs"
-                        tuiIconButton
-                        type="button"
-                        [style.border-radius.%]="100"
-                        [style.color]="'red'"
-                        (click)="deleteAccommodation(accommodation.id)"
+                </td>
+                <td
+                    *tuiCell="'Description'"
+                    tuiTd
+                    [innerHTML]="getDescription(accommodation.description)"
+                ></td>
+
+                <td *tuiCell="'Rating'" tuiTd>
+                    {{ accommodation.rating }}
+                </td>
+                <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
+                    {{ accommodation.google_map }}
+                </td>
+                <td *tuiCell="'Rules'" tuiTd>
+                    {{ accommodation.rules }}
+                </td>
+
+                <td *tuiCell="'Wifi'" tuiTd>
+                    @if (accommodation.facilities.wifi) {
+                    <tui-icon icon="@tui.check" [style.color]="'green'" />
+                    }@else {
+                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
+                    }
+                </td>
+                <td class="text-nowrap" *tuiCell="'Air Condition'" tuiTd>
+                    @if (accommodation.facilities.air_condition) {
+                    <tui-icon icon="@tui.check" [style.color]="'green'" />
+                    }@else {
+                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
+                    }
+                </td>
+                <td *tuiCell="'TV'" tuiTd>
+                    @if (accommodation.facilities.tv) {
+                    <tui-icon icon="@tui.check" [style.color]="'green'" />
+                    }@else {
+                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
+                    }
+                </td>
+                <td *tuiCell="'Restaurant'" tuiTd>
+                    @if (accommodation.property_surrounds.restaurant) {
+                    <tui-icon icon="@tui.check" [style.color]="'green'" />
+                    }@else {
+                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
+                    }
+                </td>
+                <td *tuiCell="'Bar'" tuiTd>
+                    @if (accommodation.property_surrounds.bar) {
+                    <tui-icon icon="@tui.check" [style.color]="'green'" />
+                    }@else {
+                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
+                    }
+                </td>
+                <td *tuiCell="'Action'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            (click)="
+                                openDialogUpdate(updateForm, accommodation)
+                            "
+                        >
+                            Edit
+                        </button>
+                        <button
+                            appearance="action"
+                            iconStart="@tui.trash"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.color]="'red'"
+                            (click)="deleteAccommodation(accommodation.id)"
+                        >
+                            Delete
+                        </button>
+                    </span>
+                </td>
+                <td *tuiCell="'Show Accommodation Detail'" tuiTd>
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
+                            '/manager/accommodation/',
+                            accommodation.id,
+                            'details'
+                        ]"
+                        >Show</a
                     >
-                        Delete
-                    </button>
-                </span>
-            </td>
-            <td *tuiCell="'Show Accommodation Detail'" tuiTd>
-                <a
-                    class="button"
-                    target="_blank"
-                    [routerLink]="[
-                        '/manager/accommodation/',
-                        accommodation.id,
-                        'details'
-                    ]"
-                    >Show</a
-                >
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 
-<ng-template #createForm>
-    <form
-        tuiCardLarge
-        [formGroup]="formAccommodation"
-        [style.max-width.rem]="32"
-        [style.padding.px]="5"
-        (ngSubmit)="createAccommodation()"
-    >
-        <tui-textfield>
-            <label tuiLabel>Name</label>
-            <input formControlName="name" placeholder="Name" tuiTextfield />
-            @if(formAccommodation.get('name')?.invalid &&
-            formAccommodation.get('name')?.touched) {
-            <div>
-                <small class="text-red-500">Name is required</small>
-            </div>
-            }
-        </tui-textfield>
+    <ng-template #createForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formAccommodation"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="createAccommodation()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Name</label>
+                <input formControlName="name" placeholder="Name" tuiTextfield />
+                @if(formAccommodation.get('name')?.invalid &&
+                formAccommodation.get('name')?.touched) {
+                <div>
+                    <small class="text-red-500">Name is required</small>
+                </div>
+                }
+            </tui-textfield>
 
-        <tui-textfield>
-            <label tuiLabel>City</label>
-            <input formControlName="city" placeholder="City" tuiTextfield />
-            @if(formAccommodation.get('city')?.invalid &&
-            formAccommodation.get('city')?.touched) {
+            <tui-textfield>
+                <label tuiLabel>City</label>
+                <input formControlName="city" placeholder="City" tuiTextfield />
+                @if(formAccommodation.get('city')?.invalid &&
+                formAccommodation.get('city')?.touched) {
+                <div>
+                    <small class="text-red-500">City is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Country</label>
+                <input
+                    formControlName="country"
+                    placeholder="Country"
+                    tuiTextfield
+                />
+                @if(formAccommodation.get('country')?.invalid &&
+                formAccommodation.get('country')?.touched) {
+                <div>
+                    <small class="text-red-500">Country is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>District</label>
+                <input
+                    formControlName="district"
+                    placeholder="District"
+                    tuiTextfield
+                />
+                @if(formAccommodation.get('district')?.invalid &&
+                formAccommodation.get('district')?.touched) {
+                <div>
+                    <small class="text-red-500">District is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Rules</label>
+                <input
+                    formControlName="rules"
+                    placeholder="Rules"
+                    tuiTextfield
+                />
+                @if(formAccommodation.get('rules')?.invalid &&
+                formAccommodation.get('rules')?.touched) {
+                <div>
+                    <small class="text-red-500">Rules is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Google map</label>
+                <input
+                    formControlName="googleMap"
+                    placeholder="Google Map"
+                    tuiTextfield
+                />
+                @if(formAccommodation.get('googleMap')?.invalid &&
+                formAccommodation.get('googleMap')?.touched) {
+                <div>
+                    <small class="text-red-500">Google map is required</small>
+                </div>
+                }
+            </tui-textfield>
             <div>
-                <small class="text-red-500">City is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Country</label>
-            <input
-                formControlName="country"
-                placeholder="Country"
-                tuiTextfield
-            />
-            @if(formAccommodation.get('country')?.invalid &&
-            formAccommodation.get('country')?.touched) {
-            <div>
-                <small class="text-red-500">Country is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>District</label>
-            <input
-                formControlName="district"
-                placeholder="District"
-                tuiTextfield
-            />
-            @if(formAccommodation.get('district')?.invalid &&
-            formAccommodation.get('district')?.touched) {
-            <div>
-                <small class="text-red-500">District is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Rules</label>
-            <input formControlName="rules" placeholder="Rules" tuiTextfield />
-            @if(formAccommodation.get('rules')?.invalid &&
-            formAccommodation.get('rules')?.touched) {
-            <div>
-                <small class="text-red-500">Rules is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Google map</label>
-            <input
-                formControlName="googleMap"
-                placeholder="Google Map"
-                tuiTextfield
-            />
-            @if(formAccommodation.get('googleMap')?.invalid &&
-            formAccommodation.get('googleMap')?.touched) {
-            <div>
-                <small class="text-red-500">Google map is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <div>
-            <label tuiLabel>Description</label>
-            <tui-editor formControlName="description" [tools]="tools">
-            </tui-editor>
-            @if(formAccommodation.get('description')?.invalid &&
-            formAccommodation.get('description')?.touched) {
-            <div>
-                <small class="text-red-500">Description is required</small>
-            </div>
-            }
-        </div>
-        <div>
-            <div class="tui-space_bottom-2">
-                <label>Facilities</label>
+                <label tuiLabel>Description</label>
+                <tui-editor formControlName="description" [tools]="tools">
+                </tui-editor>
+                @if(formAccommodation.get('description')?.invalid &&
+                formAccommodation.get('description')?.touched) {
+                <div>
+                    <small class="text-red-500">Description is required</small>
+                </div>
+                }
             </div>
             <div>
                 <div class="tui-space_bottom-2">
@@ -239,15 +246,223 @@
                 </div>
                 <div tuiGroup>
                     <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="wifi" class="mr-8" />
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="wifi"
+                            class="mr-8"
+                        />
                         Wifi
                     </label>
                     <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="airCondition" class="mr-8" />
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="airCondition"
+                            class="mr-8"
+                        />
                         Air Condition
                     </label>
                     <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="tv" class="mr-8" />
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="tv"
+                            class="mr-8"
+                        />
+                        TV
+                    </label>
+                </div>
+                <div>
+                    <div class="tui-space_bottom-2">
+                        <label>Property Surrounds</label>
+                    </div>
+                    <div tuiGroup>
+                        <label class="flex items-center">
+                            <input
+                                size="m"
+                                tuiCheckbox
+                                type="checkbox"
+                                formControlName="restaurant"
+                                class="mr-8"
+                            />
+                            Restaurant
+                        </label>
+                        <label class="flex items-center">
+                            <input
+                                size="m"
+                                tuiCheckbox
+                                type="checkbox"
+                                formControlName="bar"
+                                class="mr-8"
+                            />
+                            Bar
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="bar"
+                            class="mr-8"
+                        />
+                        Bar
+                    </label>
+                </div>
+            </div>
+            <footer>
+                <button tuiButton type="submit">Submit</button>
+            </footer>
+        </form>
+    </ng-template>
+
+    <ng-template #updateForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formAccommodation"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="updateAccommodation()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Name</label>
+                <input formControlName="name" placeholder="Name" tuiTextfield />
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>City</label>
+                <input formControlName="city" placeholder="City" tuiTextfield />
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Country</label>
+                <input
+                    formControlName="country"
+                    placeholder="Country"
+                    tuiTextfield
+                />
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>District</label>
+                <input
+                    formControlName="district"
+                    placeholder="District"
+                    tuiTextfield
+                />
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Rules</label>
+                <input
+                    formControlName="rules"
+                    placeholder="Rules"
+                    tuiTextfield
+                />
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Google map</label>
+                <input
+                    formControlName="googleMap"
+                    placeholder="Google Map"
+                    tuiTextfield
+                />
+                @if(formAccommodation.get('googleMap')?.invalid &&
+                formAccommodation.get('googleMap')?.touched) {
+                <div>
+                    <small class="text-red-500">Google map is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <div>
+                <label tuiLabel>Description</label>
+                <tui-editor formControlName="description" [tools]="tools">
+                </tui-editor>
+            </div>
+            <div>
+                <div class="tui-space_bottom-2">
+                    <label>Facilities</label>
+                </div>
+                <div tuiGroup>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="wifi"
+                            class="mr-8"
+                        />
+                        Wifi
+                    </label>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="airCondition"
+                            class="mr-8"
+                        />
+                        Air Condition
+                    </label>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="tv"
+                            class="mr-8"
+                        />
+                        TV
+                    </label>
+                </div>
+                <div>
+                    <div class="tui-space_bottom-2">
+                        <label>Property Surrounds</label>
+                    </div>
+                    <div tuiGroup>
+                        <label class="flex items-center">
+                            <input
+                                size="m"
+                                tuiCheckbox
+                                type="checkbox"
+                                formControlName="restaurant"
+                                class="mr-8"
+                            />
+                            Restaurant
+                        </label>
+                        <label class="flex items-center">
+                            <input
+                                size="m"
+                                tuiCheckbox
+                                type="checkbox"
+                                formControlName="bar"
+                                class="mr-8"
+                            />
+                            Bar
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="airCondition"
+                            class="mr-8"
+                        />
+                        Air Condition
+                    </label>
+                    <label class="flex items-center">
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="tv"
+                            class="mr-8"
+                        />
                         TV
                     </label>
                 </div>
@@ -258,188 +473,31 @@
                 </div>
                 <div tuiGroup>
                     <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="restaurant" class="mr-8" />
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="restaurant"
+                            class="mr-8"
+                        />
                         Restaurant
                     </label>
                     <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="bar" class="mr-8" />
+                        <input
+                            size="m"
+                            tuiCheckbox
+                            type="checkbox"
+                            formControlName="bar"
+                            class="mr-8"
+                        />
                         Bar
                     </label>
                 </div>
             </div>
-            <div>
-                <label tuiLabel>Image</label>
-                <label *ngIf="!imageControl.value" tuiInputFiles>
-                    <input accept="image/*" tuiInputFiles [formControl]="imageControl" />
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="bar"
-                        class="mr-8"
-                    />
-                    Bar
-                </label>
-            </div>
-        </div>
-        <footer>
-            <button tuiButton type="submit">Submit</button>
-        </footer>
-    </form>
-</ng-template>
 
-<ng-template #updateForm>
-    <form
-        tuiCardLarge
-        [formGroup]="formAccommodation"
-        [style.max-width.rem]="32"
-        [style.padding.px]="5"
-        (ngSubmit)="updateAccommodation()"
-    >
-        <tui-textfield>
-            <label tuiLabel>Name</label>
-            <input formControlName="name" placeholder="Name" tuiTextfield />
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>City</label>
-            <input formControlName="city" placeholder="City" tuiTextfield />
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Country</label>
-            <input
-                formControlName="country"
-                placeholder="Country"
-                tuiTextfield
-            />
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>District</label>
-            <input
-                formControlName="district"
-                placeholder="District"
-                tuiTextfield
-            />
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Rules</label>
-            <input formControlName="rules" placeholder="Rules" tuiTextfield />
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Google map</label>
-            <input
-                formControlName="googleMap"
-                placeholder="Google Map"
-                tuiTextfield
-            />
-            @if(formAccommodation.get('googleMap')?.invalid &&
-            formAccommodation.get('googleMap')?.touched) {
-            <div>
-                <small class="text-red-500">Google map is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <div>
-            <label tuiLabel>Description</label>
-            <tui-editor formControlName="description" [tools]="tools">
-            </tui-editor>
-        </div>
-        <div>
-            <div class="tui-space_bottom-2">
-                <label>Facilities</label>
-            </div>
-            <div>
-                <div class="tui-space_bottom-2">
-                    <label>Facilities</label>
-                </div>
-                <div tuiGroup>
-                    <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="wifi" class="mr-8" />
-                        Wifi
-                    </label>
-                    <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="airCondition" class="mr-8" />
-                        Air Condition
-                    </label>
-                    <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="tv" class="mr-8" />
-                        TV
-                    </label>
-                </div>
-            </div>
-            <div>
-                <div class="tui-space_bottom-2">
-                    <label>Property Surrounds</label>
-                </div>
-                <div tuiGroup>
-                    <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="restaurant" class="mr-8" />
-                        Restaurant
-                    </label>
-                    <label class="flex items-center">
-                        <input size="m" tuiCheckbox type="checkbox" formControlName="bar" class="mr-8" />
-                        Bar
-                    </label>
-                </div>
-            </div>
-            <div>
-                <label tuiLabel>Image</label>
-                <label *ngIf="!imageControl.value" tuiInputFiles>
-                    <input accept="image/*" tuiInputFiles [formControl]="imageControl" />
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="airCondition"
-                        class="mr-8"
-                    />
-                    Air Condition
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="tv"
-                        class="mr-8"
-                    />
-                    TV
-                </label>
-            </div>
-        </div>
-        <div>
-            <div class="tui-space_bottom-2">
-                <label>Property Surrounds</label>
-            </div>
-            <div tuiGroup>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="restaurant"
-                        class="mr-8"
-                    />
-                    Restaurant
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="bar"
-                        class="mr-8"
-                    />
-                    Bar
-                </label>
-            </div>
-        </div>
-
-        <footer>
-            <button tuiButton type="submit">Submit</button>
-        </footer>
-    </form>
-</ng-template>
+            <footer>
+                <button tuiButton type="submit">Submit</button>
+            </footer>
+        </form>
+    </ng-template>
+</main>

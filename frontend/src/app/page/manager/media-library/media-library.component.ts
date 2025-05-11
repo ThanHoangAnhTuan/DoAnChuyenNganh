@@ -12,8 +12,7 @@ import { TuiFiles } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImageService } from '../../services/manager/image.service';
-import { environment } from '../../../environments/environment';
+import { ImageService } from '../../../services/manager/image.service';
 
 @Component({
     selector: 'app-media-library',

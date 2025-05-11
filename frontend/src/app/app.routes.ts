@@ -3,6 +3,8 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './page/user/home/home.component';
 import { AccommodationComponent } from './page/manager/accommodation/accommodation.component';
 import { AccommodationDetailComponent } from './page/user/accommodation-detail/accommodation-detail.component';
+import { AccommodationDetailComponent as ManagerAccommodationDetailComponent } from './page/manager/accommodation-detail/accommodation-detail.component';
+
 import { LoginComponent } from './page/manager/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';
 import { MediaLibraryComponent } from './page/manager/media-library/media-library.component';
@@ -31,7 +33,7 @@ export const routes: Routes = [
     },
     {
         path: 'manager/accommodation/:id/details',
-        component: AccommodationDetailComponent,
+        component: ManagerAccommodationDetailComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'manager' },
     },
