@@ -1,11 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    inject,
-    Injector,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, inject, Injector, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -19,8 +12,6 @@ import { AccommodationService } from '../../services/accommodation.service';
 import {
     Accommodation,
     CreateAccommodation,
-    Facilities,
-    PropertySurroundings,
     UpdateAccommodation,
 } from '../../models/accommodation.model';
 
@@ -37,7 +28,7 @@ import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule } from '@taiga-ui/legacy';
 import { TuiConfirmService, TuiFiles, TuiCheckbox } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
-import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import {
     TUI_EDITOR_DEFAULT_EXTENSIONS,
     TUI_EDITOR_DEFAULT_TOOLS,
@@ -106,7 +97,6 @@ export class AccommodationComponent implements OnInit {
         'Action',
         'Show Accommodation Detail',
     ];
-    // protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
     protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
     protected idAccommodationUpdating = '';
 
@@ -127,12 +117,6 @@ export class AccommodationComponent implements OnInit {
         rules: new FormControl('', Validators.required),
     });
 
-    // protected singleImagePreview: string | null = null;
-    // protected oldImage: string[] | null = null;
-
-    // @ViewChild('singleFileInput')
-    // singleFileInput!: ElementRef<HTMLInputElement>;
-
     constructor(
         private accommodationService: AccommodationService,
         private sanitizer: DomSanitizer
@@ -144,41 +128,8 @@ export class AccommodationComponent implements OnInit {
         });
     }
 
-    // protected onSingleFileSelected(event: Event): void {
-    //     const input = event.target as HTMLInputElement;
-    //     if (input.files && input.files.length > 0) {
-    //         const file = input.files[0];
-    //         this.formAccommodation.get('image')?.setValue(file);
-
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             this.removeOldImage();
-    //             this.singleImagePreview = reader.result as string;
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // }
-
-    // protected removeSingleImage(): void {
-    //     this.formAccommodation.get('image')?.reset();
-    //     this.singleImagePreview = null;
-    //     this.resetSingleFileInput();
-    // }
-
-    // protected removeOldImage(): void {
-    //     this.oldImage = null;
-    // }
-
-    // protected resetSingleFileInput(): void {
-    //     if (this.singleFileInput) {
-    //         this.singleFileInput.nativeElement.value = '';
-    //     }
-    // }
-
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formAccommodation.reset();
-        // this.singleImagePreview = null
-        // this.oldImage = null
         this.dialogs
             .open(content, {
                 label: 'Create Accommodation',
@@ -195,8 +146,6 @@ export class AccommodationComponent implements OnInit {
         accommodation: Accommodation
     ) {
         this.formAccommodation.reset();
-        // this.singleImagePreview = null
-        // this.oldImage = null
 
         this.formAccommodation.patchValue({
             name: accommodation.name,

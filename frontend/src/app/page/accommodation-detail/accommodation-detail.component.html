@@ -98,7 +98,9 @@
                         [style.border-radius.%]="100"
                         [style.background]="'white'"
                         [style.color]="'blue'"
-                        (click)="openDialogUpdate(updateForm, accommodationDetail)"
+                        (click)="
+                            openDialogUpdate(updateForm, accommodationDetail)
+                        "
                     >
                         Edit
                     </button>
@@ -296,69 +298,11 @@
             </div>
         </div>
 
-        <!-- <div>
-            <label tuiLabel>Images</label>
-            <div class="single-file-form">
-                <label tuiInputFiles>
-                    <input
-                        #multiFileInput
-                        tuiInputFiles
-                        formControlName="images"
-                        accept="image/*"
-                        [multiple]="true"
-                        (ngModelChange)="onMultiFileSelected($event)"
-                    />
-                </label>
-                @if(formAccommodationDetail.get('images')?.invalid &&
-                formAccommodationDetail.get('images')?.touched) {
-                <div>
-                    <small class="text-red-500">Images is required</small>
-                </div>
-                } @if (multiImagePreview) {
-                <tui-carousel
-                    [draggable]="true"
-                    [itemsCount]="4"
-                    [(index)]="indexCarousel"
-                >
-                    @for(image of multiImagePreview; track image; let i =
-                    $index) {
-                    <ng-container>
-                        <div *tuiItem class="carousel">
-                            <img
-                                alt="Preview"
-                                draggable="false"
-                                class="item"
-                                width="100"
-                                height="100"
-                                style="object-fit: cover"
-                                [src]="image"
-                                [class.item_active]="i === $index + 1"
-                            />
-                            <button
-                                appearance="secondary-destructive"
-                                size="xs"
-                                tuiIconButton
-                                type="button"
-                                iconStart="@tui.x"
-                                [style.border-radius.%]="100"
-                                (click)="onRemove(i)"
-                            >
-                                Xoá
-                            </button>
-                        </div>
-                    </ng-container>
-                    }
-                </tui-carousel>
-                }
-            </div>
-        </div> -->
-
         <footer>
             <button tuiButton type="submit">Submit</button>
         </footer>
     </form>
 </ng-template>
-
 
 <ng-template #updateForm>
     <form

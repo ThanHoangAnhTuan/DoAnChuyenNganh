@@ -13,6 +13,7 @@ func (ir *ImageRouter) InitImageRouter(Router *gin.RouterGroup) {
 	imageRouterPrivate := Router.Group("/images")
 	imageRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
-		imageRouterPrivate.POST("/upload", controllers.UploadImages.UploadImages)
+		imageRouterPrivate.POST("/upload-images", controllers.UploadImages.UploadImages)
+		imageRouterPrivate.GET("/get-images/:id", controllers.UploadImages.GetImages)
 	}
 }

@@ -1,1 +1,105 @@
-<p>media-library works!</p>
+<main>
+    <form
+        tuiCardLarge
+        [formGroup]="formImages"
+        [style.padding.px]="5"
+        (ngSubmit)="uploadFiles()"
+        style="display: flex; flex-direction: row"
+    >
+        <div>
+            <div class="single-file-form">
+                <label tuiInputFiles>
+                    <input
+                        #fileInput
+                        tuiInputFiles
+                        formControlName="images"
+                        accept="image/*"
+                        [multiple]="true"
+                        (change)="onSelected($event)"
+                    />
+                </label>
+                @if(formImages.get('images')?.invalid &&
+                formImages.get('images')?.touched) {
+                <div>
+                    <small class="text-red-500">Images is required</small>
+                </div>
+                }
+            </div>
+        </div>
+
+        <footer>
+            <button tuiButton type="submit">Upload</button>
+        </footer>
+    </form>
+</main>
+
+<div style="display: flex; flex-direction: row;">
+    @if (imagesPreview.length > 0) {
+    <div style="display: flex; gap: 10px; flex-direction: row; padding: 10px">
+        @for(image of imagesPreview; track $index; let i = $index) {
+        <div
+            style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            "
+        >
+            <img
+                alt="Preview"
+                class="item"
+                width="100"
+                height="100"
+                style="object-fit: cover"
+                [src]="image"
+                [class.item_active]="i === $index + 1"
+            />
+            <button
+                appearance="secondary-destructive"
+                size="xs"
+                tuiIconButton
+                type="button"
+                iconStart="@tui.x"
+                [style.border-radius.%]="100"
+                (click)="onRemove(i)"
+            >
+                Xoá
+            </button>
+        </div>
+        }
+    </div>
+    } @if (oldImages && oldImages.length > 0) {
+    <div style="display: flex; gap: 10px; flex-direction: row; padding: 10px">
+        @for(image of oldImages; track $index; let i = $index) {
+        <div
+            style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            "
+        >
+            <img
+                alt="Preview"
+                class="item"
+                width="100"
+                height="100"
+                style="object-fit: cover"
+                [src]="apiURl + image"
+            />
+            <button
+                appearance="secondary-destructive"
+                size="xs"
+                tuiIconButton
+                type="button"
+                iconStart="@tui.x"
+                [style.border-radius.%]="100"
+                (click)="onRemoveOldImage(image)"
+            >
+                Xoá
+            </button>
+        </div>
+        }
+    </div>
+    }
+</div>

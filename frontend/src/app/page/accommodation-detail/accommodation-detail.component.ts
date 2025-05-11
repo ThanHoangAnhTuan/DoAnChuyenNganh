@@ -1,18 +1,11 @@
 import {
     Component,
-    ElementRef,
     inject,
     OnInit,
-    ViewChild,
 } from '@angular/core';
 import {
     Accommodation,
-    CreateAccommodation,
-    Facilities,
-    PropertySurroundings,
-    UpdateAccommodation,
 } from '../../models/accommodation.model';
-import { TUI_EDITOR_DEFAULT_TOOLS, TuiEditor } from '@taiga-ui/editor';
 import {
     TuiAppearance,
     TuiButton,
@@ -44,10 +37,8 @@ import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiInputModule } from '@taiga-ui/legacy';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import {
-    TuiCarousel,
     TuiCheckbox,
     TuiChevron,
-    TuiFiles,
     TuiInputNumber,
     TuiSelect,
 } from '@taiga-ui/kit';
@@ -65,8 +56,6 @@ import { TuiContext } from '@taiga-ui/cdk';
         TuiTextfield,
         TuiAppearance,
         TuiCardLarge,
-        TuiFiles,
-        // TuiEditor,
         TuiGroup,
         TuiCheckbox,
         RouterLink,
@@ -74,15 +63,13 @@ import { TuiContext } from '@taiga-ui/cdk';
         TuiDataList,
         TuiSelect,
         TuiChevron,
-        TuiCarousel,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
 })
 export class AccommodationDetailComponent implements OnInit {
-    protected indexCarousel = 0;
     protected accommodationDetails!: AccommodationDetails[];
-    protected columns: string[] = [
+    protected readonly columns: string[] = [
         'ID',
         'Name',
         'Guests',
@@ -101,7 +88,6 @@ export class AccommodationDetailComponent implements OnInit {
         'Action',
     ];
     protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
-    // protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
     protected idAccommodationDetailUpdating = '';
 
     private readonly dialogs = inject(TuiDialogService);
@@ -118,12 +104,11 @@ export class AccommodationDetailComponent implements OnInit {
         airCondition: new FormControl<boolean | false>(false),
         tv: new FormControl<boolean | false>(false),
         availableRooms: new FormControl<number | 0>(0),
-        // images: new FormControl<File[] | []>([], [this.maxFilesLength(20)]),
         accommodationId: new FormControl<string | ''>('', Validators.required),
         discountId: new FormControl<string | ''>(''),
     });
 
-    resetFormAccommodationDetail = {
+    protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
         airCondition: false,
         availableRooms: 0,
@@ -139,11 +124,6 @@ export class AccommodationDetailComponent implements OnInit {
         wifi: false,
     };
 
-    // protected multiImagePreview: string[] | null = null;
-    // protected oldImage: string | null = null;
-
-    // @ViewChild('multiFileInput')
-    // multiFileInput!: ElementRef<HTMLInputElement>;
     protected accommodations!: Accommodation[];
 
     protected accommodationItems: readonly AccommodationSelect[] = [];
@@ -171,75 +151,21 @@ export class AccommodationDetailComponent implements OnInit {
         });
     }
 
-    // protected onMultiFileSelected(files: File[]): void {
-    //     this.multiImagePreview = [];
-
-    //     for (const file of files) {
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             this.multiImagePreview?.push(reader.result as string);
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // }
-
-    // protected onRemove(index: number): void {
-    //     if (
-    //         this.multiImagePreview &&
-    //         index >= 0 &&
-    //         index < this.multiImagePreview.length
-    //     ) {
-    //         this.multiImagePreview.splice(index, 1);
-    //     }
-
-    //     const currentFiles = this.formAccommodationDetail.get('images')
-    //         ?.value as File[];
-    //     if (currentFiles && currentFiles.length > index) {
-    //         const updatedFiles = currentFiles.filter((_, i) => i !== index);
-
-    //         this.formAccommodationDetail
-    //             .get('images')
-    //             ?.setValue(updatedFiles.length ? updatedFiles : null);
-
-    //         // Đặt lại trạng thái nếu không còn file
-    //         if (updatedFiles.length === 0) {
-    //             this.formAccommodationDetail.get('images')?.markAsPristine();
-    //             this.formAccommodationDetail.get('images')?.markAsUntouched();
-    //         }
-    //     }
-    // }
-
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
 
-        console.log(this.formAccommodationDetail.get('wifi')?.value);
-
-        // this.multiImagePreview = [];
-        // this.oldImage = null;
         this.dialogs
             .open(content, {
                 label: 'Create Accommodation Detail',
             })
             .subscribe({
                 complete: () => {
-                    this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+                    this.formAccommodationDetail.reset(
+                        this.resetFormAccommodationDetail
+                    );
                 },
             });
     }
-
-    // protected maxFilesLength(maxLength: number): ValidatorFn {
-    //     const stringErr = `Error: maximum limit - ${maxLength} files for upload`;
-
-    //     return ({ value }: AbstractControl) => {
-    //         if (!value || !Array.isArray(value)) {
-    //             return null;
-    //         }
-
-    //         return value.length > maxLength
-    //             ? { maxLength: new TuiValidationError(stringErr) }
-    //             : null;
-    //     };
-    // }
 
     protected openDialogUpdate(
         content: PolymorpheusContent,
@@ -273,14 +199,12 @@ export class AccommodationDetailComponent implements OnInit {
             })
             .subscribe({
                 complete: () => {
-                    this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
+                    this.formAccommodationDetail.reset(
+                        this.resetFormAccommodationDetail
+                    );
                 },
             });
     }
-
-    // protected getDescription(html: string): SafeHtml {
-    //     return this.sanitizer.bypassSecurityTrustHtml(html);
-    // }
 
     protected createAccommodationDetail() {
         const accommodationDetail: CreateAccommodationDetails = {
@@ -391,14 +315,7 @@ export class AccommodationDetailComponent implements OnInit {
     > = ({ $implicit: id }) =>
         this.accommodationItems.find((item) => item.id === id)?.name ?? '';
 
-    protected readonly discountItems: readonly DiscountSelect[] = [
-        // {id: 42, name: 'John Cleese'},
-        // {id: 237, name: 'Eric Idle'},
-        // {id: 666, name: 'Michael Palin'},
-        // {id: 123, name: 'Terry Gilliam'},
-        // {id: 777, name: 'Terry Jones'},
-        // {id: 999, name: 'Graham Chapman'},
-    ];
+    protected readonly discountItems: readonly DiscountSelect[] = [];
 
     protected readonly contentDiscount: PolymorpheusContent<
         TuiContext<string | null>

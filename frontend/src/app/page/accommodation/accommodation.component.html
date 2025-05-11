@@ -28,7 +28,16 @@
                 {{ accommodation.district }}
             </td>
             <td *tuiCell="'Image'" tuiTd>
-                <a class="button" target="_blank" [routerLink]="['/manager/accommodation/', accommodation.id, 'images']">Quản lý hình ảnh</a>
+                <a
+                    class="button"
+                    target="_blank"
+                    [routerLink]="[
+                        '/manager/accommodation/',
+                        accommodation.id,
+                        'images'
+                    ]"
+                    >Quản lý hình ảnh</a
+                >
             </td>
             <td
                 *tuiCell="'Description'"
@@ -111,7 +120,16 @@
                 </span>
             </td>
             <td *tuiCell="'Show Accommodation Detail'" tuiTd>
-                <a class="button" target="_blank" [routerLink]="['/manager/accommodation/', accommodation.id, 'details']">Show</a>
+                <a
+                    class="button"
+                    target="_blank"
+                    [routerLink]="[
+                        '/manager/accommodation/',
+                        accommodation.id,
+                        'details'
+                    ]"
+                    >Show</a
+                >
             </td>
         </tr>
         }
@@ -274,52 +292,6 @@
                 </label>
             </div>
         </div>
-        <!-- <div>
-            <label tuiLabel>Image</label>
-            <div class="single-file-form">
-                <label tuiInputFiles>
-                    <input
-                        #singleFileInput
-                        #validator="tuiInputFilesValidator"
-                        tuiInputFiles
-                        formControlName="image"
-                        (change)="onSingleFileSelected($event)"
-                        accept="image/*"
-                    />
-                </label>
-                @if(formAccommodation.get('image')?.invalid &&
-                formAccommodation.get('image')?.touched) {
-                <div>
-                    <small class="text-red-500">Image is required</small>
-                </div>
-                } @if (singleImagePreview) {
-                <div class="image-preview">
-                    <div class="image-box">
-                        <img
-                            [src]="singleImagePreview"
-                            alt="Preview"
-                            class="preview-img"
-                            width="100"
-                            height="100"
-                            style="object-fit: cover"
-                        />
-                        <button
-                            appearance="secondary-destructive"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            iconStart="@tui.x"
-                            [style.border-radius.%]="100"
-                            (click)="removeSingleImage()"
-                        >
-                            Xoá
-                        </button>
-                    </div>
-                </div>
-                }
-            </div>
-        </div> -->
-
         <footer>
             <button tuiButton type="submit">Submit</button>
         </footer>
@@ -445,70 +417,7 @@
                 </label>
             </div>
         </div>
-        <!-- <div>
-            <label tuiLabel>Image</label>
-            <div class="single-file-form">
-                <label tuiInputFiles>
-                    <input
-                        #singleFileInput
-                        #validator="tuiInputFilesValidator"
-                        tuiInputFiles
-                        formControlName="image"
-                        (change)="onSingleFileSelected($event)"
-                        accept="image/*"
-                    />
-                </label>
-                @if(singleImagePreview) {
-                <div class="image-preview">
-                    <div class="image-box">
-                        <img
-                            [src]="singleImagePreview"
-                            alt="Preview"
-                            class="preview-img"
-                            width="100"
-                            height="100"
-                            style="object-fit: cover"
-                        />
-                        <button
-                            appearance="secondary-destructive"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            iconStart="@tui.x"
-                            [style.border-radius.%]="100"
-                            (click)="removeSingleImage()"
-                        >
-                            Xoá
-                        </button>
-                    </div>
-                </div>
-                } @else if (oldImage) {
-                <div class="image-old">
-                    <div class="image-box">
-                        <img
-                            [src]="baseUrl + oldImage"
-                            alt="old image"
-                            class="old-img"
-                            width="100"
-                            height="100"
-                            style="object-fit: cover"
-                        />
-                        <button
-                            appearance="secondary-destructive"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            iconStart="@tui.x"
-                            [style.border-radius.%]="100"
-                            (click)="removeOldImage()"
-                        >
-                            Xoá
-                        </button>
-                    </div>
-                </div>
-                }
-            </div>
-        </div> -->
+
         <footer>
             <button tuiButton type="submit">Submit</button>
         </footer>
