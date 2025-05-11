@@ -14,11 +14,11 @@ export const routes: Routes = [
         component: ManagerComponent,
     },
     {
-        path: 'manager/accommodation/',
+        path: 'manager/accommodation',
         component: AccommodationComponent,
     },
     {
-        path: 'manager/accommodation/detail/:name',
+        path: 'manager/accommodation/detail',
         component: AccommodationDetailComponent,
     },
     {
