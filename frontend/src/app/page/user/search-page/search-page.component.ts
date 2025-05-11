@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {NavbarComponent} from '../../components/navbar/navbar.component';
-import SearchBoxComponent from '../../components/search-box/search-box.component';
+import {NavbarComponent} from '../../../components/navbar/navbar.component';
+import SearchBoxComponent from '../../../components/search-box/search-box.component';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TuiIcon, tuiNumberFormatProvider, TuiSizeS} from '@taiga-ui/core';
 import {TuiCheckbox} from '@taiga-ui/kit';
 import {NgForOf, NgIf} from '@angular/common';
 import {TuiInputRangeModule, TuiTextfieldControllerModule} from '@taiga-ui/legacy';
-import {HotelService} from '../../services/hotel/hotel.service';
+import {HotelService} from '../../../services/user/hotel.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({

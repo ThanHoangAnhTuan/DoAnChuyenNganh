@@ -1,12 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { AccommodationDetailService } from '../../services/user/accommodation-detail.service';
+import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { TuiLike } from '@taiga-ui/kit';
 import { TuiIcon } from '@taiga-ui/core';
-import { ImageListModalComponent } from '../../components/image-list-modal/image-list-modal.component';
-import { NavbarComponent } from "../../components/navbar/navbar.component";
-import SearchBoxComponent from "../../components/search-box/search-box.component";
+import { ImageListModalComponent } from '../../../components/image-list-modal/image-list-modal.component';
+import { NavbarComponent } from "../../../components/navbar/navbar.component";
+import SearchBoxComponent from "../../../components/search-box/search-box.component";
 
 @Component({
   selector: 'app-accommodation-detail',

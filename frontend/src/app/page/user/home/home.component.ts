@@ -1,5 +1,5 @@
-import SearchBoxComponent from '../../components/search-box/search-box.component';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
+import SearchBoxComponent from '../../../components/search-box/search-box.component';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { NgFor } from '@angular/common';
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { TuiCarousel, TuiCarouselComponent } from '@taiga-ui/kit';

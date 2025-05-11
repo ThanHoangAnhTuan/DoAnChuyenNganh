@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 // import { ManagerComponent } from './../page/manager/manager.component';
-import { HomeComponent } from './page/home/home.component';
+import { HomeComponent } from './page/user/home/home.component';
 import { AccommodationComponent } from './page/manager/accommodation/accommodation.component';
-import { AccommodationDetailComponent } from './page/accommodation-detail/accommodation-detail.component';
-import { LoginComponent } from './page/login/login.component';
+import { AccommodationDetailComponent } from './page/user/accommodation-detail/accommodation-detail.component';
+import { LoginComponent } from './page/manager/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';
-import { MediaLibraryComponent } from './page/media-library/media-library.component';
-import { SearchPageComponent } from './page/search-page/search-page.component';
+import { MediaLibraryComponent } from './page/manager/media-library/media-library.component';
+import { SearchPageComponent } from './page/user/search-page/search-page.component';
 
 export const routes: Routes = [
     {
