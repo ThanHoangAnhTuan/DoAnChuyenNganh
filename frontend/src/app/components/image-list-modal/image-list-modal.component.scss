@@ -1,0 +1,172 @@
+.main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+
+    .modal {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        height: 90%;
+        width: 95%;
+        text-align: center;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+
+            .title {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 10px;
+            }
+
+            .close-button {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                top: 30px;
+                right: 40px;
+                border: 0;
+                background-color: rgba(255, 255, 255, 0);
+                font-size: 15px;
+            }
+
+            .close-button:hover {
+                color: #57a6f4;
+            }
+        }
+
+        .content {
+            height: 90%;
+            padding: 10px;
+            align-content: center;
+            overflow: scroll;
+
+            ::ng-deep {
+                .p-galleria {
+                    border-style: none;
+                }
+
+                .p-icon {
+                    width: 50px;
+                }
+
+                .p-galleria-thumbnail {
+                    overflow: hidden;
+                }
+            }
+
+            .image-wrapper {
+                height: 430px;
+                display: flex;
+                flex-direction: column;
+                gap: 0px;
+                align-items: center;
+                justify-content: center;
+                // margin-bottom: 5px;
+
+                .main-image {
+                    height: 90%;
+                    width: auto;
+                    object-fit: contain;
+                    border-radius: 12px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+
+                .number-image {
+                    margin: 5px;
+                    font-size: 20px;
+                }
+            }
+
+            .thumbnail-image {
+                height: 100px;
+                object-fit: cover;
+                border-radius: 8px;
+                cursor: pointer;
+                padding: 0;
+                margin: 0;
+            }
+        }
+
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+// Mobile
+@media (max-width: 768px) {
+    .modal {
+        height: 100% !important;
+        width: 100% !important;
+        border-radius: 0px !important;
+        padding: 20px 0 !important;
+
+        .header {
+            justify-content: end !important;
+            padding-bottom: 10px !important;
+
+            .title {
+                display: none;
+            }
+        }
+
+        .content {
+            padding: 0 !important;
+
+            .image-wrapper {
+                height: 100% !important;
+
+                .main-image {
+                    width: 100% !important;
+                    border-radius: 0px !important;
+                }
+
+                .number-image {
+                    margin: 0 !important;
+                    position: fixed;
+                    bottom: 20px;
+                }
+            }
+
+            .thumbnail-image {
+                display: none;
+            }
+
+            ::ng-deep {
+                .p-icon {
+                    width: 20px !important;
+                    position: fixed;
+                    bottom: 20px;
+                }
+                
+                .p-galleria-next-button {
+                    right: 30%;
+                }
+
+                .p-galleria-prev-button {
+                    left: 30%;
+                }
+            }
+        }
+    }
+}
+
+// Tablet
+@media (min-width: 768px) and (max-width: 1024px) {
+    .image-wrapper {
+        height: 350px !important;
+    }
+}

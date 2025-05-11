@@ -30,6 +30,7 @@
     "@taiga-ui/editor": "^4.26.0",
     "@taiga-ui/event-plugins": "^4.0.2",
     "@taiga-ui/icons": "^4.35.0",
+    "@taiga-ui/icons-fontawesome": "^4.36.0",
     "@taiga-ui/kit": "^4.35.0",
     "@taiga-ui/layout": "^4.35.0",
     "camelcase-keys": "^9.1.3",

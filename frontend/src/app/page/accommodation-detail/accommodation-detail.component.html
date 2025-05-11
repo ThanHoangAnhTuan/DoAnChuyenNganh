@@ -1,495 +1,128 @@
-<button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
-    New
-</button>
+<app-navbar />
+<app-search-box />
 
-<table tuiTable class="table" [columns]="columns" [style.width.%]="100">
-    <thead>
-        <tr tuiThGroup></tr>
-    </thead>
-    <tbody tuiTbody>
-        @for(accommodationDetail of accommodationDetails; track
-        accommodationDetail.id) {
-        <tr tuiTr>
-            <td *tuiCell="'ID'" tuiTd>
-                {{ accommodationDetail.id }}
-            </td>
-            <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
-                {{ accommodationDetail.accommodation_id }}
-            </td>
-            <td *tuiCell="'Name'" tuiTd>
-                {{ accommodationDetail.name }}
-            </td>
-            <td *tuiCell="'Guests'" tuiTd>
-                {{ accommodationDetail.guests }}
-            </td>
-            <td *tuiCell="'Single Bed'" tuiTd>
-                {{ accommodationDetail.beds.single_bed }}
-            </td>
-            <td *tuiCell="'Double Bed'" tuiTd>
-                {{ accommodationDetail.beds.double_bed }}
-            </td>
-            <td *tuiCell="'Large Double Bed'" tuiTd>
-                {{ accommodationDetail.beds.large_double_bed }}
-            </td>
-            <td *tuiCell="'Extra Large Double Bed'" tuiTd>
-                {{ accommodationDetail.beds.extra_large_double_bed }}
-            </td>
-            <!-- <td *tuiCell="'Image'" tuiTd>
-                <img
-                    src="{{ baseUrl + accommodationDetail.image }}"
-                    width="100"
-                    height="100"
-                    style="object-fit: cover"
-                />
-            </td> -->
-            <td *tuiCell="'Wifi'" tuiTd>
-                @if (accommodationDetail.facilities.wifi) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td class="text-nowrap" *tuiCell="'Air Condition'" tuiTd>
-                @if (accommodationDetail.facilities.air_condition) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td class="text-nowrap" *tuiCell="'TV'" tuiTd>
-                @if (accommodationDetail.facilities.tv) {
-                <tui-icon icon="@tui.check" [style.color]="'green'" />
-                }@else {
-                <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                }
-            </td>
-            <td *tuiCell="'Available Rooms'" tuiTd>
-                {{ accommodationDetail.available_rooms }}
-            </td>
-            <td *tuiCell="'Price'" tuiTd>
-                {{ accommodationDetail.price }}
-            </td>
-            <td *tuiCell="'Accommodation'" tuiTd>
-                {{ accommodationDetail.accommodation_id }}
-            </td>
-            <td *tuiCell="'Discount'" tuiTd>
-                {{ accommodationDetail.discount_id }}
-            </td>
-            <td *tuiCell="'Image'" tuiTd>
-                <a
-                    class="button"
-                    target="_blank"
-                    [routerLink]="[
-                        '/manager/accommodation/detail/',
-                        accommodationDetail.id,
-                        'images'
-                    ]"
-                    >Quản lý hình ảnh</a
-                >
-            </td>
-            <td *tuiCell="'Action'" tuiTd>
-                <span tuiStatus style="display: flex">
-                    <button
-                        appearance="primary"
-                        iconStart="@tui.pencil"
-                        size="xs"
-                        tuiIconButton
-                        type="button"
-                        [style.border-radius.%]="100"
-                        [style.background]="'white'"
-                        [style.color]="'blue'"
-                        (click)="
-                            openDialogUpdate(updateForm, accommodationDetail)
-                        "
-                    >
-                        Edit
-                    </button>
-                    <button
-                        appearance="action"
-                        iconStart="@tui.trash"
-                        size="xs"
-                        tuiIconButton
-                        type="button"
-                        [style.border-radius.%]="100"
-                        [style.color]="'red'"
-                    >
-                        <!-- (click)="deleteAccommodationDetail(accommodationDetail.id)" -->
-                        Delete
-                    </button>
-                </span>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+<main class="main">
+    <div class="accommodation-detail-header">
+        <p class="accommodation-detail-title">{{ accommodation.name }}</p>
+        <div class="btn-group">
+            <!-- Icon like của TaigaUI -->
+            <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
+            <!-- Dùng tag svg để tạo icon share -->
+            <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="share-icon"
+                title="Chia sẻ thông tin chỗ nghỉ này">
+                <path
+                    d="M 8.25 11.25 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 m 12 -5.25 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 m -1.5 12 a 3 3 0 1 1 -6 0 a 3 3 0 0 1 6 0 m 1.5 0 a 4.5 4.5 0 1 0 -9 0 a 4.5 4.5 0 0 0 9 0 M 9.018 10.59 l 6.508 -2.531 a 0.75 0.75 0 0 0 -0.544 -1.398 L 8.474 9.192 a 0.75 0.75 0 1 0 0.544 1.398 m -0.748 3.009 l 6.79 3.395 a 0.75 0.75 0 1 0 0.67 -1.342 l -6.79 -3.395 a 0.75 0.75 0 1 0 -0.67 1.342"
+                    fill="rgb(0 107 227)" title="Chia sẻ thông tin chỗ nghỉ này" />
+            </svg>
+            <button class="order-btn">Đặt ngay</button>
+        </div>
+    </div>
 
-<ng-template #createForm>
-    <form
-        tuiCardLarge
-        [formGroup]="formAccommodationDetail"
-        [style.max-width.rem]="32"
-        [style.padding.px]="5"
-        (ngSubmit)="createAccommodationDetail()"
-    >
-        <tui-textfield>
-            <label tuiLabel>Name</label>
-            <input formControlName="name" placeholder="Name" tuiTextfield />
-            @if(formAccommodationDetail.get('name')?.invalid &&
-            formAccommodationDetail.get('name')?.touched) {
-            <div>
-                <small class="text-red-500">Name is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Guests</label>
-            <input tuiInputNumber formControlName="guests" />
-            @if(formAccommodationDetail.get('guests')?.invalid &&
-            formAccommodationDetail.get('guests')?.touched) {
-            <div>
-                <small class="text-red-500">Guests is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Single Bed</label>
-            <input tuiInputNumber formControlName="singleBed" />
-            @if(formAccommodationDetail.get('singleBed')?.invalid &&
-            formAccommodationDetail.get('singleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Single Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Double Bed</label>
-            <input tuiInputNumber formControlName="doubleBed" />
-            @if(formAccommodationDetail.get('doubleBed')?.invalid &&
-            formAccommodationDetail.get('doubleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Double Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Large Double Bed</label>
-            <input tuiInputNumber formControlName="largeDoubleBed" />
-            @if(formAccommodationDetail.get('largeDoubleBed')?.invalid &&
-            formAccommodationDetail.get('largeDoubleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Large Double Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Extra Large Double Bed</label>
-            <input tuiInputNumber formControlName="extraLargeDoubleBed" />
-            @if(formAccommodationDetail.get('extraLargeDoubleBed')?.invalid &&
-            formAccommodationDetail.get('extraLargeDoubleBed')?.touched) {
-            <div>
-                <small class="text-red-500"
-                    >Extra Large Double Bed is required</small
-                >
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Available Rooms</label>
-            <input tuiInputNumber formControlName="availableRooms" />
-            @if(formAccommodationDetail.get('availableRooms')?.invalid &&
-            formAccommodationDetail.get('availableRooms')?.touched) {
-            <div>
-                <small class="text-red-500">Available Rooms is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield>
-            <label tuiLabel>Price</label>
-            <input tuiInputNumber formControlName="price" />
-            @if(formAccommodationDetail.get('price')?.invalid &&
-            formAccommodationDetail.get('price')?.touched) {
-            <div>
-                <small class="text-red-500">Price is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield tuiChevron [content]="contentAccommodation">
-            <input
-                tuiSelect
-                formControlName="accommodationId"
-                placeholder="Accommodation"
-            />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of accommodationItems; track item) {
-                <button new tuiOption type="button" [value]="item.id">
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('accommodationId')?.invalid &&
-            formAccommodationDetail.get('accommodationId')?.touched) {
-            <div>
-                <small class="text-red-500">Accommodation is required</small>
-            </div>
-            }
-        </tui-textfield>
-        <tui-textfield tuiChevron [content]="contentDiscount">
-            <input
-                tuiSelect
-                formControlName="discountId"
-                placeholder="Discount"
-            />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of discountItems; track item) {
-                <button
-                    *ngFor="let item of discountItems"
-                    new
-                    tuiOption
-                    type="button"
-                    [value]="item.id"
-                >
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('discountId')?.invalid &&
-            formAccommodationDetail.get('discountId')?.touched) {
-            <div>
-                <small class="text-red-500">Discount is required</small>
-            </div>
-            }
-        </tui-textfield>
+    <div class="accommodation-address-container">
+        <svg viewBox="0 0 24 24" width="20" fill="currentColor">
+            <path
+                d="M 12 0 a 8.01 8.01 0 0 0 -8 8 c 0 3.51 5 12.025 7.148 15.524 A 1 1 0 0 0 12 24 a 0.99 0.99 0 0 0 0.852 -0.477 C 15 20.026 20 11.514 20 8 a 8.01 8.01 0 0 0 -8 -8 m 0 11.5 A 3.5 3.5 0 1 1 15.5 8 a 3.5 3.5 0 0 1 -3.5 3.5"
+                fill="#006ce4" />
+        </svg>
+        <p class="accommodation-address">{{ accommodation.addressNumber }}, {{ accommodation.street }}, {{
+            accommodation.district }},
+            {{ accommodation.city }}, {{
+            accommodation.country }}</p>
+    </div>
 
-        <div>
-            <div class="tui-space_bottom-2">
-                <label>Facilities</label>
+    <div class="image-review-map-container">
+        <div class="accommodation-image-container">
+            <div class="accommodation-image" *ngFor="let image of accommodation.images.slice(0, 8); let i = index">
+                <img [src]="image" alt="accommodation image {{ i + 1 }}" class="accommodation-image-item"
+                    (click)="openModal()" />
             </div>
-            <div tuiGroup>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="wifi"
-                        class="mr-8"
-                    />
-                    Wifi
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="airCondition"
-                        class="mr-8"
-                    />
-                    Air Condition
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="tv"
-                        class="mr-8"
-                    />
-                    TV
-                </label>
+
+            <!-- Modal image list -->
+            <app-image-list-modal [accommodationName]="accommodation.name" [show]="isModalOpen" (close)="closeModal()"
+                *ngIf="isModalOpen" />
+        </div>
+
+        <div class="accommodation-review-map-container">
+            <div class="accommodation-review-container">
+                <div class="rating-score">
+                    <div></div>
+                </div>
+
+                <div class="comment">
+
+                </div>
+
+                <div class="service-staff-score">
+
+                </div>
+            </div>
+
+            <div class="accommodation-google-map-container"
+                (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')">
+                <!-- iframe hiển thị google map -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.557169179431!2d106.69526517480476!3d10.768571589379736!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fbafd84e059%3A0x629cbf7d0faaee10!2sCubicity%20Metro%20House!5e0!3m2!1sen!2s!4v1746451957768!5m2!1sen!2s"
+                    class="google-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <!-- Nội dung đè lên google map -->
+                <div class="google-map-overlay">
+                    <img src="icons/detail-icon/location.svg" alt="location icon" class="google-map-overlay-icon" />
+                    <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>
+                </div>
             </div>
         </div>
 
-        <footer>
-            <button tuiButton type="submit">Submit</button>
-        </footer>
-    </form>
-</ng-template>
+    </div>
 
-<ng-template #updateForm>
-    <form
-        tuiCardLarge
-        [formGroup]="formAccommodationDetail"
-        [style.max-width.rem]="32"
-        [style.padding.px]="5"
-        (ngSubmit)="updateAccommodationDetail()"
-    >
-        <tui-textfield>
-            <label tuiLabel>Name</label>
-            <input formControlName="name" placeholder="Name" tuiTextfield />
-            @if(formAccommodationDetail.get('name')?.invalid &&
-            formAccommodationDetail.get('name')?.touched) {
-            <div>
-                <small class="text-red-500">Name is required</small>
+    <div class="description-facilities-highlight-container">
+        <div class="accommodation-description-facilities-container">
+            <div class="description-container">
+                <p class="description-title">Miêu tả</p>
+                <div class="description-content-container" [class.collapsed]="!showFull">
+                    <div class="description-content" *ngFor="let description of accommodation.descriptions">
+                        <p>{{ description }}</p>
+                    </div>
+                </div>
+                <p (click)="toggleDescription()" *ngIf="isMobile" class="see-more-button">
+                    {{ showFull ? 'Thu gọn' : 'Xem thêm' }}
+                </p>
             </div>
-            }
-        </tui-textfield>
 
-        <tui-textfield>
-            <label tuiLabel>Guests</label>
-            <input tuiInputNumber formControlName="guests" />
-            @if(formAccommodationDetail.get('guests')?.invalid &&
-            formAccommodationDetail.get('guests')?.touched) {
-            <div>
-                <small class="text-red-500">Guests is required</small>
-            </div>
-            }
-        </tui-textfield>
+            <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng ©
+                OpenStreetMap</p>
 
-        <tui-textfield>
-            <label tuiLabel>Single Bed</label>
-            <input tuiInputNumber formControlName="singleBed" />
-            @if(formAccommodationDetail.get('singleBed')?.invalid &&
-            formAccommodationDetail.get('singleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Single Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
+            <div class="facilities-container">
+                <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
 
-        <tui-textfield>
-            <label tuiLabel>Double Bed</label>
-            <input tuiInputNumber formControlName="doubleBed" />
-            @if(formAccommodationDetail.get('doubleBed')?.invalid &&
-            formAccommodationDetail.get('doubleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Double Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield>
-            <label tuiLabel>Large Double Bed</label>
-            <input tuiInputNumber formControlName="largeDoubleBed" />
-            @if(formAccommodationDetail.get('largeDoubleBed')?.invalid &&
-            formAccommodationDetail.get('largeDoubleBed')?.touched) {
-            <div>
-                <small class="text-red-500">Large Double Bed is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield>
-            <label tuiLabel>Extra Large Double Bed</label>
-            <input tuiInputNumber formControlName="extraLargeDoubleBed" />
-            @if(formAccommodationDetail.get('extraLargeDoubleBed')?.invalid &&
-            formAccommodationDetail.get('extraLargeDoubleBed')?.touched) {
-            <div>
-                <small class="text-red-500"
-                    >Extra Large Double Bed is required</small
-                >
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield>
-            <label tuiLabel>Available Rooms</label>
-            <input tuiInputNumber formControlName="availableRooms" />
-            @if(formAccommodationDetail.get('availableRooms')?.invalid &&
-            formAccommodationDetail.get('availableRooms')?.touched) {
-            <div>
-                <small class="text-red-500">Available Rooms is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield>
-            <label tuiLabel>Price</label>
-            <input tuiInputNumber formControlName="price" />
-            @if(formAccommodationDetail.get('price')?.invalid &&
-            formAccommodationDetail.get('price')?.touched) {
-            <div>
-                <small class="text-red-500">Price is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield tuiChevron [content]="contentAccommodation">
-            <input
-                tuiSelect
-                formControlName="accommodationId"
-                placeholder="Accommodation"
-            />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of accommodationItems; track item) {
-                <button new tuiOption type="button" [value]="item.id">
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('accommodationId')?.invalid &&
-            formAccommodationDetail.get('accommodationId')?.touched) {
-            <div>
-                <small class="text-red-500">Accommodation is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <tui-textfield tuiChevron [content]="contentDiscount">
-            <input
-                tuiSelect
-                formControlName="discountId"
-                placeholder="Discount"
-            />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of discountItems; track item) {
-                <button
-                    *ngFor="let item of discountItems"
-                    new
-                    tuiOption
-                    type="button"
-                    [value]="item.id"
-                >
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('discountId')?.invalid &&
-            formAccommodationDetail.get('discountId')?.touched) {
-            <div>
-                <small class="text-red-500">Discount is required</small>
-            </div>
-            }
-        </tui-textfield>
-
-        <div>
-            <div class="tui-space_bottom-2">
-                <label>Facilities</label>
-            </div>
-            <div tuiGroup>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="wifi"
-                        class="mr-8"
-                    />
-                    Wifi
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="airCondition"
-                        class="mr-8"
-                    />
-                    Air Condition
-                </label>
-                <label class="flex items-center">
-                    <input
-                        size="m"
-                        tuiCheckbox
-                        type="checkbox"
-                        formControlName="tv"
-                        class="mr-8"
-                    />
-                    TV
-                </label>
+                <div class="facilities-content">
+                    <div *ngFor="let facility of accommodation.facilities">
+                        <div class="facility-item">
+                            <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="facility-icon">
+                                <path [attr.d]="facility.path" fill="#008234" />
+                            </svg>
+                            <p class="facility-name">{{ facility.name }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <footer>
-            <button tuiButton type="submit">Submit</button>
-        </footer>
-    </form>
-</ng-template>
+        <div class="accommodation-highlight-container">
+            <p class="hightlight-first-title">Điểm nổi bật của chỗ nghỉ</p>
+            <p class="hightlight-second-title">Hoàn hảo cho kỳ nghỉ 1 đêm!</p>
+
+            <div class="hightlight-content-container">
+                <img src="icons/detail-icon/pin-heart.svg" alt="pin heart icon" class="pin-heart-icon" />
+                <p class="hightlight-content">
+                    Nằm ngay trung tâm TP. Hồ Chí Minh, khách sạn này có điểm vị trí tuyệt vời 10,0
+                </p>
+            </div>
+
+            <button class="hightlight-order-button">Đặt ngay</button>
+            <button class="hightlight-favourite-button">
+                <tui-icon icon="@tui.heart" [style.color]="'var(--tui-background-accent-1)'" />
+                Lưu chỗ nghỉ
+            </button>
+        </div>
+    </div>
+</main>
