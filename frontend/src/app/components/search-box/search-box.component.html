@@ -2,7 +2,7 @@
     <div class="place-picker">
         <tui-combo-box
             [tuiTextfieldCleaner]="true"
-            [formControl]="searchCity"
+            [formControl]="searchCityControl"
         >
             City
             <tui-data-list-wrapper
@@ -19,7 +19,7 @@
     <div class="date-picker">
         <tui-input-date-range
             [min]="today"
-            [formControl]="control"
+            [formControl]="DayControl"
         >Choose dates
         </tui-input-date-range>
     </div>
