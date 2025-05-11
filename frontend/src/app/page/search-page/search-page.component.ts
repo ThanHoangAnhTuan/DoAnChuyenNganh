@@ -35,33 +35,44 @@ import {ActivatedRoute} from '@angular/router';
     ],
 })
 export class SearchPageComponent implements OnInit {
+
+    // Các FormControl dùng để kiểm tra validation
     protected readonly invalidTrue = new FormControl(true, () => ({invalid: true}));
     protected readonly invalidFalse = new FormControl(false, () => ({invalid: true}));
+
+    // Giá trị min/max cho slider khoảng giá
     protected readonly max = 3_000_000;
     protected readonly min = 100_000;
     protected readonly control = new FormControl([this.min, this.max]);
 
+    /**
+     * Lấy kích thước cho các phần tử UI
+     * @param first - Có phải phần tử đầu tiên không
+     * @returns Kích thước 'm'
+     */
     protected getSize(first: boolean): TuiSizeS {
         return first ? 'm' : 'm';
     }
 
-    city: string = '';
-    hotels: any[] = [];
-    error = false;
+    city: string = ''; // Thành phố tìm kiếm
+    hotels: any[] = []; // Danh sách khách sạn
+    error = false; // Có lỗi khi tải dữ liệu không
 
     constructor(private hotelService: HotelService, private route: ActivatedRoute) {
+        // Lấy tham số city từ URL
         this.route.params.subscribe(params => {
             this.city = params['city'];
-            console.log(this.city);
         });
     }
 
+    // Khởi tạo component
     public ngOnInit(): void {
         this.invalidTrue.markAsTouched();
         this.invalidFalse.markAsTouched();
-        this.loadHotels();
+        this.loadHotels(); // Tải danh sách khách sạn
     }
 
+    // Danh sách các checkbox filter
     customCheckboxes = [
         {id: '1', label: 'Guest houses', checked: false},
         {id: '2', label: 'Very good: 8+', checked: false},
@@ -71,7 +82,9 @@ export class SearchPageComponent implements OnInit {
         {id: '6', label: '3 stars', checked: false},
     ];
 
-
+    /**
+     * Tải danh sách khách sạn từ service
+     */
     loadHotels(): void {
         this.hotelService.getHotels().subscribe({
             next: (hotels) => {
@@ -83,6 +96,11 @@ export class SearchPageComponent implements OnInit {
         });
     }
 
+    /**
+     * Định dạng giá tiền theo VND
+     * @param price - Giá tiền
+     * @returns Chuỗi giá đã định dạng
+     */
     formatPrice(price: number): string {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -91,6 +109,11 @@ export class SearchPageComponent implements OnInit {
         }).format(price).replace('₫', 'VND');
     }
 
+    /**
+     * Tạo chuỗi đánh giá sao
+     * @param rating - Số sao đánh giá
+     * @returns Chuỗi sao (★) và sao rỗng (☆)
+     */
     getStars(rating: number): string {
         return '★'.repeat(rating) + '☆'.repeat(5 - rating);
     }
