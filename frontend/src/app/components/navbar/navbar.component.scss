@@ -1,57 +1,6 @@
-// .navbar {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   background-color: #526ed3;
-//   color: white;
-//   padding: 10px 20px;
-// }
-
-// .navbar-left {
-//   display: flex;
-//   align-items: center;
-// }
-
-// .logo {
-//   font-size: 20px;
-//   font-weight: bold;
-//   margin-right: 20px;
-// }
-
-// .navbar-right {
-//   display: flex;
-//   align-items: center;
-//   gap: 15px;
-// }
-
-// .list-property {
-//   font-size: 14px;
-// }
-
-// .user-info {
-//   display: flex;
-//   flex-direction: row;
-//   align-items: flex-start;
-// }
-
-// .user-name {
-//   font-size: 14px;
-//   font-weight: bold;
-// }
-
-// .avatar {
-//   width: 50px;
-//   height: auto;
-//   border-radius: 50%;
-//   margin-right: 10px;
-// }
-
-// h1 a {
-//   color: #f3f3f3;
-// }
 
 //Desktop view
-  .navbar { 
+  .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -67,6 +16,7 @@
     font-size: 20px;
     font-weight: bold;
     margin-right: 20px;
+      cursor: pointer;
   }
   .navbar-right {
     display: flex;
@@ -93,7 +43,7 @@
   }
 //Tablet view
 @media screen and (max-width: 1024px) and (min-width: 768px){
-  .navbar { 
+  .navbar {
     h1 {
       font-size: 15px;
     }

@@ -1,0 +1,98 @@
+<app-navbar></app-navbar>
+<app-search-box></app-search-box>
+
+<div class="hotel-booking-container">
+    <div class="filter-panel">
+        <h3>Filter by:</h3>
+        <div class="filter-section">
+            <h4>Your previous filters</h4>
+            <ul class="filter-list">
+                <li
+                    *ngFor="let item of customCheckboxes; let first = first"
+                    class="wrapper"
+                >
+                    <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [ngModel]="item.checked"
+                        [size]="getSize(first)"
+                    />
+                    {{ item.label }}
+                </li>
+            </ul>
+        </div>
+
+        <div class="filter-section">
+            <h4>Your budget (per night)</h4>
+            <tui-input-range
+                [formControl]="control"
+                [max]="max"
+                [min]="min"
+                [tuiTextfieldLabelOutside]="false"
+            />
+        </div>
+    </div>
+
+    <div class="hotel-listings">
+        <div *ngIf="error" class="error-message">
+            Failed to load hotels. Please try again later.
+        </div>
+
+        <div *ngFor="let hotel of hotels" class="hotel-card">
+            <div class="hotel-image">
+                <img [src]="hotel.image" [alt]="hotel.name"/>
+                <div class="featured-badge">
+                    <tui-icon icon="@tui.heart"></tui-icon>
+                </div>
+            </div>
+
+            <div class="hotel-content">
+                <div class="hotel-header">
+                    <h2 class="hotel-name">
+                        {{ hotel.name }}
+                        <span class="stars">{{ getStars(hotel.rating) }}</span>
+                    </h2>
+                    <div class="location">
+                        <tui-icon icon="tuiIconMapPin"></tui-icon>
+                        {{ hotel.location.city }}, {{ hotel.location.district }}, {{ hotel.location.distance }}
+                        <a href="#">Show on map</a>
+                        {{ hotel.area }}
+                    </div>
+                </div>
+
+                <div class="room-info">
+                    <!--                    <h3 class="room-type">{{ hotel.roomType }}</h3>-->
+                    <!--                    <p class="room-details">{{ hotel.bedInfo }}</p>-->
+                    <div *ngIf="hotel.roomsLeft < 10" class="availability-alert">
+                        <tui-icon icon="tuiIconAlertCircle"></tui-icon>
+                        Only {{ hotel.roomsLeft }} rooms left at this price on our site
+                    </div>
+                </div>
+
+                <div class="amenities">
+                <span *ngIf="hotel.freeCancellation" class="amenity">
+                    <tui-icon icon="tuiIconCheck"></tui-icon> Free cancellation
+                </span>
+                    <span *ngIf="hotel.noPrepayment" class="amenity">
+                    <tui-icon icon="tuiIconCheck"></tui-icon> No prepayment needed
+                </span>
+                </div>
+
+                <div class="rating-price">
+                    <div class="rating">
+                        <!--                        <div class="rating-score">{{ hotel.reviewScore }}</div>-->
+                        <!--                        <div class="rating-text">{{ hotel.reviewText }}</div>-->
+                        <!--                        <div class="review-count">{{ hotel.reviewCount }} reviews</div>-->
+                    </div>
+
+                    <div class="price-section">
+                        <!--                        <div class="price-info">1 night, 2 adults</div>-->
+                        <!--                        <div class="price">{{ formatPrice(hotel.price) }}</div>-->
+                        <!--                        <div class="tax-info">Includes taxes and charges</div>-->
+                        <button class="view-availability">See availability</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
