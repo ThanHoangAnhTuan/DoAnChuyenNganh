@@ -16,35 +16,31 @@ import SearchBoxComponent from "../../components/search-box/search-box.component
 })
 export class AccommodationDetailComponent implements OnInit {
   accommodation: any;
-  accommodationId: string = '';
-  accommodationName: string = '';
   isModalOpen: boolean = false;
   windowWidth: number = 0;
   showFull: boolean = false;
   isMobile: boolean = false;
 
   constructor(private accommodationDetailService: AccommodationDetailService, private route: ActivatedRoute) {
-    this.windowWidth = window.innerWidth;
+    this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
   }
 
+  // Lắng nghe sự kiện mỗi khi thay đổi kích thước màn hình
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    this.windowWidth = window.innerWidth;
+    this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.accommodationId = params['id'];
-      this.accommodationName = params['name'];
+    const accommodationName = this.route.snapshot.paramMap.get('name'); // Lấy giá trị name trong url
 
-      if (this.accommodationId != null && this.accommodationId !== '') {
-        this.getAccommodationByName(this.accommodationName);
-      } else {
-        console.error('City param is missing in URL');
-      }
-    });
+    if (accommodationName) {
+      this.getAccommodationByName(accommodationName);
+    } else {
+      console.error('City name is missing in URL');
+    }
   };
 
   getAccommodationByName(name: string) {
@@ -65,6 +61,7 @@ export class AccommodationDetailComponent implements OnInit {
     this.isModalOpen = false;
   }
 
+  // Dựa vào giá trị của windowWidth để kiểm tra có phải mobile không
   updateDescription() {
     if (this.windowWidth <= 768) {
       this.showFull = false;
@@ -75,6 +72,7 @@ export class AccommodationDetailComponent implements OnInit {
     }
   }
 
+  // Hiện thêm hay thu gọn description
   toggleDescription() {
     this.showFull = !this.showFull;
   }

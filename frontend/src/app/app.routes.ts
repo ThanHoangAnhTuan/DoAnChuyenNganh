@@ -3,7 +3,6 @@ import { ManagerComponent } from './page/manager/manager.component';
 import { HomeComponent } from './page/home/home.component';
 import { AccommodationComponent } from './page/accommodation/accommodation.component';
 import { AccommodationDetailComponent } from './page/accommodation-detail/accommodation-detail.component';
-import { SearchComponent } from './page/search/search.component';
 
 export const routes: Routes = [
     {
@@ -23,11 +22,7 @@ export const routes: Routes = [
         component: AccommodationDetailComponent,
     },
     {
-        path: 'search/accommodation',
-        component: SearchComponent,
-    },
-    {
-        path: 'search/accommodation/detail',
+        path: 'search/accommodation/detail/:name',
         component: AccommodationDetailComponent,
     },
     {

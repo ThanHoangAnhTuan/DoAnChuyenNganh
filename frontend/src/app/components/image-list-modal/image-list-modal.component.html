@@ -9,6 +9,7 @@
         </div>
 
         <div class="content">
+            <!-- Dùng Galleria của PrimeNg để hiển thị danh sách hình ảnh -->
             <p-galleria [value]="images" [(activeIndex)]="activeIndex" [showItemNavigators]="true"
                 [showThumbnails]="true" [numVisible]="5" [circular]="true" [responsiveOptions]="responsiveOptions"
                 [containerStyle]="{ 'max-width': '900px', 'margin': 'auto' }" [showThumbnailNavigators]="false"
@@ -20,8 +21,6 @@
                         <p class="number-image">{{ activeIndex + 1 }}/{{ images.length }}</p>
                     </div>
                 </ng-template>
-
-                <p>{{ activeIndex }}/</p>
 
                 <ng-template #thumbnail let-item let-index="index">
                     <img [src]="item" [alt]="'Thumbnail ' + index" class="thumbnail-image" />

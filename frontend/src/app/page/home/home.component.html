@@ -10,8 +10,9 @@
             Các lựa chọn phổ biến nhất cho du khách từ Việt Nam
         </p>
         <div class="trending-content">
-            <div class="trending-place" *ngFor="let place of trendingPlaces" [routerLink]="['/search/accommodation']"
-                [queryParams]="{ id: place.id, name: place.name }">
+            <div class="trending-place" *ngFor="let place of trendingPlaces"
+                [routerLink]="['/search/accommodation', place.name]"
+                [queryParams]="{ id: place.id }">
                 <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}
@@ -31,6 +32,7 @@
                 Previous
             </button>
 
+            <!-- Dùng Carousel của TaigaUI hiển thị chỗ ở -->
             <tui-carousel [draggable]="false" [itemsCount]="showPlaceTypeList" [(index)]="placeTypeIndex"
                 #placeTypeCarousel class="carousel">
                 <ng-container *ngFor="let place of places; let i = index">
@@ -62,6 +64,7 @@
                 Previous
             </button>
 
+            <!-- Dùng Carousel của TaigaUI hiển thị chỗ ở -->
             <tui-carousel [draggable]="false" [itemsCount]="showExplorePlacesList" [(index)]="explorePlaceIndex"
                 #explorePlacesCarousel class="explore-content">
                 <ng-container *ngFor="let place of explorePaces; let i = index">

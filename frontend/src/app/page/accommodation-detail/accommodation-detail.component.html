@@ -5,7 +5,9 @@
     <div class="accommodation-detail-header">
         <p class="accommodation-detail-title">{{ accommodation.name }}</p>
         <div class="btn-group">
+            <!-- Icon like của TaigaUI -->
             <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
+            <!-- Dùng tag svg để tạo icon share -->
             <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="share-icon"
                 title="Chia sẻ thông tin chỗ nghỉ này">
                 <path
@@ -35,6 +37,7 @@
                     (click)="openModal()" />
             </div>
 
+            <!-- Modal image list -->
             <app-image-list-modal [accommodationName]="accommodation.name" [show]="isModalOpen" (close)="closeModal()"
                 *ngIf="isModalOpen" />
         </div>
@@ -56,10 +59,12 @@
 
             <div class="accommodation-google-map-container"
                 (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')">
+                <!-- iframe hiển thị google map -->
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.557169179431!2d106.69526517480476!3d10.768571589379736!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752fbafd84e059%3A0x629cbf7d0faaee10!2sCubicity%20Metro%20House!5e0!3m2!1sen!2s!4v1746451957768!5m2!1sen!2s"
                     class="google-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
+                <!-- Nội dung đè lên google map -->
                 <div class="google-map-overlay">
                     <img src="icons/detail-icon/location.svg" alt="location icon" class="google-map-overlay-icon" />
                     <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>

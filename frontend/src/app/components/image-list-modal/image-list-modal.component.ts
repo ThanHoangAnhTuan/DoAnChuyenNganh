@@ -20,7 +20,6 @@ export class ImageListModalComponent implements OnInit {
 
     ngOnInit() {
         this.getAccommodationImagesByName(this.accommodationName);
-        console.log(this.accommodationName);
         document.body.style.overflow = 'hidden'; // chặn scroll nền
     }
 
@@ -35,6 +34,7 @@ export class ImageListModalComponent implements OnInit {
         this.close.emit();
     }
 
+    // Responsive của Galleria
     responsiveOptions = [
         {
             breakpoint: '1024px',
