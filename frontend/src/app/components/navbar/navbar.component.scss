@@ -17,10 +17,12 @@
     font-size: 20px;
     font-weight: bold;
     margin-right: 20px;
-    cursor: pointer;
+    color: white;
+    text-decoration: none;
 }
 
 .navbar-right {
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -140,4 +142,3 @@
         }
     }
 }
-

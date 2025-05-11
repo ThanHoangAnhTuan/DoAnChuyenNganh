@@ -23,6 +23,10 @@ export const routes: Routes = [
         component: AccommodationDetailComponent,
     },
     {
+        path: 'search/accommodation/detail/:name',
+        component: AccommodationDetailComponent,
+    },
+    {
         path: 'search/:city',
         component: SearchPageComponent,
     },
