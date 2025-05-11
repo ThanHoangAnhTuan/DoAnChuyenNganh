@@ -1,0 +1,376 @@
+//Desktop View
+.hotel-booking-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 30px;
+}
+
+.filter-panel {
+    width: 250px;
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+
+    h3 {
+        margin-top: 0;
+        font-size: 18px;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+        width: 100%;
+        position: relative;
+
+        tui-input-range {
+            width: 100%;
+            margin-top: 10px;
+
+            ::ng-deep .t-wrapper tui-input-number {
+                inline-size: 100% !important;
+            }
+        }
+
+
+        h4 {
+            margin: 15px 0 10px;
+            font-size: 16px;
+        }
+
+        .wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+
+            input[tuiCheckbox] {
+                display: block;
+                justify-content: center;
+            }
+        }
+    }
+
+    .filter-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            padding: 5px 0;
+
+            &.subtext {
+                color: #666;
+                font-size: 12px;
+                margin-left: 15px;
+            }
+        }
+    }
+}
+
+.hotel-listings {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hotel-card {
+    width: 100%;
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin: 10px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .hotel-image {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        object-fit: cover;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #006ce4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+
+    }
+
+    .hotel-content {
+        width: 100%;
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+
+        .hotel-header {
+            margin-bottom: 12px;
+
+            .hotel-name {
+                margin: 0;
+                font-size: 22px;
+                color: #333;
+
+                .stars {
+                    color: #ffb700;
+                }
+            }
+
+            .location {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                color: #666;
+                font-size: 14px;
+                margin-top: 6px;
+
+                a {
+                    color: #006ce4;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .room-info {
+            margin-bottom: 16px;
+
+            .room-type {
+                margin: 0 0 4px 0;
+                font-size: 18px;
+                color: #333;
+            }
+
+            .room-details {
+                margin: 0;
+                color: #666;
+                font-size: 14px;
+            }
+
+            .availability-alert {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: #d32f2f;
+                font-size: 14px;
+                margin-top: 8px;
+            }
+        }
+
+        .amenities {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+
+            .amenity {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: #4caf50;
+                font-size: 14px;
+            }
+        }
+
+        .rating-price {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+
+            .rating {
+                display: flex;
+                flex-direction: column;
+
+                .rating-score {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #333;
+                }
+
+                .rating-text {
+                    font-size: 14px;
+                    color: #333;
+                }
+
+                .review-count {
+                    font-size: 12px;
+                    color: #666;
+                }
+            }
+
+            .price-section {
+                text-align: right;
+
+                .price-info {
+                    font-size: 14px;
+                    color: #666;
+                }
+
+                .price {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #333;
+                    margin: 4px 0;
+                }
+
+                .tax-info {
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 8px;
+                }
+
+                .view-availability {
+                    background: #006ce4;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #005bb7;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+//Laptop View
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+    .hotel-booking-container {
+        margin: 50px;
+    }
+    .hotel-listings {
+        padding-right: 20px;
+        background: #f8f8f8;
+        border-radius: 8px;
+    }
+}
+
+
+// MobilePhone
+@media screen and (max-width: 768px) {
+    .hotel-booking-container {
+        flex-direction: column;
+        padding: 10px;
+        gap: 15px;
+        margin-right: 20px;
+    }
+
+    .filter-panel {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .hotel-listings {
+        order: 1;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* 2 cột bằng nhau */
+        gap: 12px;
+    }
+
+    .hotel-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .hotel-image {
+            width: 100%;
+            height: 120px;
+
+            img {
+                object-fit: cover;
+            }
+
+            .featured-badge {
+                top: 8px;
+                right: 8px;
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+
+        .hotel-content {
+            padding: 10px;
+            flex-grow: 1; /* Chiếm hết không gian còn lại */
+
+            .hotel-header .hotel-name {
+                font-size: 16px;
+                margin-bottom: 4px;
+            }
+
+            .location {
+                font-size: 12px;
+                flex-wrap: wrap;
+            }
+
+            .room-info .room-type {
+                font-size: 14px;
+            }
+
+            .amenities {
+                display: none;
+            }
+        }
+    }
+
+    .rating-price {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 8px;
+
+        .rating {
+            display: none; /* Ẩn rating trên mobile */
+        }
+
+        .price-section {
+            text-align: left;
+
+            .price-info {
+                display: none;
+            }
+
+            .price {
+                font-size: 18px;
+                margin: 2px 0;
+            }
+
+            .tax-info {
+                display: none;
+            }
+
+            .view-availability {
+                width: 100%;
+                padding: 6px;
+                font-size: 12px;
+            }
+        }
+    }
+}

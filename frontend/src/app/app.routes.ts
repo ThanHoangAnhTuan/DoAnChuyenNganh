@@ -1,8 +1,9 @@
-import { Routes } from '@angular/router';
-import { ManagerComponent } from './page/manager/manager.component';
-import { HomeComponent } from './page/home/home.component';
-import { AccommodationComponent } from './page/accommodation/accommodation.component';
-import { AccommodationDetailComponent } from './page/accommodation-detail/accommodation-detail.component';
+import {Routes} from '@angular/router';
+import {ManagerComponent} from './page/manager/manager.component';
+import {HomeComponent} from './page/home/home.component';
+import {AccommodationComponent} from './page/accommodation/accommodation.component';
+import {AccommodationDetailComponent} from './page/accommodation-detail/accommodation-detail.component';
+import {SearchPageComponent} from './page/search-page/search-page.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,10 @@ export const routes: Routes = [
     {
         path: 'search/accommodation/detail/:name',
         component: AccommodationDetailComponent,
+    },
+    {
+        path: 'search/:city',
+        component: SearchPageComponent,
     },
     {
         path: '**',
