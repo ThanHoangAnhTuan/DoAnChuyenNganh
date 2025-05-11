@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Accommodation } from '../../../models/accommodation.model';
+import { Accommodation } from '../../../models/manager/accommodation.model';
 import {
     TuiAppearance,
     TuiButton,
@@ -26,7 +26,7 @@ import {
     CreateAccommodationDetails,
     DiscountSelect,
     UpdateAccommodationDetails,
-} from '../../../models/accommodation-detail.model';
+} from '../../../models/manager/accommodation-detail.model';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiInputModule } from '@taiga-ui/legacy';
 import { TuiCardLarge } from '@taiga-ui/layout';

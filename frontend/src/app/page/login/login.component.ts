@@ -7,8 +7,8 @@ import {
 } from '@angular/forms';
 import { TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiPassword } from '@taiga-ui/kit';
-import { ManagerService } from '../../../services/manager/manager.service';
-import { ManagerLoginInput } from '../../../models/manager/accommodation.model';
+import { ManagerService } from '../../services/manager/manager.service';
+import { ManagerLoginInput } from '../../models/manager/accommodation.model';
 import { Router } from '@angular/router';
 
 @Component({

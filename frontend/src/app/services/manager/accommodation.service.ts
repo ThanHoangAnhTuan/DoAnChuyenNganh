@@ -8,7 +8,7 @@ import {
     UpdateAccommodationResponse,
     UpdateAccommodation,
     DeleteAccommodationResponse,
-} from '../../models/accommodation.model';
+} from '../../models/manager/accommodation.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({

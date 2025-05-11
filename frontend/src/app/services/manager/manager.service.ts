@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
     ManagerLoginInput,
     ManagerLoginOutput,
-} from '../../models/accommodation.model';
+} from '../../models/manager/accommodation.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';

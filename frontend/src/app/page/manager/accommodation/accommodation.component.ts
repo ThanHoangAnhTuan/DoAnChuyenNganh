@@ -13,7 +13,7 @@ import {
     Accommodation,
     CreateAccommodation,
     UpdateAccommodation,
-} from '../../../models/accommodation.model';
+} from '../../../models/manager/accommodation.model';
 
 import { TuiTable } from '@taiga-ui/addon-table';
 import {

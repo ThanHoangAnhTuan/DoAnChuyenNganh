@@ -8,7 +8,7 @@ import {
     GetAccommodationDetailsResponse,
     UpdateAccommodationDetailResponse,
     UpdateAccommodationDetails,
-} from '../../models/accommodation-detail.model';
+} from '../../models/manager/accommodation-detail.model';
 
 @Injectable({
     providedIn: 'root',
