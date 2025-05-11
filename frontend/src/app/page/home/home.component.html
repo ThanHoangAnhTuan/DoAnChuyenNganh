@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<img src="city_pictures/banner.png" alt="banner" class="banner" />
+<img src="images/city_pictures/banner.png" alt="banner" class="banner" />
 <app-search-box></app-search-box>
 
 <main class="main">
@@ -12,14 +12,14 @@
         <div class="trending-content">
             <div class="trending-place" *ngFor="let place of trendinPlaces">
                 <img
-                    src="trending-places/{{ place.image }}"
+                    src="images/trending-places/{{ place.image }}"
                     alt="{{ place.alt }}"
                     class="trending-image"
                 />
                 <p class="text-in-image">
                     {{ place.name }}
                     <img
-                        src="flags/vn.png"
+                        src="images/flags/vn.png"
                         alt="vietnamese flag"
                         class="trending-flag"
                     />
@@ -59,7 +59,7 @@
                     >
                         <img
                             alt="place.name"
-                            src="place-type/{{ place.image }}"
+                            src="images/place-type/{{ place.image }}"
                             class="place-type-image"
                         />
                         <div class="place-type-name">{{ place.name }}</div>
@@ -113,7 +113,7 @@
                     >
                         <img
                             alt="place.name"
-                            src="explore-places/{{ place.image }}"
+                            src="images/explore-places/{{ place.image }}"
                             class="explore-image"
                         />
                         <div class="explore-place-name">{{ place.name }}</div>
