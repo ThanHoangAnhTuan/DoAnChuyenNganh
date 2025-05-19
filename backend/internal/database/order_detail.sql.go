@@ -26,7 +26,7 @@ VALUES
 type CreateOrderDetailParams struct {
 	ID                    string
 	OrderID               string
-	Price                 string
+	Price                 uint32
 	AccommodationDetailID string
 	CreatedAt             uint64
 	UpdatedAt             uint64

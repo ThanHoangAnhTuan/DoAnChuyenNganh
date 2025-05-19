@@ -87,3 +87,42 @@ type UpdateAccommodationOutput struct {
 type DeleteAccommodationInput struct {
 	Id string `uri:"id" validate:"required"`
 }
+
+// get accommodation by city
+type GetAccommodationByCityInput struct {
+	City string `uri:"city"`
+}
+
+// get accommodation by city
+type GetAccommodationsByCity struct {
+	Id        string `json:"id"`
+	Name      string `json:"name"`
+	City      string `json:"city"`
+	Country   string `json:"country"`
+	District  string `json:"district"`
+	Image     string `json:"image"`
+	Rating    string `json:"rating"`
+	GoogleMap string `json:"google_map"`
+}
+
+// get accommodation by id
+
+type GetAccommodationByIdInput struct {
+	Id string `uri:"id"`
+}
+
+type GetAccommodationByIdOutput struct {
+	Id                   string               `json:"id"`
+	ManagerId            string               `json:"manager_id"`
+	Name                 string               `json:"name"`
+	City                 string               `json:"city"`
+	Country              string               `json:"country"`
+	District             string               `json:"district"`
+	Images               []string             `json:"images"`
+	Description          string               `json:"description"`
+	Rating               string               `json:"rating"`
+	Facilities           Facilities           `json:"facilities"`
+	GoogleMap            string               `json:"google_map"`
+	PropertySurroundings PropertySurroundings `json:"property_surrounds"`
+	Rules                string               `json:"rules"`
+}

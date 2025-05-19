@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	IUploadImage interface {
+	IUpload interface {
 		UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error)
 		GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeStatus int, imagesPath []string, err error)
 		DeleteImage(ctx *gin.Context, fileName string) (err error)
@@ -14,16 +14,16 @@ type (
 )
 
 var (
-	localUploadImage IUploadImage
+	localUpload IUpload
 )
 
-func UploadImage() IUploadImage {
-	if localUploadImage == nil {
-		panic("Implement localUploadImage not found for interface IUploadImage")
+func Upload() IUpload {
+	if localUpload == nil {
+		panic("Implement localUpload not found for interface IUpload")
 	}
-	return localUploadImage
+	return localUpload
 }
 
-func InitImage(i IUploadImage) {
-	localUploadImage = i
+func InitUpload(i IUpload) {
+	localUpload = i
 }

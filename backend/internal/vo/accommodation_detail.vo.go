@@ -20,11 +20,11 @@ type GetAccommodationDetailsInput struct {
 type CreateAccommodationDetailInput struct {
 	AccommodationId string                        `json:"accommodation_id" validate:"required"`
 	Name            string                        `json:"name" validate:"required"`
-	Guests          uint8                         `json:"guests" validate:"required"`
+	Guests          uint8                         `json:"guests" validate:"gte=1"`
 	Beds            Beds                          `json:"beds" validate:"required"`
 	Facilities      FacilitiesAccommodationDetail `json:"facilities" validate:"required"`
-	AvailableRooms  uint8                         `json:"available_rooms" validate:"required"`
-	Price           float64                       `json:"price" validate:"required"`
+	AvailableRooms  uint8                         `json:"available_rooms" validate:"gte=0"`
+	Price           uint32                        `json:"price" validate:"gte=1"`
 	DiscountId      string                        `json:"discount_id"`
 }
 
@@ -36,7 +36,7 @@ type CreateAccommodationDetailOutput struct {
 	Beds            Beds                          `json:"beds"`
 	Facilities      FacilitiesAccommodationDetail `json:"facilities"`
 	AvailableRooms  uint8                         `json:"available_rooms"`
-	Price           string                        `json:"price"`
+	Price           uint32                        `json:"price"`
 	DiscountId      string                        `json:"discount_id"`
 	Images          []string                      `json:"images"`
 }
@@ -49,7 +49,7 @@ type GetAccommodationDetailsOutput struct {
 	Beds            Beds                          `json:"beds"`
 	Facilities      FacilitiesAccommodationDetail `json:"facilities"`
 	AvailableRooms  uint8                         `json:"available_rooms"`
-	Price           string                        `json:"price"`
+	Price           uint32                        `json:"price"`
 	DiscountId      string                        `json:"discount_id"`
 	Images          []string                      `json:"images"`
 }
@@ -62,7 +62,7 @@ type UpdateAccommodationDetailInput struct {
 	Beds            Beds                          `json:"beds"`
 	Facilities      FacilitiesAccommodationDetail `json:"facilities"`
 	AvailableRooms  uint8                         `json:"available_rooms"`
-	Price           float64                       `json:"price"`
+	Price           uint32                        `json:"price"`
 	DiscountId      string                        `json:"discount_id"`
 }
 
@@ -74,7 +74,7 @@ type UpdateAccommodationDetailOutput struct {
 	Beds            Beds                          `json:"beds"`
 	Facilities      FacilitiesAccommodationDetail `json:"facilities"`
 	AvailableRooms  uint8                         `json:"available_rooms"`
-	Price           string                        `json:"price"`
+	Price           uint32                        `json:"price"`
 	DiscountId      string                        `json:"discount_id"`
 	Images          []string                      `json:"images"`
 }

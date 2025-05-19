@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 )
 
 const checkAccommodationDetailExists = `-- name: CheckAccommodationDetailExists :one
@@ -56,7 +57,7 @@ type CreateAccommodationDetailParams struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           string
+	Price           uint32
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -106,7 +107,8 @@ FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    and ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
+    and ` + "`" + `accommodation_id` + "`" + ` = ?
+    and ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type GetAccommodationDetailParams struct {
@@ -122,7 +124,7 @@ type GetAccommodationDetailRow struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           string
+	Price           uint32
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -161,7 +163,8 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
-    ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
+    ` + "`" + `accommodation_id` + "`" + ` = ?
+    and ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type GetAccommodationDetailsRow struct {
@@ -173,7 +176,7 @@ type GetAccommodationDetailsRow struct {
 	DiscountID      sql.NullString
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           string
+	Price           uint32
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -213,6 +216,69 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 	return items, nil
 }
 
+const getAccommodationDetailsByIDs = `-- name: GetAccommodationDetailsByIDs :many
+SELECT
+    id, accommodation_id, name, guests, beds, facilities, available_rooms, price, discount_id, is_verified, is_deleted, created_at, updated_at
+FROM
+    ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` IN (/*SLICE:ids*/?)
+    AND ` + "`" + `accommodation_id` + "`" + ` = ?
+`
+
+type GetAccommodationDetailsByIDsParams struct {
+	Ids             []string
+	AccommodationID string
+}
+
+func (q *Queries) GetAccommodationDetailsByIDs(ctx context.Context, arg GetAccommodationDetailsByIDsParams) ([]EcommerceGoAccommodationDetail, error) {
+	query := getAccommodationDetailsByIDs
+	var queryParams []interface{}
+	if len(arg.Ids) > 0 {
+		for _, v := range arg.Ids {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:ids*/?", strings.Repeat(",?", len(arg.Ids))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:ids*/?", "NULL", 1)
+	}
+	queryParams = append(queryParams, arg.AccommodationID)
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []EcommerceGoAccommodationDetail
+	for rows.Next() {
+		var i EcommerceGoAccommodationDetail
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccommodationID,
+			&i.Name,
+			&i.Guests,
+			&i.Beds,
+			&i.Facilities,
+			&i.AvailableRooms,
+			&i.Price,
+			&i.DiscountID,
+			&i.IsVerified,
+			&i.IsDeleted,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateAccommodationDetail = `-- name: UpdateAccommodationDetail :exec
 UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 SET
@@ -225,7 +291,8 @@ SET
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    and ` + "`" + `accommodation_id` + "`" + ` = ? and ` + "`" + `is_deleted` + "`" + `= 0
+    and ` + "`" + `accommodation_id` + "`" + ` = ?
+    and ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type UpdateAccommodationDetailParams struct {
@@ -234,7 +301,7 @@ type UpdateAccommodationDetailParams struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           string
+	Price           uint32
 	UpdatedAt       uint64
 	ID              string
 	AccommodationID string

@@ -1,0 +1,94 @@
+package controllers
+
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"go.uber.org/zap"
+)
+
+var Facility = new(CFacility)
+
+type CFacility struct {
+}
+
+func (c *CFacility) CreateFacility(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("CreateFacility validation not found")
+		global.Logger.Error("CreateFacility validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.CreateFacilityInput
+	if err := ctx.ShouldBind(&params); err != nil {
+		fmt.Printf("CreateFacility binding error: %s\n", err.Error())
+		global.Logger.Error("CreateFacility binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("CreateFacility validation error: %s\n", err.Error())
+		global.Logger.Error("CreateFacility validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		return
+	}
+
+	codeStatus, data, err := services.Facility().CreateFacility(ctx, &params)
+	if err != nil {
+		fmt.Printf("CreateFacility error: %s\n", err.Error())
+		global.Logger.Error("CreateFacility error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("CreateFacility success: %s\n", data)
+	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.Id)))
+	response.SuccessResponse(ctx, codeStatus, nil)
+}
+
+func (c *CFacility) GetFacilities(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("Validation not found")
+		global.Logger.Error("Validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.GetFacilitiesInput
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		fmt.Printf("GetFacilities binding error\n: %s", err.Error())
+		global.Logger.Error("GetFacilities binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		fmt.Printf("GetFacilities validation error\n: %s", err.Error())
+		global.Logger.Error("GetFacilities validation error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		return
+	}
+
+	codeResult, data, err := services.Facility().GetFacilities(ctx, &params)
+	if err != nil {
+		fmt.Printf("GetFacilities error\n: %s", err.Error())
+		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeResult, nil)
+		return
+	}
+
+	fmt.Printf("GetFacilities success\n: %s", data)
+	// global.Logger.Info("GetFacilities success: ", zap.String("info", data))
+	response.SuccessResponse(ctx, codeResult, data)
+}

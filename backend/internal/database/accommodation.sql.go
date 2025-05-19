@@ -231,6 +231,63 @@ func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow
 	return items, nil
 }
 
+const getAccommodationsByCity = `-- name: GetAccommodationsByCity :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `rating` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `city` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type GetAccommodationsByCityRow struct {
+	ID       string
+	Country  string
+	Name     string
+	City     string
+	District string
+	GgMap    string
+	Rating   uint8
+}
+
+func (q *Queries) GetAccommodationsByCity(ctx context.Context, city string) ([]GetAccommodationsByCityRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAccommodationsByCity, city)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAccommodationsByCityRow
+	for rows.Next() {
+		var i GetAccommodationsByCityRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Country,
+			&i.Name,
+			&i.City,
+			&i.District,
+			&i.GgMap,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAccommodationsByManager = `-- name: GetAccommodationsByManager :many
 SELECT
     ` + "`" + `id` + "`" + `,

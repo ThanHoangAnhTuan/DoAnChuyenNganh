@@ -56,10 +56,10 @@ func (ns NullEcommerceGoDiscountDiscountType) Value() (driver.Value, error) {
 type EcommerceGoOrderOrderStatus string
 
 const (
-	EcommerceGoOrderOrderStatusPending   EcommerceGoOrderOrderStatus = "pending"
-	EcommerceGoOrderOrderStatusCanceled  EcommerceGoOrderOrderStatus = "canceled"
-	EcommerceGoOrderOrderStatusSuccess   EcommerceGoOrderOrderStatus = "success"
+	EcommerceGoOrderOrderStatusConfirmed EcommerceGoOrderOrderStatus = "confirmed"
+	EcommerceGoOrderOrderStatusActive    EcommerceGoOrderOrderStatus = "active"
 	EcommerceGoOrderOrderStatusCompleted EcommerceGoOrderOrderStatus = "completed"
+	EcommerceGoOrderOrderStatusCanceled  EcommerceGoOrderOrderStatus = "canceled"
 	EcommerceGoOrderOrderStatusRefunded  EcommerceGoOrderOrderStatus = "refunded"
 )
 
@@ -143,11 +143,9 @@ func (ns NullEcommerceGoPaymentPaymentMethod) Value() (driver.Value, error) {
 type EcommerceGoPaymentPaymentStatus string
 
 const (
-	EcommerceGoPaymentPaymentStatusPending   EcommerceGoPaymentPaymentStatus = "pending"
-	EcommerceGoPaymentPaymentStatusCanceled  EcommerceGoPaymentPaymentStatus = "canceled"
-	EcommerceGoPaymentPaymentStatusSuccess   EcommerceGoPaymentPaymentStatus = "success"
-	EcommerceGoPaymentPaymentStatusCompleted EcommerceGoPaymentPaymentStatus = "completed"
-	EcommerceGoPaymentPaymentStatusRefunded  EcommerceGoPaymentPaymentStatus = "refunded"
+	EcommerceGoPaymentPaymentStatusFailed   EcommerceGoPaymentPaymentStatus = "failed"
+	EcommerceGoPaymentPaymentStatusSuccess  EcommerceGoPaymentPaymentStatus = "success"
+	EcommerceGoPaymentPaymentStatusRefunded EcommerceGoPaymentPaymentStatus = "refunded"
 )
 
 func (e *EcommerceGoPaymentPaymentStatus) Scan(src interface{}) error {
@@ -322,7 +320,7 @@ type EcommerceGoAccommodationDetail struct {
 	// available rooms
 	AvailableRooms uint8
 	// price
-	Price string
+	Price uint32
 	// discount ID
 	DiscountID sql.NullString
 	// is verified: 0 - unverified, 1 - verified
@@ -387,18 +385,34 @@ type EcommerceGoDiscount struct {
 	UpdatedAt uint64
 }
 
+// facility table
+type EcommerceGoFacility struct {
+	// ID
+	ID string
+	// image
+	Image string
+	// name
+	Name string
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
 // order table
 type EcommerceGoOrder struct {
 	// ID
 	ID string
 	// user base ID
 	UserID string
-	// total price
-	TotalPrice string
+	// final total
+	FinalTotal uint32
 	// order status
 	OrderStatus EcommerceGoOrderOrderStatus
+	// accommodation ID
+	AccommodationID string
 	// voucher ID
-	VoucherID string
+	VoucherID sql.NullString
 	// Checkin date
 	CheckinDate uint64
 	// checkout date
@@ -416,7 +430,7 @@ type EcommerceGoOrderDetail struct {
 	// order ID
 	OrderID string
 	// price
-	Price string
+	Price uint32
 	// accommodation detail ID
 	AccommodationDetailID string
 	// created at
@@ -436,7 +450,7 @@ type EcommerceGoPayment struct {
 	// payment method
 	PaymentMethod EcommerceGoPaymentPaymentMethod
 	// total price
-	TotalPrice string
+	TotalPrice uint32
 	// transaction id
 	TransactionID sql.NullString
 	// created at
@@ -473,6 +487,8 @@ type EcommerceGoUserAdmin struct {
 	ID string
 	// account: email or SMS
 	Account string
+	// user name
+	UserName string
 	// password
 	Password string
 	// login time

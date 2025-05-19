@@ -12,7 +12,10 @@ VALUES
 
 -- name: GetUserAdmin :one
 SELECT
-    `account`
+    `id`,
+    `account`,
+    `user_name`,
+    `password`
 FROM
     `ecommerce_go_user_admin`
 WHERE
@@ -25,3 +28,22 @@ SET
     `is_deleted` = 1
 WHERE
     `account` = ?;
+
+-- name: UpdateUserAdminLogin :exec
+UPDATE `ecommerce_go_user_admin`
+SET
+    `login_time` = ?
+WHERE
+    `account` = ?;
+
+-- name: CheckUserAdminExistsByEmail :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_admin`
+        WHERE
+            `account` = ?
+            AND `is_deleted` = 0
+    );

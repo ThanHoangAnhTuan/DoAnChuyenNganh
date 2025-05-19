@@ -4,6 +4,7 @@ CREATE TABLE
     IF NOT EXISTS `ecommerce_go_user_admin` (
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `account` VARCHAR(255) NOT NULL COMMENT 'account: email or SMS',
+        `user_name` VARCHAR(255) NOT NULL DEFAULT "" COMMENT 'user name',
         `password` VARCHAR(60) NOT NULL COMMENT 'password',
         `login_time` BIGINT UNSIGNED NOT NULL COMMENT 'login time',
         `logout_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'logout time',

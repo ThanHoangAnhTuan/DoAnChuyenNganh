@@ -2,16 +2,18 @@ package response
 
 const (
 	// global
-	ErrCodeSaveDataFailed       = 20001
-	ErrCodeUpdateDataFailed     = 20002
-	ErrCodeMarshalFailed        = 20003
-	ErrCodeUnMarshalFailed      = 20004
-	ErrCodeCreateJWTTokenFailed = 20005
-	ErrCodeParamsInvalid        = 20006
-	ErrCodeUnauthorized         = 20007
-	ErrCodeForbidden            = 20008
-	ErrCodeValidatorNotFound    = 20009
-	ErrCodeValidator            = 20010
+	ErrCodeSaveDataFailed         = 20001
+	ErrCodeUpdateDataFailed       = 20002
+	ErrCodeMarshalFailed          = 20003
+	ErrCodeUnMarshalFailed        = 20004
+	ErrCodeCreateJWTTokenFailed   = 20005
+	ErrCodeParamsInvalid          = 20006
+	ErrCodeUnauthorized           = 20007
+	ErrCodeForbidden              = 20008
+	ErrCodeValidatorNotFound      = 20009
+	ErrCodeValidator              = 20010
+	ErrCodeConvertISOToUnixFailed = 200011
+	ErrCodeConvertUnixToISOFailed = 200012
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -94,20 +96,45 @@ const (
 	// manager
 	ErrCodeUpdateManagerFailed = 110001
 	ErrCodeGetManagerFailed    = 110002
+
+	// admin
+	ErrCodeGetAdminFailed = 120001
+	ErrCodeUserNotAdmin   = 120002
+
+	// facility
+	ErrCodeCreateFacilitySuccess = 130001
+	ErrCodeCreateFacilityFailed  = 130002
+	ErrCodeGetFacilityFailed     = 130003
+
+	// user base
+	ErrCodeGetUserBaseFailed = 140001
+	ErrCodeUserBaseNotFound  = 140002
+
+	// transaction
+	ErrCodeBeginTransactionFailed  = 150001
+	ErrCodeCommitTransactionFailed = 150002
+
+	// order
+	ErrCodeCreateOrderDetailFailed = 160001
+	ErrCodeCreateOrderFailed       = 160002
+	ErrCodeCreatePaymentFailed     = 160003
+	ErrCodeCreateOrderSuccess      = 160004
 )
 
 var message = map[int]string{
 	// global
-	ErrCodeSaveDataFailed:       "Save data failed",
-	ErrCodeUpdateDataFailed:     "Update data failed",
-	ErrCodeMarshalFailed:        "Marshal failed",
-	ErrCodeUnMarshalFailed:      "Unmarshal failed",
-	ErrCodeCreateJWTTokenFailed: "Create JWT token failed",
-	ErrCodeParamsInvalid:        "Params invalid",
-	ErrCodeUnauthorized:         "Unauthorized",
-	ErrCodeForbidden:            "You do not have permission to access this resource.",
-	ErrCodeValidatorNotFound:    "Validator not found",
-	ErrCodeValidator:            "Validator error",
+	ErrCodeSaveDataFailed:         "Save data failed",
+	ErrCodeUpdateDataFailed:       "Update data failed",
+	ErrCodeMarshalFailed:          "Marshal failed",
+	ErrCodeUnMarshalFailed:        "Unmarshal failed",
+	ErrCodeCreateJWTTokenFailed:   "Create JWT token failed",
+	ErrCodeParamsInvalid:          "Params invalid",
+	ErrCodeUnauthorized:           "Unauthorized",
+	ErrCodeForbidden:              "You do not have permission to access this resource.",
+	ErrCodeValidatorNotFound:      "Validator not found",
+	ErrCodeValidator:              "Validator error",
+	ErrCodeConvertISOToUnixFailed: "Convert ISO to Unix failed",
+	ErrCodeConvertUnixToISOFailed: "Convert Unix to ISO failed",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",
@@ -190,4 +217,26 @@ var message = map[int]string{
 	// manager
 	ErrCodeUpdateManagerFailed: "Update manager failed",
 	ErrCodeGetManagerFailed:    "Get manager failed",
+
+	// admin
+	ErrCodeGetAdminFailed: "Get admin failed",
+
+	// facility
+	ErrCodeCreateFacilitySuccess: "Create facility successfully",
+	ErrCodeCreateFacilityFailed:  "Create facility failed",
+	ErrCodeGetFacilityFailed:     "Get facility failed",
+
+	// user base
+	ErrCodeGetUserBaseFailed: "Get user base failed",
+	ErrCodeUserBaseNotFound:  "User base not found",
+
+	// transaction
+	ErrCodeBeginTransactionFailed:  "Start transaction failed",
+	ErrCodeCommitTransactionFailed: "Commit transaction failed",
+
+	// order vs order detail
+	ErrCodeCreateOrderDetailFailed: "Create order detail failed",
+	ErrCodeCreateOrderFailed:       "Create order failed",
+	ErrCodeCreatePaymentFailed:     "Create payment failed",
+	ErrCodeCreateOrderSuccess:      "Create order successfully",
 }

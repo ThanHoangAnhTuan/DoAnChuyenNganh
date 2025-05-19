@@ -54,18 +54,40 @@ func (q *Queries) AddUserBase(ctx context.Context, arg AddUserBaseParams) error 
 }
 
 const checkUserBaseExists = `-- name: CheckUserBaseExists :one
-SELECT EXISTS (
 SELECT
-    1
-FROM
-    ` + "`" + `ecommerce_go_user_base` + "`" + `
-WHERE
-    ` + "`" + `account` + "`" + ` = ?
-)
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_base` + "`" + `
+        WHERE
+            ` + "`" + `account` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
 `
 
 func (q *Queries) CheckUserBaseExists(ctx context.Context, account string) (bool, error) {
 	row := q.db.QueryRowContext(ctx, checkUserBaseExists, account)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const checkUserBaseExistsById = `-- name: CheckUserBaseExistsById :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_base` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
+`
+
+func (q *Queries) CheckUserBaseExistsById(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserBaseExistsById, id)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

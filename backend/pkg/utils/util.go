@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 func GetUserKey(hashKey string) string {
@@ -33,4 +35,9 @@ func GetUserIDFromContext(c context.Context) (string, bool) {
 	id := c.Value("userId")
 	uid, ok := id.(string)
 	return uid, ok
+}
+
+func FormatCurrency(amount uint32) string {
+	p := message.NewPrinter(language.Vietnamese)
+	return p.Sprintf("%d", amount)
 }

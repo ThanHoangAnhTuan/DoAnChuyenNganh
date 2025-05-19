@@ -5,14 +5,12 @@ CREATE TABLE
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `order_id` VARCHAR(36) NOT NULL COMMENT 'order ID',
         `payment_status` ENUM (
-            'pending',
-            'canceled',
+            'failed',
             'success',
-            'completed',
             'refunded'
         ) NOT NULL COMMENT 'payment status',
         `payment_method` ENUM ('cash', 'card') NOT NULL COMMENT 'payment method',
-        `total_price` DECIMAL(10, 2) NOT NULL COMMENT 'total price',
+        `total_price` INT UNSIGNED NOT NULL COMMENT 'total price',
         `transaction_id` VARCHAR(100) COMMENT 'transaction id',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',

@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createOrder = `-- name: CreateOrder :exec
@@ -14,36 +15,40 @@ INSERT INTO
     ` + "`" + `ecommerce_go_order` + "`" + ` (
         ` + "`" + `id` + "`" + `,
         ` + "`" + `user_id` + "`" + `,
-        ` + "`" + `total_price` + "`" + `,
+        ` + "`" + `final_total` + "`" + `,
         ` + "`" + `order_status` + "`" + `,
+        ` + "`" + `accommodation_id` + "`" + `,
         ` + "`" + `voucher_id` + "`" + `,
         ` + "`" + `checkin_date` + "`" + `,
         ` + "`" + `checkout_date` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
+
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateOrderParams struct {
-	ID           string
-	UserID       string
-	TotalPrice   string
-	OrderStatus  EcommerceGoOrderOrderStatus
-	VoucherID    string
-	CheckinDate  uint64
-	CheckoutDate uint64
-	CreatedAt    uint64
-	UpdatedAt    uint64
+	ID              string
+	UserID          string
+	FinalTotal      uint32
+	OrderStatus     EcommerceGoOrderOrderStatus
+	AccommodationID string
+	VoucherID       sql.NullString
+	CheckinDate     uint64
+	CheckoutDate    uint64
+	CreatedAt       uint64
+	UpdatedAt       uint64
 }
 
 func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error {
 	_, err := q.db.ExecContext(ctx, createOrder,
 		arg.ID,
 		arg.UserID,
-		arg.TotalPrice,
+		arg.FinalTotal,
 		arg.OrderStatus,
+		arg.AccommodationID,
 		arg.VoucherID,
 		arg.CheckinDate,
 		arg.CheckoutDate,
@@ -56,9 +61,9 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 const getOrdersByUser = `-- name: GetOrdersByUser :many
 SELECT
     ` + "`" + `id` + "`" + `,
-    ` + "`" + `total_price` + "`" + `,
+    ` + "`" + `final_total` + "`" + `,
     ` + "`" + `order_status` + "`" + `,
-    ` + "`" + `voucher_id` + "`" + `,
+    -- ` + "`" + `voucher_id` + "`" + `,
     ` + "`" + `checkin_date` + "`" + `,
     ` + "`" + `checkout_date` + "`" + `,
     ` + "`" + `created_at` + "`" + `,
@@ -71,9 +76,8 @@ WHERE
 
 type GetOrdersByUserRow struct {
 	ID           string
-	TotalPrice   string
+	FinalTotal   uint32
 	OrderStatus  EcommerceGoOrderOrderStatus
-	VoucherID    string
 	CheckinDate  uint64
 	CheckoutDate uint64
 	CreatedAt    uint64
@@ -91,9 +95,8 @@ func (q *Queries) GetOrdersByUser(ctx context.Context, userID string) ([]GetOrde
 		var i GetOrdersByUserRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.TotalPrice,
+			&i.FinalTotal,
 			&i.OrderStatus,
-			&i.VoucherID,
 			&i.CheckinDate,
 			&i.CheckoutDate,
 			&i.CreatedAt,

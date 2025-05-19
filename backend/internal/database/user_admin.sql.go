@@ -9,6 +9,26 @@ import (
 	"context"
 )
 
+const checkUserAdminExistsByEmail = `-- name: CheckUserAdminExistsByEmail :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_admin` + "`" + `
+        WHERE
+            ` + "`" + `account` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
+`
+
+func (q *Queries) CheckUserAdminExistsByEmail(ctx context.Context, account string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserAdminExistsByEmail, account)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createUserAdmin = `-- name: CreateUserAdmin :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_user_admin` + "`" + ` (
@@ -56,7 +76,10 @@ func (q *Queries) DeleteUserAdmin(ctx context.Context, account string) error {
 
 const getUserAdmin = `-- name: GetUserAdmin :one
 SELECT
-    ` + "`" + `account` + "`" + `
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `account` + "`" + `,
+    ` + "`" + `user_name` + "`" + `,
+    ` + "`" + `password` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_user_admin` + "`" + `
 WHERE
@@ -64,8 +87,39 @@ WHERE
     AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
-func (q *Queries) GetUserAdmin(ctx context.Context, account string) (string, error) {
+type GetUserAdminRow struct {
+	ID       string
+	Account  string
+	UserName string
+	Password string
+}
+
+func (q *Queries) GetUserAdmin(ctx context.Context, account string) (GetUserAdminRow, error) {
 	row := q.db.QueryRowContext(ctx, getUserAdmin, account)
-	err := row.Scan(&account)
-	return account, err
+	var i GetUserAdminRow
+	err := row.Scan(
+		&i.ID,
+		&i.Account,
+		&i.UserName,
+		&i.Password,
+	)
+	return i, err
+}
+
+const updateUserAdminLogin = `-- name: UpdateUserAdminLogin :exec
+UPDATE ` + "`" + `ecommerce_go_user_admin` + "`" + `
+SET
+    ` + "`" + `login_time` + "`" + ` = ?
+WHERE
+    ` + "`" + `account` + "`" + ` = ?
+`
+
+type UpdateUserAdminLoginParams struct {
+	LoginTime uint64
+	Account   string
+}
+
+func (q *Queries) UpdateUserAdminLogin(ctx context.Context, arg UpdateUserAdminLoginParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserAdminLogin, arg.LoginTime, arg.Account)
+	return err
 }

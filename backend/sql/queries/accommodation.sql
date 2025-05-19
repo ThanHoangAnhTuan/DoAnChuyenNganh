@@ -77,6 +77,21 @@ WHERE
     `id` = ?
     AND `is_deleted` = 0;
 
+-- name: GetAccommodationsByCity :many
+SELECT
+    `id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `gg_map`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `city` = ?
+    AND `is_deleted` = 0;
+
 -- name: UpdateAccommodation :exec
 UPDATE `ecommerce_go_accommodation`
 SET

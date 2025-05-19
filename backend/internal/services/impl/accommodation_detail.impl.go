@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -75,7 +74,7 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           strconv.FormatFloat(in.Price, 'f', 2, 64),
+		Price:           in.Price,
 		CreatedAt:       now,
 		UpdatedAt:       now,
 	}
@@ -92,7 +91,7 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 	out.Facilities = in.Facilities
 	out.Guests = in.Guests
 	out.Name = in.Name
-	out.Price = strconv.FormatFloat(in.Price, 'f', 2, 64)
+	out.Price = in.Price
 	return response.ErrCodeCreateAccommodationDetailSuccess, out, nil
 }
 
@@ -234,7 +233,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           strconv.FormatFloat(in.Price, 'f', 2, 64),
+		Price:           in.Price,
 		UpdatedAt:       now,
 		ID:              in.Id,
 		AccommodationID: in.AccommodationId,
@@ -252,7 +251,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 	out.Guests = in.Guests
 	out.Id = in.Id
 	out.Name = in.Name
-	out.Price = strconv.FormatFloat(in.Price, 'f', 2, 64)
+	out.Price = in.Price
 	return response.ErrCodeUpdateAccommodationDetailSuccess, out, nil
 }
 

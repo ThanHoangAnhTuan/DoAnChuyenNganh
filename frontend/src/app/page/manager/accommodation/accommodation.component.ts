@@ -78,8 +78,8 @@ import { RouterLink } from '@angular/router';
 export class AccommodationComponent implements OnInit {
     protected accommodations!: Accommodation[];
     protected columns: string[] = [
-        'ID',
-        'Manager ID',
+        // 'ID',
+        // 'Manager ID',
         'Name',
         'City',
         'Country',

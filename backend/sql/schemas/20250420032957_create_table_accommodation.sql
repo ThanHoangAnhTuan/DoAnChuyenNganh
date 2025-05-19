@@ -8,7 +8,7 @@ CREATE TABLE
         `country` VARCHAR(255) NOT NULL COMMENT 'country',
         `city` VARCHAR(255) NOT NULL COMMENT 'city',
         `district` VARCHAR(255) NOT NULL COMMENT 'district',
-        `description` VARCHAR(255) NOT NULL COMMENT 'description',
+        `description` TEXT NOT NULL COMMENT 'description',
         `facilities` JSON NOT NULL COMMENT 'facilities',
         `rating` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'rating',
         `gg_map` TEXT NOT NULL COMMENT 'google map address',

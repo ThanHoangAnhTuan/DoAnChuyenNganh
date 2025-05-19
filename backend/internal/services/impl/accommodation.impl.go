@@ -20,14 +20,89 @@ type AccommodationImpl struct {
 	sqlc *database.Queries
 }
 
-// GetAccommodationsByManager implements services.IAccommodation.
+func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.GetAccommodationByIdInput) (codeStatus int, out *vo.GetAccommodationByIdOutput, err error) {
+	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.Id)
+	if err != nil {
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %s", err)
+	}
+
+	facilities := vo.Facilities{}
+	if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	}
+
+	propertySurroundings := vo.PropertySurroundings{}
+	if err := json.Unmarshal(accommodation.PropertySurroundings, &propertySurroundings); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+	}
+
+	// TODO: get images of accommodation
+	images, err := t.sqlc.GetAccommodationImages(ctx, in.Id)
+	if err != nil {
+		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("error for get images of accommodation failed: %s", err)
+	}
+	var imagesName []string
+	for _, img := range images {
+		imagesName = append(imagesName, img.Image)
+	}
+
+	out = &vo.GetAccommodationByIdOutput{
+		Id:                   accommodation.ID,
+		Name:                 accommodation.Name,
+		Country:              accommodation.Country,
+		City:                 accommodation.City,
+		District:             accommodation.District,
+		Description:          accommodation.Description,
+		ManagerId:            accommodation.ManagerID,
+		Rating:               strconv.Itoa(int(accommodation.Rating)),
+		Facilities:           facilities,
+		GoogleMap:            accommodation.GgMap,
+		PropertySurroundings: propertySurroundings,
+		Rules:                accommodation.Rules,
+		Images:               imagesName,
+	}
+
+	return response.ErrCodeGetAccommodationSuccess, out, nil
+}
+
+func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.GetAccommodationByCityInput) (codeStatus int, out []*vo.GetAccommodationsByCity, err error) {
+	out = []*vo.GetAccommodationsByCity{}
+	accommodations, err := t.sqlc.GetAccommodationsByCity(ctx, in.City)
+	if err != nil {
+		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
+	}
+
+	for _, accommodation := range accommodations {
+		// TODO: get image of accommodation
+		image, err := t.sqlc.GetAccommodationImage(ctx, accommodation.ID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get accommodation image failed: %s", err)
+		}
+
+		out = append(out, &vo.GetAccommodationsByCity{
+			Id:        accommodation.ID,
+			Name:      accommodation.Name,
+			Country:   accommodation.Country,
+			City:      accommodation.City,
+			District:  accommodation.District,
+			Rating:    strconv.Itoa(int(accommodation.Rating)),
+			GoogleMap: accommodation.GgMap,
+			Image:     image,
+		})
+	}
+	return response.ErrCodeGetAccommodationSuccess, out, nil
+}
+
 func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
 	out = []*vo.GetAccommodations{}
 
 	val := ctx.Value("userId")
+	if val == nil {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
+	}
 	userID, ok := val.(string)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
 	}
 
 	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
@@ -66,7 +141,6 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-// DeleteAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
 	// !. get userId from context
 	val := ctx.Value("userId")
@@ -111,7 +185,6 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 	return response.ErrCodeDeleteAccommodationSuccess, nil
 }
 
-// UpdateAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommodationInput) (codeResult int, out *vo.UpdateAccommodationOutput, err error) {
 	out = &vo.UpdateAccommodationOutput{}
 	// !. get userId from context
@@ -192,7 +265,6 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
 }
 
-// GetAccommodations implements services.IAccommodation.
 func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
 	out = make([]*vo.GetAccommodations, 0)
 	accommodations, err := t.sqlc.GetAccommodations(ctx)
@@ -229,7 +301,6 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-// CreateAccommodation implements services.ITest.
 func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error) {
 	out = &vo.CreateAccommodationOutput{}
 	// !. check manager exists in database

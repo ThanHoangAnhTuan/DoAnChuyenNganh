@@ -15,12 +15,12 @@
         <tbody tuiTbody>
             @for(accommodation of accommodations; track accommodation.id) {
             <tr tuiTr>
-                <td *tuiCell="'ID'" tuiTd>
+                <!-- <td *tuiCell="'ID'" tuiTd>
                     {{ accommodation.id }}
                 </td>
                 <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
                     {{ accommodation.manager_id }}
-                </td>
+                </td> -->
                 <td *tuiCell="'Name'" tuiTd>
                     {{ accommodation.name }}
                 </td>
@@ -303,18 +303,6 @@
                         </label>
                     </div>
                 </div>
-                <div>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="bar"
-                            class="mr-8"
-                        />
-                        Bar
-                    </label>
-                </div>
             </div>
             <footer>
                 <button tuiButton type="submit">Submit</button>
@@ -334,10 +322,12 @@
                 <label tuiLabel>Name</label>
                 <input formControlName="name" placeholder="Name" tuiTextfield />
             </tui-textfield>
+            
             <tui-textfield>
                 <label tuiLabel>City</label>
                 <input formControlName="city" placeholder="City" tuiTextfield />
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>Country</label>
                 <input
@@ -346,6 +336,7 @@
                     tuiTextfield
                 />
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>District</label>
                 <input
@@ -354,6 +345,7 @@
                     tuiTextfield
                 />
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>Rules</label>
                 <input
@@ -362,6 +354,7 @@
                     tuiTextfield
                 />
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>Google map</label>
                 <input
@@ -376,11 +369,13 @@
                 </div>
                 }
             </tui-textfield>
+
             <div>
                 <label tuiLabel>Description</label>
                 <tui-editor formControlName="description" [tools]="tools">
                 </tui-editor>
             </div>
+
             <div>
                 <div class="tui-space_bottom-2">
                     <label>Facilities</label>
@@ -417,56 +412,8 @@
                         TV
                     </label>
                 </div>
-                <div>
-                    <div class="tui-space_bottom-2">
-                        <label>Property Surrounds</label>
-                    </div>
-                    <div tuiGroup>
-                        <label class="flex items-center">
-                            <input
-                                size="m"
-                                tuiCheckbox
-                                type="checkbox"
-                                formControlName="restaurant"
-                                class="mr-8"
-                            />
-                            Restaurant
-                        </label>
-                        <label class="flex items-center">
-                            <input
-                                size="m"
-                                tuiCheckbox
-                                type="checkbox"
-                                formControlName="bar"
-                                class="mr-8"
-                            />
-                            Bar
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="airCondition"
-                            class="mr-8"
-                        />
-                        Air Condition
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="tv"
-                            class="mr-8"
-                        />
-                        TV
-                    </label>
-                </div>
             </div>
+
             <div>
                 <div class="tui-space_bottom-2">
                     <label>Property Surrounds</label>

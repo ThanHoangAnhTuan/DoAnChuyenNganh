@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
     CreateAccommodationDetailResponse,
     CreateAccommodationDetails,
+    DeleteAccommodationDetailResponse,
     GetAccommodationDetailsResponse,
     UpdateAccommodationDetailResponse,
     UpdateAccommodationDetails,
@@ -14,7 +15,7 @@ import {
     providedIn: 'root',
 })
 export class AccommodationDetailService {
-    private readonly apiUrl = `${environment.apiUrl}/accommodation-detail/`;
+    private readonly apiUrl = `${environment.apiUrl}/accommodation-detail`;
 
     constructor(private http: HttpClient) {}
 
@@ -22,7 +23,7 @@ export class AccommodationDetailService {
         accommodationId: string
     ): Observable<GetAccommodationDetailsResponse> {
         return this.http.get<GetAccommodationDetailsResponse>(
-            this.apiUrl + 'get-accommodation-details/' + accommodationId
+            `${this.apiUrl}/get-accommodation-details/${accommodationId}`
         );
     }
 
@@ -50,8 +51,10 @@ export class AccommodationDetailService {
             },
         };
 
+        console.log(newAccommodationDetail);
+
         return this.http.post<CreateAccommodationDetailResponse>(
-            this.apiUrl + 'create-accommodation-detail',
+            `${this.apiUrl}/create-accommodation-detail`,
             newAccommodationDetail
         );
     }
@@ -82,8 +85,16 @@ export class AccommodationDetailService {
         };
 
         return this.http.put<UpdateAccommodationDetailResponse>(
-            this.apiUrl + 'update-accommodation-detail',
+            `${this.apiUrl}/update-accommodation-detail`,
             newAccommodationDetail
+        );
+    }
+
+    deleteAccommodationDetail(
+        id: string
+    ): Observable<DeleteAccommodationDetailResponse> {
+        return this.http.delete<DeleteAccommodationDetailResponse>(
+            `${this.apiUrl}/delete-accommodation-detail/${id}`
         );
     }
 }
