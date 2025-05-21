@@ -281,6 +281,8 @@ type EcommerceGoAccommodation struct {
 	City string
 	// district
 	District string
+	// address
+	Address string
 	// description
 	Description string
 	// facilities
@@ -289,10 +291,8 @@ type EcommerceGoAccommodation struct {
 	Rating uint8
 	// google map address
 	GgMap string
-	// property surroundings
-	PropertySurroundings json.RawMessage
 	// rules
-	Rules string
+	Rules json.RawMessage
 	// is verified: 0 - unverified, 1 - verified
 	IsVerified uint8
 	// is deleted: 0 - not deleted; 1 - deleted
@@ -333,6 +333,18 @@ type EcommerceGoAccommodationDetail struct {
 	UpdatedAt uint64
 }
 
+// facility table
+type EcommerceGoAccommodationDetailFacility struct {
+	// ID
+	ID string
+	// name
+	Name string
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
 // accommodation detail image table
 type EcommerceGoAccommodationDetailImage struct {
 	// ID
@@ -341,6 +353,20 @@ type EcommerceGoAccommodationDetailImage struct {
 	AccommodationDetailID string
 	// image
 	Image string
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
+// facility table
+type EcommerceGoAccommodationFacility struct {
+	// ID
+	ID string
+	// image
+	Image string
+	// name
+	Name string
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -379,20 +405,6 @@ type EcommerceGoDiscount struct {
 	IsDeleted uint8
 	// 0 - inactivated; 1 - activated
 	IsActive uint8
-	// created at
-	CreatedAt uint64
-	// updated at
-	UpdatedAt uint64
-}
-
-// facility table
-type EcommerceGoFacility struct {
-	// ID
-	ID string
-	// image
-	Image string
-	// name
-	Name string
 	// created at
 	CreatedAt uint64
 	// updated at

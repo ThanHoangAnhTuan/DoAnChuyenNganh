@@ -14,6 +14,7 @@ func InitInterface() {
 	services.InitAccommodation(impl.NewAccommodationImpl(queries))
 	services.InitAccommodationDetail(impl.NewAccommodationDetailImpl(queries))
 	services.InitManagerLogin(impl.NewManagerLoginImpl(queries))
+	services.InitAdminLogin(impl.NewAdminLoginImpl(queries))
 	services.InitUpload(impl.NewUploadImpl(queries))
 	services.InitOrder(impl.NewOrderImpl(queries, db))
 	services.InitFacility(impl.NewFacilityImpl(queries))

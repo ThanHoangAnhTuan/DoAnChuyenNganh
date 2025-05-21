@@ -41,7 +41,7 @@ INSERT INTO
         ` + "`" + `description` + "`" + `,
         ` + "`" + `facilities` + "`" + `,
         ` + "`" + `gg_map` + "`" + `,
-        ` + "`" + `property_surroundings` + "`" + `,
+        ` + "`" + `address` + "`" + `,
         ` + "`" + `rules` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
@@ -51,19 +51,19 @@ VALUES
 `
 
 type CreateAccommodationParams struct {
-	ID                   string
-	ManagerID            string
-	Country              string
-	Name                 string
-	City                 string
-	District             string
-	Description          string
-	Facilities           json.RawMessage
-	GgMap                string
-	PropertySurroundings json.RawMessage
-	Rules                string
-	CreatedAt            uint64
-	UpdatedAt            uint64
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Address     string
+	Rules       json.RawMessage
+	CreatedAt   uint64
+	UpdatedAt   uint64
 }
 
 func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodationParams) error {
@@ -77,7 +77,7 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 		arg.Description,
 		arg.Facilities,
 		arg.GgMap,
-		arg.PropertySurroundings,
+		arg.Address,
 		arg.Rules,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -112,10 +112,10 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `city` + "`" + `,
     ` + "`" + `district` + "`" + `,
+    ` + "`" + `address` + "`" + `,
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
-    ` + "`" + `property_surroundings` + "`" + `,
     ` + "`" + `rules` + "`" + `,
     ` + "`" + `rating` + "`" + `
 FROM
@@ -126,18 +126,18 @@ WHERE
 `
 
 type GetAccommodationByIdRow struct {
-	ID                   string
-	ManagerID            string
-	Country              string
-	Name                 string
-	City                 string
-	District             string
-	Description          string
-	Facilities           json.RawMessage
-	GgMap                string
-	PropertySurroundings json.RawMessage
-	Rules                string
-	Rating               uint8
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Address     string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Rules       json.RawMessage
+	Rating      uint8
 }
 
 func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccommodationByIdRow, error) {
@@ -150,10 +150,10 @@ func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccom
 		&i.Name,
 		&i.City,
 		&i.District,
+		&i.Address,
 		&i.Description,
 		&i.Facilities,
 		&i.GgMap,
-		&i.PropertySurroundings,
 		&i.Rules,
 		&i.Rating,
 	)
@@ -170,8 +170,8 @@ SELECT
     ` + "`" + `district` + "`" + `,
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `address` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
-    ` + "`" + `property_surroundings` + "`" + `,
     ` + "`" + `rules` + "`" + `,
     ` + "`" + `rating` + "`" + `
 FROM
@@ -181,18 +181,18 @@ WHERE
 `
 
 type GetAccommodationsRow struct {
-	ID                   string
-	ManagerID            string
-	Country              string
-	Name                 string
-	City                 string
-	District             string
-	Description          string
-	Facilities           json.RawMessage
-	GgMap                string
-	PropertySurroundings json.RawMessage
-	Rules                string
-	Rating               uint8
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Description string
+	Facilities  json.RawMessage
+	Address     string
+	GgMap       string
+	Rules       json.RawMessage
+	Rating      uint8
 }
 
 func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow, error) {
@@ -213,8 +213,8 @@ func (q *Queries) GetAccommodations(ctx context.Context) ([]GetAccommodationsRow
 			&i.District,
 			&i.Description,
 			&i.Facilities,
+			&i.Address,
 			&i.GgMap,
-			&i.PropertySurroundings,
 			&i.Rules,
 			&i.Rating,
 		); err != nil {
@@ -238,6 +238,7 @@ SELECT
     ` + "`" + `name` + "`" + `,
     ` + "`" + `city` + "`" + `,
     ` + "`" + `district` + "`" + `,
+    ` + "`" + `address` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
     ` + "`" + `rating` + "`" + `
 FROM
@@ -253,6 +254,7 @@ type GetAccommodationsByCityRow struct {
 	Name     string
 	City     string
 	District string
+	Address  string
 	GgMap    string
 	Rating   uint8
 }
@@ -272,6 +274,7 @@ func (q *Queries) GetAccommodationsByCity(ctx context.Context, city string) ([]G
 			&i.Name,
 			&i.City,
 			&i.District,
+			&i.Address,
 			&i.GgMap,
 			&i.Rating,
 		); err != nil {
@@ -299,7 +302,7 @@ SELECT
     ` + "`" + `description` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
-    ` + "`" + `property_surroundings` + "`" + `,
+    ` + "`" + `address` + "`" + `,
     ` + "`" + `rules` + "`" + `,
     ` + "`" + `rating` + "`" + `
 FROM
@@ -310,18 +313,18 @@ WHERE
 `
 
 type GetAccommodationsByManagerRow struct {
-	ID                   string
-	ManagerID            string
-	Country              string
-	Name                 string
-	City                 string
-	District             string
-	Description          string
-	Facilities           json.RawMessage
-	GgMap                string
-	PropertySurroundings json.RawMessage
-	Rules                string
-	Rating               uint8
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Address     string
+	Rules       json.RawMessage
+	Rating      uint8
 }
 
 func (q *Queries) GetAccommodationsByManager(ctx context.Context, managerID string) ([]GetAccommodationsByManagerRow, error) {
@@ -343,7 +346,7 @@ func (q *Queries) GetAccommodationsByManager(ctx context.Context, managerID stri
 			&i.Description,
 			&i.Facilities,
 			&i.GgMap,
-			&i.PropertySurroundings,
+			&i.Address,
 			&i.Rules,
 			&i.Rating,
 		); err != nil {
@@ -370,7 +373,7 @@ SET
     ` + "`" + `description` + "`" + ` = ?,
     ` + "`" + `facilities` + "`" + ` = ?,
     ` + "`" + `gg_map` + "`" + ` = ?,
-    ` + "`" + `property_surroundings` + "`" + ` = ?,
+    ` + "`" + `address` + "`" + ` = ?,
     ` + "`" + `rules` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
@@ -379,17 +382,17 @@ WHERE
 `
 
 type UpdateAccommodationParams struct {
-	Country              string
-	Name                 string
-	City                 string
-	District             string
-	Description          string
-	Facilities           json.RawMessage
-	GgMap                string
-	PropertySurroundings json.RawMessage
-	Rules                string
-	UpdatedAt            uint64
-	ID                   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Address     string
+	Rules       json.RawMessage
+	UpdatedAt   uint64
+	ID          string
 }
 
 func (q *Queries) UpdateAccommodation(ctx context.Context, arg UpdateAccommodationParams) error {
@@ -401,7 +404,7 @@ func (q *Queries) UpdateAccommodation(ctx context.Context, arg UpdateAccommodati
 		arg.Description,
 		arg.Facilities,
 		arg.GgMap,
-		arg.PropertySurroundings,
+		arg.Address,
 		arg.Rules,
 		arg.UpdatedAt,
 		arg.ID,

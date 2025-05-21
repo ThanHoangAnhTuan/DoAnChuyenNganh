@@ -14,4 +14,7 @@ type CreateFacilityOutput struct {
 type GetFacilitiesInput struct {
 }
 type GetFacilitiesOutput struct {
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Image string `json:"image"`
 }

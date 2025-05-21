@@ -36,6 +36,18 @@ SET
 WHERE
     `account` = ?;
 
+-- name: CheckUserAdminExistsById :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_admin`
+        WHERE
+            `id` = ?
+            AND `is_deleted` = 0
+    );
+
 -- name: CheckUserAdminExistsByEmail :one
 SELECT
     EXISTS (

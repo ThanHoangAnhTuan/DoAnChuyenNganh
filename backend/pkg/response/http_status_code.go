@@ -105,6 +105,7 @@ const (
 	ErrCodeCreateFacilitySuccess = 130001
 	ErrCodeCreateFacilityFailed  = 130002
 	ErrCodeGetFacilityFailed     = 130003
+	ErrCodeGetFacilitySuccess    = 130004
 
 	// user base
 	ErrCodeGetUserBaseFailed = 140001
@@ -225,6 +226,7 @@ var message = map[int]string{
 	ErrCodeCreateFacilitySuccess: "Create facility successfully",
 	ErrCodeCreateFacilityFailed:  "Create facility failed",
 	ErrCodeGetFacilityFailed:     "Get facility failed",
+	ErrCodeGetFacilitySuccess:    "Get facility successfully",
 
 	// user base
 	ErrCodeGetUserBaseFailed: "Get user base failed",

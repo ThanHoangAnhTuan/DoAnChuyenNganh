@@ -52,35 +52,11 @@ func (c *CFacility) CreateFacility(ctx *gin.Context) {
 
 	fmt.Printf("CreateFacility success: %s\n", data)
 	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.Id)))
-	response.SuccessResponse(ctx, codeStatus, nil)
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CFacility) GetFacilities(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
-		return
-	}
-
-	var params vo.GetFacilitiesInput
-	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("GetFacilities binding error\n: %s", err.Error())
-		global.Logger.Error("GetFacilities binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		fmt.Printf("GetFacilities validation error\n: %s", err.Error())
-		global.Logger.Error("GetFacilities validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
-		return
-	}
-
-	codeResult, data, err := services.Facility().GetFacilities(ctx, &params)
+	codeResult, data, err := services.Facility().GetFacilities(ctx)
 	if err != nil {
 		fmt.Printf("GetFacilities error\n: %s", err.Error())
 		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
@@ -88,7 +64,7 @@ func (c *CFacility) GetFacilities(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("GetFacilities success\n: %s", data)
+	fmt.Printf("GetFacilities success\n")
 	// global.Logger.Info("GetFacilities success: ", zap.String("info", data))
 	response.SuccessResponse(ctx, codeResult, data)
 }

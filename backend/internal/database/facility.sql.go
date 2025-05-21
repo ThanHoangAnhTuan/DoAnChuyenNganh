@@ -9,14 +9,14 @@ import (
 	"context"
 )
 
-const createFacility = `-- name: CreateFacility :exec
+const createAccommodationFacility = `-- name: CreateAccommodationFacility :exec
 INSERT INTO
-    ` + "`" + `ecommerce_go_facility` + "`" + ` (` + "`" + `id` + "`" + `, ` + "`" + `image` + "`" + `, ` + "`" + `name` + "`" + `, ` + "`" + `created_at` + "`" + `, ` + "`" + `updated_at` + "`" + `)
+    ` + "`" + `ecommerce_go_accommodation_facility` + "`" + ` (` + "`" + `id` + "`" + `, ` + "`" + `image` + "`" + `, ` + "`" + `name` + "`" + `, ` + "`" + `created_at` + "`" + `, ` + "`" + `updated_at` + "`" + `)
 VALUES
     (?, ?, ?, ?, ?)
 `
 
-type CreateFacilityParams struct {
+type CreateAccommodationFacilityParams struct {
 	ID        string
 	Image     string
 	Name      string
@@ -24,8 +24,8 @@ type CreateFacilityParams struct {
 	UpdatedAt uint64
 }
 
-func (q *Queries) CreateFacility(ctx context.Context, arg CreateFacilityParams) error {
-	_, err := q.db.ExecContext(ctx, createFacility,
+func (q *Queries) CreateAccommodationFacility(ctx context.Context, arg CreateAccommodationFacilityParams) error {
+	_, err := q.db.ExecContext(ctx, createAccommodationFacility,
 		arg.ID,
 		arg.Image,
 		arg.Name,
@@ -35,26 +35,64 @@ func (q *Queries) CreateFacility(ctx context.Context, arg CreateFacilityParams) 
 	return err
 }
 
-const getFacilityById = `-- name: GetFacilityById :one
+const getAccommodationFacilityById = `-- name: GetAccommodationFacilityById :one
 SELECT
     ` + "`" + `id` + "`" + `,
     ` + "`" + `image` + "`" + `,
     ` + "`" + `name` + "`" + `
 FROM
-    ` + "`" + `ecommerce_go_facility` + "`" + `
+    ` + "`" + `ecommerce_go_accommodation_facility` + "`" + `
 WHERE
     ` + "`" + `id` + "`" + ` = ?
 `
 
-type GetFacilityByIdRow struct {
+type GetAccommodationFacilityByIdRow struct {
 	ID    string
 	Image string
 	Name  string
 }
 
-func (q *Queries) GetFacilityById(ctx context.Context, id string) (GetFacilityByIdRow, error) {
-	row := q.db.QueryRowContext(ctx, getFacilityById, id)
-	var i GetFacilityByIdRow
+func (q *Queries) GetAccommodationFacilityById(ctx context.Context, id string) (GetAccommodationFacilityByIdRow, error) {
+	row := q.db.QueryRowContext(ctx, getAccommodationFacilityById, id)
+	var i GetAccommodationFacilityByIdRow
 	err := row.Scan(&i.ID, &i.Image, &i.Name)
 	return i, err
+}
+
+const getAccommodationFacilityNames = `-- name: GetAccommodationFacilityNames :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `image` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation_facility` + "`" + `
+`
+
+type GetAccommodationFacilityNamesRow struct {
+	ID    string
+	Name  string
+	Image string
+}
+
+func (q *Queries) GetAccommodationFacilityNames(ctx context.Context) ([]GetAccommodationFacilityNamesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAccommodationFacilityNames)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAccommodationFacilityNamesRow
+	for rows.Next() {
+		var i GetAccommodationFacilityNamesRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.Image); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

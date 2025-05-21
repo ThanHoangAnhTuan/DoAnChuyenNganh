@@ -10,7 +10,7 @@ INSERT INTO
         `description`,
         `facilities`,
         `gg_map`,
-        `property_surroundings`,
+        `address`,
         `rules`,
         `created_at`,
         `updated_at`
@@ -28,8 +28,8 @@ SELECT
     `district`,
     `description`,
     `facilities`,
+    `address`,
     `gg_map`,
-    `property_surroundings`,
     `rules`,
     `rating`
 FROM
@@ -48,7 +48,7 @@ SELECT
     `description`,
     `facilities`,
     `gg_map`,
-    `property_surroundings`,
+    `address`,
     `rules`,
     `rating`
 FROM
@@ -65,10 +65,10 @@ SELECT
     `name`,
     `city`,
     `district`,
+    `address`,
     `description`,
     `facilities`,
     `gg_map`,
-    `property_surroundings`,
     `rules`,
     `rating`
 FROM
@@ -84,6 +84,7 @@ SELECT
     `name`,
     `city`,
     `district`,
+    `address`,
     `gg_map`,
     `rating`
 FROM
@@ -102,7 +103,7 @@ SET
     `description` = ?,
     `facilities` = ?,
     `gg_map` = ?,
-    `property_surroundings` = ?,
+    `address` = ?,
     `rules` = ?,
     `updated_at` = ?
 WHERE

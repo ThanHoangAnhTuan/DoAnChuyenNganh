@@ -1,15 +1,23 @@
--- name: CreateFacility :exec
+-- name: CreateAccommodationFacility :exec
 INSERT INTO
-    `ecommerce_go_facility` (`id`, `image`, `name`, `created_at`, `updated_at`)
+    `ecommerce_go_accommodation_facility` (`id`, `image`, `name`, `created_at`, `updated_at`)
 VALUES
     (?, ?, ?, ?, ?);
 
--- name: GetFacilityById :one
+-- name: GetAccommodationFacilityById :one
 SELECT
     `id`,
     `image`,
     `name`
 FROM
-    `ecommerce_go_facility`
+    `ecommerce_go_accommodation_facility`
 WHERE
     `id` = ?;
+
+-- name: GetAccommodationFacilityNames :many
+SELECT
+    `id`,
+    `name`,
+    `image`
+FROM
+    `ecommerce_go_accommodation_facility`;

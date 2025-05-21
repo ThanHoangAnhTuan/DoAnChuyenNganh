@@ -29,6 +29,26 @@ func (q *Queries) CheckUserAdminExistsByEmail(ctx context.Context, account strin
 	return exists, err
 }
 
+const checkUserAdminExistsById = `-- name: CheckUserAdminExistsById :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_admin` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
+`
+
+func (q *Queries) CheckUserAdminExistsById(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserAdminExistsById, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createUserAdmin = `-- name: CreateUserAdmin :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_user_admin` + "`" + ` (

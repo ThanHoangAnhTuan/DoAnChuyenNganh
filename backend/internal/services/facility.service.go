@@ -10,7 +10,7 @@ import (
 type (
 	IFacility interface {
 		CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInput) (codeStatus int, out *vo.CreateFacilityOutput, err error)
-		GetFacilities(ctx context.Context, in *vo.GetFacilitiesInput) (codeStatus int, out *vo.GetFacilitiesOutput, err error)
+		GetFacilities(ctx context.Context) (codeStatus int, out []*vo.GetFacilitiesOutput, err error)
 	}
 )
 
