@@ -1,5 +1,14 @@
 package vo
 
+type FacilitiesInput struct {
+	Id string `json:"id"`
+}
+
+type FacilitiesOutput struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
 type Rule struct {
 	CheckIn                 string `json:"check_in"`
 	CheckOut                string `json:"check_out"`
@@ -10,77 +19,77 @@ type Rule struct {
 }
 
 type CreateAccommodationInput struct {
-	Name        string   `json:"name" validate:"required"`
-	Country     string   `json:"country" validate:"required"`
-	City        string   `json:"city" validate:"required"`
-	District    string   `json:"district" validate:"required"`
-	Address     string   `json:"address" validate:"required"`
-	Description string   `json:"description" validate:"required"`
-	Facilities  []string `json:"facilities" validate:"required"`
-	GoogleMap   string   `json:"google_map" validate:"required"`
-	Rating      uint8    `json:"rating" validate:"required"`
-	Rules       Rule     `json:"rules"`
+	Name        string            `json:"name" validate:"required"`
+	Country     string            `json:"country" validate:"required"`
+	City        string            `json:"city" validate:"required"`
+	District    string            `json:"district" validate:"required"`
+	Address     string            `json:"address" validate:"required"`
+	Description string            `json:"description" validate:"required"`
+	Facilities  []FacilitiesInput `json:"facilities" validate:"required"`
+	GoogleMap   string            `json:"google_map" validate:"required"`
+	Rating      uint8             `json:"rating" validate:"required"`
+	Rules       Rule              `json:"rules"`
 }
 
 type CreateAccommodationOutput struct {
-	Id          string   `json:"id"`
-	ManagerId   string   `json:"manager_id"`
-	Name        string   `json:"name"`
-	City        string   `json:"city"`
-	Country     string   `json:"country"`
-	District    string   `json:"district"`
-	Address     string   `json:"address"`
-	Images      []string `json:"images"`
-	Description string   `json:"description"`
-	Rating      uint8    `json:"rating"`
-	Facilities  []string `json:"facilities"`
-	GoogleMap   string   `json:"google_map"`
-	Rules       Rule     `json:"rules"`
+	Id          string             `json:"id"`
+	ManagerId   string             `json:"manager_id"`
+	Name        string             `json:"name"`
+	City        string             `json:"city"`
+	Country     string             `json:"country"`
+	District    string             `json:"district"`
+	Address     string             `json:"address"`
+	Images      []string           `json:"images"`
+	Description string             `json:"description"`
+	Rating      uint8              `json:"rating"`
+	Facilities  []FacilitiesOutput `json:"facilities"`
+	GoogleMap   string             `json:"google_map"`
+	Rules       Rule               `json:"rules"`
 }
 
 type GetAccommodations struct {
-	Id          string   `json:"id"`
-	ManagerId   string   `json:"manager_id"`
-	Name        string   `json:"name"`
-	City        string   `json:"city"`
-	Country     string   `json:"country"`
-	District    string   `json:"district"`
-	Address     string   `json:"address"`
-	Images      []string `json:"images"`
-	Description string   `json:"description"`
-	Rating      uint8    `json:"rating"`
-	Facilities  []string `json:"facilities"`
-	GoogleMap   string   `json:"google_map"`
-	Rules       Rule     `json:"rules"`
+	Id          string             `json:"id"`
+	ManagerId   string             `json:"manager_id"`
+	Name        string             `json:"name"`
+	City        string             `json:"city"`
+	Country     string             `json:"country"`
+	District    string             `json:"district"`
+	Address     string             `json:"address"`
+	Images      []string           `json:"images"`
+	Description string             `json:"description"`
+	Rating      uint8              `json:"rating"`
+	Facilities  []FacilitiesOutput `json:"facilities"`
+	GoogleMap   string             `json:"google_map"`
+	Rules       Rule               `json:"rules"`
 }
 
 type UpdateAccommodationInput struct {
-	Id          string   `json:"id" validate:"required"`
-	Name        string   `json:"name"`
-	Country     string   `json:"country"`
-	City        string   `json:"city"`
-	District    string   `json:"district"`
-	Address     string   `json:"address"`
-	Description string   `json:"description"`
-	Facilities  []string `json:"facilities"`
-	GoogleMap   string   `json:"google_map"`
-	Rules       Rule     `json:"rules"`
+	Id          string            `json:"id" validate:"required"`
+	Name        string            `json:"name"`
+	Country     string            `json:"country"`
+	City        string            `json:"city"`
+	District    string            `json:"district"`
+	Address     string            `json:"address"`
+	Description string            `json:"description"`
+	Facilities  []FacilitiesInput `json:"facilities"`
+	GoogleMap   string            `json:"google_map"`
+	Rules       Rule              `json:"rules"`
 }
 
 type UpdateAccommodationOutput struct {
-	Id          string   `json:"id"`
-	ManagerId   string   `json:"manager_id"`
-	Name        string   `json:"name"`
-	City        string   `json:"city"`
-	Country     string   `json:"country"`
-	District    string   `json:"district"`
-	Address     string   `json:"address"`
-	Images      []string `json:"images"`
-	Description string   `json:"description"`
-	Rating      uint8    `json:"rating"`
-	Facilities  []string `json:"facilities"`
-	GoogleMap   string   `json:"google_map"`
-	Rules       Rule     `json:"rules"`
+	Id          string             `json:"id"`
+	ManagerId   string             `json:"manager_id"`
+	Name        string             `json:"name"`
+	City        string             `json:"city"`
+	Country     string             `json:"country"`
+	District    string             `json:"district"`
+	Address     string             `json:"address"`
+	Images      []string           `json:"images"`
+	Description string             `json:"description"`
+	Rating      uint8              `json:"rating"`
+	Facilities  []FacilitiesOutput `json:"facilities"`
+	GoogleMap   string             `json:"google_map"`
+	Rules       Rule               `json:"rules"`
 }
 
 type DeleteAccommodationInput struct {
@@ -112,17 +121,17 @@ type GetAccommodationByIdInput struct {
 }
 
 type GetAccommodationByIdOutput struct {
-	Id          string   `json:"id"`
-	ManagerId   string   `json:"manager_id"`
-	Name        string   `json:"name"`
-	City        string   `json:"city"`
-	Country     string   `json:"country"`
-	District    string   `json:"district"`
-	Address     string   `json:"address"`
-	Images      []string `json:"images"`
-	Description string   `json:"description"`
-	Rating      uint8    `json:"rating"`
-	Facilities  []string `json:"facilities"`
-	GoogleMap   string   `json:"google_map"`
-	Rules       Rule     `json:"rules"`
+	Id          string             `json:"id"`
+	ManagerId   string             `json:"manager_id"`
+	Name        string             `json:"name"`
+	City        string             `json:"city"`
+	Country     string             `json:"country"`
+	District    string             `json:"district"`
+	Address     string             `json:"address"`
+	Images      []string           `json:"images"`
+	Description string             `json:"description"`
+	Rating      uint8              `json:"rating"`
+	Facilities  []FacilitiesOutput `json:"facilities"`
+	GoogleMap   string             `json:"google_map"`
+	Rules       Rule               `json:"rules"`
 }

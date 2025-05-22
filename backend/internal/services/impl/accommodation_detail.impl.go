@@ -84,12 +84,29 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		return response.ErrCodeCreateAccommodationDetailFailed, nil, fmt.Errorf("error for create accommodation details: %s", err)
 	}
 
+	// TODO: get facility
+	var facilitieIds []vo.FacilitiesInput
+	if err := json.Unmarshal(facilitiesJson, &facilitieIds); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	}
+
+	for _, facilityId := range facilitieIds {
+		facility, err := a.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		if err != nil {
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		}
+
+		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Name:  facility.Name,
+			Image: facility.Image,
+		})
+	}
+
 	out.Id = accommodationDetailId
 	out.AccommodationId = in.AccommodationId
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
 	out.DiscountId = in.DiscountId
-	out.Facilities = in.Facilities
 	out.Guests = in.Guests
 	out.Name = in.Name
 	out.Price = in.Price
@@ -157,9 +174,24 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, i
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling beds: %s", err)
 		}
 
-		var facilities []string
-		if err := json.Unmarshal(accommodationDetail.Facilities, &facilities); err != nil {
+		// TODO: get facility
+		var facilityIds []vo.FacilitiesInput
+		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIds); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		facilities := []vo.FacilitiesOutput{}
+
+		for _, facilityId := range facilityIds {
+			facility, err := a.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+			if err != nil {
+				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			}
+
+			facilities = append(facilities, vo.FacilitiesOutput{
+				Name:  facility.Name,
+				Image: facility.Image,
+			})
 		}
 
 		// TODO: get images of accommodation detail
@@ -268,11 +300,21 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		pathNames = append(pathNames, img.Image)
 	}
 
+	for _, facilityId := range in.Facilities {
+		facility, err := a.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		if err != nil {
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		}
+		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Name:  facility.Name,
+			Image: facility.Image,
+		})
+	}
+
 	out.AccommodationId = in.AccommodationId
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
 	out.DiscountId = in.DiscountId
-	out.Facilities = in.Facilities
 	out.Guests = in.Guests
 	out.Id = in.Id
 	out.Name = in.Name

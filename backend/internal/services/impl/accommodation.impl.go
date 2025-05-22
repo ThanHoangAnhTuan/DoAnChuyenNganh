@@ -29,9 +29,24 @@ func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.Get
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id: %s", err)
 	}
 
-	var facilities []string
-	if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+	// TODO: get facility
+	var facilityIds []vo.FacilitiesInput
+	if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	}
+
+	facilities := []vo.FacilitiesOutput{}
+
+	for _, facilityId := range facilityIds {
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		if err != nil {
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		}
+
+		facilities = append(facilities, vo.FacilitiesOutput{
+			Name:  facility.Name,
+			Image: facility.Image,
+		})
 	}
 
 	rules := vo.Rule{}
@@ -118,10 +133,24 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 	}
 
 	for _, accommodation := range accommodations {
-
-		var facilities []string
-		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+		// TODO: get facility
+		var facilityIds []vo.FacilitiesInput
+		if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		facilities := []vo.FacilitiesOutput{}
+
+		for _, facilityId := range facilityIds {
+			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+			if err != nil {
+				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			}
+
+			facilities = append(facilities, vo.FacilitiesOutput{
+				Name:  facility.Name,
+				Image: facility.Image,
+			})
 		}
 
 		rules := vo.Rule{}
@@ -264,6 +293,18 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		return response.ErrCodeUpdateAccommodationFailed, nil, fmt.Errorf("error for update accommodation: %s", err)
 	}
 
+	// TODO: get facility
+	for _, facilityId := range in.Facilities {
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		if err != nil {
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		}
+		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Name:  facility.Name,
+			Image: facility.Image,
+		})
+	}
+
 	// TODO: return response
 	out.Id = accommodation.ID
 	out.ManagerId = accommodation.ManagerID
@@ -273,7 +314,6 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	out.District = in.District
 	out.Description = in.Description
 	out.Address = in.Address
-	out.Facilities = in.Facilities
 	out.GoogleMap = in.GoogleMap
 	out.Rules = in.Rules
 	out.Rating = accommodation.Rating
@@ -290,9 +330,24 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 	}
 
 	for _, accommodation := range accommodations {
-		var facilities []string
-		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+		// TODO: get facility
+		var facilityIds []vo.FacilitiesInput
+		if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		facilities := []vo.FacilitiesOutput{}
+
+		for _, facilityId := range facilityIds {
+			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+			if err != nil {
+				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			}
+
+			facilities = append(facilities, vo.FacilitiesOutput{
+				Name:  facility.Name,
+				Image: facility.Image,
+			})
 		}
 
 		rules := vo.Rule{}
@@ -401,9 +456,22 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	out.GoogleMap = accommodation.GgMap
 	out.Address = accommodation.Address
 	out.Rating = accommodation.Rating
-	err = json.Unmarshal(accommodation.Facilities, &out.Facilities)
-	if err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error for unmarshal facilities: %s", err)
+	// TODO: get facility
+	var facilitieIds []vo.FacilitiesInput
+	if err := json.Unmarshal(accommodation.Facilities, &facilitieIds); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	}
+
+	for _, facilityId := range facilitieIds {
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		if err != nil {
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		}
+
+		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Name:  facility.Name,
+			Image: facility.Image,
+		})
 	}
 
 	err = json.Unmarshal(accommodation.Rules, &out.Rules)
