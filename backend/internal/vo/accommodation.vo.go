@@ -1,12 +1,12 @@
 package vo
 
 type Rule struct {
-	CheckIn                 string `json:"check_in" validate:"required"`
-	CheckOut                string `json:"check_out" validate:"required"`
-	Cancellation            string `json:"cancellation" validate:"required"`
-	RefundableDamageDeposit uint32 `json:"refundable_damage_deposit" validate:"required"`
-	AgeRestriction          bool   `json:"age_restriction" validate:"boolean"`
-	Pet                     bool   `json:"pet" validate:"boolean"`
+	CheckIn                 string `json:"check_in"`
+	CheckOut                string `json:"check_out"`
+	Cancellation            string `json:"cancellation"`
+	RefundableDamageDeposit uint32 `json:"refundable_damage_deposit"`
+	AgeRestriction          bool   `json:"age_restriction"`
+	Pet                     bool   `json:"pet"`
 }
 
 type CreateAccommodationInput struct {
@@ -18,7 +18,8 @@ type CreateAccommodationInput struct {
 	Description string   `json:"description" validate:"required"`
 	Facilities  []string `json:"facilities" validate:"required"`
 	GoogleMap   string   `json:"google_map" validate:"required"`
-	Rules       Rule     `json:"rules" validate:"required"`
+	Rating      uint8    `json:"rating" validate:"required"`
+	Rules       Rule     `json:"rules"`
 }
 
 type CreateAccommodationOutput struct {
@@ -83,7 +84,7 @@ type UpdateAccommodationOutput struct {
 }
 
 type DeleteAccommodationInput struct {
-	Id string `uri:"id" validate:"required"`
+	Id string `json:"id" validate:"required"`
 }
 
 // get accommodation by city

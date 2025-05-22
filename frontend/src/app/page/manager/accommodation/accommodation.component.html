@@ -15,12 +15,6 @@
         <tbody tuiTbody>
             @for(accommodation of accommodations; track accommodation.id) {
             <tr tuiTr>
-                <!-- <td *tuiCell="'ID'" tuiTd>
-                    {{ accommodation.id }}
-                </td>
-                <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
-                    {{ accommodation.manager_id }}
-                </td> -->
                 <td *tuiCell="'Name'" tuiTd>
                     {{ accommodation.name }}
                 </td>
@@ -32,6 +26,9 @@
                 </td>
                 <td *tuiCell="'District'" tuiTd>
                     {{ accommodation.district }}
+                </td>
+                <td *tuiCell="'Address'" tuiTd>
+                    {{ accommodation.address }}
                 </td>
                 <td *tuiCell="'Image'" tuiTd>
                     <a
@@ -57,45 +54,7 @@
                 <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
                     {{ accommodation.google_map }}
                 </td>
-                <td *tuiCell="'Rules'" tuiTd>
-                    {{ accommodation.rules }}
-                </td>
 
-                <td *tuiCell="'Wifi'" tuiTd>
-                    @if (accommodation.facilities.wifi) {
-                    <tui-icon icon="@tui.check" [style.color]="'green'" />
-                    }@else {
-                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                    }
-                </td>
-                <td class="text-nowrap" *tuiCell="'Air Condition'" tuiTd>
-                    @if (accommodation.facilities.air_condition) {
-                    <tui-icon icon="@tui.check" [style.color]="'green'" />
-                    }@else {
-                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                    }
-                </td>
-                <td *tuiCell="'TV'" tuiTd>
-                    @if (accommodation.facilities.tv) {
-                    <tui-icon icon="@tui.check" [style.color]="'green'" />
-                    }@else {
-                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                    }
-                </td>
-                <td *tuiCell="'Restaurant'" tuiTd>
-                    @if (accommodation.property_surrounds.restaurant) {
-                    <tui-icon icon="@tui.check" [style.color]="'green'" />
-                    }@else {
-                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                    }
-                </td>
-                <td *tuiCell="'Bar'" tuiTd>
-                    @if (accommodation.property_surrounds.bar) {
-                    <tui-icon icon="@tui.check" [style.color]="'green'" />
-                    }@else {
-                    <tui-icon icon="@tui.x" [style.color]="'red'"></tui-icon>
-                    }
-                </td>
                 <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
                         <button
@@ -202,16 +161,16 @@
                 }
             </tui-textfield>
             <tui-textfield>
-                <label tuiLabel>Rules</label>
+                <label tuiLabel>Address</label>
                 <input
-                    formControlName="rules"
-                    placeholder="Rules"
+                    formControlName="address"
+                    placeholder="Address"
                     tuiTextfield
                 />
-                @if(formAccommodation.get('rules')?.invalid &&
-                formAccommodation.get('rules')?.touched) {
+                @if(formAccommodation.get('address')?.invalid &&
+                formAccommodation.get('address')?.touched) {
                 <div>
-                    <small class="text-red-500">Rules is required</small>
+                    <small class="text-red-500">Address is required</small>
                 </div>
                 }
             </tui-textfield>
@@ -240,70 +199,6 @@
                 </div>
                 }
             </div>
-            <div>
-                <div class="tui-space_bottom-2">
-                    <label>Facilities</label>
-                </div>
-                <div tuiGroup>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="wifi"
-                            class="mr-8"
-                        />
-                        Wifi
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="airCondition"
-                            class="mr-8"
-                        />
-                        Air Condition
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="tv"
-                            class="mr-8"
-                        />
-                        TV
-                    </label>
-                </div>
-                <div>
-                    <div class="tui-space_bottom-2">
-                        <label>Property Surrounds</label>
-                    </div>
-                    <div tuiGroup>
-                        <label class="flex items-center">
-                            <input
-                                size="m"
-                                tuiCheckbox
-                                type="checkbox"
-                                formControlName="restaurant"
-                                class="mr-8"
-                            />
-                            Restaurant
-                        </label>
-                        <label class="flex items-center">
-                            <input
-                                size="m"
-                                tuiCheckbox
-                                type="checkbox"
-                                formControlName="bar"
-                                class="mr-8"
-                            />
-                            Bar
-                        </label>
-                    </div>
-                </div>
-            </div>
             <footer>
                 <button tuiButton type="submit">Submit</button>
             </footer>
@@ -321,11 +216,23 @@
             <tui-textfield>
                 <label tuiLabel>Name</label>
                 <input formControlName="name" placeholder="Name" tuiTextfield />
+                @if(formAccommodation.get('name')?.invalid &&
+                formAccommodation.get('name')?.touched) {
+                <div>
+                    <small class="text-red-500">Name is required</small>
+                </div>
+                }
             </tui-textfield>
-            
+
             <tui-textfield>
                 <label tuiLabel>City</label>
                 <input formControlName="city" placeholder="City" tuiTextfield />
+                @if(formAccommodation.get('city')?.invalid &&
+                formAccommodation.get('city')?.touched) {
+                <div>
+                    <small class="text-red-500">City is required</small>
+                </div>
+                }
             </tui-textfield>
 
             <tui-textfield>
@@ -335,6 +242,12 @@
                     placeholder="Country"
                     tuiTextfield
                 />
+                @if(formAccommodation.get('country')?.invalid &&
+                formAccommodation.get('country')?.touched) {
+                <div>
+                    <small class="text-red-500">Country is required</small>
+                </div>
+                }
             </tui-textfield>
 
             <tui-textfield>
@@ -344,15 +257,27 @@
                     placeholder="District"
                     tuiTextfield
                 />
+                @if(formAccommodation.get('district')?.invalid &&
+                formAccommodation.get('district')?.touched) {
+                <div>
+                    <small class="text-red-500">District is required</small>
+                </div>
+                }
             </tui-textfield>
 
             <tui-textfield>
-                <label tuiLabel>Rules</label>
+                <label tuiLabel>Address</label>
                 <input
-                    formControlName="rules"
-                    placeholder="Rules"
+                    formControlName="address"
+                    placeholder="Address"
                     tuiTextfield
                 />
+                @if(formAccommodation.get('address')?.invalid &&
+                formAccommodation.get('address')?.touched) {
+                <div>
+                    <small class="text-red-500">Address is required</small>
+                </div>
+                }
             </tui-textfield>
 
             <tui-textfield>
@@ -374,72 +299,12 @@
                 <label tuiLabel>Description</label>
                 <tui-editor formControlName="description" [tools]="tools">
                 </tui-editor>
-            </div>
-
-            <div>
-                <div class="tui-space_bottom-2">
-                    <label>Facilities</label>
+                @if(formAccommodation.get('description')?.invalid &&
+                formAccommodation.get('description')?.touched) {
+                <div>
+                    <small class="text-red-500">Description is required</small>
                 </div>
-                <div tuiGroup>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="wifi"
-                            class="mr-8"
-                        />
-                        Wifi
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="airCondition"
-                            class="mr-8"
-                        />
-                        Air Condition
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="tv"
-                            class="mr-8"
-                        />
-                        TV
-                    </label>
-                </div>
-            </div>
-
-            <div>
-                <div class="tui-space_bottom-2">
-                    <label>Property Surrounds</label>
-                </div>
-                <div tuiGroup>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="restaurant"
-                            class="mr-8"
-                        />
-                        Restaurant
-                    </label>
-                    <label class="flex items-center">
-                        <input
-                            size="m"
-                            tuiCheckbox
-                            type="checkbox"
-                            formControlName="bar"
-                            class="mr-8"
-                        />
-                        Bar
-                    </label>
-                </div>
+                }
             </div>
 
             <footer>

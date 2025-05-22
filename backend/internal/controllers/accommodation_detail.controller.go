@@ -150,7 +150,7 @@ func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 	}
 
 	var params vo.DeleteAccommodationDetailInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
+	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("DeleteAccommodationDetail binding error: %s\n", err.Error())
 		global.Logger.Error("DeleteAccommodationDetail binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)

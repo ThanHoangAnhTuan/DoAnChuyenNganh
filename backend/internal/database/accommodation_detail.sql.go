@@ -78,7 +78,7 @@ func (q *Queries) CreateAccommodationDetail(ctx context.Context, arg CreateAccom
 	return err
 }
 
-const deleteAccommodationDetails = `-- name: DeleteAccommodationDetails :exec
+const deleteAccommodationDetail = `-- name: DeleteAccommodationDetail :exec
 UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 SET
     ` + "`" + `is_deleted` + "`" + ` = 1
@@ -86,8 +86,8 @@ WHERE
     ` + "`" + `id` + "`" + ` = ?
 `
 
-func (q *Queries) DeleteAccommodationDetails(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteAccommodationDetails, id)
+func (q *Queries) DeleteAccommodationDetail(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteAccommodationDetail, id)
 	return err
 }
 

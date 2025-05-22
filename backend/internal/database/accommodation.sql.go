@@ -42,12 +42,13 @@ INSERT INTO
         ` + "`" + `facilities` + "`" + `,
         ` + "`" + `gg_map` + "`" + `,
         ` + "`" + `address` + "`" + `,
+        ` + "`" + `rating` + "`" + `,
         ` + "`" + `rules` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateAccommodationParams struct {
@@ -61,6 +62,7 @@ type CreateAccommodationParams struct {
 	Facilities  json.RawMessage
 	GgMap       string
 	Address     string
+	Rating      uint8
 	Rules       json.RawMessage
 	CreatedAt   uint64
 	UpdatedAt   uint64
@@ -78,6 +80,7 @@ func (q *Queries) CreateAccommodation(ctx context.Context, arg CreateAccommodati
 		arg.Facilities,
 		arg.GgMap,
 		arg.Address,
+		arg.Rating,
 		arg.Rules,
 		arg.CreatedAt,
 		arg.UpdatedAt,

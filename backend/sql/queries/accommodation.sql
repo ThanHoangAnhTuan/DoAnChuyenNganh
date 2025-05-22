@@ -11,12 +11,13 @@ INSERT INTO
         `facilities`,
         `gg_map`,
         `address`,
+        `rating`,
         `rules`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetAccommodations :many
 SELECT

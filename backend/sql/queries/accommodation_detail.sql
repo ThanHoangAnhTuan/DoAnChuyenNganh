@@ -68,7 +68,7 @@ WHERE
     and `accommodation_id` = ?
     and `is_deleted` = 0;
 
--- name: DeleteAccommodationDetails :exec
+-- name: DeleteAccommodationDetail :exec
 UPDATE `ecommerce_go_accommodation_detail`
 SET
     `is_deleted` = 1

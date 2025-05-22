@@ -26,7 +26,12 @@ import {
 } from '@taiga-ui/core';
 import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule } from '@taiga-ui/legacy';
-import { TuiConfirmService, TuiFiles, TuiCheckbox } from '@taiga-ui/kit';
+import {
+    TuiConfirmService,
+    TuiFiles,
+    TuiCheckbox,
+    tuiCreateTimePeriods,
+} from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import {
@@ -36,8 +41,10 @@ import {
     TuiEditor,
 } from '@taiga-ui/editor';
 import { RouterLink } from '@angular/router';
+import { TuiInputTimeModule } from '@taiga-ui/legacy';
 
 @Component({
+    standalone: true,
     selector: 'app-accommodation',
     imports: [
         TuiTable,
@@ -54,6 +61,7 @@ import { RouterLink } from '@angular/router';
         TuiGroup,
         TuiCheckbox,
         RouterLink,
+        TuiInputTimeModule,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -78,22 +86,15 @@ import { RouterLink } from '@angular/router';
 export class AccommodationComponent implements OnInit {
     protected accommodations!: Accommodation[];
     protected columns: string[] = [
-        // 'ID',
-        // 'Manager ID',
         'Name',
-        'City',
         'Country',
+        'City',
         'District',
-        'Image',
+        'Address',
         'Description',
         'Rating',
         'Google Map',
-        'Rules',
-        'Wifi',
-        'Air Condition',
-        'TV',
-        'Restaurant',
-        'Bar',
+        'Image',
         'Action',
         'Show Accommodation Detail',
     ];
@@ -107,15 +108,12 @@ export class AccommodationComponent implements OnInit {
         city: new FormControl('', Validators.required),
         country: new FormControl('', Validators.required),
         district: new FormControl('', Validators.required),
+        address: new FormControl('', Validators.required),
         description: new FormControl('', Validators.required),
-        wifi: new FormControl(false),
-        airCondition: new FormControl(false),
-        tv: new FormControl(false),
         googleMap: new FormControl('', Validators.required),
-        restaurant: new FormControl(false),
-        bar: new FormControl(false),
-        rules: new FormControl('', Validators.required),
     });
+
+    protected timePeriods = tuiCreateTimePeriods();
 
     constructor(
         private accommodationService: AccommodationService,
@@ -153,13 +151,8 @@ export class AccommodationComponent implements OnInit {
             country: accommodation.country,
             district: accommodation.district,
             description: accommodation.description,
-            wifi: accommodation.facilities.wifi,
-            airCondition: accommodation.facilities.air_condition,
-            tv: accommodation.facilities.tv,
             googleMap: accommodation.google_map,
-            restaurant: accommodation.property_surrounds.restaurant,
-            bar: accommodation.property_surrounds.bar,
-            rules: accommodation.rules,
+            address: accommodation.address,
         });
 
         this.idAccommodationUpdating = accommodation.id;
@@ -184,21 +177,10 @@ export class AccommodationComponent implements OnInit {
             name: this.formAccommodation.get('name')?.value || '',
             city: this.formAccommodation.get('city')?.value || '',
             country: this.formAccommodation.get('country')?.value || '',
-            description: this.formAccommodation.get('description')?.value || '',
             district: this.formAccommodation.get('district')?.value || '',
-            facilities: {
-                air_condition:
-                    this.formAccommodation.get('airCondition')?.value || false,
-                tv: this.formAccommodation.get('tv')?.value || false,
-                wifi: this.formAccommodation.get('wifi')?.value || false,
-            },
+            address: this.formAccommodation.get('address')?.value || '',
+            description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
-            property_surrounds: {
-                bar: this.formAccommodation.get('bar')?.value || false,
-                restaurant:
-                    this.formAccommodation.get('restaurant')?.value || false,
-            },
-            rules: this.formAccommodation.get('rules')?.value || '',
         };
 
         if (this.formAccommodation.invalid) {
@@ -219,21 +201,10 @@ export class AccommodationComponent implements OnInit {
             name: this.formAccommodation.get('name')?.value || '',
             city: this.formAccommodation.get('city')?.value || '',
             country: this.formAccommodation.get('country')?.value || '',
-            description: this.formAccommodation.get('description')?.value || '',
             district: this.formAccommodation.get('district')?.value || '',
-            facilities: {
-                air_condition:
-                    this.formAccommodation.get('airCondition')?.value || false,
-                tv: this.formAccommodation.get('tv')?.value || false,
-                wifi: this.formAccommodation.get('wifi')?.value || false,
-            },
+            address: this.formAccommodation.get('address')?.value || '',
+            description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
-            property_surrounds: {
-                bar: this.formAccommodation.get('bar')?.value || false,
-                restaurant:
-                    this.formAccommodation.get('restaurant')?.value || false,
-            },
-            rules: this.formAccommodation.get('rules')?.value || '',
         };
 
         this.accommodationService

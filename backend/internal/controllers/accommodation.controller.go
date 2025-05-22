@@ -119,7 +119,7 @@ func (c *CAccommodation) DeleteAccommodation(ctx *gin.Context) {
 		return
 	}
 	var params vo.DeleteAccommodationInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
+	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("DeleteAccommodation binding error")
 		global.Logger.Error("DeleteAccommodation binding error")
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)

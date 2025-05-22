@@ -12,6 +12,7 @@ import (
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
 )
 
@@ -105,16 +106,13 @@ func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.G
 func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
 	out = []*vo.GetAccommodations{}
 
-	val := ctx.Value("userId")
-	if val == nil {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
-	}
-	userID, ok := val.(string)
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
-	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
+	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userId)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations by manager: %s", err)
 	}
@@ -163,14 +161,13 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 
 func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
 	// TODO: get userId from context
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+	userId, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, fmt.Errorf("userId not found in context")
 	}
 
 	// TODO: check manager exists in database
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -189,7 +186,7 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 	}
 
 	// TODO: check if the manager is the owner of the accommodation
-	if accommodation.ManagerID != userID {
+	if accommodation.ManagerID != userId {
 		return response.ErrCodeUnauthorized, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
@@ -207,15 +204,15 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 
 func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommodationInput) (codeResult int, out *vo.UpdateAccommodationOutput, err error) {
 	out = &vo.UpdateAccommodationOutput{}
+
 	// TODO: get userId from context
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+	userId, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
 	// TODO: check manager exists in database
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -234,7 +231,7 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	}
 
 	// TODO: check if the manager is the owner of the accommodation
-	if accommodation.ManagerID != userID {
+	if accommodation.ManagerID != userId {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
@@ -285,7 +282,8 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 }
 
 func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
-	out = make([]*vo.GetAccommodations, 0)
+	out = []*vo.GetAccommodations{}
+
 	accommodations, err := t.sqlc.GetAccommodations(ctx)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
@@ -334,14 +332,15 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 
 func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error) {
 	out = &vo.CreateAccommodationOutput{}
-	// TODO: check manager exists in database
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	// TODO: check manager exists in database
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -367,7 +366,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	// TODO: create accommodation
 	err = t.sqlc.CreateAccommodation(ctx, database.CreateAccommodationParams{
 		ID:          id,
-		ManagerID:   userID,
+		ManagerID:   userId,
 		Name:        in.Name,
 		Country:     in.Country,
 		City:        in.City,
@@ -377,6 +376,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		GgMap:       in.GoogleMap,
 		Facilities:  facilitiesJSON,
 		Rules:       rulesJSON,
+		Rating:      in.Rating,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	})
