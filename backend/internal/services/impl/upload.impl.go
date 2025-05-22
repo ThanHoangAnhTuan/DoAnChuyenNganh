@@ -15,12 +15,11 @@ import (
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
 )
 
-type ImageImpl struct {
+type UploadImpl struct {
 	sqlc *database.Queries
 }
 
-// GetImages implements services.IUploadImage.
-func (i *ImageImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeStatus int, imagesPath []string, err error) {
+func (i *UploadImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeStatus int, imagesPath []string, err error) {
 	// TODO: Get images of accommodation detail
 	if in.IsDetail {
 
@@ -71,12 +70,13 @@ func (i *ImageImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeStat
 	}
 }
 
-// DeleteImage implements services.IImage.
-func (i *ImageImpl) DeleteImage(ctx *gin.Context, fileName string) (err error) {
+func (i *UploadImpl) DeleteImage(ctx *gin.Context, fileName string) (err error) {
 	panic("unimplemented")
 }
 
-func (i *ImageImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error) {
+func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error) {
+	fmt.Printf("UploadImages: %v\n", in)
+
 	// TODO: check accommodation exists in db
 	if !in.IsDetail {
 		isExists, err := i.sqlc.CheckAccommodationExists(ctx, in.Id)
@@ -97,21 +97,23 @@ func (i *ImageImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSta
 		if len(in.OldImages) > 0 {
 			deleteFileNames := []string{}
 
-			for _, deteleImage := range in.OldImages {
+			for _, accommodationImage := range accommodationImages {
 				is_deleted := false
-				for _, accommodationImage := range accommodationImages {
+				for _, deteleImage := range in.OldImages {
 					if deteleImage == accommodationImage.Image {
 						is_deleted = true
 						break
 					}
 				}
+				fmt.Printf("image: %v\n", accommodationImage.Image)
+				fmt.Printf("is_deleted: %v\n", is_deleted)
 
 				if !is_deleted {
-					err := i.sqlc.DeleteAccommodationImage(ctx, deteleImage)
+					err := i.sqlc.DeleteAccommodationImage(ctx, accommodationImage.Image)
 					if err != nil {
 						return response.ErrCodeDeleteAccommodationImagesFailed, nil, fmt.Errorf("delete images in db of accommodation failed: %s", err)
 					}
-					deleteFileNames = append(deleteFileNames, deteleImage)
+					deleteFileNames = append(deleteFileNames, accommodationImage.Image)
 				}
 			}
 
@@ -278,8 +280,8 @@ func deleteImageToDisk(fileNames []string) error {
 	return nil
 }
 
-func NewImageImpl(sqlc *database.Queries) *ImageImpl {
-	return &ImageImpl{
+func NewUploadImpl(sqlc *database.Queries) *UploadImpl {
+	return &UploadImpl{
 		sqlc: sqlc,
 	}
 }

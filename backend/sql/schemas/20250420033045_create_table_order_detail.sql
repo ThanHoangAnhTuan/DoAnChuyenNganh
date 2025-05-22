@@ -4,7 +4,7 @@ CREATE TABLE
     IF NOT EXISTS `ecommerce_go_order_detail` (
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `order_id` VARCHAR(36) NOT NULL COMMENT 'order ID',
-        `price` DECIMAL(10, 2) NOT NULL COMMENT 'price',
+        `price` INT UNSIGNED NOT NULL COMMENT 'price',
         `accommodation_detail_id` VARCHAR(36) NOT NULL COMMENT 'accommodation detail ID',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',

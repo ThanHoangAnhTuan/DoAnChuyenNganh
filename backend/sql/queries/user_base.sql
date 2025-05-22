@@ -1,12 +1,26 @@
 -- name: CheckUserBaseExists :one
-SELECT EXISTS (
 SELECT
-    1
-FROM
-    `ecommerce_go_user_base`
-WHERE
-    `account` = ?
-);
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_base`
+        WHERE
+            `account` = ?
+            AND `is_deleted` = 0
+    );
+
+-- name: CheckUserBaseExistsById :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_base`
+        WHERE
+            `id` = ?
+            AND `is_deleted` = 0
+    );
 
 -- name: GetUserBaseByAccount :one 
 SELECT

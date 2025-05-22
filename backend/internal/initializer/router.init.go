@@ -21,6 +21,7 @@ func InitRouter() *gin.Engine {
 
 	r.Use(middlewares.CorsMiddleware())
 	r.Use(middlewares.ValidatorMiddleware())
+	r.Use(middlewares.TimezoneMiddleware())
 
 	r.Static("/uploads/", "./storage/uploads")
 
@@ -29,7 +30,9 @@ func InitRouter() *gin.Engine {
 	managerRouter := routers.RouterGroupApp.Manager
 	accommodationRouter := routers.RouterGroupApp.Accommodation
 	accommodationDetailRouter := routers.RouterGroupApp.AccommodationDetail
-	imageRouter := routers.RouterGroupApp.Image
+	uploadRouter := routers.RouterGroupApp.Upload
+	orderRouter := routers.RouterGroupApp.Order
+	facilityRouter := routers.RouterGroupApp.Facility
 
 	MainGroup := r.Group("api/v1")
 	{
@@ -48,7 +51,13 @@ func InitRouter() *gin.Engine {
 		accommodationDetailRouter.InitAccommodationDetailRouter(MainGroup)
 	}
 	{
-		imageRouter.InitImageRouter(MainGroup)
+		uploadRouter.InitUploadRouter(MainGroup)
+	}
+	{
+		orderRouter.InitOrderRouter(MainGroup)
+	}
+	{
+		facilityRouter.InitFacilityRouter(MainGroup)
 	}
 	return r
 }

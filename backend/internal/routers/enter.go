@@ -4,8 +4,10 @@ import (
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/accommodation"
 	accommodationDetail "github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/accommodation_detail"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/admin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/image"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/facility"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/manager"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/order"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/upload"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers/user"
 )
 
@@ -15,7 +17,9 @@ type RouterGroup struct {
 	Manager             manager.ManagerRouterGroup
 	Accommodation       accommodation.AccommodationRouterGroup
 	AccommodationDetail accommodationDetail.AccommodationDetailRouterGroup
-	Image               image.ImageRouterGroup
+	Upload              upload.UploadRouterGroup
+	Order               order.OrderRouterGroup
+	Facility            facility.FacilityRouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)

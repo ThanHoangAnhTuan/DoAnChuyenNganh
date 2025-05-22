@@ -21,7 +21,6 @@ import (
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/random"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/sendto"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/validate"
 )
 
 type UserLoginImpl struct {
@@ -29,12 +28,6 @@ type UserLoginImpl struct {
 }
 
 func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error) {
-	// !input: email, type, purpose
-	// !. validate email
-	if !validate.IsValidEmail(in.VerifyKey) {
-		return response.ErrCodeInvalidEmailFormat, fmt.Errorf("invalid email format")
-	}
-
 	// !. check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, in.VerifyKey)
 	if err != nil {

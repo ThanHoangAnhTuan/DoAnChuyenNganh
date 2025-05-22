@@ -46,7 +46,6 @@ export class MediaLibraryComponent {
                 .getImages(this.id, this.isDetailMode)
                 .subscribe((response) => {
                     this.oldImages = response.data;
-                    console.log(this.oldImages);
                 });
         });
     }
@@ -57,6 +56,7 @@ export class MediaLibraryComponent {
 
     protected onSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
+        console.log('upload');
 
         if (input.files && input.files.length > 0) {
             const filesArray = Array.from(input.files); // convert FileList -> File[]
@@ -119,30 +119,21 @@ export class MediaLibraryComponent {
     }
 
     protected uploadFiles() {
-        console.log('imagesPreview:', this.imagesPreview);
-        console.log('oldImages:', this.oldImages);
-        console.log('fileInput:', this.fileInput);
-        console.log('formImages:');
         const formImages = this.formImages.get('images')?.value;
-        if (
-            this.oldImages !== null &&
-            formImages !== undefined &&
-            formImages !== null
-        ) {
-            this.imageService
-                .uploadImages(
-                    this.oldImages,
-                    formImages,
-                    this.id,
-                    this.isDetailMode
-                )
-                .subscribe((response) => {
-                    this.oldImages = [];
-                    if (response.data) {
-                        this.oldImages.push(...response.data);
-                    }
-                    this.imagesPreview = [];
-                });
-        }
+
+        this.imageService
+            .uploadImages(
+                this.oldImages ?? [],
+                formImages ?? [],
+                this.id,
+                this.isDetailMode
+            )
+            .subscribe((response) => {
+                this.oldImages = [];
+                if (response.data) {
+                    this.oldImages.push(...response.data);
+                }
+                this.imagesPreview = [];
+            });
     }
 }

@@ -6,13 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
 )
 
@@ -20,63 +20,154 @@ type AccommodationImpl struct {
 	sqlc *database.Queries
 }
 
-// GetAccommodationsByManager implements services.IAccommodation.
+func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.GetAccommodationByIdInput) (codeStatus int, out *vo.GetAccommodationByIdOutput, err error) {
+	out = &vo.GetAccommodationByIdOutput{}
+
+	// TODO: get accommodation by id
+	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.Id)
+	if err != nil {
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id: %s", err)
+	}
+
+	var facilities []string
+	if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	}
+
+	rules := vo.Rule{}
+	if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling rules: %s", err)
+	}
+
+	// TODO: get images of accommodation
+	images, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("error for get images of accommodation by id failed: %s", err)
+	}
+
+	var imagesName []string
+	for _, img := range images {
+		imagesName = append(imagesName, img.Image)
+	}
+
+	out = &vo.GetAccommodationByIdOutput{
+		Id:          accommodation.ID,
+		ManagerId:   accommodation.ManagerID,
+		Name:        accommodation.Name,
+		Country:     accommodation.Country,
+		City:        accommodation.City,
+		District:    accommodation.District,
+		Address:     accommodation.Address,
+		Description: accommodation.Description,
+		Rating:      accommodation.Rating,
+		GoogleMap:   accommodation.GgMap,
+		Facilities:  facilities,
+		Rules:       rules,
+		Images:      imagesName,
+	}
+
+	return response.ErrCodeGetAccommodationSuccess, out, nil
+}
+
+func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.GetAccommodationByCityInput) (codeStatus int, out []*vo.GetAccommodationsByCity, err error) {
+	out = []*vo.GetAccommodationsByCity{}
+	accommodations, err := t.sqlc.GetAccommodationsByCity(ctx, in.City)
+	if err != nil {
+		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
+	}
+
+	for _, accommodation := range accommodations {
+		// TODO: get image of accommodation
+		images, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get accommodation image failed: %s", err)
+		}
+
+		var imagesName []string
+		for _, img := range images {
+			imagesName = append(imagesName, img.Image)
+		}
+
+		out = append(out, &vo.GetAccommodationsByCity{
+			Id:        accommodation.ID,
+			Name:      accommodation.Name,
+			Country:   accommodation.Country,
+			City:      accommodation.City,
+			Address:   accommodation.Address,
+			District:  accommodation.District,
+			Rating:    accommodation.Rating,
+			GoogleMap: accommodation.GgMap,
+			Images:    imagesName,
+		})
+	}
+	return response.ErrCodeGetAccommodationSuccess, out, nil
+}
+
 func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
 	out = []*vo.GetAccommodations{}
 
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
-	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
+	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userId)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations by manager: %s", err)
 	}
 
 	for _, accommodation := range accommodations {
 
-		facilities := vo.Facilities{}
+		var facilities []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
-		propertySurroundings := vo.PropertySurroundings{}
-		if err := json.Unmarshal(accommodation.PropertySurroundings, &propertySurroundings); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+		rules := vo.Rule{}
+		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
+			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling rules: %s", err)
+		}
+
+		// TODO: get images of accommodation
+		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+		}
+
+		var imagePaths []string
+		for _, i := range accommodationImages {
+			imagePaths = append(imagePaths, i.Image)
 		}
 
 		out = append(out, &vo.GetAccommodations{
 			Id:          accommodation.ID,
+			ManagerId:   accommodation.ManagerID,
 			Name:        accommodation.Name,
 			Country:     accommodation.Country,
 			City:        accommodation.City,
 			District:    accommodation.District,
+			Address:     accommodation.Address,
 			Description: accommodation.Description,
-			// Image:                accommodation.Image,
-			ManagerId:            accommodation.ManagerID,
-			Rating:               strconv.Itoa(int(accommodation.Rating)),
-			Facilities:           facilities,
-			GoogleMap:            accommodation.GgMap,
-			PropertySurroundings: propertySurroundings,
-			Rules:                accommodation.Rules,
+			Rating:      accommodation.Rating,
+			GoogleMap:   accommodation.GgMap,
+			Facilities:  facilities,
+			Rules:       rules,
+			Images:      imagePaths,
 		})
 	}
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-// DeleteAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
-	// !. get userId from context
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, fmt.Errorf("userId not found in context")
 	}
 
-	// !. check manager exists in database
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	// TODO: check manager exists in database
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -85,7 +176,7 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 		return response.ErrCodeManagerNotFound, fmt.Errorf("manager not found")
 	}
 
-	// !. check accommodation exists in database
+	// TODO: check accommodation exists in database
 	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -94,12 +185,12 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 		return response.ErrCodeGetAccommodationFailed, fmt.Errorf("error for get accommodation: %w", err)
 	}
 
-	// !. check if the manager is the owner of the accommodation
-	if accommodation.ManagerID != userID {
+	// TODO: check if the manager is the owner of the accommodation
+	if accommodation.ManagerID != userId {
 		return response.ErrCodeUnauthorized, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
-	// !. delete accommodation
+	// TODO: delete accommodation
 	err = t.sqlc.DeleteAccommodation(ctx, database.DeleteAccommodationParams{
 		ID:        accommodation.ID,
 		UpdatedAt: utiltime.GetTimeNow(),
@@ -111,18 +202,17 @@ func (t *AccommodationImpl) DeleteAccommodation(ctx context.Context, in *vo.Dele
 	return response.ErrCodeDeleteAccommodationSuccess, nil
 }
 
-// UpdateAccommodation implements services.IAccommodation.
 func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommodationInput) (codeResult int, out *vo.UpdateAccommodationOutput, err error) {
 	out = &vo.UpdateAccommodationOutput{}
-	// !. get userId from context
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
-	// !. check manager exists in database
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	// TODO: check manager exists in database
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -131,7 +221,7 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
 	}
 
-	// !. get accommodation in database
+	// TODO: get accommodation in database
 	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -140,41 +230,41 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %w", err)
 	}
 
-	// !. check if the manager is the owner of the accommodation
-	if accommodation.ManagerID != userID {
+	// TODO: check if the manager is the owner of the accommodation
+	if accommodation.ManagerID != userId {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
-	// !. update accommodation
+	// TODO: update accommodation
 	now := utiltime.GetTimeNow()
 	facilitiesJSON, err := json.Marshal(in.Facilities)
 	if err != nil {
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
-	propertySurroundingsJSON, err := json.Marshal(in.PropertySurroundings)
+	rulesJSON, err := json.Marshal(in.Rules)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
+		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal rules: %s", err)
 	}
 
 	err = t.sqlc.UpdateAccommodation(ctx, database.UpdateAccommodationParams{
-		ID:                   accommodation.ID,
-		Name:                 in.Name,
-		Country:              in.Country,
-		City:                 in.City,
-		District:             in.District,
-		Description:          in.Description,
-		Facilities:           facilitiesJSON,
-		PropertySurroundings: propertySurroundingsJSON,
-		GgMap:                in.GoogleMap,
-		Rules:                in.Rules,
-		UpdatedAt:            now,
+		ID:          accommodation.ID,
+		Name:        in.Name,
+		Country:     in.Country,
+		City:        in.City,
+		District:    in.District,
+		Description: in.Description,
+		GgMap:       in.GoogleMap,
+		Address:     in.Address,
+		Facilities:  facilitiesJSON,
+		Rules:       rulesJSON,
+		UpdatedAt:   now,
 	})
 	if err != nil {
 		return response.ErrCodeUpdateAccommodationFailed, nil, fmt.Errorf("error for update accommodation: %s", err)
 	}
 
-	// !. return response
+	// TODO: return response
 	out.Id = accommodation.ID
 	out.ManagerId = accommodation.ManagerID
 	out.Name = in.Name
@@ -182,64 +272,75 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	out.Country = in.Country
 	out.District = in.District
 	out.Description = in.Description
-
+	out.Address = in.Address
 	out.Facilities = in.Facilities
 	out.GoogleMap = in.GoogleMap
-	out.PropertySurroundings = in.PropertySurroundings
 	out.Rules = in.Rules
-	out.Rating = strconv.Itoa(int(accommodation.Rating))
+	out.Rating = accommodation.Rating
 
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
 }
 
-// GetAccommodations implements services.IAccommodation.
 func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
-	out = make([]*vo.GetAccommodations, 0)
+	out = []*vo.GetAccommodations{}
+
 	accommodations, err := t.sqlc.GetAccommodations(ctx)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
 	}
 
 	for _, accommodation := range accommodations {
-		facilities := vo.Facilities{}
+		var facilities []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilities); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
-		propertySurroundings := vo.PropertySurroundings{}
-		if err := json.Unmarshal(accommodation.PropertySurroundings, &propertySurroundings); err != nil {
+		rules := vo.Rule{}
+		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
 		}
 
+		// TODO: get images of accommodation
+		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+		}
+
+		var imagePaths []string
+		for _, i := range accommodationImages {
+			imagePaths = append(imagePaths, i.Image)
+		}
+
 		out = append(out, &vo.GetAccommodations{
-			Id:                   accommodation.ID,
-			Name:                 accommodation.Name,
-			Country:              accommodation.Country,
-			City:                 accommodation.City,
-			District:             accommodation.District,
-			Description:          accommodation.Description,
-			ManagerId:            accommodation.ManagerID,
-			Rating:               strconv.Itoa(int(accommodation.Rating)),
-			Facilities:           facilities,
-			GoogleMap:            accommodation.GgMap,
-			PropertySurroundings: propertySurroundings,
-			Rules:                accommodation.Rules,
+			Id:          accommodation.ID,
+			ManagerId:   accommodation.ManagerID,
+			Name:        accommodation.Name,
+			Country:     accommodation.Country,
+			City:        accommodation.City,
+			District:    accommodation.District,
+			Address:     accommodation.Address,
+			Description: accommodation.Description,
+			Rating:      accommodation.Rating,
+			GoogleMap:   accommodation.GgMap,
+			Facilities:  facilities,
+			Rules:       rules,
+			Images:      imagePaths,
 		})
 	}
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-// CreateAccommodation implements services.ITest.
 func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error) {
 	out = &vo.CreateAccommodationOutput{}
-	// !. check manager exists in database
-	val := ctx.Value("userId")
-	userID, ok := val.(string)
+
+	// TODO: get userId from context
+	userId, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
 	}
 
-	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
+	// TODO: check manager exists in database
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userId)
 	if err != nil {
 		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
@@ -248,6 +349,7 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
 	}
 
+	// TODO: convert struct to json
 	now := utiltime.GetTimeNow()
 	id := uuid.New().String()
 
@@ -256,50 +358,68 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
-	propertySurroundingsJSON, err := json.Marshal(in.PropertySurroundings)
+	rulesJSON, err := json.Marshal(in.Rules)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal property surroundings: %s", err)
+		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal rules: %s", err)
 	}
 
-	// !. create accommodation
+	// TODO: create accommodation
 	err = t.sqlc.CreateAccommodation(ctx, database.CreateAccommodationParams{
-		ID:                   id,
-		ManagerID:            userID,
-		Name:                 in.Name,
-		Country:              in.Country,
-		City:                 in.City,
-		District:             in.District,
-		Description:          in.Description,
-		Facilities:           facilitiesJSON,
-		PropertySurroundings: propertySurroundingsJSON,
-		GgMap:                in.GoogleMap,
-		Rules:                in.Rules,
-		CreatedAt:            now,
-		UpdatedAt:            now,
+		ID:          id,
+		ManagerID:   userId,
+		Name:        in.Name,
+		Country:     in.Country,
+		City:        in.City,
+		District:    in.District,
+		Description: in.Description,
+		Address:     in.Address,
+		GgMap:       in.GoogleMap,
+		Facilities:  facilitiesJSON,
+		Rules:       rulesJSON,
+		Rating:      in.Rating,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	})
 
 	if err != nil {
 		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for create accommodation: %s", err)
 	}
 
-	out.Id = id
-	out.ManagerId = userID
-	out.Name = in.Name
-	out.City = in.City
-	out.Country = in.Country
-	out.District = in.District
-	out.Description = in.Description
-	err = json.Unmarshal(facilitiesJSON, &out.Facilities)
+	// TODO: get accommodation
+	accommodation, err := t.sqlc.GetAccommodationById(ctx, id)
+	if err != nil {
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
+	}
+
+	out.Id = accommodation.ID
+	out.ManagerId = accommodation.ManagerID
+	out.Name = accommodation.Name
+	out.City = accommodation.City
+	out.Country = accommodation.Country
+	out.District = accommodation.District
+	out.Description = accommodation.Description
+	out.GoogleMap = accommodation.GgMap
+	out.Address = accommodation.Address
+	out.Rating = accommodation.Rating
+	err = json.Unmarshal(accommodation.Facilities, &out.Facilities)
 	if err != nil {
 		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error for unmarshal facilities: %s", err)
 	}
-	err = json.Unmarshal(propertySurroundingsJSON, &out.PropertySurroundings)
+
+	err = json.Unmarshal(accommodation.Rules, &out.Rules)
 	if err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error for unmarshal property surroundings: %s", err)
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error for unmarshal rules: %s", err)
 	}
-	out.GoogleMap = in.GoogleMap
-	out.Rules = in.Rules
-	out.Rating = "0"
+
+	// TODO: get images of accommodation
+	accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+	}
+
+	for _, i := range accommodationImages {
+		out.Images = append(out.Images, i.Image)
+	}
 
 	return response.ErrCodeCreateAccommodationSuccess, out, nil
 }

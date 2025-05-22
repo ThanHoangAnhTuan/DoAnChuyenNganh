@@ -31,7 +31,8 @@ FROM
     `ecommerce_go_accommodation_detail`
 WHERE
     `id` = ?
-    and `accommodation_id` = ? and `is_deleted`= 0;
+    and `accommodation_id` = ?
+    and `is_deleted` = 0;
 
 -- name: GetAccommodationDetails :many
 SELECT
@@ -49,7 +50,8 @@ SELECT
 FROM
     `ecommerce_go_accommodation_detail`
 WHERE
-    `accommodation_id` = ? and `is_deleted`= 0;
+    `accommodation_id` = ?
+    and `is_deleted` = 0;
 
 -- name: UpdateAccommodationDetail :exec
 UPDATE `ecommerce_go_accommodation_detail`
@@ -63,9 +65,10 @@ SET
     `updated_at` = ?
 WHERE
     `id` = ?
-    and `accommodation_id` = ? and `is_deleted`= 0;
+    and `accommodation_id` = ?
+    and `is_deleted` = 0;
 
--- name: DeleteAccommodationDetails :exec
+-- name: DeleteAccommodationDetail :exec
 UPDATE `ecommerce_go_accommodation_detail`
 SET
     `is_deleted` = 1
@@ -82,3 +85,12 @@ SELECT
         WHERE
             `id` = ?
     );
+
+-- name: GetAccommodationDetailsByIDs :many
+SELECT
+    *
+FROM
+    `ecommerce_go_accommodation_detail`
+WHERE
+    `id` IN (sqlc.slice('ids'))
+    AND `accommodation_id` = ?;

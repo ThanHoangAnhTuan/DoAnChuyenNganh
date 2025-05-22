@@ -12,12 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
-var UploadImages = new(CUploadImages)
+var UploadImage = new(CUploadImage)
 
-type CUploadImages struct {
+type CUploadImage struct {
 }
 
-func (c *CUploadImages) UploadImages(ctx *gin.Context) {
+func (c *CUploadImage) UploadImages(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
 		fmt.Printf("Validation not found")
@@ -42,7 +42,7 @@ func (c *CUploadImages) UploadImages(ctx *gin.Context) {
 		return
 	}
 
-	codeStatus, data, err := services.UploadImage().UploadImages(ctx, &params)
+	codeStatus, data, err := services.Upload().UploadImages(ctx, &params)
 	if err != nil {
 		fmt.Printf("UploadImages error: %s\n", err.Error())
 		global.Logger.Error("UploadImages error: ", zap.String("error", err.Error()))
@@ -55,7 +55,7 @@ func (c *CUploadImages) UploadImages(ctx *gin.Context) {
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
-func (c *CUploadImages) GetImages(ctx *gin.Context) {
+func (c *CUploadImage) GetImages(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
 		fmt.Printf("Validation not found")
@@ -87,7 +87,7 @@ func (c *CUploadImages) GetImages(ctx *gin.Context) {
 		return
 	}
 
-	codeStatus, data, err := services.UploadImage().GetImages(ctx, &params)
+	codeStatus, data, err := services.Upload().GetImages(ctx, &params)
 	if err != nil {
 		fmt.Printf("GetImages error: %s\n", err.Error())
 		global.Logger.Error("GetImages error: ", zap.String("error", err.Error()))
