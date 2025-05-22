@@ -11,8 +11,7 @@
         </p>
         <div class="trending-content">
             <div class="trending-place" *ngFor="let place of trendingPlaces"
-                [routerLink]="['/search/accommodation', place.name]"
-                [queryParams]="{ id: place.id }">
+                [routerLink]="['/search', place.name]">
                 <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}

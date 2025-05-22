@@ -1,29 +1,76 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
-import { NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { TuiLike } from '@taiga-ui/kit';
-import { TuiIcon } from '@taiga-ui/core';
 import { ImageListModalComponent } from '../../../components/image-list-modal/image-list-modal.component';
 import { NavbarComponent } from "../../../components/navbar/navbar.component";
 import SearchBoxComponent from "../../../components/search-box/search-box.component";
+import { HotelService } from '../../../services/user/hotel.service';
+import { RoomService } from '../../../services/user/room.service';
 
 @Component({
   selector: 'app-accommodation-detail',
-  imports: [NgIf, NgFor, TuiLike, TuiIcon, ImageListModalComponent, NavbarComponent, SearchBoxComponent],
+  imports: [NgIf, NgFor, NgClass, TuiLike, ImageListModalComponent, NavbarComponent, SearchBoxComponent],
   templateUrl: './accommodation-detail.component.html',
   styleUrl: './accommodation-detail.component.scss'
 })
 export class AccommodationDetailComponent implements OnInit {
+  accommodationName: string = '';
+  accommodationId: string = '';
   accommodation: any;
+  hotel: any;
+  rooms: any[] = [];
   isModalOpen: boolean = false;
+  isRoomInformationModalOpen: boolean = false;
   windowWidth: number = 0;
   showFull: boolean = false;
   isMobile: boolean = false;
+  bedTypes = [
+    {
+      key: 'single_bed',
+      label: 'single bed',
+      icon: 'icons/room-icon/full-bed.svg',
+      containerClass: 'single-bed-icon-container'
+    },
+    {
+      key: 'double_bed',
+      label: 'full bed',
+      icon: 'icons/room-icon/full-bed.svg',
+      containerClass: 'full-bed-icon-container'
+    },
+    {
+      key: 'large_double_bed',
+      label: 'large full bed',
+      icon: 'icons/room-icon/full-bed.svg',
+      containerClass: 'full-bed-icon-container'
+    },
+    {
+      key: 'extra_large_double_bed',
+      label: 'extra large full bed',
+      icon: 'icons/room-icon/full-bed.svg',
+      containerClass: 'full-bed-icon-container'
+    }
+  ];
+  totalPrice: number = 0;
+  numberOfRooms: number = 0;
+  selectedBedType: string = '';
 
-  constructor(private accommodationDetailService: AccommodationDetailService, private route: ActivatedRoute) {
+  get allAvailableRooms(): any[] {
+    return this.rooms.flatMap(room =>
+      this.getRoomByAvailableRooms(room.available_rooms).map(() => room)
+    );
+  }
+
+  constructor(
+    private accommodationDetailService: AccommodationDetailService,
+    private route: ActivatedRoute,
+    private hotelService: HotelService,
+    private roomService: RoomService
+  ) {
     this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
+    console.log(this.isRoomInformationModalOpen);
   }
 
   // Lắng nghe sự kiện mỗi khi thay đổi kích thước màn hình
@@ -34,18 +81,42 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const accommodationName = this.route.snapshot.paramMap.get('name'); // Lấy giá trị name trong url
+    this.accommodationName = this.route.snapshot.paramMap.get('name') ?? ''; // Lấy giá trị name trong url
+    this.route.queryParams.subscribe(params => {
+      this.accommodationId = params['id'];
+    });
 
-    if (accommodationName) {
-      this.getAccommodationByName(accommodationName);
+    if (this.accommodationName) {
+      this.getAccommodationByName(this.accommodationName);
+      this.getHotelByName(this.accommodationName);
     } else {
-      console.error('City name is missing in URL');
+      console.error('Accommodation name is missing in URL');
+    }
+
+    if (this.accommodationId) {
+      this.getRoomByAccommodationId(this.accommodationId);
+    } else {
+      console.error('Accommodation id is missing in URL');
     }
   };
 
   getAccommodationByName(name: string) {
     this.accommodationDetailService.getAccommodationDetailByName(name).subscribe((data: any) => {
       this.accommodation = data[0];
+      // console.log("accommodation: ", this.accommodation);
+    })
+  }
+
+  getHotelByName(name: string) {
+    this.hotelService.getHotelDetailByName(name).subscribe((data: any) => {
+      this.hotel = data[0];
+    })
+  }
+
+  getRoomByAccommodationId(id: string) {
+    this.roomService.getRoomDetailByAccommodationId(id).subscribe((data: any) => {
+      this.rooms = data.data;
+      console.log("room: ", this.rooms);
     })
   }
 
@@ -75,5 +146,34 @@ export class AccommodationDetailComponent implements OnInit {
   // Hiện thêm hay thu gọn description
   toggleDescription() {
     this.showFull = !this.showFull;
+  }
+
+  getRoomByAvailableRooms(count: number): number[] {
+    return Array.from({ length: count }, (_, i) => i + 1);
+  }
+
+  addPriceToTotal(value: string) {
+    const [priceStr, numberOfRoomsStr] = value.split(',');
+    const price = Number(priceStr);
+    const numberRooms = Number(numberOfRoomsStr);
+
+    this.totalPrice += price;
+    this.totalPrice = Math.round(this.totalPrice * 100) / 100;
+
+    this.numberOfRooms += numberRooms;
+  }
+
+  getTotalBeds(beds: any): number {
+    return Object.values(beds || {}).reduce((total: number, count: any) => total + (+count || 0), 0);
+  }
+
+  toggleOpenModal() {
+    this.isRoomInformationModalOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  toggleCloseModal() {
+    this.isRoomInformationModalOpen = false;
+    document.body.style.overflow = 'auto';
   }
 }

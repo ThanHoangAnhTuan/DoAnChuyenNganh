@@ -7,7 +7,7 @@ import {TuiCheckbox} from '@taiga-ui/kit';
 import {NgForOf, NgIf} from '@angular/common';
 import {TuiInputRangeModule, TuiTextfieldControllerModule} from '@taiga-ui/legacy';
 import {HotelService} from '../../../services/user/hotel.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 
 @Component({
     selector: 'app-search-page',
@@ -22,6 +22,7 @@ import {ActivatedRoute} from '@angular/router';
         TuiTextfieldControllerModule,
         TuiIcon,
         NgIf,
+        RouterLink,
     ],
     templateUrl: './search-page.component.html',
     styleUrl: './search-page.component.scss',
@@ -62,6 +63,7 @@ export class SearchPageComponent implements OnInit {
         // Lấy tham số city từ URL
         this.route.params.subscribe(params => {
             this.city = params['city'];
+            console.log(this.city);
         });
     }
 
@@ -86,7 +88,7 @@ export class SearchPageComponent implements OnInit {
      * Tải danh sách khách sạn từ service
      */
     loadHotels(): void {
-        this.hotelService.getHotels().subscribe({
+        this.hotelService.getHotelDetailByCity(this.city).subscribe({
             next: (hotels) => {
                 this.hotels = hotels;
             },

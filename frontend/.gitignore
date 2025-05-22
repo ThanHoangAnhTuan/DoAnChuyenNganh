@@ -43,3 +43,6 @@ Thumbs.db
 
 # Assets folder
 src/assets/
+
+# Data folder
+data/

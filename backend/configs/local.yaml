@@ -13,7 +13,7 @@ logger:
   compress: true # disabled by default
 mysql:
   host: localhost
-  port: 3306
+  port: 3307
   username: root
   password: root
   databaseName: ecommerce_go
