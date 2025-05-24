@@ -6,7 +6,7 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RoomService {
-  private baseUrl = 'http://localhost:8081/api/v1/accommodation-detail/get-accommodation-details';
+  private baseUrl = 'http://localhost:8080/api/v1/accommodation-detail/get-accommodation-details';
 
   constructor(private http: HttpClient) { }
 

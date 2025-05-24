@@ -7,13 +7,13 @@
         <div class="btn-group">
             <!-- Icon like của TaigaUI -->
             <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
-            <img src="icons/accommodation-detail-icon/share.svg" alt="Share Icon " class="share-icon">
+            <img src="icons/accommodation-detail-icon/share-icon.svg" alt="Share Icon " class="share-icon">
             <button class="order-btn">Đặt ngay</button>
         </div>
     </div>
 
     <div class="accommodation-address-container">
-        <img src="icons/accommodation-detail-icon/location.svg" alt="location icon" class="location-icon">
+        <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon" class="location-icon">
         <p class="accommodation-address">
             {{ hotel?.location.addressNumber }},
             {{ hotel?.location.street }},
@@ -59,7 +59,7 @@
                 </iframe>
                 <!-- Nội dung đè lên google map -->
                 <div class="google-map-overlay">
-                    <img src="icons/accommodation-detail-icon/location.svg" alt="location icon"
+                    <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon"
                         class="google-map-overlay-icon" />
                     <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>
                 </div>
@@ -140,7 +140,7 @@
 
                     <div class="some-room-facilities-container">
                         <div class="room-size-container">
-                            <img src="icons/room-icon/room-size.svg" alt="room size icon" class="room-size-icon">
+                            <img src="icons/accommodation-detail-icon/size-icon.svg" alt="room size icon" class="room-size-icon">
                             <p class="room-size">18 m<sup>2</sup></p>
                         </div>
 
@@ -155,7 +155,7 @@
 
                 <td class="number-of-guests-container">
                     <ng-container *ngFor="let g of [].constructor(room.guests)">
-                        <img src="icons/room-icon/guest.svg" alt="guest icon" class="guest-icon">
+                        <img src="icons/accommodation-detail-icon/guest-icon.svg" alt="guest icon" class="guest-icon">
                     </ng-container>
                 </td>
 

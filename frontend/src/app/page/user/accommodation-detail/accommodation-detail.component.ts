@@ -30,25 +30,26 @@ export class AccommodationDetailComponent implements OnInit {
     {
       key: 'single_bed',
       label: 'single bed',
-      icon: 'icons/room-icon/full-bed.svg',
+      icon: 'icons/accommodation-detail-icon/single-bed-icon.svg',
+      
       containerClass: 'single-bed-icon-container'
     },
     {
       key: 'double_bed',
       label: 'full bed',
-      icon: 'icons/room-icon/full-bed.svg',
+      icon: 'icons/accommodation-detail-icon/full-bed-icon.svg',
       containerClass: 'full-bed-icon-container'
     },
     {
       key: 'large_double_bed',
       label: 'large full bed',
-      icon: 'icons/room-icon/full-bed.svg',
+      icon: 'icons/accommodation-detail-icon/full-bed-icon.svg',
       containerClass: 'full-bed-icon-container'
     },
     {
       key: 'extra_large_double_bed',
       label: 'extra large full bed',
-      icon: 'icons/room-icon/full-bed.svg',
+      icon: 'icons/accommodation-detail-icon/full-bed-icon.svg',
       containerClass: 'full-bed-icon-container'
     }
   ];
@@ -102,7 +103,7 @@ export class AccommodationDetailComponent implements OnInit {
 
   getAccommodationByName(name: string) {
     this.accommodationDetailService.getAccommodationDetailByName(name).subscribe((data: any) => {
-      this.accommodation = data[0];
+      this.accommodation = data.data[0];
       // console.log("accommodation: ", this.accommodation);
     })
   }
