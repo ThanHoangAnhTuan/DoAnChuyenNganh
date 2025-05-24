@@ -9,6 +9,7 @@ import { LoginComponent } from './page/manager/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';
 import { MediaLibraryComponent } from './page/manager/media-library/media-library.component';
 import { SearchPageComponent } from './page/user/search-page/search-page.component';
+import { UserProfileComponent } from './page/user/user-profile/user-profile.component';
 
 export const routes: Routes = [
     {
@@ -56,6 +57,10 @@ export const routes: Routes = [
     {
         path: 'search/:city',
         component: SearchPageComponent,
+    },
+    {
+        path: 'user-profile',
+        component: UserProfileComponent,
     },
     {
         path: '**',

@@ -35,6 +35,7 @@ export const appConfig: ApplicationConfig = {
                     darkModeSelector: false || 'none'
                 }
             }
-        })
+        }),
+        provideEventPlugins()
     ],
 };

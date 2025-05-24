@@ -16,7 +16,7 @@ import { ImageService } from '../../../services/manager/image.service';
 
 @Component({
     selector: 'app-media-library',
-    imports: [ReactiveFormsModule, TuiCardLarge, TuiFiles, TuiButton, TuiIcon],
+    imports: [ReactiveFormsModule, TuiCardLarge, TuiFiles, TuiButton],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',
 })

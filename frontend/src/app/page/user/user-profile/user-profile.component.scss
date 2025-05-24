@@ -1,0 +1,62 @@
+.personal-details-container {
+    margin: 0 auto;
+    padding: 0 14% 0 14%;
+
+    .title {
+        font: var(--tui-font-heading-4);
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        font: var(--tui-font-text-m);
+        color: var(--tui-text-02);
+        margin-bottom: 24px;
+    }
+
+    .details-grid {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 150px 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--tui-base-03);
+
+        .label {
+            font: var(--tui-font-text-m);
+            font-weight: bold;
+        }
+
+        .value {
+            font: var(--tui-font-text-m);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+
+    .description-row {
+        grid-column: 2;
+        font: var(--tui-font-text-s);
+        color: var(--tui-text-02);
+        margin-bottom: 12px;
+    }
+
+    .verified-badge {
+        margin-left: 8px;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 8px;
+    }
+}
