@@ -52,7 +52,6 @@ import { FacilityService } from '../../../services/facility/facility.service';
     selector: 'app-accommodation',
     imports: [
         TuiTable,
-        TuiIcon,
         TuiButton,
         TuiInputModule,
         FormsModule,
@@ -62,8 +61,6 @@ import { FacilityService } from '../../../services/facility/facility.service';
         TuiCardLarge,
         TuiFiles,
         TuiEditor,
-        TuiGroup,
-        TuiCheckbox,
         RouterLink,
         TuiInputTimeModule,
         TuiRating,

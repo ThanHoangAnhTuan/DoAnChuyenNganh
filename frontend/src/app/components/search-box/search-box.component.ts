@@ -1,11 +1,19 @@
-import {TuiComboBoxModule, TuiInputDateRangeModule} from '@taiga-ui/legacy';
-import {TuiButton, TuiTextfieldOptionsDirective} from '@taiga-ui/core';
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {TuiDataListWrapper, TuiDataListWrapperComponent, TuiFilterByInputPipe} from '@taiga-ui/kit';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {TuiDay} from '@taiga-ui/cdk';
-
+import { TuiComboBoxModule, TuiInputDateRangeModule } from '@taiga-ui/legacy';
+import { TuiButton, TuiTextfieldOptionsDirective } from '@taiga-ui/core';
+import {
+    FormControl,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
+import {
+    TuiDataListWrapper,
+    TuiDataListWrapperComponent,
+    TuiFilterByInputPipe,
+} from '@taiga-ui/kit';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 
 @Component({
     selector: 'app-search-box',
@@ -23,55 +31,108 @@ import {TuiDay} from '@taiga-ui/cdk';
     standalone: true,
     templateUrl: './search-box.component.html',
     styleUrl: './search-box.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-export default class SearchBoxComponent {
+export default class SearchBoxComponent implements OnInit {
     protected city: string = '';
     //danh sách các thành phố có sẵn để người dùng chọn
     protected readonly cities = [
-        'Ho Chi Minh',
-        'Ha Noi',
-        'Da Nang',
+        'Hồ Chí Minh',
+        'Hà Nội',
+        'Đà Nẵng',
         'Nha Trang',
-        'Hue',
-        'Dong Nai',
-        'Vung Tau',
-        'Da Lat',
-        'Can Tho',
-        'Ninh Binh',
-        'Bac Linh',
-        'Binh Dinh',
-        'Binh Thuan',
-        'Cao Bang',
-    ]
+        'Huế',
+        'Đồng Nai',
+        'Vũng Tàu',
+        'Đà Lạt',
+        'Cần Thơ',
+        'Ninh Bình',
+        'Bắc Ninh',
+        'Bình Định',
+        'Bình Thuận',
+        'Cao Bằng',
+    ];
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
-
     protected readonly today = TuiDay.currentLocal(); // Lấy ngày hiện tại
 
-    constructor(private activatedRoute: ActivatedRoute, private router: Router) {
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private router: Router
+    ) {
         //Lấy tham số từ URL khi component khởi tạo
-        this.activatedRoute.params.subscribe(params => {
-            // this.searchCity = params['city'];
+        this.activatedRoute.params.subscribe((params) => {
             this.city = params['city'];
         });
         //thiết lập validator cho date-range
         this.DayControl.setValidators([
-            control => {
+            (control) => {
                 const value = control.value;
                 if (!value) return null;
-
                 const today = TuiDay.currentLocal();
-                const fromDay = TuiDay.fromLocalNativeDate(new Date(value.from));
-                const toDay = TuiDay.fromLocalNativeDate(new Date(value.to));
+
+                const newFromDate = new Date(
+                    Number(value.from.formattedYear),
+                    Number(value.from.formattedMonthPart) - 1,
+                    Number(value.from.formattedDayPart)
+                );
+                console.log(newFromDate);
+                const newToDate = new Date(
+                    Number(value.to.formattedYear),
+                    Number(value.to.formattedMonthPart) - 1,
+                    Number(value.to.formattedDayPart)
+                );
+
+                const fromDay = TuiDay.fromLocalNativeDate(newFromDate);
+                const toDay = TuiDay.fromLocalNativeDate(newToDate);
                 // Kiểm tra ngày không được trước ngày hiện tại
                 if (fromDay.dayBefore(today) || toDay.dayBefore(today)) {
-                    return {minDate: true};
+                    return { minDate: true };
                 }
                 return null;
-            }
+            },
         ]);
+    }
+    ngOnInit(): void {
+        // Lấy thành phố từ URL parameter
+        this.activatedRoute.params.subscribe((params) => {
+            const cityParam = params['city'];
+            if (cityParam) {
+                this.city = cityParam;
+                this.searchCityControl.setValue(cityParam);
+            }
+        });
+        // Lấy ngày từ query parameters
+        this.activatedRoute.queryParams.subscribe((queryParams) => {
+            if (queryParams['checkIn'] && queryParams['checkOut']) {
+                try {
+                    // Parse ngày từ định dạng "dd-MM-yyyy" (giống với cách bạn đang gửi lên URL)
+                    const [checkInDay, checkInMonth, checkInYear] = queryParams[
+                        'checkIn'
+                    ]
+                        .split('-')
+                        .map(Number);
+                    const [checkOutDay, checkOutMonth, checkOutYear] =
+                        queryParams['checkOut'].split('-').map(Number);
+
+                    const fromDay = new TuiDay(
+                        checkInYear,
+                        checkInMonth - 1, // Trừ 1 vì TuiDay dùng tháng 0-11
+                        checkInDay
+                    );
+
+                    const toDay = new TuiDay(
+                        checkOutYear,
+                        checkOutMonth - 1, // Trừ 1 vì TuiDay dùng tháng 0-11
+                        checkOutDay
+                    );
+
+                    // Tạo TuiDayRange và gán vào form control
+                    this.DayControl.setValue(new TuiDayRange(fromDay, toDay));
+                } catch (e) {
+                    console.error('Lỗi khi parse ngày từ URL:', e);
+                }
+            }
+        });
     }
 
     /**
@@ -93,6 +154,8 @@ export default class SearchBoxComponent {
             this.searchCityControl.markAllAsTouched(); //Đánh dấu touched để hiển thị lỗi
             return;
         }
+        this.searchChanged.emit(this.searchCityControl.value ?? undefined);
+
         if (this.DayControl.value) {
             // Định dạng ngày check-in và check-out
             const checkIn = `${this.DayControl.value?.from.formattedDayPart}-${this.DayControl.value?.from.formattedMonthPart}-${this.DayControl.value?.from.formattedYear}`;
@@ -101,8 +164,8 @@ export default class SearchBoxComponent {
             this.router.navigate(['/search', this.searchCityControl.value], {
                 queryParams: {
                     checkIn,
-                    checkOut
-                }
+                    checkOut,
+                },
             });
             return;
         }
@@ -110,4 +173,5 @@ export default class SearchBoxComponent {
         this.router.navigate(['/search', this.searchCityControl.value]);
         return;
     }
+    @Output() searchChanged = new EventEmitter<string>();
 }

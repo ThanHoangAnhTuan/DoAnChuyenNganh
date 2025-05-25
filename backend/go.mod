@@ -14,6 +14,8 @@ require (
 	golang.org/x/crypto v0.37.0
 )
 
+require github.com/gin-contrib/gzip v0.0.6 // indirect
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
