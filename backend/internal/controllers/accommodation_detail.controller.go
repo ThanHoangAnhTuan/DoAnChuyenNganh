@@ -21,6 +21,8 @@ type CAccommodationDetail struct {
 func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
+		fmt.Printf("CreateAccommodationDetail Validation not found")
+		global.Logger.Error("CreateAccommodationDetail Validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
@@ -35,6 +37,8 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
+		fmt.Printf("CreateAccommodationDetail validation error: %s\n", err.Error())
+		global.Logger.Error("CreateAccommodationDetail validation error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
@@ -58,8 +62,8 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("GetAccommodationDetails Validation not found")
+		global.Logger.Error("GetAccommodationDetails Validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
@@ -98,6 +102,8 @@ func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
+		fmt.Printf("GetAccommodationDetails Validation not found")
+		global.Logger.Error("GetAccommodationDetails Validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
@@ -112,6 +118,8 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
+		fmt.Printf("UpdateAccommodationDetail validation error: %s\n", err.Error())
+		global.Logger.Error("UpdateAccommodationDetail validation error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
@@ -135,12 +143,14 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
+		fmt.Printf("DeleteAccommodationDetail Validation not found")
+		global.Logger.Error("DeleteAccommodationDetail Validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
 
 	var params vo.DeleteAccommodationDetailInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
+	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("DeleteAccommodationDetail binding error: %s\n", err.Error())
 		global.Logger.Error("DeleteAccommodationDetail binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)

@@ -34,17 +34,8 @@ export class AccommodationService {
             country: accommodation.country,
             description: accommodation.description,
             district: accommodation.district,
-            facilities: {
-                air_condition: accommodation.facilities.air_condition,
-                tv: accommodation.facilities.tv,
-                wifi: accommodation.facilities.wifi,
-            },
             google_map: accommodation.google_map,
-            property_surrounds: {
-                bar: accommodation.property_surrounds.bar,
-                restaurant: accommodation.property_surrounds.restaurant,
-            },
-            rules: accommodation.rules,
+            address: accommodation.address,
         };
         return this.http.post<CreateAccommodationResponse>(
             this.apiUrl + 'create-accommodation',
@@ -62,17 +53,8 @@ export class AccommodationService {
             country: accommodation.country,
             description: accommodation.description,
             district: accommodation.district,
-            facilities: {
-                air_condition: accommodation.facilities.air_condition,
-                tv: accommodation.facilities.tv,
-                wifi: accommodation.facilities.wifi,
-            },
+            address: accommodation.address,
             google_map: accommodation.google_map,
-            property_surrounds: {
-                bar: accommodation.property_surrounds.bar,
-                restaurant: accommodation.property_surrounds.restaurant,
-            },
-            rules: accommodation.rules,
         };
         return this.http.put<UpdateAccommodationResponse>(
             this.apiUrl + 'update-accommodation',

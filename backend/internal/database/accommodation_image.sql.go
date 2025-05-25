@@ -20,6 +20,24 @@ func (q *Queries) DeleteAccommodationImage(ctx context.Context, image string) er
 	return err
 }
 
+const getAccommodationImage = `-- name: GetAccommodationImage :one
+SELECT
+    ` + "`" + `image` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation_image` + "`" + `
+WHERE
+    ` + "`" + `accommodation_id` + "`" + ` = ?
+LIMIT
+    1
+`
+
+func (q *Queries) GetAccommodationImage(ctx context.Context, accommodationID string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getAccommodationImage, accommodationID)
+	var image string
+	err := row.Scan(&image)
+	return image, err
+}
+
 const getAccommodationImages = `-- name: GetAccommodationImages :many
 SELECT
     ` + "`" + `id` + "`" + `,

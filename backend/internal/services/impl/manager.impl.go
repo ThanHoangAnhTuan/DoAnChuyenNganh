@@ -16,14 +16,12 @@ import (
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/auth"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/crypto"
 	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/validate"
 )
 
 type ManagerLoginImpl struct {
 	sqlc *database.Queries
 }
 
-// Login implements services.IManagerLogin.
 func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error) {
 	out = &vo.ManagerLoginOutput{}
 
@@ -76,14 +74,7 @@ func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) 
 	return response.ErrCodeLoginSuccess, out, nil
 }
 
-// Register implements services.IManagerLogin.
 func (m *ManagerLoginImpl) Register(ctx context.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error) {
-	// !input: email, type, purpose
-	// !. validate email
-	if !validate.IsValidEmail(in.UserAccount) {
-		return response.ErrCodeInvalidEmailFormat, fmt.Errorf("invalid email format")
-	}
-
 	// !. check email exists in user manager
 	managerFound, err := m.sqlc.CheckUserManagerExistsByEmail(ctx, in.UserAccount)
 	if err != nil {

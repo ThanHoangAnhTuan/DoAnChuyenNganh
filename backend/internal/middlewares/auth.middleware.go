@@ -12,7 +12,10 @@ import (
 
 type contextKey string
 
-const UserIDKey contextKey = "userId"
+const (
+	UserIDKey   contextKey = "userId"
+	TimezoneKey contextKey = "timezone"
+)
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {

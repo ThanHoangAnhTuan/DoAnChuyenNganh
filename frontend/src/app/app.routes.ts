@@ -1,30 +1,25 @@
 import { Routes } from '@angular/router';
-// import { ManagerComponent } from './../page/manager/manager.component';
 import { HomeComponent } from './page/user/home/home.component';
 import { AccommodationComponent } from './page/manager/accommodation/accommodation.component';
 import { AccommodationDetailComponent } from './page/user/accommodation-detail/accommodation-detail.component';
 import { AccommodationDetailComponent as ManagerAccommodationDetailComponent } from './page/manager/accommodation-detail/accommodation-detail.component';
 
-import { LoginComponent } from './page/manager/login/login.component';
+import { LoginComponent as ManagerLoginComponent } from './page/manager/login/login.component';
+import { LoginComponent as AdminLoginComponent } from './page/admin/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';
 import { MediaLibraryComponent } from './page/manager/media-library/media-library.component';
 import { SearchPageComponent } from './page/user/search-page/search-page.component';
 import { UserProfileComponent } from './page/user/user-profile/user-profile.component';
+import { FacilityComponent } from './page/admin/facility/facility.component';
 
 export const routes: Routes = [
     {
         path: '',
         component: HomeComponent,
     },
-    // {
-    //     path: 'manager',
-    //     component: ManagerComponent,
-    //     canActivate: [RoleGuard],
-    //     data: { expectedRole: 'manager' },
-    // },
     {
         path: 'manager/login',
-        component: LoginComponent,
+        component: ManagerLoginComponent,
     },
     {
         path: 'manager/accommodation',
@@ -51,7 +46,19 @@ export const routes: Routes = [
         data: { expectedRole: 'manager' },
     },
     {
-        path: 'search/accommodation/detail/:name',
+        path: 'admin/login',
+        component: AdminLoginComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
+        path: 'admin/facility',
+        component: FacilityComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
+        path: 'search/accommodation/detail/:id',
         component: AccommodationDetailComponent,
     },
     {

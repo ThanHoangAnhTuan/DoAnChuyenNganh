@@ -31,7 +31,7 @@ type CreatePaymentParams struct {
 	OrderID       string
 	PaymentStatus EcommerceGoPaymentPaymentStatus
 	PaymentMethod EcommerceGoPaymentPaymentMethod
-	TotalPrice    string
+	TotalPrice    uint32
 	TransactionID sql.NullString
 	CreatedAt     uint64
 	UpdatedAt     uint64
