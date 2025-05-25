@@ -20,75 +20,75 @@ type CManagerLogin struct {
 func (c *CManagerLogin) Register(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("Manager register validation not found\n")
+		global.Logger.Error("Manager register validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
 
 	var params vo.ManagerRegisterInput
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("Register binding error: %s\n", err.Error())
-		global.Logger.Error("Register binding error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager register binding error: %s\n", err.Error())
+		global.Logger.Error("Manager register binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Register validation error: %s\n", err.Error())
-		global.Logger.Error("Register validation error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager register validation error: %s\n", err.Error())
+		global.Logger.Error("Manager register validation error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
 	codeStatus, err := services.ManagerLogin().Register(ctx, &params)
 	if err != nil {
-		fmt.Printf("Register error: %s\n", err.Error())
-		global.Logger.Error("Register error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager register error: %s\n", err.Error())
+		global.Logger.Error("Manager register error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("Register success: %s\n", params.UserAccount)
-	global.Logger.Info("Register success: ", zap.String("info", params.UserAccount))
+	fmt.Printf("Manager register success: %s\n", params.UserAccount)
+	global.Logger.Info("Manager register success: ", zap.String("info", params.UserAccount))
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CManagerLogin) Login(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("Manager login validation not found\n")
+		global.Logger.Error("Manager login validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
 
 	var params vo.ManagerLoginInput
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("Login binding error\n: %s", err.Error())
-		global.Logger.Error("Login binding error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager login binding error\n: %s", err.Error())
+		global.Logger.Error("Manager login binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Login validation error\n: %s", err.Error())
-		global.Logger.Error("Login validation error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager login validation error\n: %s", err.Error())
+		global.Logger.Error("Manager login validation error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
 
 	codeResult, data, err := services.ManagerLogin().Login(ctx, &params)
 	if err != nil {
-		fmt.Printf("Login error\n: %s", err.Error())
-		global.Logger.Error("Login error: ", zap.String("error", err.Error()))
+		fmt.Printf("Manager login error\n: %s", err.Error())
+		global.Logger.Error("Manager login error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeResult, nil)
 		return
 	}
 
-	fmt.Printf("Login success\n: %s", data.Token)
-	global.Logger.Info("Login success: ", zap.String("info", data.Token))
+	fmt.Printf("Manager login success\n: %s", data.Token)
+	global.Logger.Info("Manager login success: ", zap.String("info", data.Token))
 	response.SuccessResponse(ctx, codeResult, data)
 }

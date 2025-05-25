@@ -10,7 +10,7 @@ import (
 
 func Run() *gin.Engine {
 	LoadConfig()
-	fmt.Printf("Server: %d. Port: %s", global.Config.Server.Port, global.Config.Server.Mode)
+	fmt.Printf("Server: %d. Port: %s\n", global.Config.Server.Port, global.Config.Server.Mode)
 	InitLogger()
 	global.Logger.Info("Config", zap.String("ok", "success"))
 

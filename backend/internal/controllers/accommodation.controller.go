@@ -21,7 +21,7 @@ type CAccommodation struct {
 func (c *CAccommodation) CreateAccommodation(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("CreateAccommodation validation not found")
+		fmt.Printf("CreateAccommodation validation not found\n")
 		global.Logger.Error("CreateAccommodation validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -74,7 +74,7 @@ func (c *CAccommodation) GetAccommodations(ctx *gin.Context) {
 func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("UpdateAccommodation validation not found")
+		fmt.Printf("UpdateAccommodation validation not found\n")
 		global.Logger.Error("UpdateAccommodation validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -113,7 +113,7 @@ func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
 func (c *CAccommodation) DeleteAccommodation(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("DeleteAccommodation validation not found")
+		fmt.Printf("DeleteAccommodation validation not found\n")
 		global.Logger.Error("DeleteAccommodation validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -153,8 +153,8 @@ func (c *CAccommodation) DeleteAccommodation(ctx *gin.Context) {
 func (c *CAccommodation) GetAccommodationByCity(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("GetAccommodationByCity validation not found\n")
+		global.Logger.Error("GetAccommodationByCity validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
@@ -190,8 +190,8 @@ func (c *CAccommodation) GetAccommodationByCity(ctx *gin.Context) {
 func (c *CAccommodation) GetAccommodationById(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("GetAccommodationById validation not found\n")
+		global.Logger.Error("GetAccommodationById validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}

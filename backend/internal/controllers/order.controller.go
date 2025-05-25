@@ -20,8 +20,8 @@ type COrder struct {
 func (c *COrder) CreateOrder(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("CreateOrder validation not found\n")
+		global.Logger.Error("CreateOrder validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}

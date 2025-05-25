@@ -20,6 +20,6 @@ func (ur *AccommodationDetailRouter) InitAccommodationDetailRouter(Router *gin.R
 	{
 		userRouterPrivate.POST("/create-accommodation-detail", controllers.AccommodationDetail.CreateAccommodationDetail)
 		userRouterPrivate.PUT("/update-accommodation-detail", controllers.AccommodationDetail.UpdateAccommodationDetail)
-		userRouterPrivate.DELETE("/delete-accommodation-detail/:id", controllers.AccommodationDetail.DeleteAccommodationDetail)
+		userRouterPrivate.DELETE("/delete-accommodation-detail", controllers.AccommodationDetail.DeleteAccommodationDetail)
 	}
 }

@@ -20,7 +20,7 @@ type CFacility struct {
 func (c *CFacility) CreateFacility(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("CreateFacility validation not found")
+		fmt.Printf("CreateFacility validation not found\n")
 		global.Logger.Error("CreateFacility validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -65,6 +65,6 @@ func (c *CFacility) GetFacilities(ctx *gin.Context) {
 	}
 
 	fmt.Printf("GetFacilities success\n")
-	// global.Logger.Info("GetFacilities success: ", zap.String("info", data))
+	global.Logger.Info("GetFacilities success")
 	response.SuccessResponse(ctx, codeResult, data)
 }
