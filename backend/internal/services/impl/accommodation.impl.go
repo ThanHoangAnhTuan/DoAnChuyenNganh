@@ -30,7 +30,7 @@ func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.Get
 	}
 
 	// TODO: get facility
-	var facilityIds []vo.FacilitiesInput
+	var facilityIds []string
 	if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 	}
@@ -38,12 +38,13 @@ func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.Get
 	facilities := []vo.FacilitiesOutput{}
 
 	for _, facilityId := range facilityIds {
-		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId)
 		if err != nil {
 			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 		}
 
 		facilities = append(facilities, vo.FacilitiesOutput{
+			Id:    facility.ID,
 			Name:  facility.Name,
 			Image: facility.Image,
 		})
@@ -134,7 +135,7 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 
 	for _, accommodation := range accommodations {
 		// TODO: get facility
-		var facilityIds []vo.FacilitiesInput
+		var facilityIds []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
@@ -142,12 +143,13 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx context.Context) (cod
 		facilities := []vo.FacilitiesOutput{}
 
 		for _, facilityId := range facilityIds {
-			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId)
 			if err != nil {
 				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 			}
 
 			facilities = append(facilities, vo.FacilitiesOutput{
+				Id:    facility.ID,
 				Name:  facility.Name,
 				Image: facility.Image,
 			})
@@ -295,11 +297,12 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 
 	// TODO: get facility
 	for _, facilityId := range in.Facilities {
-		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId)
 		if err != nil {
 			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 		}
 		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Id:    facility.ID,
 			Name:  facility.Name,
 			Image: facility.Image,
 		})
@@ -331,7 +334,7 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 
 	for _, accommodation := range accommodations {
 		// TODO: get facility
-		var facilityIds []vo.FacilitiesInput
+		var facilityIds []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIds); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
@@ -339,12 +342,13 @@ func (t *AccommodationImpl) GetAccommodations(ctx context.Context) (codeStatus i
 		facilities := []vo.FacilitiesOutput{}
 
 		for _, facilityId := range facilityIds {
-			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId)
 			if err != nil {
 				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 			}
 
 			facilities = append(facilities, vo.FacilitiesOutput{
+				Id:    facility.ID,
 				Name:  facility.Name,
 				Image: facility.Image,
 			})
@@ -456,19 +460,21 @@ func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateA
 	out.GoogleMap = accommodation.GgMap
 	out.Address = accommodation.Address
 	out.Rating = accommodation.Rating
+
 	// TODO: get facility
-	var facilitieIds []vo.FacilitiesInput
+	var facilitieIds []string
 	if err := json.Unmarshal(accommodation.Facilities, &facilitieIds); err != nil {
 		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 	}
 
 	for _, facilityId := range facilitieIds {
-		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId.Id)
+		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityId)
 		if err != nil {
 			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 		}
 
 		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
+			Id:    facility.ID,
 			Name:  facility.Name,
 			Image: facility.Image,
 		})

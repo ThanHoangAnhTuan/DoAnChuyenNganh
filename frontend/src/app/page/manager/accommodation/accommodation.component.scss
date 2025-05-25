@@ -30,3 +30,20 @@
 .text-nowrap {
     text-wrap: nowrap;
 }
+
+.facilities-form {
+    margin: 24px 0;
+}
+
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.facility-heading {
+    margin-bottom: 8px;
+}
+
+.facility-item {
+    margin-bottom: 8px;
+}

@@ -33,6 +33,7 @@ func InitRouter() *gin.Engine {
 	uploadRouter := routers.RouterGroupApp.Upload
 	orderRouter := routers.RouterGroupApp.Order
 	facilityRouter := routers.RouterGroupApp.Facility
+	paymentRouter := routers.RouterGroupApp.Payment
 
 	MainGroup := r.Group("api/v1")
 	{
@@ -58,6 +59,9 @@ func InitRouter() *gin.Engine {
 	}
 	{
 		facilityRouter.InitFacilityRouter(MainGroup)
+	}
+	{
+		paymentRouter.InitPaymentRouter(MainGroup)
 	}
 	return r
 }

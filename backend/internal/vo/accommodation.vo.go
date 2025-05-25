@@ -1,10 +1,7 @@
 package vo
 
-type FacilitiesInput struct {
-	Id string `json:"id"`
-}
-
 type FacilitiesOutput struct {
+	Id    string `json:"id"`
 	Name  string `json:"name"`
 	Image string `json:"image"`
 }
@@ -19,16 +16,16 @@ type Rule struct {
 }
 
 type CreateAccommodationInput struct {
-	Name        string            `json:"name" validate:"required"`
-	Country     string            `json:"country" validate:"required"`
-	City        string            `json:"city" validate:"required"`
-	District    string            `json:"district" validate:"required"`
-	Address     string            `json:"address" validate:"required"`
-	Description string            `json:"description" validate:"required"`
-	Facilities  []FacilitiesInput `json:"facilities" validate:"required"`
-	GoogleMap   string            `json:"google_map" validate:"required"`
-	Rating      uint8             `json:"rating" validate:"required"`
-	Rules       Rule              `json:"rules"`
+	Name        string   `json:"name" validate:"required"`
+	Country     string   `json:"country" validate:"required"`
+	City        string   `json:"city" validate:"required"`
+	District    string   `json:"district" validate:"required"`
+	Address     string   `json:"address" validate:"required"`
+	Description string   `json:"description" validate:"required"`
+	Facilities  []string `json:"facilities" validate:"required"`
+	GoogleMap   string   `json:"google_map" validate:"required"`
+	Rating      uint8    `json:"rating" validate:"required"`
+	Rules       Rule     `json:"rules"`
 }
 
 type CreateAccommodationOutput struct {
@@ -64,16 +61,16 @@ type GetAccommodations struct {
 }
 
 type UpdateAccommodationInput struct {
-	Id          string            `json:"id" validate:"required"`
-	Name        string            `json:"name"`
-	Country     string            `json:"country"`
-	City        string            `json:"city"`
-	District    string            `json:"district"`
-	Address     string            `json:"address"`
-	Description string            `json:"description"`
-	Facilities  []FacilitiesInput `json:"facilities"`
-	GoogleMap   string            `json:"google_map"`
-	Rules       Rule              `json:"rules"`
+	Id          string   `json:"id" validate:"required"`
+	Name        string   `json:"name"`
+	Country     string   `json:"country"`
+	City        string   `json:"city"`
+	District    string   `json:"district"`
+	Address     string   `json:"address"`
+	Description string   `json:"description"`
+	Facilities  []string `json:"facilities"`
+	GoogleMap   string   `json:"google_map"`
+	Rules       Rule     `json:"rules"`
 }
 
 type UpdateAccommodationOutput struct {

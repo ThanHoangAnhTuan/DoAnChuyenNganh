@@ -1,3 +1,5 @@
+import { Facility } from '../facility/facility.model';
+
 export interface Accommodation {
     id: string;
     manager_id: string;
@@ -7,7 +9,8 @@ export interface Accommodation {
     district: string;
     address: string;
     description: string;
-    rating: string;
+    rating: number;
+    facilities: Facility[];
     images: string[];
     google_map: string;
 }
@@ -31,8 +34,10 @@ export interface CreateAccommodation {
     city: string;
     district: string;
     address: string;
+    rating: number;
     description: string;
     google_map: string;
+    facilities: string[];
 }
 
 export interface CreateAccommodationResponse {
@@ -49,8 +54,10 @@ export interface UpdateAccommodation {
     city: string;
     district: string;
     address: string;
+    rating: number;
     description: string;
     google_map: string;
+    facilities: string[];
 }
 export interface UpdateAccommodationResponse {
     data: Accommodation;

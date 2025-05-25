@@ -76,24 +76,24 @@ func (f *FacilityImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInp
 
 func (f *FacilityImpl) GetFacilities(ctx context.Context) (codeStatus int, out []*vo.GetFacilitiesOutput, err error) {
 	// TODO: get user id in gin.Context
-	val := ctx.Value("userId")
-	if val == nil {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
-	}
-	userID, ok := val.(string)
-	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
-	}
+	// val := ctx.Value("userId")
+	// if val == nil {
+	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
+	// }
+	// userID, ok := val.(string)
+	// if !ok {
+	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
+	// }
 
 	// TODO: check user is admin
-	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
-	if err != nil {
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
-	}
+	// isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
+	// if err != nil {
+	// 	return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+	// }
 
-	if !isExists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
-	}
+	// if !isExists {
+	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+	// }
 
 	// TODO: get facilities
 	facilities, err := f.sqlc.GetAccommodationFacilityNames(ctx)
