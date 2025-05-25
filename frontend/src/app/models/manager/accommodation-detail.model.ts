@@ -1,15 +1,15 @@
 export interface Beds {
-    single_bed:  number;
+    single_bed: number;
     double_bed: number;
     large_double_bed: number;
     extra_large_double_bed: number;
 }
 
-export interface Facilities {
-    wifi: boolean;
-    air_condition: boolean;
-    tv: boolean;
-}
+// export interface Facilities {
+//     wifi: boolean;
+//     air_condition: boolean;
+//     tv: boolean;
+// }
 
 export interface AccommodationDetails {
     id: string;
@@ -17,7 +17,7 @@ export interface AccommodationDetails {
     name: string;
     guests: number;
     beds: Beds;
-    facilities: Facilities;
+    // facilities: Facilities;
     available_rooms: number;
     price: number;
     discount_id: string;
@@ -29,7 +29,6 @@ export interface GetAccommodationDetailsResponse {
     code: number;
     message: string;
 }
-
 
 export interface AccommodationSelect {
     id: string;
@@ -46,7 +45,7 @@ export interface CreateAccommodationDetails {
     name: string;
     guests: number;
     beds: Beds;
-    facilities: Facilities;
+    // facilities: Facilities;
     available_rooms: number;
     price: number;
     discount_id: string;
@@ -64,7 +63,7 @@ export interface UpdateAccommodationDetails {
     name: string;
     guests: number;
     beds: Beds;
-    facilities: Facilities;
+    // facilities: Facilities;
     available_rooms: number;
     price: number;
     discount_id: string;

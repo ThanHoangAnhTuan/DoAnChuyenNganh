@@ -11,7 +11,7 @@ import {
     providedIn: 'root',
 })
 export class ImageService {
-    private apiUrl = `${environment.apiUrl}/images`;
+    private apiUrl = `${environment.apiUrl}/image`;
 
     constructor(private http: HttpClient) {}
 

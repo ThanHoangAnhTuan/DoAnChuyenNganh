@@ -36,6 +36,8 @@ export class AccommodationService {
             district: accommodation.district,
             google_map: accommodation.google_map,
             address: accommodation.address,
+            rating: accommodation.rating,
+            facilities: accommodation.facilities,
         };
         return this.http.post<CreateAccommodationResponse>(
             this.apiUrl + 'create-accommodation',
@@ -55,6 +57,8 @@ export class AccommodationService {
             district: accommodation.district,
             address: accommodation.address,
             google_map: accommodation.google_map,
+            rating: accommodation.rating,
+            facilities: accommodation.facilities,
         };
         return this.http.put<UpdateAccommodationResponse>(
             this.apiUrl + 'update-accommodation',
@@ -64,7 +68,10 @@ export class AccommodationService {
 
     deleteAccommodation(id: string): Observable<DeleteAccommodationResponse> {
         return this.http.delete<DeleteAccommodationResponse>(
-            this.apiUrl + 'delete-accommodation/' + id
+            this.apiUrl + 'delete-accommodation',
+            {
+                body: { id: id },
+            }
         );
     }
 }

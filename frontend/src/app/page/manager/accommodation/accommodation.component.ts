@@ -31,6 +31,8 @@ import {
     TuiFiles,
     TuiCheckbox,
     tuiCreateTimePeriods,
+    TuiRating,
+    TuiSelect,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -42,6 +44,8 @@ import {
 } from '@taiga-ui/editor';
 import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
+import { Facility } from '../../../models/facility/facility.model';
+import { FacilityService } from '../../../services/facility/facility.service';
 
 @Component({
     standalone: true,
@@ -59,6 +63,8 @@ import { TuiInputTimeModule } from '@taiga-ui/legacy';
         TuiEditor,
         RouterLink,
         TuiInputTimeModule,
+        TuiRating,
+        TuiSelect,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -82,6 +88,7 @@ import { TuiInputTimeModule } from '@taiga-ui/legacy';
 })
 export class AccommodationComponent implements OnInit {
     protected accommodations!: Accommodation[];
+    protected facilities!: Facility[];
     protected columns: string[] = [
         'Name',
         'Country',
@@ -106,14 +113,21 @@ export class AccommodationComponent implements OnInit {
         country: new FormControl('', Validators.required),
         district: new FormControl('', Validators.required),
         address: new FormControl('', Validators.required),
+        rating: new FormControl(0, [
+            Validators.required,
+            Validators.min(1),
+            Validators.max(5),
+        ]),
         description: new FormControl('', Validators.required),
         googleMap: new FormControl('', Validators.required),
     });
+    protected formFacilities = new FormGroup({});
 
     protected timePeriods = tuiCreateTimePeriods();
 
     constructor(
         private accommodationService: AccommodationService,
+        private facilityService: FacilityService,
         private sanitizer: DomSanitizer
     ) {}
 
@@ -121,6 +135,32 @@ export class AccommodationComponent implements OnInit {
         this.accommodationService.getAccommodations().subscribe((response) => {
             this.accommodations = response.data;
         });
+        this.facilityService.getFacilities().subscribe((response) => {
+            this.facilities = response.data;
+            this.createFacilityControls();
+        });
+    }
+
+    private createFacilityControls() {
+        const facilityControls: { [key: string]: FormControl<boolean> } = {};
+
+        this.facilities.forEach((facility) => {
+            facilityControls[facility.id] = new FormControl<boolean>(false, {
+                nonNullable: true,
+            });
+        });
+
+        // Tạo FormGroup mới với các controls
+        this.formFacilities = new FormGroup(facilityControls);
+    }
+
+    getSelectedFacilityIds(): string[] {
+        return this.facilities
+            .filter(
+                (facility) =>
+                    this.formFacilities.get(facility.id)?.value === true
+            )
+            .map((facility) => facility.id);
     }
 
     protected openDialogCreate(content: PolymorpheusContent): void {
@@ -141,6 +181,7 @@ export class AccommodationComponent implements OnInit {
         accommodation: Accommodation
     ) {
         this.formAccommodation.reset();
+        this.formFacilities.reset();
 
         this.formAccommodation.patchValue({
             name: accommodation.name,
@@ -150,7 +191,12 @@ export class AccommodationComponent implements OnInit {
             description: accommodation.description,
             googleMap: accommodation.google_map,
             address: accommodation.address,
+            rating: accommodation.rating,
         });
+
+        console.log('accommodation: ', accommodation);
+
+        this.setFacilityValues(accommodation.facilities);
 
         this.idAccommodationUpdating = accommodation.id;
 
@@ -163,6 +209,21 @@ export class AccommodationComponent implements OnInit {
                     this.formAccommodation.reset();
                 },
             });
+    }
+
+    private setFacilityValues(accommodationFacilities: Facility[]) {
+        const facilityValues: { [key: string]: boolean } = {};
+        Object.keys(this.formFacilities.controls).forEach((facilityId) => {
+            facilityValues[facilityId] = false;
+        });
+
+        accommodationFacilities.forEach((facilityId) => {
+            if (facilityValues.hasOwnProperty(facilityId.id)) {
+                facilityValues[facilityId.id] = true;
+            }
+        });
+
+        this.formFacilities.patchValue(facilityValues);
     }
 
     protected getDescription(html: string): SafeHtml {
@@ -178,6 +239,8 @@ export class AccommodationComponent implements OnInit {
             address: this.formAccommodation.get('address')?.value || '',
             description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
+            rating: this.formAccommodation.get('rating')?.value || 0,
+            facilities: this.getSelectedFacilityIds(),
         };
 
         if (this.formAccommodation.invalid) {
@@ -202,6 +265,8 @@ export class AccommodationComponent implements OnInit {
             address: this.formAccommodation.get('address')?.value || '',
             description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
+            rating: this.formAccommodation.get('rating')?.value || 0,
+            facilities: this.getSelectedFacilityIds(),
         };
 
         this.accommodationService
