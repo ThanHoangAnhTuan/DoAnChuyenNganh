@@ -10,17 +10,17 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/consts"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/auth"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/crypto"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/random"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/sendto"
-	utiltime "github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/util_time"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/auth"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/crypto"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/random"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/sendto"
+	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
 )
 
 type UserLoginImpl struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 type (

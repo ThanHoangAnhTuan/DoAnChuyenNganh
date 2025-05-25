@@ -2,7 +2,7 @@ package payment
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/middlewares"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 )
 
 type PaymentRouter struct {

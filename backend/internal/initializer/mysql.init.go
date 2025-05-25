@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"go.uber.org/zap"
 )
 

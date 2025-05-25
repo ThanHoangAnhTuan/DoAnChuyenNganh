@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 func SortObject(obj vo.VNPayParams) vo.VNPayParams {

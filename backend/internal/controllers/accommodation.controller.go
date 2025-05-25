@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	"go.uber.org/zap"
 )
 

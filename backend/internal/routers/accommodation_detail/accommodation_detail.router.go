@@ -2,8 +2,8 @@ package accommodationdetail
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/controllers"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/middlewares"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/controllers"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 )
 
 type AccommodationDetailRouter struct {

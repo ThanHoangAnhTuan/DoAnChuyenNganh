@@ -11,13 +11,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/crypto"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/ip"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/payment"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/crypto"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/ip"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/payment"
 	"go.uber.org/zap"
 )
 

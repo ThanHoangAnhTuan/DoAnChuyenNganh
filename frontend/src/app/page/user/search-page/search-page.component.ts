@@ -10,7 +10,7 @@ import {
     TuiTextfieldControllerModule,
 } from '@taiga-ui/legacy';
 import { HotelService } from '../../../services/user/hotel.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-search-page',
@@ -24,6 +24,7 @@ import { ActivatedRoute } from '@angular/router';
         TuiTextfieldControllerModule,
         TuiIcon,
         NgIf,
+        RouterLink,
     ],
     templateUrl: './search-page.component.html',
     standalone: true,
