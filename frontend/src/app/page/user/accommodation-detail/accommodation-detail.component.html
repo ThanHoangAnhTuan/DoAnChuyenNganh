@@ -1,0 +1,211 @@
+<app-navbar />
+<app-search-box />
+
+<main class="main">
+    <div class="accommodation-detail-header">
+        <p class="accommodation-detail-title">{{ accommodation?.name }}</p>
+        <div class="btn-group">
+            <!-- Icon like của TaigaUI -->
+            <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
+            <img src="icons/accommodation-detail-icon/share-icon.svg" alt="Share Icon " class="share-icon">
+            <button class="order-btn">Đặt ngay</button>
+        </div>
+    </div>
+
+    <div class="accommodation-address-container">
+        <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon" class="location-icon">
+        <p class="accommodation-address">
+            {{ accommodation?.address }},
+            {{ accommodation?.district }},
+            {{ accommodation?.city }},
+            {{ accommodation?.country }}
+        </p>
+    </div>
+
+    <div class="image-review-map-container">
+        <div class="accommodation-image-container">
+            <div class="accommodation-image" *ngFor="let image of accommodation.images.slice(0, 8); let i = index">
+                <img [src]="'http://localhost:8080/uploads/' + image" alt="accommodation image {{ i + 1 }}" class="accommodation-image-item"
+                    (click)="openModal()" />
+            </div>
+
+            <!-- Modal image list -->
+            <app-image-list-modal [accommodationName]="accommodation.name" [accommodationImages]="accommodation.images" [show]="isModalOpen" (close)="closeModal()"
+                *ngIf="isModalOpen" />
+        </div>
+
+        <div class="accommodation-review-map-container">
+            <div class="accommodation-review-container">
+                <div class="rating-score">
+                    <div></div>
+                </div>
+
+                <div class="comment">
+
+                </div>
+
+                <div class="service-staff-score">
+
+                </div>
+            </div>
+
+            <div class="accommodation-google-map-container"
+                (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')">
+                <!-- iframe hiển thị google map -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5665253383495!2d106.68903127769052!3d10.767852461998428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f49e6cd244f%3A0xa4d430b935c6d453!2zQ1VCSUNJVFkgMjMyIMSQ4buAIFRIw4FN!5e0!3m2!1sen!2s!4v1747484393285!5m2!1sen!2s"
+                    class="google-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <!-- Nội dung đè lên google map -->
+                <div class="google-map-overlay">
+                    <!-- <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon"
+                        class="google-map-overlay-icon" /> -->
+                    <!-- <button class="google-map-overlay-button">Hiển thị trên bản đồ</button> -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="description-facilities-container">
+        <div class="accommodation-description-facilities-container">
+            <div class="description-container">
+                <p class="description-title">Về chỗ ở</p>
+                <div class="description-content-container" [class.collapsed]="!showFull">
+                    <div class="description-content">
+                        <p>{{ accommodation?.description }}</p>
+                    </div>
+                </div>
+                <p (click)="toggleDescription()" *ngIf="isMobile" class="see-more-button">
+                    {{ showFull ? 'Thu gọn' : 'Xem thêm' }}
+                </p>
+            </div>
+
+            <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng © OpenStreetMap</p>
+
+            <div class="facilities-container">
+                <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
+
+                <div class="facilities-content">
+                    <div *ngFor="let facility of accommodation?.facilities">
+                        <div class="facility-item">
+                            <img [src]="'http://localhost:8080/uploads/' + facility.image" alt="facility.name icon" class="facility-icon">
+                            <p class="facility-name">{{ facility.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="availability-room-container">
+        <p class="availability-room-title">Phòng còn trống</p>
+
+        <table class="availability-room-table">
+            <tr class="table-header">
+                <th>Loại phòng</th>
+                <th>Số lượng khách</th>
+                <th>Giá cho 1 tuần</th>
+                <th>Chọn phòng</th>
+                <th></th>
+            </tr>
+
+            <tr *ngFor="let room of allAvailableRooms; let i = index">
+                <td class="room-type-container">
+                    <p class="room-type-title" (click)="toggleOpenModal()">
+                        {{ room.name }}
+                    </p>
+
+                    <div class="beds-container">
+                        <ng-container *ngFor="let bed of bedTypes">
+                            <div class="bed-item">
+                                <ng-container *ngIf="room?.beds?.[bed.key] > 0">
+                                    <ng-container *ngIf="getTotalBeds(room?.beds) > 1">
+                                        <input type="radio" name="bedSelection-{{ i }}" [value]="bed.key" />
+                                    </ng-container>
+
+                                    {{ room.beds[bed.key] }} {{ bed.label }}{{ room.beds[bed.key] > 1 ? 's' : '' }}
+
+                                    <div [ngClass]="bed.containerClass">
+                                        <img [src]="bed.icon" [alt]="bed.label" class="bed-icon" />
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <div class="some-room-facilities-container">
+                        <div class="room-size-container">
+                            <img src="icons/accommodation-detail-icon/size-icon.svg" alt="room size icon" class="room-size-icon">
+                            <p class="room-size">18 m<sup>2</sup></p>
+                        </div>
+
+                        <div class="facilities-with-icon" *ngFor="let facility of hotel.facilities.slice(0,3)">
+                            <svg viewBox="0 0 24 24" width="16" fill="currentColor">
+                                <path [attr.d]="facility.path" fill="#000000" />
+                            </svg>
+                            <p class="facility-name">{{ facility.name }}</p>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="number-of-guests-container">
+                    <ng-container *ngFor="let g of [].constructor(room.guests)">
+                        <img src="icons/accommodation-detail-icon/guest-icon.svg" alt="guest icon" class="guest-icon">
+                    </ng-container>
+                </td>
+
+                <td class="price-container">
+                    <p class="original-price">US${{ room.price }}</p>
+                </td>
+
+                <td class="select-rooms-container">
+                    <select (change)="addPriceToTotal($any($event.target).value)">
+                        <option [value]="-room.price + ',' + -1">0</option>
+                        <option [value]="room.price + ',' + 1">1 (US$ {{ room.price }})</option>
+                    </select>
+                </td>
+
+                <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="allAvailableRooms.length">
+                    <ng-container *ngIf="totalPrice > 0">
+                        <p *ngIf="numberOfRooms == 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
+                        <p *ngIf="numberOfRooms > 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
+                        <p class="total-price">US${{ totalPrice }}</p>
+                    </ng-container>
+
+                    <button class="reserve-button">
+                        Tôi sẽ đặt
+                        <ng-container *ngIf="totalPrice == 0">
+                            <span class="hover-text">Hãy chọn chỗ nghỉ trước</span>
+                        </ng-container>
+                    </button>
+
+                    <ng-container *ngIf="totalPrice > 0">
+                        <p>Bạn sẽ được chuyển sang bước kế tiếp</p>
+                    </ng-container>
+                    <ul class="sub-content">
+                        <li>Chỉ mất có 2 phút</li>
+                        <li>Bạn sẽ không bị trừ tiền ngay</li>
+                    </ul>
+                </td>
+
+                <ng-container *ngIf="isRoomInformationModalOpen">
+                    <div class="room-information-modal-container">
+                        <div class="modal-container">
+                            <img src="icons\room-icon\close-button.svg" alt="close icon" class="close-icon"
+                                (click)="toggleCloseModal()">
+                            
+                            <div class="room-image-container">
+
+                            </div>
+
+                            <div class="room-information-container">
+
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </tr>
+        </table>
+    </div>
+</main>
