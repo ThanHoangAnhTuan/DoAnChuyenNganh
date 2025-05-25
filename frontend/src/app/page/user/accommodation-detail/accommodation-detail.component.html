@@ -15,8 +15,7 @@
     <div class="accommodation-address-container">
         <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon" class="location-icon">
         <p class="accommodation-address">
-            {{ hotel?.location.addressNumber }},
-            {{ hotel?.location.street }},
+            {{ accommodation?.address }},
             {{ accommodation?.district }},
             {{ accommodation?.city }},
             {{ accommodation?.country }}
@@ -31,7 +30,7 @@
             </div>
 
             <!-- Modal image list -->
-            <app-image-list-modal [accommodationName]="accommodation.name" [show]="isModalOpen" (close)="closeModal()"
+            <app-image-list-modal [accommodationName]="accommodation.name" [accommodationImages]="accommodation.images" [show]="isModalOpen" (close)="closeModal()"
                 *ngIf="isModalOpen" />
         </div>
 
@@ -59,9 +58,9 @@
                 </iframe>
                 <!-- Nội dung đè lên google map -->
                 <div class="google-map-overlay">
-                    <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon"
-                        class="google-map-overlay-icon" />
-                    <button class="google-map-overlay-button">Hiển thị trên bản đồ</button>
+                    <!-- <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon"
+                        class="google-map-overlay-icon" /> -->
+                    <!-- <button class="google-map-overlay-button">Hiển thị trên bản đồ</button> -->
                 </div>
             </div>
         </div>
@@ -71,7 +70,7 @@
     <div class="description-facilities-container">
         <div class="accommodation-description-facilities-container">
             <div class="description-container">
-                <p class="description-title">About this property</p>
+                <p class="description-title">Về chỗ ở</p>
                 <div class="description-content-container" [class.collapsed]="!showFull">
                     <div class="description-content">
                         <p>{{ accommodation?.description }}</p>
@@ -82,18 +81,15 @@
                 </p>
             </div>
 
-            <p class="open-street-map">Distance in property description is calculated using © OpenStreetMap</p>
+            <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng © OpenStreetMap</p>
 
             <div class="facilities-container">
-                <p class="facilities-title">Most popular facilities</p>
+                <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
 
                 <div class="facilities-content">
-                    <div *ngFor="let facility of hotel?.facilities">
+                    <div *ngFor="let facility of accommodation?.facilities">
                         <div class="facility-item">
-                            <svg viewBox="0 0 24 24" width="20" fill="currentColor" class="facility-icon">
-                                <path [attr.d]="facility.path" fill="#008234" />
-                            </svg>
-                            <!-- <img [src]="facility.icon" alt="facility.name icon" class="facility-icon"> -->
+                            <img [src]="'http://localhost:8080/uploads/' + facility.image" alt="facility.name icon" class="facility-icon">
                             <p class="facility-name">{{ facility.name }}</p>
                         </div>
                     </div>
@@ -103,14 +99,14 @@
     </div>
 
     <div class="availability-room-container">
-        <p class="availability-room-title">Availability</p>
+        <p class="availability-room-title">Phòng còn trống</p>
 
         <table class="availability-room-table">
             <tr class="table-header">
-                <th>Room type</th>
-                <th>Number of guests</th>
-                <th>Price for 1 week</th>
-                <th>Select Rooms</th>
+                <th>Loại phòng</th>
+                <th>Số lượng khách</th>
+                <th>Giá cho 1 tuần</th>
+                <th>Chọn phòng</th>
                 <th></th>
             </tr>
 
@@ -172,24 +168,24 @@
 
                 <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="allAvailableRooms.length">
                     <ng-container *ngIf="totalPrice > 0">
-                        <p *ngIf="numberOfRooms == 1" class="room-for"><strong>{{ numberOfRooms }}</strong> room for</p>
-                        <p *ngIf="numberOfRooms > 1" class="room-for"><strong>{{ numberOfRooms }}</strong> rooms for</p>
+                        <p *ngIf="numberOfRooms == 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
+                        <p *ngIf="numberOfRooms > 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
                         <p class="total-price">US${{ totalPrice }}</p>
                     </ng-container>
 
                     <button class="reserve-button">
-                        I'll reserve
+                        Tôi sẽ đặt
                         <ng-container *ngIf="totalPrice == 0">
-                            <span class="hover-text">Select your accommodations first</span>
+                            <span class="hover-text">Hãy chọn chỗ nghỉ trước</span>
                         </ng-container>
                     </button>
 
                     <ng-container *ngIf="totalPrice > 0">
-                        <p>Let's go to the next step</p>
+                        <p>Bạn sẽ được chuyển sang bước kế tiếp</p>
                     </ng-container>
                     <ul class="sub-content">
-                        <li>It only takes 2 minutes</li>
-                        <li>You won't be charged yet</li>
+                        <li>Chỉ mất có 2 phút</li>
+                        <li>Bạn sẽ không bị trừ tiền ngay</li>
                     </ul>
                 </td>
 

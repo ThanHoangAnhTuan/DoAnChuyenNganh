@@ -10,9 +10,9 @@ import { HotelService } from '../../services/user/hotel.service';
     styleUrl: './image-list-modal.component.scss'
 })
 export class ImageListModalComponent implements OnInit {
-    images: any[] = [];
     activeIndex: number = 0;
     @Input() accommodationName: string = '';
+    @Input() accommodationImages: string[] = [];
     @Input() show: boolean = false;
 
     @Output() close = new EventEmitter<void>();
@@ -20,21 +20,7 @@ export class ImageListModalComponent implements OnInit {
     constructor(private accommodationDetailService: AccommodationDetailService, private hotelService: HotelService) { }
 
     ngOnInit() {
-        // this.getAccommodationImagesByName(this.accommodationName);
-        this.getHotelImagesByName(this.accommodationName);
         document.body.style.overflow = 'hidden'; // chặn scroll nền
-    }
-
-    // getAccommodationImagesByName(name: string) {
-    //     this.accommodationDetailService.getAccommodationImagesByName(name).subscribe((data: any) => {
-    //         this.images = data;
-    //     })
-    // }
-
-    getHotelImagesByName(name: string) {
-        this.hotelService.getHotelImagesByName(name).subscribe((images: any) => {
-            this.images = images;
-        })
     }
 
     handleClose(): void {
