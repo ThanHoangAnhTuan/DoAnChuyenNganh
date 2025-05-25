@@ -1,4 +1,4 @@
-module github.com/thanhoanganhtuan/go-ecommerce-backend-api
+module github.com/thanhoanganhtuan/DoAnChuyenNganh
 
 go 1.23.2
 
@@ -10,10 +10,11 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/segmentio/kafka-go v0.4.48
 	github.com/spf13/viper v1.20.1
-	golang.org/x/crypto v0.38.0
+	github.com/swaggo/swag v1.16.4
+	golang.org/x/crypto v0.37.0
 )
 
-require github.com/swaggo/swag v1.16.4 // indirect
+// require github.com/gin-contrib/gzip v0.0.6 // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

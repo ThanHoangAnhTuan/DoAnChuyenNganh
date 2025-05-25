@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 // TODO: Refactor interface

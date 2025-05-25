@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 )
 
 type IUserAuthRepo interface {

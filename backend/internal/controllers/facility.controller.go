@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +20,7 @@ type CFacility struct {
 func (c *CFacility) CreateFacility(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("CreateFacility validation not found")
+		fmt.Printf("CreateFacility validation not found\n")
 		global.Logger.Error("CreateFacility validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -65,6 +65,6 @@ func (c *CFacility) GetFacilities(ctx *gin.Context) {
 	}
 
 	fmt.Printf("GetFacilities success\n")
-	// global.Logger.Info("GetFacilities success: ", zap.String("info", data))
+	global.Logger.Info("GetFacilities success")
 	response.SuccessResponse(ctx, codeResult, data)
 }

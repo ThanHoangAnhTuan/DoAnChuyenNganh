@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/timezone"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/timezone"
 )
 
 func TimezoneMiddleware() gin.HandlerFunc {

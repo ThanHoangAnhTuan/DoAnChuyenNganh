@@ -2,9 +2,9 @@ package initializer
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/middlewares"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/routers"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers"
 )
 
 func InitRouter() *gin.Engine {

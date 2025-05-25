@@ -6,8 +6,8 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/logger"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/setting"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/logger"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/setting"
 )
 
 var (
