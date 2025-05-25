@@ -7,10 +7,19 @@
         <div class="filter-section">
             <h4>Your previous filters</h4>
             <ul class="filter-list">
-                <li *ngFor="let item of customCheckboxes; let first = first" class="wrapper">
-                    <input tuiCheckbox type="checkbox" [ngModel]="item.checked" [size]="getSize(first)" />
+                @for (item of customCheckboxes;track item.id; let first =
+                $first){
+                <li class="wrapper">
+                    <input
+                        tuiCheckbox
+                        type="checkbox"
+                        [ngModel]="item.checked"
+                        (ngModelChange)="onCheckboxChange(item, $event)"
+                        [size]="getSize(first)"
+                    />
                     {{ item.label }}
                 </li>
+                }
             </ul>
         </div>
 
@@ -25,10 +34,15 @@
             Failed to load hotels. Please try again later.
         </div>
 
-        <div *ngFor="let hotel of hotels" class="hotel-card">
-            <div class="hotel-image" *ngFor="let image of hotel.images.slice(0, 1)">
-                <img [src]="image" [alt]="hotel.name" [routerLink]="['/search/accommodation/detail', hotel.id]"
-                    [queryParams]="{ name: hotel.name, city: hotel.location.city }"> />
+        @for (hotel of filteredHotels; track hotel.id){
+        <div class="hotel-card">
+            <div class="hotel-image">
+                @for (image of hotel.images; track image){
+                <img
+                    [src]="'http://localhost:8080/uploads/' + image"
+                    [alt]="hotel.name"
+                />
+                }
                 <div class="featured-badge">
                     <tui-icon icon="@tui.heart"></tui-icon>
                 </div>
@@ -42,29 +56,14 @@
                         <span class="stars">{{ getStars(hotel.rating) }}</span>
                     </h2>
                     <div class="location">
-                        <tui-icon icon="tuiIconMapPin"></tui-icon>
-                        {{ hotel.location.city }}, {{ hotel.location.district }}, {{ hotel.location.distance }}
-                        <a href="#">Show on map</a>
-                        {{ hotel.area }}
+                        <!--                        <tui-icon icon="@tui.mappin"></tui-icon>-->
+                        {{ hotel.city }}, {{ hotel.district }},
                     </div>
                 </div>
 
                 <div class="room-info">
                     <!--                    <h3 class="room-type">{{ hotel.roomType }}</h3>-->
                     <!--                    <p class="room-details">{{ hotel.bedInfo }}</p>-->
-                    <div *ngIf="hotel.roomsLeft < 10" class="availability-alert">
-                        <tui-icon icon="tuiIconAlertCircle"></tui-icon>
-                        Only {{ hotel.roomsLeft }} rooms left at this price on our site
-                    </div>
-                </div>
-
-                <div class="amenities">
-                    <span *ngIf="hotel.freeCancellation" class="amenity">
-                        <tui-icon icon="tuiIconCheck"></tui-icon> Free cancellation
-                    </span>
-                    <span *ngIf="hotel.noPrepayment" class="amenity">
-                        <tui-icon icon="tuiIconCheck"></tui-icon> No prepayment needed
-                    </span>
                 </div>
 
                 <div class="rating-price">
@@ -78,10 +77,13 @@
                         <!--                        <div class="price-info">1 night, 2 adults</div>-->
                         <!--                        <div class="price">{{ formatPrice(hotel.price) }}</div>-->
                         <!--                        <div class="tax-info">Includes taxes and charges</div>-->
-                        <button class="view-availability">See availability</button>
+                        <button class="view-availability">
+                            See availability
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        }
     </div>
 </div>

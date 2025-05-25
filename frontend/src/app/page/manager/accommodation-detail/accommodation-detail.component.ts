@@ -94,17 +94,16 @@ export class AccommodationDetailComponent implements OnInit {
         largeDoubleBed: new FormControl<number | 0>(0),
         extraLargeDoubleBed: new FormControl<number | 0>(0),
         price: new FormControl<number | 0>(0, Validators.min(1)),
-        wifi: new FormControl<boolean | false>(false),
-        airCondition: new FormControl<boolean | false>(false),
-        tv: new FormControl<boolean | false>(false),
         availableRooms: new FormControl<number | 0>(0),
         accommodationId: new FormControl<string | ''>('', Validators.required),
         discountId: new FormControl<string | ''>(''),
+        // wifi: new FormControl<boolean | false>(false),
+        // airCondition: new FormControl<boolean | false>(false),
+        // tv: new FormControl<boolean | false>(false),
     });
 
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
-        airCondition: false,
         availableRooms: 0,
         discountId: '',
         doubleBed: 0,
@@ -114,8 +113,9 @@ export class AccommodationDetailComponent implements OnInit {
         name: '',
         price: 0,
         singleBed: 0,
-        tv: false,
-        wifi: false,
+        // airCondition: false,
+        // tv: false,
+        // wifi: false,
     };
 
     protected accommodations!: Accommodation[];
@@ -178,11 +178,11 @@ export class AccommodationDetailComponent implements OnInit {
             largeDoubleBed: accommodationDetail.beds.large_double_bed,
             extraLargeDoubleBed:
                 accommodationDetail.beds.extra_large_double_bed,
-            airCondition: accommodationDetail.facilities.air_condition,
-            wifi: accommodationDetail.facilities.wifi,
-            tv: accommodationDetail.facilities.tv,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
+            // airCondition: accommodationDetail.facilities.air_condition,
+            // wifi: accommodationDetail.facilities.wifi,
+            // tv: accommodationDetail.facilities.tv,
         });
 
         this.idAccommodationDetailUpdating = accommodationDetail.id;
@@ -216,13 +216,6 @@ export class AccommodationDetailComponent implements OnInit {
                     this.formAccommodationDetail.get('extraLargeDoubleBed')
                         ?.value || 0,
             },
-            facilities: {
-                wifi: this.formAccommodationDetail.get('wifi')?.value || false,
-                air_condition:
-                    this.formAccommodationDetail.get('airCondition')?.value ||
-                    false,
-                tv: this.formAccommodationDetail.get('tv')?.value || false,
-            },
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
             price: this.formAccommodationDetail.get('price')?.value || 0,
@@ -231,6 +224,13 @@ export class AccommodationDetailComponent implements OnInit {
                 '',
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
+            // facilities: {
+            //     wifi: this.formAccommodationDetail.get('wifi')?.value || false,
+            //     air_condition:
+            //         this.formAccommodationDetail.get('airCondition')?.value ||
+            //         false,
+            //     tv: this.formAccommodationDetail.get('tv')?.value || false,
+            // },
         };
 
         if (this.formAccommodationDetail.invalid) {
@@ -266,13 +266,13 @@ export class AccommodationDetailComponent implements OnInit {
                     this.formAccommodationDetail.get('extraLargeDoubleBed')
                         ?.value || 0,
             },
-            facilities: {
-                air_condition:
-                    this.formAccommodationDetail.get('airCondition')?.value ||
-                    false,
-                tv: this.formAccommodationDetail.get('tv')?.value || false,
-                wifi: this.formAccommodationDetail.get('wifi')?.value || false,
-            },
+            // facilities: {
+            //     air_condition:
+            //         this.formAccommodationDetail.get('airCondition')?.value ||
+            //         false,
+            //     tv: this.formAccommodationDetail.get('tv')?.value || false,
+            //     wifi: this.formAccommodationDetail.get('wifi')?.value || false,
+            // },
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,

@@ -120,6 +120,9 @@ const (
 	ErrCodeCreateOrderFailed       = 160002
 	ErrCodeCreatePaymentFailed     = 160003
 	ErrCodeCreateOrderSuccess      = 160004
+
+	// payment
+	ErrCodeCreatePaymentURLSuccess = 1700011
 )
 
 var message = map[int]string{
@@ -241,4 +244,7 @@ var message = map[int]string{
 	ErrCodeCreateOrderFailed:       "Create order failed",
 	ErrCodeCreatePaymentFailed:     "Create payment failed",
 	ErrCodeCreateOrderSuccess:      "Create order successfully",
+
+	// payment
+	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",
 }

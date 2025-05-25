@@ -18,11 +18,11 @@
                 <td *tuiCell="'Name'" tuiTd>
                     {{ accommodation.name }}
                 </td>
-                <td *tuiCell="'City'" tuiTd>
-                    {{ accommodation.city }}
-                </td>
                 <td *tuiCell="'Country'" tuiTd>
                     {{ accommodation.country }}
+                </td>
+                <td *tuiCell="'City'" tuiTd>
+                    {{ accommodation.city }}
                 </td>
                 <td *tuiCell="'District'" tuiTd>
                     {{ accommodation.district }}
@@ -121,17 +121,6 @@
                 </div>
                 }
             </tui-textfield>
-
-            <tui-textfield>
-                <label tuiLabel>City</label>
-                <input formControlName="city" placeholder="City" tuiTextfield />
-                @if(formAccommodation.get('city')?.invalid &&
-                formAccommodation.get('city')?.touched) {
-                <div>
-                    <small class="text-red-500">City is required</small>
-                </div>
-                }
-            </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Country</label>
                 <input
@@ -143,6 +132,16 @@
                 formAccommodation.get('country')?.touched) {
                 <div>
                     <small class="text-red-500">Country is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>City</label>
+                <input formControlName="city" placeholder="City" tuiTextfield />
+                @if(formAccommodation.get('city')?.invalid &&
+                formAccommodation.get('city')?.touched) {
+                <div>
+                    <small class="text-red-500">City is required</small>
                 </div>
                 }
             </tui-textfield>
@@ -188,6 +187,16 @@
                 </div>
                 }
             </tui-textfield>
+            <label>
+                Rating
+                <tui-rating class="rating" formControlName="rating" />
+                @if(formAccommodation.get('rating')?.invalid &&
+                formAccommodation.get('rating')?.touched) {
+                <div>
+                    <small class="text-red-500">Rating is required</small>
+                </div>
+                }
+            </label>
             <div>
                 <label tuiLabel>Description</label>
                 <tui-editor formControlName="description" [tools]="tools">
@@ -199,10 +208,32 @@
                 </div>
                 }
             </div>
-            <footer>
-                <button tuiButton type="submit">Submit</button>
-            </footer>
         </form>
+
+        <form [formGroup]="formFacilities" class="facilities-form">
+            <div class="facility-heading">
+                <label>Facility</label>
+            </div>
+            <div class="facilities-grid">
+                @for (facility of facilities; track facility.id) {
+                <div class="facility-item">
+                    <label tuiLabel class="facility-label">
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <span class="facility-name">{{ facility.name }}</span>
+                    </label>
+                </div>
+                }
+            </div>
+        </form>
+
+        <button tuiButton type="button" (click)="createAccommodation()">
+            Submit
+        </button>
     </ng-template>
 
     <ng-template #updateForm>
@@ -306,10 +337,31 @@
                 </div>
                 }
             </div>
-
-            <footer>
-                <button tuiButton type="submit">Submit</button>
-            </footer>
         </form>
+
+        <form [formGroup]="formFacilities" class="facilities-form">
+            <div class="facility-heading">
+                <label>Facility</label>
+            </div>
+            <div class="facilities-grid">
+                @for (facility of facilities; track facility.id) {
+                <div class="facility-item">
+                    <label tuiLabel class="facility-label">
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <span class="facility-name">{{ facility.name }}</span>
+                    </label>
+                </div>
+                }
+            </div>
+        </form>
+
+        <button tuiButton type="button" (click)="updateAccommodation()">
+            Submit
+        </button>
     </ng-template>
 </main>

@@ -23,6 +23,6 @@ func (ur *AccommodationRouter) InitAccommodationRouter(Router *gin.RouterGroup) 
 		userRouterPrivate.GET("/get-accommodations-by-manager", controllers.Accommodation.GetAccommodationsByManager)
 		userRouterPrivate.POST("/create-accommodation", controllers.Accommodation.CreateAccommodation)
 		userRouterPrivate.PUT("/update-accommodation", controllers.Accommodation.UpdateAccommodation)
-		userRouterPrivate.DELETE("/delete-accommodation/:id", controllers.Accommodation.DeleteAccommodation)
+		userRouterPrivate.DELETE("/delete-accommodation", controllers.Accommodation.DeleteAccommodation)
 	}
 }

@@ -18,4 +18,5 @@ func InitInterface() {
 	services.InitUpload(impl.NewUploadImpl(queries))
 	services.InitOrder(impl.NewOrderImpl(queries, db))
 	services.InitFacility(impl.NewFacilityImpl(queries))
+	services.InitPayment(impl.NewPaymentImpl(queries, db))
 }

@@ -14,6 +14,7 @@ require (
 )
 
 require github.com/swaggo/swag v1.16.4 // indirect
+require github.com/gin-contrib/gzip v0.0.6 // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

@@ -4,7 +4,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 
-	// _ "github.com/thanhoanganhtuan/go-ecommerce-backend-api/docs"
+	//_ "github.com/thanhoanganhtuan/go-ecommerce-backend-api/docs"
 	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/initializer"
 )
 

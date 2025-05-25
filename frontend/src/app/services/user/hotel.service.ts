@@ -7,11 +7,12 @@ import { Hotel } from '../../models/user/hotel.model';
     providedIn: 'root',
 })
 export class HotelService {
-    private apiUrl = 'http://localhost:3000/accommodation-detail';
-    constructor(private http: HttpClient) { }
+    private apiUrl =
+        'http://localhost:8080/api/v1/accommodation/get-accommodations';
+    constructor(private http: HttpClient) {}
 
-    getHotels(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl);
+    getHotels(): Observable<any> {
+        return this.http.get<any>(this.apiUrl);
     }
 
     getHotelDetailByCity(city: string): Observable<any[]> {

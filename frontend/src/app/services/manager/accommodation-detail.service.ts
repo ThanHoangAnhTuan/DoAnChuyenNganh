@@ -44,11 +44,6 @@ export class AccommodationDetailService {
             discount_id: accommodationDetail.discount_id,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
-            facilities: {
-                air_condition: accommodationDetail.facilities.air_condition,
-                tv: accommodationDetail.facilities.tv,
-                wifi: accommodationDetail.facilities.wifi,
-            },
         };
 
         console.log(newAccommodationDetail);
@@ -77,11 +72,6 @@ export class AccommodationDetailService {
             discount_id: accommodationDetail.discount_id,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
-            facilities: {
-                air_condition: accommodationDetail.facilities.air_condition,
-                tv: accommodationDetail.facilities.tv,
-                wifi: accommodationDetail.facilities.wifi,
-            },
         };
 
         return this.http.put<UpdateAccommodationDetailResponse>(
@@ -94,7 +84,12 @@ export class AccommodationDetailService {
         id: string
     ): Observable<DeleteAccommodationDetailResponse> {
         return this.http.delete<DeleteAccommodationDetailResponse>(
-            `${this.apiUrl}/delete-accommodation-detail/${id}`
+            `${this.apiUrl}/delete-accommodation-detail`,
+            {
+                body: {
+                    id: id,
+                },
+            }
         );
     }
 }

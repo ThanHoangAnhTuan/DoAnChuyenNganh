@@ -9,6 +9,7 @@ import { LoginComponent as AdminLoginComponent } from './page/admin/login/login.
 import { RoleGuard } from './shared/guards/role.guard';
 import { MediaLibraryComponent } from './page/manager/media-library/media-library.component';
 import { SearchPageComponent } from './page/user/search-page/search-page.component';
+import { UserProfileComponent } from './page/user/user-profile/user-profile.component';
 import { FacilityComponent } from './page/admin/facility/facility.component';
 
 export const routes: Routes = [
@@ -63,6 +64,10 @@ export const routes: Routes = [
     {
         path: 'search/:city',
         component: SearchPageComponent,
+    },
+    {
+        path: 'user-profile',
+        component: UserProfileComponent,
     },
     {
         path: '**',

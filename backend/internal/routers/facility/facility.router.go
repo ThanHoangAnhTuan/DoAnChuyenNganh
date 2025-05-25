@@ -11,9 +11,13 @@ type FacilityRouter struct {
 
 func (ar *FacilityRouter) InitFacilityRouter(Router *gin.RouterGroup) {
 	facilityRouterPublic := Router.Group("/facility")
-	facilityRouterPublic.Use(middlewares.AuthMiddleware())
 	{
-		facilityRouterPublic.POST("/create-facility", controllers.Facility.CreateFacility)
 		facilityRouterPublic.GET("/get-facilities", controllers.Facility.GetFacilities)
+	}
+
+	facilityRouterPrivate := Router.Group("/facility")
+	facilityRouterPrivate.Use(middlewares.AuthMiddleware())
+	{
+		facilityRouterPrivate.POST("/create-facility", controllers.Facility.CreateFacility)
 	}
 }
