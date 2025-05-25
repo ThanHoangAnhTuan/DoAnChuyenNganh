@@ -112,8 +112,8 @@
                         type="button"
                         [style.border-radius.%]="100"
                         [style.color]="'red'"
+                        (click)="deleteAccommodationDetail(accommodationDetail.id)"
                     >
-                        <!-- (click)="deleteAccommodationDetail(accommodationDetail.id)" -->
                         Delete
                     </button>
                 </span>
@@ -147,7 +147,9 @@
             @if(formAccommodationDetail.get('guests')?.invalid &&
             formAccommodationDetail.get('guests')?.touched) {
             <div>
-                <small class="text-red-500">Guests is required</small>
+                @if(formAccommodationDetail.get('guests')?.errors?.['min']) {
+                    <small class="text-red-500">Guests must be at least 1 person</small>
+                }
             </div>
             }
         </tui-textfield>
@@ -209,7 +211,9 @@
             @if(formAccommodationDetail.get('price')?.invalid &&
             formAccommodationDetail.get('price')?.touched) {
             <div>
-                <small class="text-red-500">Price is required</small>
+                @if(formAccommodationDetail.get('price')?.errors?.['min']) {
+                    <small class="text-red-500">Price must be at least 1 VND</small>
+                }
             </div>
             }
         </tui-textfield>

@@ -25,8 +25,8 @@
 
     <div class="image-review-map-container">
         <div class="accommodation-image-container">
-            <div class="accommodation-image" *ngFor="let image of hotel?.images.slice(0, 8); let i = index">
-                <img [src]="image" alt="accommodation image {{ i + 1 }}" class="accommodation-image-item"
+            <div class="accommodation-image" *ngFor="let image of accommodation.images.slice(0, 8); let i = index">
+                <img [src]="'http://localhost:8080/uploads/' + image" alt="accommodation image {{ i + 1 }}" class="accommodation-image-item"
                     (click)="openModal()" />
             </div>
 

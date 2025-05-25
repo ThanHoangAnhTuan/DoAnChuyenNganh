@@ -10,13 +10,14 @@ INSERT INTO
         `description`,
         `facilities`,
         `gg_map`,
-        `property_surroundings`,
+        `address`,
+        `rating`,
         `rules`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetAccommodations :many
 SELECT
@@ -28,8 +29,8 @@ SELECT
     `district`,
     `description`,
     `facilities`,
+    `address`,
     `gg_map`,
-    `property_surroundings`,
     `rules`,
     `rating`
 FROM
@@ -48,7 +49,7 @@ SELECT
     `description`,
     `facilities`,
     `gg_map`,
-    `property_surroundings`,
+    `address`,
     `rules`,
     `rating`
 FROM
@@ -65,16 +66,32 @@ SELECT
     `name`,
     `city`,
     `district`,
+    `address`,
     `description`,
     `facilities`,
     `gg_map`,
-    `property_surroundings`,
     `rules`,
     `rating`
 FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
+    AND `is_deleted` = 0;
+
+-- name: GetAccommodationsByCity :many
+SELECT
+    `id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `address`,
+    `gg_map`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `city` = ?
     AND `is_deleted` = 0;
 
 -- name: UpdateAccommodation :exec
@@ -87,7 +104,7 @@ SET
     `description` = ?,
     `facilities` = ?,
     `gg_map` = ?,
-    `property_surroundings` = ?,
+    `address` = ?,
     `rules` = ?,
     `updated_at` = ?
 WHERE

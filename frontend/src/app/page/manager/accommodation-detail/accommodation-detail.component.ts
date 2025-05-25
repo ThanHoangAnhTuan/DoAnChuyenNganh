@@ -88,12 +88,12 @@ export class AccommodationDetailComponent implements OnInit {
 
     protected formAccommodationDetail = new FormGroup({
         name: new FormControl<string | ''>('', Validators.required),
-        guests: new FormControl<number | 0>(0),
+        guests: new FormControl<number | 0>(0, Validators.min(1)),
         singleBed: new FormControl<number | 0>(0),
         doubleBed: new FormControl<number | 0>(0),
         largeDoubleBed: new FormControl<number | 0>(0),
         extraLargeDoubleBed: new FormControl<number | 0>(0),
-        price: new FormControl<number | 0>(0),
+        price: new FormControl<number | 0>(0, Validators.min(1)),
         wifi: new FormControl<boolean | false>(false),
         airCondition: new FormControl<boolean | false>(false),
         tv: new FormControl<boolean | false>(false),
@@ -294,15 +294,15 @@ export class AccommodationDetailComponent implements OnInit {
             });
     }
 
-    // protected deleteAccommodation(id: string) {
-    //     this.accommodationService
-    //         .deleteAccommodation(id)
-    //         .subscribe((response) => {
-    //             this.accommodations = this.accommodations.filter(
-    //                 (accommodation) => accommodation.id !== id
-    //             );
-    //         });
-    // }
+    protected deleteAccommodationDetail(id: string) {
+        this.accommodationDetailService
+            .deleteAccommodationDetail(id)
+            .subscribe((response) => {
+                this.accommodationDetails = this.accommodationDetails.filter(
+                    (accommodationDetail) => accommodationDetail.id !== id
+                );
+            });
+    }
 
     protected readonly contentAccommodation: PolymorpheusContent<
         TuiContext<string | null>

@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiPassword } from '@taiga-ui/kit';
-import { ManagerService } from '../../../services/manager/manager.service';
+import { AuthService } from '../../../services/manager/auth.service';
 import { ManagerLoginInput } from '../../../models/manager/accommodation.model';
 import { Router } from '@angular/router';
 
@@ -23,7 +23,7 @@ export class LoginComponent {
         password: new FormControl('', Validators.required),
     });
 
-    constructor(private managerSerivce: ManagerService, private router: Router) {}
+    constructor(private authSerivce: AuthService, private router: Router) {}
 
     handleLogin() {
         if (this.formLogin.invalid) {
@@ -36,7 +36,7 @@ export class LoginComponent {
             password: this.formLogin.value.password ?? '',
         };
 
-        this.managerSerivce.login(managerLogin).subscribe((response) => {
+        this.authSerivce.login(managerLogin).subscribe((response) => {
             this.saveTokenToCookie(response.data.token);
             this.router.navigate(['/manager/accommodation']);
         });
@@ -47,7 +47,7 @@ export class LoginComponent {
 
         // Thiết lập thời gian hết hạn (1h)
         const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + (1 * 60 * 60 * 1000));
+        expirationDate.setTime(expirationDate.getTime() + 1 * 60 * 60 * 1000);
 
         // Thiết lập cookie với các tùy chọn bảo mật
         document.cookie = `auth_token=${token}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Strict`;

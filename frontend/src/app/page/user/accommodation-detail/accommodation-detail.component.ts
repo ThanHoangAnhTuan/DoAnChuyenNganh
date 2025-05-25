@@ -16,7 +16,6 @@ import { RoomService } from '../../../services/user/room.service';
   styleUrl: './accommodation-detail.component.scss'
 })
 export class AccommodationDetailComponent implements OnInit {
-  accommodationName: string = '';
   accommodationId: string = '';
   accommodation: any;
   hotel: any;
@@ -82,14 +81,11 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.accommodationName = this.route.snapshot.paramMap.get('name') ?? ''; // Lấy giá trị name trong url
-    this.route.queryParams.subscribe(params => {
-      this.accommodationId = params['id'];
-    });
+    this.accommodationId = this.route.snapshot.paramMap.get('id') ?? ''; // Lấy giá trị name trong url
 
-    if (this.accommodationName) {
-      this.getAccommodationByName(this.accommodationName);
-      this.getHotelByName(this.accommodationName);
+    if (this.accommodationId) {
+      this.getAccommodationById(this.accommodationId);
+      // this.getHotelByName(this.accommodationName);
     } else {
       console.error('Accommodation name is missing in URL');
     }
@@ -101,10 +97,10 @@ export class AccommodationDetailComponent implements OnInit {
     }
   };
 
-  getAccommodationByName(name: string) {
-    this.accommodationDetailService.getAccommodationDetailByName(name).subscribe((data: any) => {
-      this.accommodation = data.data[0];
-      // console.log("accommodation: ", this.accommodation);
+  getAccommodationById(id: string) {
+    this.accommodationDetailService.getAccommodationDetailById(id).subscribe((data: any) => {
+      this.accommodation = data.data;
+      console.log("accommodation: ", this.accommodation);
     })
   }
 

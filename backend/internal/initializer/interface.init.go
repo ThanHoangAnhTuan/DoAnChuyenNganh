@@ -8,10 +8,14 @@ import (
 )
 
 func InitInterface() {
-	queries := database.New(global.Mysql)
+	db := global.Mysql
+	queries := database.New(db)
 	services.InitUserLogin(impl.NewUserLoginImpl(queries))
 	services.InitAccommodation(impl.NewAccommodationImpl(queries))
 	services.InitAccommodationDetail(impl.NewAccommodationDetailImpl(queries))
 	services.InitManagerLogin(impl.NewManagerLoginImpl(queries))
-	services.InitImage(impl.NewImageImpl(queries))
+	services.InitAdminLogin(impl.NewAdminLoginImpl(queries))
+	services.InitUpload(impl.NewUploadImpl(queries))
+	services.InitOrder(impl.NewOrderImpl(queries, db))
+	services.InitFacility(impl.NewFacilityImpl(queries))
 }

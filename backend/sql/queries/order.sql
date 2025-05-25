@@ -3,23 +3,25 @@ INSERT INTO
     `ecommerce_go_order` (
         `id`,
         `user_id`,
-        `total_price`,
+        `final_total`,
         `order_status`,
+        `accommodation_id`,
         `voucher_id`,
         `checkin_date`,
         `checkout_date`,
         `created_at`,
         `updated_at`
+
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetOrdersByUser :many
 SELECT
     `id`,
-    `total_price`,
+    `final_total`,
     `order_status`,
-    `voucher_id`,
+    -- `voucher_id`,
     `checkin_date`,
     `checkout_date`,
     `created_at`,

@@ -1,4 +1,4 @@
 docs
 production.yaml
 .vscode/
-storage/logs/*
+storage/

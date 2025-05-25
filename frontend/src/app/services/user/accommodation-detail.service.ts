@@ -7,14 +7,16 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AccommodationDetailService {
-  private baseUrl = 'http://localhost:8080/api/v1/accommodation/get-accommodations';
+  private baseUrl = 'http://localhost:8080/api/v1/accommodation/get-accommodation-by-id';
 
   constructor(private http: HttpClient) { }
 
   getAccommodationDetail(): Observable<any[]> {
-    return this.http.get<any>(this.baseUrl).pipe(
-      map(response => response.data)
-    );
+    return this.http.get<any>(this.baseUrl)
+  }
+
+  getAccommodationDetailById(id: string): Observable<any[]> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
   getAccommodationDetailByName(name: string): Observable<any[]> {

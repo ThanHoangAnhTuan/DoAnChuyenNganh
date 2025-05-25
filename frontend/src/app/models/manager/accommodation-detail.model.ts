@@ -75,3 +75,9 @@ export interface UpdateAccommodationDetailResponse {
     code: number;
     message: string;
 }
+
+export interface DeleteAccommodationDetailResponse {
+    data: null;
+    code: number;
+    message: string;
+}
