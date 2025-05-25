@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import {NavbarComponent} from '../../../components/navbar/navbar.component';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {TuiInputModule} from '@taiga-ui/legacy';
-import {TuiButton} from '@taiga-ui/core';
-import {NgIf} from '@angular/common';
-import {TuiBadge} from '@taiga-ui/kit';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { TuiInputModule } from '@taiga-ui/legacy';
+import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { NgIf } from '@angular/common';
+import { TuiBadge } from '@taiga-ui/kit';
 
 @Component({
-  selector: 'app-user-profile',
+    selector: 'app-user-profile',
     imports: [
         NavbarComponent,
         TuiInputModule,
@@ -15,10 +15,11 @@ import {TuiBadge} from '@taiga-ui/kit';
         TuiButton,
         NgIf,
         TuiBadge,
+        TuiIcon
     ],
-  templateUrl: './user-profile.component.html',
+    templateUrl: './user-profile.component.html',
     standalone: true,
-  styleUrl: './user-profile.component.scss'
+    styleUrl: './user-profile.component.scss',
 })
 export class UserProfileComponent {
     readonly name = new FormControl('Lưu Đình Quang Vinh');
@@ -48,5 +49,14 @@ export class UserProfileComponent {
     cancelEdit(): void {
         this.isEditing = false;
         this.currentEditingField = null;
+    }
+    getInitials(): string {
+        const name = this.name.value || '';
+        return name
+            .split(' ')
+            .map((n) => n[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
     }
 }

@@ -11,7 +11,6 @@ import {
 } from '@taiga-ui/legacy';
 import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute } from '@angular/router';
-import { Hotel } from '../../../models/user/hotel.model';
 
 @Component({
     selector: 'app-search-page',

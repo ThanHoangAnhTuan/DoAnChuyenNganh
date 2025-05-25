@@ -1,61 +1,136 @@
 <app-navbar></app-navbar>
 
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-info">
+            <h1 class="title">Personal details</h1>
+            <p class="subtitle">
+                Update your information and find out how it's used.
+            </p>
+        </div>
+        <div class="profile-avatar">
+            <div class="avatar-circle">
+                <span class="avatar-text">{{ getInitials() }}</span>
+            </div>
+        </div>
+    </div>
 
-
-
-<div class="personal-details-container">
-    <h1 class="title">Personal details</h1>
-    <p class="subtitle">Update your info and find out how it's used.</p>
-
-    <div class="details-grid">
+    <div class="details-card">
         <!-- Name -->
-        <div class="detail-row">
+        <div
+            class="detail-row"
+            [class.editing]="currentEditingField === 'name'"
+        >
             <div class="label">Name</div>
             <div class="value">
-                <ng-container *ngIf="currentEditingField !== 'name'; else editName">
-                    {{ name.value }}
+                <ng-container
+                    *ngIf="currentEditingField !== 'name'; else editName"
+                >
+                    <span class="field-value">{{ name.value }}</span>
                 </ng-container>
                 <ng-template #editName>
-                    <tui-input [formControl]="name"></tui-input>
+                    <tui-input
+                        [formControl]="name"
+                        class="edit-input"
+                    ></tui-input>
                 </ng-template>
             </div>
             <div class="action">
-                <button *ngIf="currentEditingField !== 'name'"
+                <button
+                    *ngIf="currentEditingField !== 'name'"
+                    tuiButton
+                    size="s"
+                    appearance="flat"
+                    class="edit-button"
+                    (click)="startEditing('name')"
+                >
+                    <tui-icon icon="square-pen"></tui-icon>
+                    Edit
+                </button>
+                <div
+                    *ngIf="currentEditingField === 'name'"
+                    class="edit-actions"
+                >
+                    <button
+                        tuiButton
+                        size="s"
+                        appearance="primary"
+                        class="save-button"
+                        (click)="saveEdit()"
+                    >
+                        Save
+                    </button>
+                    <button
                         tuiButton
                         size="s"
                         appearance="flat"
-                        (click)="startEditing('name')">
-                    Edit
-                </button>
-                <div *ngIf="currentEditingField === 'name'" class="edit-actions">
-                    <button tuiButton size="s" appearance="flat" (click)="saveEdit()">Save</button>
-                    <button tuiButton size="s" appearance="flat" (click)="cancelEdit()">Cancel</button>
+                        class="cancel-button"
+                        (click)="cancelEdit()"
+                    >
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Display Name -->
-        <div class="detail-row">
+        <div
+            class="detail-row"
+            [class.editing]="currentEditingField === 'displayName'"
+        >
             <div class="label">Display name</div>
             <div class="value">
-                <ng-container *ngIf="currentEditingField !== 'displayName'; else editDisplayName">
-                    {{ displayName.value }}
+                <ng-container
+                    *ngIf="
+                        currentEditingField !== 'displayName';
+                        else editDisplayName
+                    "
+                >
+                    <span class="field-value">{{
+                        displayName.value || "Choose a display name"
+                    }}</span>
                 </ng-container>
                 <ng-template #editDisplayName>
-                    <tui-input [formControl]="displayName"></tui-input>
+                    <tui-input
+                        [formControl]="displayName"
+                        class="edit-input"
+                    ></tui-input>
                 </ng-template>
             </div>
             <div class="action">
-                <button *ngIf="currentEditingField !== 'displayName'"
+                <button
+                    *ngIf="currentEditingField !== 'displayName'"
+                    tuiButton
+                    size="s"
+                    appearance="flat"
+                    class="edit-button"
+                    (click)="startEditing('displayName')"
+                >
+                    <tui-icon icon="square-pen"></tui-icon>
+                    Edit
+                </button>
+                <div
+                    *ngIf="currentEditingField === 'displayName'"
+                    class="edit-actions"
+                >
+                    <button
+                        tuiButton
+                        size="s"
+                        appearance="primary"
+                        class="save-button"
+                        (click)="saveEdit()"
+                    >
+                        Save
+                    </button>
+                    <button
                         tuiButton
                         size="s"
                         appearance="flat"
-                        (click)="startEditing('displayName')">
-                    Edit
-                </button>
-                <div *ngIf="currentEditingField === 'displayName'" class="edit-actions">
-                    <button tuiButton size="s" appearance="flat" (click)="saveEdit()">Save</button>
-                    <button tuiButton size="s" appearance="flat" (click)="cancelEdit()">Cancel</button>
+                        class="cancel-button"
+                        (click)="cancelEdit()"
+                    >
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -64,92 +139,49 @@
         <div class="detail-row">
             <div class="label">Email address</div>
             <div class="value">
-                {{ email.value }}
-                <tui-badge status="success" class="verified-badge">Verified</tui-badge>
+                <span class="field-value">{{ email.value }}</span>
+                <tui-badge status="success" class="verified-badge"
+                    >Verified</tui-badge
+                >
+                <div class="field-description">
+                    This is the email address you use to sign in. It's also
+                    where we send your booking confirmations.
+                </div>
             </div>
             <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
+                <button
+                    tuiButton
+                    size="s"
+                    appearance="flat"
+                    class="edit-button"
+                >
+                    <tui-icon icon="square-pen"></tui-icon>
+                    Edit
+                </button>
             </div>
         </div>
-        <div class="description-row">
-            This is the email address you use to sign in. It's also where we send your booking confirmations.
-        </div>
 
-        <!-- Phone -->
+        <!-- Continue with other fields... -->
+        <!-- Phone, DOB, Nationality, Gender, Address, Passport -->
         <div class="detail-row">
             <div class="label">Phone number</div>
             <div class="value">
-                {{ phone.value || 'Add your phone number' }}
+                <span class="field-value">{{
+                    phone.value || "Not provided"
+                }}</span>
+                <div class="field-description">
+                    This is the phone number we use to contact you about your
+                    bookings.
+                </div>
             </div>
             <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
-            </div>
-        </div>
-        <div class="description-row">
-            Properties or attractions you book will use this number if they need to contact you.
-        </div>
-
-        <!-- Date of Birth -->
-        <div class="detail-row">
-            <div class="label">Date of birth</div>
-            <div class="value">
-                {{ dob.value || 'Enter your date of birth' }}
-            </div>
-            <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
-            </div>
-        </div>
-
-        <!-- Nationality -->
-        <div class="detail-row">
-            <div class="label">Nationality</div>
-            <div class="value">
-                {{ nationality.value || 'Select the country/region you\'re from' }}
-            </div>
-            <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
-            </div>
-        </div>
-
-        <!-- Gender -->
-        <div class="detail-row">
-            <div class="label">Gender</div>
-            <div class="value">
-                {{ gender.value || 'Select your gender' }}
-            </div>
-            <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
-            </div>
-        </div>
-
-        <!-- Address -->
-        <div class="detail-row">
-            <div class="label">Address</div>
-            <div class="value">
-                {{ address.value || 'Add your address' }}
-            </div>
-            <div class="action">
-                <button tuiButton size="s" appearance="flat">Edit</button>
-            </div>
-        </div>
-
-        <!-- Passport -->
-        <div class="detail-row">
-            <div class="label">Passport details</div>
-            <div class="value">
-                {{ passport.value }}
-            </div>
-            <div class="action">
-                <button *ngIf="passport.value === 'Not provided'"
-                        tuiButton
-                        size="s"
-                        appearance="primary">
-                    Add passport
-                </button>
-                <button *ngIf="passport.value !== 'Not provided'"
-                        tuiButton
-                        size="s"
-                        appearance="flat">
+                <button
+                    tuiButton
+                    size="s"
+                    appearance="flat"
+                    class="edit-button"
+                >
+                    <tui-icon icon="square-pen"></tui-icon>
                     Edit
                 </button>
             </div>
