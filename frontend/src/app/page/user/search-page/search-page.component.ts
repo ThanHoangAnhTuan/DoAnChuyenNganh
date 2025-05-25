@@ -123,7 +123,7 @@ export class SearchPageComponent implements OnInit {
      * Tải danh sách khách sạn từ service
      */
     loadHotels(): void {
-        this.hotelService.getHotels().subscribe({
+        this.hotelService.getHotelDetailByCity(this.city).subscribe({
             next: (hotels) => {
                 this.hotels = hotels.data;
                 // Lọc khách sạn theo thành phố từ URL

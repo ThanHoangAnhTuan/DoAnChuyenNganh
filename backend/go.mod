@@ -10,10 +10,10 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/spf13/viper v1.20.1
-	github.com/swaggo/swag v1.16.4
 	golang.org/x/crypto v0.37.0
 )
 
+require github.com/swaggo/swag v1.16.4 // indirect
 require github.com/gin-contrib/gzip v0.0.6 // indirect
 
 require (

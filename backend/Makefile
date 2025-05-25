@@ -1,6 +1,6 @@
 APP_NAME := server
 
-GOOSE_DBSTRING := "root:root@tcp(localhost:3306)/ecommerce_go"
+GOOSE_DBSTRING := "root:root@tcp(localhost:3307)/ecommerce_go"
 GOOSE_MIGRATION_DIR := sql/schemas
 GOOSE_DRIVER := mysql
 

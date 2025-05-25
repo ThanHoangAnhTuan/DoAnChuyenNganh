@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AccommodationDetailService } from '../../services/user/accommodation-detail.service';
 import { GalleriaModule } from 'primeng/galleria';
+import { HotelService } from '../../services/user/hotel.service';
 
 @Component({
     selector: 'app-image-list-modal',
@@ -9,24 +10,17 @@ import { GalleriaModule } from 'primeng/galleria';
     styleUrl: './image-list-modal.component.scss'
 })
 export class ImageListModalComponent implements OnInit {
-    images: any[] = [];
     activeIndex: number = 0;
     @Input() accommodationName: string = '';
+    @Input() accommodationImages: string[] = [];
     @Input() show: boolean = false;
 
     @Output() close = new EventEmitter<void>();
 
-    constructor(private accommodationDetailService: AccommodationDetailService) { }
+    constructor(private accommodationDetailService: AccommodationDetailService, private hotelService: HotelService) { }
 
     ngOnInit() {
-        this.getAccommodationImagesByName(this.accommodationName);
         document.body.style.overflow = 'hidden'; // chặn scroll nền
-    }
-
-    getAccommodationImagesByName(name: string) {
-        this.accommodationDetailService.getAccommodationImagesByName(name).subscribe((data: any) => {
-            this.images = data;
-        })
     }
 
     handleClose(): void {

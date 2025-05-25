@@ -25,12 +25,7 @@
 
         <div class="filter-section">
             <h4>Your budget (per night)</h4>
-            <tui-input-range
-                [formControl]="control"
-                [max]="max"
-                [min]="min"
-                [tuiTextfieldLabelOutside]="false"
-            />
+            <tui-input-range [formControl]="control" [max]="max" [min]="min" [tuiTextfieldLabelOutside]="false" />
         </div>
     </div>
 
@@ -55,7 +50,8 @@
 
             <div class="hotel-content">
                 <div class="hotel-header">
-                    <h2 class="hotel-name">
+                    <h2 class="hotel-name" [routerLink]="['/search/accommodation/detail', hotel.id]"
+                        [queryParams]="{ name: hotel.name, city: hotel.location.city }">
                         {{ hotel.name }}
                         <span class="stars">{{ getStars(hotel.rating) }}</span>
                     </h2>

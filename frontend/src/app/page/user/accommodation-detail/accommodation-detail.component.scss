@@ -30,6 +30,7 @@
                 padding: 10px;
                 border-radius: 50%;
                 overflow: visible;
+                width: 40px;
             }
 
             .share-icon:hover {
@@ -58,6 +59,11 @@
         align-items: end;
         gap: 5px;
         margin: 10px 0;
+
+        .location-icon {
+            width: 20px;
+            height: 20px;
+        }
 
         .accommodation-address {
             margin: 0;
@@ -200,19 +206,21 @@
         }
     }
 
-    .description-facilities-highlight-container {
+    .description-facilities-container {
         display: flex;
-        height: 500px;
+        height: auto;
         margin-top: 20px;
 
         .accommodation-description-facilities-container {
-            width: 73%;
+            width: 100%;
 
             .description-container {
                 padding-right: 7%;
 
                 .description-title {
-                    display: none;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    font-size: 18px;
                 }
 
                 .description-content {
@@ -231,6 +239,7 @@
                 .facilities-title {
                     font-size: 16px;
                     font-weight: bold;
+                    margin: 20px 0;
                 }
 
                 .facilities-content {
@@ -241,73 +250,257 @@
                     .facility-item {
                         display: flex;
                         gap: 8px;
-                    }
 
-                    .facility-name {
-                        font-size: 14px;
-                        margin: 0;
+                        .facility-icon {
+                            height: 20px;
+                            width: 20px;
+                        }
+
+                        .facility-name {
+                            font-size: 14px;
+                            margin: 0;
+                        }
                     }
                 }
             }
         }
+    }
 
-        .accommodation-highlight-container {
-            width: 27%;
-            height: 45%;
-            padding: 20px 15px;
-            background-color: #f0f6ff;
-            border-radius: 2%;
+    .availability-room-container {
+        margin-top: 20px;
 
-            .hightlight-first-title {
-                font-weight: bold;
-                margin: 0;
-                font-size: 16px;
-            }
+        .availability-room-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            border: none;
+        }
 
-            .hightlight-second-title {
-                font-weight: bold;
-                margin: 10px 0;
-                font-size: 14px;
-            }
+        .availability-room-table {
+            width: 100%;
+            font-size: 14px;
+            border-collapse: collapse;
 
-            .hightlight-content-container {
-                display: flex;
-                gap: 10px;
-
-                .pin-heart-icon {
-                    height: 20px;
-                    width: 20px;
-                }
-
-                .hightlight-content {
-                    margin: 0;
-                    font-size: 13px;
-                    color: gray;
-                }
-            }
-
-            .hightlight-order-button {
-                background-color: #126cd3;
+            th {
+                border: 1px solid #5bbaff;
+                padding: 10px;
+                vertical-align: top;
+                background-color: #4c76b2;
                 color: white;
-                font-weight: bold;
-                width: 100%;
-                height: 40px;
-                margin-top: 20px;
-                border: none;
-                border-radius: 5%;
-                cursor: pointer;
+                text-align: center;
+                height: 50px;
+                position: sticky;
+                top: 0;
             }
 
-            .hightlight-favourite-button {
-                background-color: white;
-                color: #0057b8;
-                font-weight: bold;
-                width: 100%;
-                height: 40px;
-                margin: 20px 0;
-                border: 1px solid #0057b8;
-                border-radius: 5%;
-                cursor: pointer;
+            td {
+                border: 1px solid #5bbaff;
+                padding: 10px;
+                vertical-align: top;
+            }
+
+            .room-type-container {
+                width: 30%;
+
+                .room-type-title {
+                    font-size: 16px;
+                    color: #006ce4;
+                    text-decoration: underline;
+                    cursor: pointer;
+                    margin: 0 0 10px 0;
+                }
+
+                .room-title:hover {
+                    color: #923e01;
+                }
+
+                .beds-container {
+                    display: flex;
+                    flex-direction: column;
+
+                    .bed-item {
+                        display: flex;
+                        gap: 5px;
+                        align-items: center;
+
+                        .full-bed-icon-container {
+                            width: 30px;
+                            height: 15px;
+                            position: relative;
+                        }
+
+                        .single-bed-icon-container {
+                            width: 15px;
+                            height: 15px;
+                            position: relative;
+                        }
+
+                        .bed-icon {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover; /* hoặc contain tùy mục đích */
+                            display: block; /* bỏ khoảng trắng mặc định của inline img */
+                        }
+                    }
+                }
+
+                .some-room-facilities-container {
+                    margin: 10px 0;
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+                    padding-bottom: 10px;
+
+                    .room-size-container {
+                        display: flex;
+                        gap: 5px;
+                        align-items: center;
+
+                        .room-size-icon {
+                            width: 16px;
+                            height: 12px;
+                        }
+
+                        .room-size {
+                            font-size: 12px;
+                        }
+                    }
+
+                    .facilities-with-icon {
+                        display: flex;
+                        gap: 5px;
+                        align-items: center;
+
+                        .facility-name {
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+
+            .number-of-guests-container {
+                width: 15%;
+
+                .guest-icon {
+                    width: 15px;
+                    height: 15px;
+                }
+            }
+
+            .price-container {
+                width: 15%;
+
+                .original-price {
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+            }
+
+            .select-rooms-container {
+                width: 15%;
+                text-align: center;
+            }
+
+            .reverse-room-container {
+                width: 25%;
+
+                .room-for {
+                    margin: 10px 0;
+                }
+
+                .total-price {
+                    margin: 10px 0;
+                    font-size: 20px;
+                }
+
+                .reserve-button {
+                    width: 100%;
+                    height: 40px;
+                    border-radius: 5px;
+                    border: none;
+                    background-color: #006ce4;
+                    color: white;
+                    font-size: 14px;
+                    cursor: pointer;
+                    position: relative;
+                    display: inline-block;
+                    outline: none;
+                    margin-bottom: 10px;
+
+                    .hover-text {
+                        visibility: hidden;
+                        width: auto;
+                        background-color: #dd9460;
+                        color: #000000;
+                        text-align: center;
+                        border-radius: 4px;
+                        padding: 10px;
+                        position: absolute;
+                        z-index: 1;
+                        bottom: 125%;
+                        left: 50%;
+                        margin-left: -100px;
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                    }
+                }
+
+                .reserve-button:hover {
+                    background-color: #0364d2;
+                }
+
+                .reserve-button:hover .hover-text {
+                    visibility: visible;
+                    opacity: 1;
+                }
+
+                .sub-content {
+                    margin: 0 0 0 10px;
+                }
+            }
+
+            .room-information-modal-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+
+                .modal-container {
+                    display: flex;
+                    position: relative;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 15px;
+                    min-height: 100%;
+                    width: 60%;
+                    text-align: center;
+
+                    .close-icon {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        height: 20px;
+                        width: 20px;
+                        cursor: pointer;
+                    }
+
+                    .room-image-container {
+                        width: 60%;
+                        border: 1px solid black;
+                    }
+
+                    .room-information-container {
+                        width: 40%;
+                    }
+                }
             }
         }
     }
