@@ -48,7 +48,6 @@ import { TuiInputTimeModule } from '@taiga-ui/legacy';
     selector: 'app-accommodation',
     imports: [
         TuiTable,
-        TuiIcon,
         TuiButton,
         TuiInputModule,
         FormsModule,
@@ -58,8 +57,6 @@ import { TuiInputTimeModule } from '@taiga-ui/legacy';
         TuiCardLarge,
         TuiFiles,
         TuiEditor,
-        TuiGroup,
-        TuiCheckbox,
         RouterLink,
         TuiInputTimeModule,
     ],

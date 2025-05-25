@@ -1,11 +1,19 @@
-import {TuiComboBoxModule, TuiInputDateRangeModule} from '@taiga-ui/legacy';
-import {TuiButton, TuiTextfieldOptionsDirective} from '@taiga-ui/core';
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {TuiDataListWrapper, TuiDataListWrapperComponent, TuiFilterByInputPipe} from '@taiga-ui/kit';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {TuiDay, TuiDayRange} from '@taiga-ui/cdk';
-
+import { TuiComboBoxModule, TuiInputDateRangeModule } from '@taiga-ui/legacy';
+import { TuiButton, TuiTextfieldOptionsDirective } from '@taiga-ui/core';
+import {
+    FormControl,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
+import {
+    TuiDataListWrapper,
+    TuiDataListWrapperComponent,
+    TuiFilterByInputPipe,
+} from '@taiga-ui/kit';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 
 @Component({
     selector: 'app-search-box',
@@ -28,20 +36,20 @@ export default class SearchBoxComponent implements OnInit {
     protected city: string = '';
     //danh sách các thành phố có sẵn để người dùng chọn
     protected readonly cities = [
-        'Ho Chi Minh',
-        'Ha Noi',
-        'Da Nang',
+        'Hồ Chí Minh',
+        'Hà Nội',
+        'Đà Nẵng',
         'Nha Trang',
-        'Hue',
-        'Dong Nai',
-        'Vung Tau',
-        'Da Lat',
-        'Can Tho',
-        'Ninh Binh',
-        'Bac Linh',
-        'Binh Dinh',
-        'Binh Thuan',
-        'Cao Bang',
+        'Huế',
+        'Đồng Nai',
+        'Vũng Tàu',
+        'Đà Lạt',
+        'Cần Thơ',
+        'Ninh Bình',
+        'Bắc Ninh',
+        'Bình Định',
+        'Bình Thuận',
+        'Cao Bằng',
     ];
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);

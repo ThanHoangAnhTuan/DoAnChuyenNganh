@@ -42,7 +42,12 @@
         @for (hotel of filteredHotels; track hotel.id){
         <div class="hotel-card">
             <div class="hotel-image">
-                <img [src]="hotel.image" [alt]="hotel.name" />
+                @for (image of hotel.images; track image){
+                <img
+                    [src]="'http://localhost:8080/uploads/' + image"
+                    [alt]="hotel.name"
+                />
+                }
                 <div class="featured-badge">
                     <tui-icon icon="@tui.heart"></tui-icon>
                 </div>
