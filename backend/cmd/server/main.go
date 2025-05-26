@@ -4,7 +4,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 
-	_ "github.com/thanhoanganhtuan/DoAnChuyenNganh/docs"
+	// _ "github.com/thanhoanganhtuan/DoAnChuyenNganh/docs"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/initializer"
 )
 

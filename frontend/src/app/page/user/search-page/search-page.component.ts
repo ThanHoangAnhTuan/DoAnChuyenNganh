@@ -100,12 +100,12 @@ export class SearchPageComponent implements OnInit {
         },
         {
             id: '3',
-            label: '5 stars',
+            label: 'Bed and breakfasts',
             checked: false,
         },
         {
             id: '4',
-            label: 'Bed and breakfasts',
+            label: '5 stars',
             checked: false,
         },
         {
