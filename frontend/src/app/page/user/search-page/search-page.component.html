@@ -83,8 +83,17 @@
                         <!--                        <div class="price-info">1 night, 2 adults</div>-->
                         <!--                        <div class="price">{{ formatPrice(hotel.price) }}</div>-->
                         <!--                        <div class="tax-info">Includes taxes and charges</div>-->
-                        <button class="view-availability" [routerLink]="['/search/accommodation/detail', hotel.id]"
-                            [queryParams]="{ name: hotel.name, city: hotel.city }">
+                        <button
+                            class="view-availability"
+                            [routerLink]="[
+                                '/search/accommodation/detail',
+                                hotel.id
+                            ]"
+                            [queryParams]="{
+                                name: hotel.name,
+                                city: hotel.city
+                            }"
+                        >
                             See availability
                         </button>
                     </div>

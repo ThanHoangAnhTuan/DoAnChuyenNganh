@@ -79,17 +79,12 @@ export class AccommodationDetailComponent implements OnInit {
 
     if (this.accommodationId) {
       this.getAccommodationById(this.accommodationId);
+      this.getRoomByAccommodationId(this.accommodationId);
       // this.getHotelByName(this.accommodationName);
     } else {
       console.error('Accommodation name is missing in URL');
     }
-
-    if (this.accommodationId) {
-      this.getRoomByAccommodationId(this.accommodationId);
-    } else {
-      console.error('Accommodation id is missing in URL');
-    }
-  };
+  }
 
   getAccommodationById(id: string) {
     this.accommodationDetailService.getAccommodationDetailById(id).subscribe((data: any) => {
