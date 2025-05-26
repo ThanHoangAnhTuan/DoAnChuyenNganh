@@ -9,7 +9,7 @@ type Config struct {
 	Email    EmailSetting  `mapstructure:"email"`
 	JWT      JWTSetting    `mapstructure:"jwt"`
 	Frontend Frontend      `mapstructure:"frontend"`
-	Payment  Payment       `mapstructure:"payment"`
+	Payment  Payment       `mapstructure:"vnpay"`
 }
 
 type Frontend struct {
@@ -69,9 +69,9 @@ type JWTSetting struct {
 }
 
 type Payment struct {
-	VnpTmnCode    string `json:"vnp_tmn_code"`
-	VnpHashSecret string `json:"vnp_hash_secret"`
-	VnpUrl        string `json:"vnp_url"`
-	VnpReturnUrl  string `json:"vnp_return_url"`
-	VnpApi        string `json:"vnp_api"`
+	VnpTmnCode    string `mapstructure:"vnp_tmn_code"`
+	VnpHashSecret string `mapstructure:"vnp_hash_secret"`
+	VnpUrl        string `mapstructure:"vnp_url"`
+	VnpReturnUrl  string `mapstructure:"vnp_return_url"`
+	VnpApi        string `mapstructure:"vnp_api"`
 }

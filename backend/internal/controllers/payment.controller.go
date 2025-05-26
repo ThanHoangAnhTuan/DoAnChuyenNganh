@@ -73,6 +73,7 @@ func (c *CPayment) VNPayReturn(ctx *gin.Context) {
 
 	services.Payment().VNPayReturn(ctx)
 }
+
 func (c *CPayment) VNPayIPN(ctx *gin.Context) {
 	// validation, exists := ctx.Get("validation")
 	// if !exists {
@@ -100,6 +101,7 @@ func (c *CPayment) VNPayIPN(ctx *gin.Context) {
 
 	services.Payment().VNPayIPN(ctx)
 }
+
 func (c *CPayment) PostQueryDR(ctx *gin.Context) {
 
 }
