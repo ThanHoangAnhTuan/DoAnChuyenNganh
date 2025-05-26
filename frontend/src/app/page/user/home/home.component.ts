@@ -47,11 +47,11 @@ export class HomeComponent {
 
   constructor() {
     this.trendingPlaces = [
-      { id: 1 ,name: 'Ho Chi Minh', image: 'ho-chi-minh-city.jpg' },
-      { id: 2, name: 'Ha Noi', image: 'ha-noi.jpg' },
-      { id: 3, name: 'Da Nang', image: 'da-nang.jpg' },
-      { id: 4, name: 'Da Lat', image: 'da-lat.jpg' },
-      { id: 5, name: 'Vung Tau', image: 'vung-tau.jpg' },
+      { id: 1 ,name: 'Hồ Chí Minh', image: 'ho-chi-minh-city.jpg' },
+      { id: 2, name: 'Hà Nội', image: 'ha-noi.jpg' },
+      { id: 3, name: 'Đà Nẵng', image: 'da-nang.jpg' },
+      { id: 4, name: 'Đà Lạt', image: 'da-lat.jpg' },
+      { id: 5, name: 'Vũng Tàu', image: 'vung-tau.jpg' },
     ];
 
     this.explorePaces = [
