@@ -15,7 +15,7 @@ type CreateAccommodationDetailInput struct {
 	Name            string   `json:"name" validate:"required"`
 	Guests          uint8    `json:"guests" validate:"gte=1"`
 	Beds            Beds     `json:"beds" validate:"required"`
-	Facilities      []string `json:"facilities" validate:"required"`
+	Facilities      []string `json:"facilities"`
 	AvailableRooms  uint8    `json:"available_rooms" validate:"gte=0"`
 	Price           uint32   `json:"price" validate:"gte=1"`
 	DiscountId      string   `json:"discount_id"`

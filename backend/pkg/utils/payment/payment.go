@@ -38,11 +38,20 @@ func BuildQueryString(params vo.VNPayParams, encode bool) string {
 	}
 	sort.Strings(keys)
 
+	// for _, key := range keys {
+	// 	value := params[key]
+	// 	if encode {
+	// 		key = url.QueryEscape(key)
+	// 		value = strings.ReplaceAll(url.QueryEscape(value), "%20", "+")
+	// 	}
+	// 	parts = append(parts, key+"="+value)
+	// }
+
 	for _, key := range keys {
 		value := params[key]
 		if encode {
 			key = url.QueryEscape(key)
-			value = strings.ReplaceAll(url.QueryEscape(value), "%20", "+")
+			value = url.QueryEscape(value)
 		}
 		parts = append(parts, key+"="+value)
 	}
