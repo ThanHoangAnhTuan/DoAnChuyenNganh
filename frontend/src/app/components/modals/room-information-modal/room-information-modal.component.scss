@@ -1,0 +1,74 @@
+main {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    .room-image-container {
+        width: 60%;
+        border: 1px solid #e0e0e0;
+
+        ::ng-deep {
+            .p-galleria {
+                border-style: none;
+            }
+
+            .p-icon {
+                width: 50px;
+                color: #526ed3;
+            }
+
+            .p-galleria-thumbnail {
+                overflow: hidden;
+            }
+        }
+
+        .image-wrapper {
+            height: 430px;
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            align-items: center;
+            justify-content: center;
+            // margin-bottom: 5px;
+
+            .main-image {
+                height: 90%;
+                width: auto;
+                object-fit: contain;
+                border-radius: 12px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .number-image {
+                margin: 5px;
+                font-size: 20px;
+            }
+        }
+
+        .thumbnail-image {
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    .room-information-container {
+        width: 40%;
+    }
+}
+
+.content {
+    height: 90%;
+    padding: 10px;
+    align-content: center;
+    overflow: hidden;
+}
+
+.content::-webkit-scrollbar {
+    display: none;
+}
