@@ -7,7 +7,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 )
 
 type Email struct {

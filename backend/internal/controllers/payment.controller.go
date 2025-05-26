@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
@@ -73,6 +73,7 @@ func (c *CPayment) VNPayReturn(ctx *gin.Context) {
 
 	services.Payment().VNPayReturn(ctx)
 }
+
 func (c *CPayment) VNPayIPN(ctx *gin.Context) {
 	// validation, exists := ctx.Get("validation")
 	// if !exists {
@@ -100,6 +101,7 @@ func (c *CPayment) VNPayIPN(ctx *gin.Context) {
 
 	services.Payment().VNPayIPN(ctx)
 }
+
 func (c *CPayment) PostQueryDR(ctx *gin.Context) {
 
 }

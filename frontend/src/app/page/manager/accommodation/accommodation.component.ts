@@ -144,6 +144,11 @@ export class AccommodationComponent implements OnInit {
     private createFacilityControls() {
         const facilityControls: { [key: string]: FormControl<boolean> } = {};
 
+        if (!this.facilities || this.facilities.length === 0) {
+            this.formFacilities = new FormGroup(facilityControls);
+            return;
+        }
+
         this.facilities.forEach((facility) => {
             facilityControls[facility.id] = new FormControl<boolean>(false, {
                 nonNullable: true,
@@ -155,6 +160,9 @@ export class AccommodationComponent implements OnInit {
     }
 
     getSelectedFacilityIds(): string[] {
+        if (!this.facilities || this.facilities.length === 0) {
+            return [];
+        }
         return this.facilities
             .filter(
                 (facility) =>

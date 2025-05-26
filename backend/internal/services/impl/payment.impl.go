@@ -11,13 +11,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/crypto"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/ip"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/payment"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/crypto"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/ip"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/payment"
 	"go.uber.org/zap"
 )
 
@@ -304,16 +303,19 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	signData := payment.BuildQueryString(sortedParams, false)
 
 	// Create HMAC SHA512 signature
+	fmt.Printf("secret: %s", global.Config.Payment.VnpHashSecret)
 	signature := crypto.CreateHMAC(signData, global.Config.Payment.VnpHashSecret)
 	vnpParams["vnp_SecureHash"] = signature
 
 	// Build final URL
-	finalURL := global.Config.Payment.VnpUrl + "?" + payment.BuildQueryString(vnpParams, true)
+	finalURL := global.Config.Payment.VnpUrl + "?" + payment.BuildQueryString(vnpParams, false)
 
 	fmt.Printf("CreatePaymentURL success: %s\n", orderId)
 	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderId))
 
-	ctx.Redirect(response.ErrCodeCreatePaymentURLSuccess, finalURL)
+	fmt.Printf("url: %s\n", finalURL)
+
+	ctx.Redirect(http.StatusFound, finalURL)
 }
 
 func (p *PaymentImpl) redirectToReactWithResult(ctx *gin.Context, data vo.PaymentResultData) {

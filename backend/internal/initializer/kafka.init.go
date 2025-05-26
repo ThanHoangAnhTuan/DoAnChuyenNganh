@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"go.uber.org/zap"
 )
 

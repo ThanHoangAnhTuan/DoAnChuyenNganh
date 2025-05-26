@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/vo"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
@@ -20,8 +20,8 @@ type COrder struct {
 func (c *COrder) CreateOrder(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
+		fmt.Printf("CreateOrder validation not found\n")
+		global.Logger.Error("CreateOrder validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}

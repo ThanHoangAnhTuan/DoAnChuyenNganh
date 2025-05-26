@@ -1,10 +1,10 @@
 package initializer
 
 import (
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/database"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/internal/services/impl"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services/impl"
 )
 
 func InitInterface() {

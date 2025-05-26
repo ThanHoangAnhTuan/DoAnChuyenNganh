@@ -71,9 +71,6 @@ export class AccommodationDetailComponent implements OnInit {
         'Double Bed',
         'Large Double Bed',
         'Extra Large Double Bed',
-        'Wifi',
-        'TV',
-        'Air Condition',
         'Available Rooms',
         'Price',
         'Image',
@@ -97,9 +94,6 @@ export class AccommodationDetailComponent implements OnInit {
         availableRooms: new FormControl<number | 0>(0),
         accommodationId: new FormControl<string | ''>('', Validators.required),
         discountId: new FormControl<string | ''>(''),
-        // wifi: new FormControl<boolean | false>(false),
-        // airCondition: new FormControl<boolean | false>(false),
-        // tv: new FormControl<boolean | false>(false),
     });
 
     protected readonly resetFormAccommodationDetail = {
@@ -113,9 +107,6 @@ export class AccommodationDetailComponent implements OnInit {
         name: '',
         price: 0,
         singleBed: 0,
-        // airCondition: false,
-        // tv: false,
-        // wifi: false,
     };
 
     protected accommodations!: Accommodation[];
@@ -180,9 +171,6 @@ export class AccommodationDetailComponent implements OnInit {
                 accommodationDetail.beds.extra_large_double_bed,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
-            // airCondition: accommodationDetail.facilities.air_condition,
-            // wifi: accommodationDetail.facilities.wifi,
-            // tv: accommodationDetail.facilities.tv,
         });
 
         this.idAccommodationDetailUpdating = accommodationDetail.id;
@@ -224,13 +212,6 @@ export class AccommodationDetailComponent implements OnInit {
                 '',
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
-            // facilities: {
-            //     wifi: this.formAccommodationDetail.get('wifi')?.value || false,
-            //     air_condition:
-            //         this.formAccommodationDetail.get('airCondition')?.value ||
-            //         false,
-            //     tv: this.formAccommodationDetail.get('tv')?.value || false,
-            // },
         };
 
         if (this.formAccommodationDetail.invalid) {
@@ -266,13 +247,6 @@ export class AccommodationDetailComponent implements OnInit {
                     this.formAccommodationDetail.get('extraLargeDoubleBed')
                         ?.value || 0,
             },
-            // facilities: {
-            //     air_condition:
-            //         this.formAccommodationDetail.get('airCondition')?.value ||
-            //         false,
-            //     tv: this.formAccommodationDetail.get('tv')?.value || false,
-            //     wifi: this.formAccommodationDetail.get('wifi')?.value || false,
-            // },
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,

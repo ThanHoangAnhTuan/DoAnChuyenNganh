@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/viper"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 )
 
 func LoadConfig() {

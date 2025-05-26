@@ -9,11 +9,8 @@ import {
     TuiInputRangeModule,
     TuiTextfieldControllerModule,
 } from '@taiga-ui/legacy';
-// import { HotelService } from '../../../services/user/hotel.service';
+import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Accommodation } from '../../../models/manager/accommodation.model';
-import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
-
 
 @Component({
     selector: 'app-search-page',
@@ -69,7 +66,7 @@ export class SearchPageComponent implements OnInit {
     filteredHotels: any[] = [];
 
     constructor(
-        private hotelService: AccommodationDetailService,
+        private hotelService: HotelService,
         private route: ActivatedRoute
     ) {
         // Lấy tham số city từ URL
@@ -127,7 +124,7 @@ export class SearchPageComponent implements OnInit {
      * Tải danh sách khách sạn từ service
      */
     loadHotels(): void {
-        this.hotelService.getAccommodationDetailByCity(this.city).subscribe({
+        this.hotelService.getHotelDetailByCity(this.city).subscribe({
             next: (hotels) => {
                 this.hotels = hotels.data;
                 console.log('Hotels loaded:', this.hotels);

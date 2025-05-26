@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/utils/timezone"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/timezone"
 )
 
 func GetTimeNow() uint64 {

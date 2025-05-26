@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 )
 
 type contextKey string

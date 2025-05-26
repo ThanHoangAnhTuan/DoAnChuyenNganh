@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/thanhoanganhtuan/go-ecommerce-backend-api/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 )
 
 type payload struct {
