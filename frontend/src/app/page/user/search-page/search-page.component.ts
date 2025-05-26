@@ -100,12 +100,12 @@ export class SearchPageComponent implements OnInit {
         },
         {
             id: '3',
-            label: '5 stars',
+            label: 'Bed and breakfasts',
             checked: false,
         },
         {
             id: '4',
-            label: 'Bed and breakfasts',
+            label: '5 stars',
             checked: false,
         },
         {
@@ -124,9 +124,10 @@ export class SearchPageComponent implements OnInit {
      * Tải danh sách khách sạn từ service
      */
     loadHotels(): void {
-        this.hotelService.getHotelDetailByCity(this.city).subscribe({
+        this.hotelService.getAccommodationsByCity(this.city).subscribe({
             next: (hotels) => {
                 this.hotels = hotels.data;
+                console.log('Hotels loaded:', this.hotels);
                 // Lọc khách sạn theo thành phố từ URL
                 if (this.city && this.city.trim() !== '') {
                     this.filteredHotels = this.hotels.filter((hotel) =>
