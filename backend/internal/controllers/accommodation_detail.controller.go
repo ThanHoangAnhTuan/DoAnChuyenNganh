@@ -53,9 +53,9 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("CreateAccommodationDetail success: manager: %s\taccommodation detail: %s\n", userId, data.Id)
+	fmt.Printf("CreateAccommodationDetail success: manager: %s\taccommodation detail: %s\n", userId, data.ID)
 	global.Logger.Info("CreateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager:%s\taccommodation detail:%s", userId, data.Id)))
+		zap.String("info", fmt.Sprintf("manager:%s\taccommodation detail:%s", userId, data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -84,7 +84,7 @@ func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
-	params.AccommodationId = id
+	params.AccommodationID = id
 
 	codeStatus, data, err := services.AccommodationDetail().GetAccommodationDetails(ctx, &params)
 	if err != nil {
@@ -134,9 +134,9 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("UpdateAccommodationDetail success: manager%s\taccommodation detail:%s\n", userId, data.Id)
+	fmt.Printf("UpdateAccommodationDetail success: manager%s\taccommodation detail:%s\n", userId, data.ID)
 	global.Logger.Info("UpdateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager%s\taccommodation detail:%s", userId, data.Id)))
+		zap.String("info", fmt.Sprintf("manager%s\taccommodation detail:%s", userId, data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -175,8 +175,8 @@ func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("DeleteAccommodationDetail success: userId:%s\taccommodation detail id:%s\n", userId, params.Id)
+	fmt.Printf("DeleteAccommodationDetail success: userId:%s\taccommodation detail id:%s\n", userId, params.ID)
 	global.Logger.Info("DeleteAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("userId:%s\taccommodation detail id:%s", userId, params.Id)))
+		zap.String("info", fmt.Sprintf("userId:%s\taccommodation detail id:%s", userId, params.ID)))
 	response.SuccessResponse(ctx, codeStatus, nil)
 }

@@ -33,30 +33,24 @@ func (o *OrderImpl) CheckOut(ctx context.Context, in *vo.CheckOutInput) (codeSta
 }
 
 func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (codeStatus int, out *vo.CreateOrderOutput, err error) {
-	// TODO: get user id in context.Context
-	val := ctx.Value("userId")
-	if val == nil {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
-	}
-	userID, ok := val.(string)
+	// TODO: get userID from context
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
 
-	// TODO: check user id
+	// TODO: check user exists
 	isUserBaseExists, err := o.sqlc.CheckUserBaseExistsById(ctx, userID)
 	if err != nil {
 		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
 	}
-
-	fmt.Printf("isUserBaseExists: %v", isUserBaseExists)
 
 	if !isUserBaseExists {
 		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
 	}
 
 	// TODO: check accommodation id
-	isAccommodationExists, err := o.sqlc.CheckAccommodationExists(ctx, in.AccommodationId)
+	isAccommodationExists, err := o.sqlc.CheckAccommodationExists(ctx, in.AccommodationID)
 	if err != nil {
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
 	}
@@ -66,15 +60,15 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 	}
 
 	// TODO: check accommodation detail id
-	for i := 0; i < len(in.AccommodationDetailId); i++ {
-		accommodationDetailId := in.AccommodationDetailId[i]
-		isAccommodationDetailExists, err := o.sqlc.CheckAccommodationDetailExists(ctx, accommodationDetailId)
+	for i := 0; i < len(in.AccommodationDetailID); i++ {
+		accommodationDetailID := in.AccommodationDetailID[i]
+		isAccommodationDetailExists, err := o.sqlc.CheckAccommodationDetailExists(ctx, accommodationDetailID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, nil, fmt.Errorf("get accommodation detail failed: %s", err)
 		}
 
 		if !isAccommodationDetailExists {
-			return response.ErrCodeAccommodationDetailNotFound, nil, fmt.Errorf("accommodation detail not found: %s", accommodationDetailId)
+			return response.ErrCodeAccommodationDetailNotFound, nil, fmt.Errorf("accommodation detail not found: %s", accommodationDetailID)
 		}
 	}
 	// TODO: start transaction
@@ -97,13 +91,13 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 
 	// TODO: get accommodation details by ids
 	accommodationDetails, err := qtx.GetAccommodationDetailsByIDs(ctx, database.GetAccommodationDetailsByIDsParams{
-		Ids:             in.AccommodationDetailId,
-		AccommodationID: in.AccommodationId,
+		Ids:             in.AccommodationDetailID,
+		AccommodationID: in.AccommodationID,
 	})
 
 	// TODO: create order
 	now := utiltime.GetTimeNow()
-	orderId := uuid.NewString()
+	orderID := uuid.NewString()
 
 	checkInUnix, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
 	if err != nil {
@@ -126,9 +120,9 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 	}
 
 	err = qtx.CreateOrder(ctx, database.CreateOrderParams{
-		ID:              orderId,
+		ID:              orderID,
 		UserID:          userID,
-		AccommodationID: in.AccommodationId,
+		AccommodationID: in.AccommodationID,
 		OrderStatus:     database.EcommerceGoOrderOrderStatusCompleted,
 		CheckinDate:     checkInUnix,
 		CheckoutDate:    checkOutUnix,
@@ -153,7 +147,7 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 		// TODO: create order detail
 		err := qtx.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
 			ID:                    orderDetailId,
-			OrderID:               orderId,
+			OrderID:               orderID,
 			Price:                 accommodationDetail.Price,
 			AccommodationDetailID: accommodationDetail.ID,
 			CreatedAt:             now,
@@ -169,7 +163,7 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 	paymentId := uuid.NewString()
 	err = qtx.CreatePayment(ctx, database.CreatePaymentParams{
 		ID:            paymentId,
-		OrderID:       orderId,
+		OrderID:       orderID,
 		PaymentStatus: database.EcommerceGoPaymentPaymentStatusSuccess,
 		PaymentMethod: database.EcommerceGoPaymentPaymentMethodCard,
 		TotalPrice:    totalPrice,
@@ -189,7 +183,7 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 	out = &vo.CreateOrderOutput{}
 	out.CheckIn = in.CheckIn
 	out.CheckOut = in.CheckOut
-	out.OrderId = orderId
+	out.OrderID = orderID
 	out.OrderStatus = string(database.EcommerceGoOrderOrderStatusCompleted)
 	out.PaymentMethod = string(database.EcommerceGoPaymentPaymentMethodCard)
 	out.TotalPrice = utils.FormatCurrency(totalPrice)

@@ -7,76 +7,76 @@ type Beds struct {
 	ExtraLargeDoubleBed uint `json:"extra_large_double_bed"`
 }
 type GetAccommodationDetailsInput struct {
-	AccommodationId string `json:"accommodation_id"`
+	AccommodationID string `json:"accommodation_id"`
 }
 
 type CreateAccommodationDetailInput struct {
-	AccommodationId string   `json:"accommodation_id" validate:"required"`
+	AccommodationID string   `json:"accommodation_id" validate:"required"`
 	Name            string   `json:"name" validate:"required"`
 	Guests          uint8    `json:"guests" validate:"gte=1"`
 	Beds            Beds     `json:"beds" validate:"required"`
 	Facilities      []string `json:"facilities"`
 	AvailableRooms  uint8    `json:"available_rooms" validate:"gte=0"`
 	Price           uint32   `json:"price" validate:"gte=1"`
-	DiscountId      string   `json:"discount_id"`
+	DiscountID      string   `json:"discount_id"`
 }
 
 type FacilityDetailOutput struct {
-	Id   string `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
 type CreateAccommodationDetailOutput struct {
-	Id              string                 `json:"id"`
-	AccommodationId string                 `json:"accommodation_id"`
+	ID              string                 `json:"id"`
+	AccommodationID string                 `json:"accommodation_id"`
 	Name            string                 `json:"name"`
 	Guests          uint8                  `json:"guests"`
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
 	Price           uint32                 `json:"price"`
-	DiscountId      string                 `json:"discount_id"`
+	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }
 
 type GetAccommodationDetailsOutput struct {
-	Id              string                 `json:"id"`
-	AccommodationId string                 `json:"accommodation_id"`
+	ID              string                 `json:"id"`
+	AccommodationID string                 `json:"accommodation_id"`
 	Name            string                 `json:"name"`
 	Guests          uint8                  `json:"guests"`
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
 	Price           uint32                 `json:"price"`
-	DiscountId      string                 `json:"discount_id"`
+	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }
 
 type UpdateAccommodationDetailInput struct {
-	Id              string   `json:"id" validate:"required"`
-	AccommodationId string   `json:"accommodation_id"`
+	ID              string   `json:"id" validate:"required"`
+	AccommodationID string   `json:"accommodation_id"`
 	Name            string   `json:"name"`
 	Guests          uint8    `json:"guests"`
 	Beds            Beds     `json:"beds"`
 	Facilities      []string `json:"facilities"`
 	AvailableRooms  uint8    `json:"available_rooms"`
 	Price           uint32   `json:"price"`
-	DiscountId      string   `json:"discount_id"`
+	DiscountID      string   `json:"discount_id"`
 }
 
 type UpdateAccommodationDetailOutput struct {
-	Id              string                 `json:"id"`
-	AccommodationId string                 `json:"accommodation_id"`
+	ID              string                 `json:"id"`
+	AccommodationID string                 `json:"accommodation_id"`
 	Name            string                 `json:"name"`
 	Guests          uint8                  `json:"guests"`
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
 	Price           uint32                 `json:"price"`
-	DiscountId      string                 `json:"discount_id"`
+	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }
 
 type DeleteAccommodationDetailInput struct {
-	Id string `json:"id" validate:"required"`
+	ID string `json:"id" validate:"required"`
 }

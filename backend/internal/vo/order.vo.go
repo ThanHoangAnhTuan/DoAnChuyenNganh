@@ -1,8 +1,8 @@
 package vo
 
 type CreateOrderInput struct {
-	AccommodationId       string   `json:"accommodation_id" validate:"required"`
-	AccommodationDetailId []string `json:"accommodation_detail_id" validate:"required"`
+	AccommodationID       string   `json:"accommodation_id" validate:"required"`
+	AccommodationDetailID []string `json:"accommodation_detail_id" validate:"required"`
 	CheckIn               string   `json:"check_in" validate:"required"`
 	CheckOut              string   `json:"check_out" validate:"required"`
 }
@@ -13,7 +13,7 @@ type CreateOrderDetailOutput struct {
 }
 
 type CreateOrderOutput struct {
-	OrderId       string                    `json:"order_id"`
+	OrderID       string                    `json:"order_id"`
 	TotalPrice    string                    `json:"total_price"`
 	OrderStatus   string                    `json:"order_status"`
 	CheckIn       string                    `json:"check_in"`

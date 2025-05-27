@@ -30,19 +30,22 @@ func (q *Queries) CheckUserManagerExistsByEmail(ctx context.Context, account str
 
 const checkUserManagerExistsByID = `-- name: CheckUserManagerExistsByID :one
 SELECT
-    COUNT(*) as count
-FROM
-    ` + "`" + `ecommerce_go_user_manager` + "`" + `
-WHERE
-    ` + "`" + `id` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_manager` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
 `
 
-func (q *Queries) CheckUserManagerExistsByID(ctx context.Context, id string) (int64, error) {
+func (q *Queries) CheckUserManagerExistsByID(ctx context.Context, id string) (bool, error) {
 	row := q.db.QueryRowContext(ctx, checkUserManagerExistsByID, id)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
 
 const createUserManage = `-- name: CreateUserManage :exec

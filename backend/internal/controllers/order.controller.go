@@ -50,7 +50,7 @@ func (c *COrder) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("CreateOrder success: %s\n", data.OrderId)
-	global.Logger.Info("CreateOrder success: ", zap.String("info", data.OrderId))
+	fmt.Printf("CreateOrder success: %s\n", data.OrderID)
+	global.Logger.Info("CreateOrder success: ", zap.String("info", data.OrderID))
 	response.SuccessResponse(ctx, codeStatus, data)
 }

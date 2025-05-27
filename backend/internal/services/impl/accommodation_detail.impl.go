@@ -23,24 +23,24 @@ type AccommodationDetailImpl struct {
 func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in *vo.CreateAccommodationDetailInput) (codeStatus int, out *vo.CreateAccommodationDetailOutput, err error) {
 	out = &vo.CreateAccommodationDetailOutput{}
 
-	// TODO: get userId from context
-	userId, ok := utils.GetUserIDFromGin(ctx)
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
 
-	// TODO: check manager exists
-	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userId)
+	// TODO: check user is manager
+	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
-	if manager == 0 {
+	if !manager {
 		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation exists
-	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationId)
+	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
@@ -49,12 +49,10 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 	}
 
 	// TODO: check if the manager is the owner of the accommodation
-	if accommodation.ManagerID != userId {
+	if accommodation.ManagerID != userID {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
-	// TODO: create accommodation detail
-	accommodationDetailId := uuid.New().String()
 	bedsJson, err := json.Marshal(in.Beds)
 	if err != nil {
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
@@ -65,10 +63,12 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
+	accommodationDetailID := uuid.New().String()
 	now := utiltime.GetTimeNow()
 
-	params := database.CreateAccommodationDetailParams{
-		ID:              accommodationDetailId,
+	// TODO: create accommodation detail
+	err = a.sqlc.CreateAccommodationDetail(ctx, database.CreateAccommodationDetailParams{
+		ID:              accommodationDetailID,
 		AccommodationID: accommodation.ID,
 		Name:            in.Name,
 		Guests:          in.Guests,
@@ -78,35 +78,34 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		Facilities:      facilitiesJson,
 		CreatedAt:       now,
 		UpdatedAt:       now,
-	}
-	err = a.sqlc.CreateAccommodationDetail(ctx, params)
+	})
 	if err != nil {
 		return response.ErrCodeCreateAccommodationDetailFailed, nil, fmt.Errorf("error for create accommodation details: %s", err)
 	}
 
-	// TODO: get facility
-	var facilitieIds []string
-	if err := json.Unmarshal(facilitiesJson, &facilitieIds); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+	// TODO: get facility detail
+	var facilityIds []string
+	if err := json.Unmarshal(facilitiesJson, &facilityIds); err != nil {
+		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facility detail: %s", err)
 	}
 
-	for _, facilityId := range facilitieIds {
+	for _, facilityId := range facilityIds {
 		facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityId)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility detail failed: %s", err)
 		}
 
 		out.Facilities = append(out.Facilities, vo.FacilityDetailOutput{
-			Id:   facility.ID,
+			ID:   facility.ID,
 			Name: facility.Name,
 		})
 	}
 
-	out.Id = accommodationDetailId
-	out.AccommodationId = in.AccommodationId
+	out.ID = accommodationDetailID
+	out.AccommodationID = in.AccommodationID
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
-	out.DiscountId = in.DiscountId
+	out.DiscountID = in.DiscountID
 	out.Guests = in.Guests
 	out.Name = in.Name
 	out.Price = in.Price
@@ -114,35 +113,36 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 }
 
 func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx context.Context, in *vo.DeleteAccommodationDetailInput) (codeResult int, err error) {
-	// TODO: Check the user is manager
-	userId, ok := utils.GetUserIDFromContext(ctx)
+	// TODO: get user from context
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, fmt.Errorf("userId not found in context")
+		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
 	}
 
-	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userId)
+	// TODO: check user is manager
+	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeGetManagerFailed, fmt.Errorf("error for get manager: %s", err)
 	}
 
-	if manager == 0 {
+	if !manager {
 		return response.ErrCodeManagerNotFound, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check the accommodation detail exists
-	isExists, err := a.sqlc.CheckAccommodationDetailExists(ctx, in.Id)
+	exists, err := a.sqlc.CheckAccommodationDetailExists(ctx, in.ID)
 	if err != nil {
 		return response.ErrCodeAccommodationDetailNotFound, fmt.Errorf("error for get accommodation detail: %s", err)
 	}
 
-	if !isExists {
+	if !exists {
 		return response.ErrCodeAccommodationDetailNotFound, nil
 	}
 
 	// TODO: check the accommodation detail belongs to manager
 	isBelongs, err := a.sqlc.IsAccommodationDetailBelongsToManager(ctx, database.IsAccommodationDetailBelongsToManagerParams{
-		ID:   userId,
-		ID_2: in.Id,
+		ID:   userID,
+		ID_2: in.ID,
 	})
 	if err != nil {
 		return response.ErrCodeDeleteAccommodationDetailFailed, fmt.Errorf("error for delete accommodation detail: %s", err)
@@ -152,7 +152,7 @@ func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx context.Context,
 	}
 
 	// TODO: delete accommodation detail
-	err = a.sqlc.DeleteAccommodationDetail(ctx, in.Id)
+	err = a.sqlc.DeleteAccommodationDetail(ctx, in.ID)
 	if err != nil {
 		return response.ErrCodeDeleteAccommodationDetailFailed, fmt.Errorf("error for delete accommodation detail: %s", err)
 	}
@@ -162,8 +162,17 @@ func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx context.Context,
 func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, in *vo.GetAccommodationDetailsInput) (codeStatus int, out []*vo.GetAccommodationDetailsOutput, err error) {
 	out = []*vo.GetAccommodationDetailsOutput{}
 
+	// TODO: check accommodation exists
+	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
+		}
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %w", err)
+	}
+
 	// TODO: get accommodation details by accommodation id
-	accommodationDetails, err := a.sqlc.GetAccommodationDetails(ctx, in.AccommodationId)
+	accommodationDetails, err := a.sqlc.GetAccommodationDetails(ctx, accommodation.ID)
 	if err != nil {
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id failed: %s", err)
 	}
@@ -175,21 +184,21 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, i
 		}
 
 		// TODO: get facility
-		var facilityIds []string
-		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIds); err != nil {
+		var facilityIDs []string
+		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIDs); err != nil {
 			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
 		facilities := []vo.FacilityDetailOutput{}
 
-		for _, facilityId := range facilityIds {
-			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityId)
+		for _, facilityID := range facilityIDs {
+			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
 			if err != nil {
 				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 			}
 
 			facilities = append(facilities, vo.FacilityDetailOutput{
-				Id:   facility.ID,
+				ID:   facility.ID,
 				Name: facility.Name,
 			})
 		}
@@ -206,15 +215,15 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, i
 		}
 
 		out = append(out, &vo.GetAccommodationDetailsOutput{
-			Id:              accommodationDetail.ID,
-			AccommodationId: accommodationDetail.AccommodationID,
+			ID:              accommodationDetail.ID,
+			AccommodationID: accommodationDetail.AccommodationID,
 			Name:            accommodationDetail.Name,
 			Guests:          accommodationDetail.Guests,
 			Beds:            beds,
 			Facilities:      facilities,
 			AvailableRooms:  accommodationDetail.AvailableRooms,
 			Price:           accommodationDetail.Price,
-			DiscountId:      accommodationDetail.DiscountID.String,
+			DiscountID:      accommodationDetail.DiscountID.String,
 			Images:          pathNames,
 		})
 	}
@@ -224,26 +233,35 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, i
 func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in *vo.UpdateAccommodationDetailInput) (codeResult int, out *vo.UpdateAccommodationDetailOutput, err error) {
 	out = &vo.UpdateAccommodationDetailOutput{}
 
-	// TODO: Check the user is manager
-	userId, ok := utils.GetUserIDFromGin(ctx)
+	// TODO: get user from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userId not found in context")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
 
-	// TODO: check manager exists
-	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userId)
+	// TODO: check user is manager
+	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
-	if manager == 0 {
+	if !manager {
 		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
 	}
 
-	// TODO: check the accommodation detail exists
-	isExists, err := a.sqlc.CheckAccommodationDetailExists(ctx, in.Id)
+	// TODO: check accommodation exists
+	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
 	if err != nil {
-		return response.ErrCodeAccommodationDetailNotFound, nil, fmt.Errorf("error for get accommodation detail: %s", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
+		}
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %w", err)
+	}
+
+	// TODO: check the accommodation detail exists
+	isExists, err := a.sqlc.CheckAccommodationDetailExists(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationDetailFailed, nil, fmt.Errorf("error for get accommodation detail: %s", err)
 	}
 
 	if !isExists {
@@ -252,8 +270,8 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 
 	// TODO: Check the user is the owner of the accommodation detail
 	isBelongs, err := a.sqlc.IsAccommodationDetailBelongsToManager(ctx, database.IsAccommodationDetailBelongsToManagerParams{
-		ID:   userId,
-		ID_2: in.Id,
+		ID:   accommodation.ManagerID,
+		ID_2: in.ID,
 	})
 	if err != nil {
 		return response.ErrCodeUpdateAccommodationDetailFailed, nil, fmt.Errorf("error for update accommodation detail: %s", err)
@@ -265,7 +283,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 	// TODO: update accommodation detail
 	bedsJson, err := json.Marshal(in.Beds)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
+		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal beds: %s", err)
 	}
 
 	facilitiesJson, err := json.Marshal(in.Facilities)
@@ -282,15 +300,15 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		AvailableRooms:  in.AvailableRooms,
 		Price:           in.Price,
 		UpdatedAt:       now,
-		ID:              in.Id,
-		AccommodationID: in.AccommodationId,
+		ID:              in.ID,
+		AccommodationID: in.AccommodationID,
 	})
 	if err != nil {
 		return response.ErrCodeUpdateAccommodationDetailFailed, nil, fmt.Errorf("error for update accommodation detail failed: %s", err)
 	}
 
 	// TODO: get images of accommodation detail
-	accommodationDetailImages, err := a.sqlc.GetAccommodationDetailImages(ctx, in.Id)
+	accommodationDetailImages, err := a.sqlc.GetAccommodationDetailImages(ctx, in.ID)
 	if err != nil {
 		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 	}
@@ -300,23 +318,24 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		pathNames = append(pathNames, img.Image)
 	}
 
-	for _, facilityId := range in.Facilities {
-		facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityId)
+	// TODO: get facility of accommodation detail
+	for _, facilityID := range in.Facilities {
+		facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
 		if err != nil {
 			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 		}
 		out.Facilities = append(out.Facilities, vo.FacilityDetailOutput{
-			Id:   facility.ID,
+			ID:   facility.ID,
 			Name: facility.Name,
 		})
 	}
 
-	out.AccommodationId = in.AccommodationId
+	out.AccommodationID = in.AccommodationID
 	out.AvailableRooms = in.AvailableRooms
 	out.Beds = in.Beds
-	out.DiscountId = in.DiscountId
+	out.DiscountID = in.DiscountID
 	out.Guests = in.Guests
-	out.Id = in.Id
+	out.ID = in.ID
 	out.Name = in.Name
 	out.Price = in.Price
 	out.Images = pathNames

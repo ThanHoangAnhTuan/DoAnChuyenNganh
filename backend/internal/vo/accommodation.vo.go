@@ -1,7 +1,7 @@
 package vo
 
 type FacilitiesOutput struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Image string `json:"image"`
 }
@@ -29,8 +29,8 @@ type CreateAccommodationInput struct {
 }
 
 type CreateAccommodationOutput struct {
-	Id          string             `json:"id"`
-	ManagerId   string             `json:"manager_id"`
+	ID          string             `json:"id"`
+	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
 	City        string             `json:"city"`
 	Country     string             `json:"country"`
@@ -45,8 +45,8 @@ type CreateAccommodationOutput struct {
 }
 
 type GetAccommodations struct {
-	Id          string             `json:"id"`
-	ManagerId   string             `json:"manager_id"`
+	ID          string             `json:"id"`
+	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
 	City        string             `json:"city"`
 	Country     string             `json:"country"`
@@ -61,7 +61,7 @@ type GetAccommodations struct {
 }
 
 type UpdateAccommodationInput struct {
-	Id          string   `json:"id" validate:"required"`
+	ID          string   `json:"id" validate:"required"`
 	Name        string   `json:"name"`
 	Country     string   `json:"country"`
 	City        string   `json:"city"`
@@ -74,8 +74,8 @@ type UpdateAccommodationInput struct {
 }
 
 type UpdateAccommodationOutput struct {
-	Id          string             `json:"id"`
-	ManagerId   string             `json:"manager_id"`
+	ID          string             `json:"id"`
+	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
 	City        string             `json:"city"`
 	Country     string             `json:"country"`
@@ -90,7 +90,7 @@ type UpdateAccommodationOutput struct {
 }
 
 type DeleteAccommodationInput struct {
-	Id string `json:"id" validate:"required"`
+	ID string `json:"id" validate:"required"`
 }
 
 // get accommodation by city
@@ -100,7 +100,7 @@ type GetAccommodationByCityInput struct {
 
 // get accommodation by city
 type GetAccommodationsByCity struct {
-	Id        string   `json:"id"`
+	ID        string   `json:"id"`
 	Name      string   `json:"name"`
 	City      string   `json:"city"`
 	Country   string   `json:"country"`
@@ -114,12 +114,12 @@ type GetAccommodationsByCity struct {
 // get accommodation by id
 
 type GetAccommodationByIdInput struct {
-	Id string `uri:"id"`
+	ID string `uri:"id"`
 }
 
 type GetAccommodationByIdOutput struct {
-	Id          string             `json:"id"`
-	ManagerId   string             `json:"manager_id"`
+	ID          string             `json:"id"`
+	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
 	City        string             `json:"city"`
 	Country     string             `json:"country"`

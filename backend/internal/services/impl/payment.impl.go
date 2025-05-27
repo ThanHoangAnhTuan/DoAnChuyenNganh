@@ -30,20 +30,20 @@ func (p *PaymentImpl) PostRefund(ctx *gin.Context, in *vo.PostRefundInput) {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	now := time.Now().In(loc)
 
-	vnpRequestId := now.Format("150405")
+	vnpRequestID := now.Format("150405")
 	vnpCreateDate := now.Format("20060102150405")
 	ipAddr := ip.GetClientIP(ctx)
-	vnpOrderInfo := "Hoan tien GD ma:" + in.OrderId
+	vnpOrderInfo := "Hoan tien GD ma:" + in.OrderID
 	vnpTransactionNo := "0"
 
 	// Create data string for signature
 	data := strings.Join([]string{
-		vnpRequestId,
+		vnpRequestID,
 		"2.1.0",
 		"refund",
 		global.Config.Payment.VnpTmnCode,
 		in.TransType,
-		in.OrderId,
+		in.OrderID,
 		strconv.Itoa(in.Amount * 100),
 		vnpTransactionNo,
 		in.TransDate,
@@ -56,12 +56,12 @@ func (p *PaymentImpl) PostRefund(ctx *gin.Context, in *vo.PostRefundInput) {
 	vnpSecureHash := crypto.CreateHMAC(data, global.Config.Payment.VnpHashSecret)
 
 	dataObj := vo.RefundDataObj{
-		VnpRequestId:       vnpRequestId,
+		VnpRequestID:       vnpRequestID,
 		VnpVersion:         "2.1.0",
 		VnpCommand:         "refund",
 		VnpTmnCode:         global.Config.Payment.VnpTmnCode,
 		VnpTransactionType: in.TransType,
-		VnpTxnRef:          in.OrderId,
+		VnpTxnRef:          in.OrderID,
 		VnpAmount:          in.Amount * 100,
 		VnpTransactionNo:   vnpTransactionNo,
 		VnpCreateBy:        in.User,
@@ -89,19 +89,19 @@ func (p *PaymentImpl) PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput) {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	now := time.Now().In(loc)
 
-	vnpRequestId := now.Format("150405")
+	vnpRequestID := now.Format("150405")
 	vnpCreateDate := now.Format("20060102150405")
 	ipAddr := ip.GetClientIP(ctx)
 
-	vnpOrderInfo := "Truy van GD ma:" + in.OrderId
+	vnpOrderInfo := "Truy van GD ma:" + in.OrderID
 
 	// Create data string for signature
 	data := strings.Join([]string{
-		vnpRequestId,
+		vnpRequestID,
 		"2.1.0",
 		"querydr",
 		global.Config.Payment.VnpTmnCode,
-		in.OrderId,
+		in.OrderID,
 		in.TransDate,
 		vnpCreateDate,
 		ipAddr,
@@ -111,11 +111,11 @@ func (p *PaymentImpl) PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput) {
 	vnpSecureHash := crypto.CreateHMAC(data, global.Config.Payment.VnpHashSecret)
 
 	dataObj := vo.QueryDataObj{
-		VnpRequestId:       vnpRequestId,
+		VnpRequestID:       vnpRequestID,
 		VnpVersion:         "2.1.0",
 		VnpCommand:         "querydr",
 		VnpTmnCode:         global.Config.Payment.VnpTmnCode,
-		VnpTxnRef:          in.OrderId,
+		VnpTxnRef:          in.OrderID,
 		VnpOrderInfo:       vnpOrderInfo,
 		VnpTransactionDate: in.TransDate,
 		VnpCreateDate:      vnpCreateDate,
@@ -147,7 +147,7 @@ func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
 	}
 
 	secureHash := vnpParams["vnp_SecureHash"]
-	orderId := vnpParams["vnp_TxnRef"]
+	orderID := vnpParams["vnp_TxnRef"]
 	rspCode := vnpParams["vnp_ResponseCode"]
 
 	// Remove hash fields for verification
@@ -161,17 +161,17 @@ func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
 
 	// Payment status simulation
 	paymentStatus := "0" // 0: Initial, 1: Success, 2: Failed
-	checkOrderId := true // Check if order exists in database
+	checkOrderID := true // Check if order exists in database
 	checkAmount := true  // Check if amount matches
 
 	if secureHash == signed {
-		if checkOrderId {
+		if checkOrderID {
 			if checkAmount {
 				if paymentStatus == "0" {
 					if rspCode == "00" {
 						// Payment successful
 						// Update payment status to success in database
-						fmt.Printf("Payment successful for order: %s\n", orderId)
+						fmt.Printf("Payment successful for order: %s\n", orderID)
 						ctx.JSON(http.StatusOK, vo.VNPayResponse{
 							RspCode: "00",
 							Message: "Success",
@@ -179,7 +179,7 @@ func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
 					} else {
 						// Payment failed
 						// Update payment status to failed in database
-						fmt.Printf("Payment failed for order: %s\n", orderId)
+						fmt.Printf("Payment failed for order: %s\n", orderID)
 						ctx.JSON(http.StatusOK, vo.VNPayResponse{
 							RspCode: "00",
 							Message: "Success",
@@ -268,7 +268,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	now := time.Now().In(loc)
 
 	createDate := now.Format("20060102150405")
-	orderId := now.Format("02150405")
+	orderID := now.Format("02150405")
 
 	ipAddr := ip.GetClientIP(ctx)
 
@@ -284,8 +284,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		"vnp_TmnCode":    global.Config.Payment.VnpTmnCode,
 		"vnp_Locale":     locale,
 		"vnp_CurrCode":   "VND",
-		"vnp_TxnRef":     orderId,
-		"vnp_OrderInfo":  "Thanh toan cho ma GD:" + orderId,
+		"vnp_TxnRef":     orderID,
+		"vnp_OrderInfo":  "Thanh toan cho ma GD:" + orderID,
 		"vnp_OrderType":  "other",
 		"vnp_Amount":     strconv.Itoa(in.Amount * 100),
 		"vnp_ReturnUrl":  global.Config.Payment.VnpReturnUrl,
@@ -310,8 +310,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	// Build final URL
 	finalURL := global.Config.Payment.VnpUrl + "?" + payment.BuildQueryString(vnpParams, false)
 
-	fmt.Printf("CreatePaymentURL success: %s\n", orderId)
-	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderId))
+	fmt.Printf("CreatePaymentURL success: %s\n", orderID)
+	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderID))
 
 	fmt.Printf("url: %s\n", finalURL)
 

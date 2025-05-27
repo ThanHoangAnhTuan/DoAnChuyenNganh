@@ -7,14 +7,14 @@ type CreateFacilityInput struct {
 	Image *multipart.FileHeader `form:"image" validate:"required"`
 }
 type CreateFacilityOutput struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Image string `json:"image"`
 }
 type GetFacilitiesInput struct {
 }
 type GetFacilitiesOutput struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Image string `json:"image"`
 }

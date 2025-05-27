@@ -20,12 +20,12 @@ type VNPayResponse struct {
 }
 
 type PostQueryDRInput struct {
-	OrderId   string `json:"orderId" form:"orderId"`
+	OrderID   string `json:"orderId" form:"orderId"`
 	TransDate string `json:"transDate" form:"transDate"`
 }
 
 type QueryDataObj struct {
-	VnpRequestId       string `json:"vnp_RequestId"`
+	VnpRequestID       string `json:"vnp_RequestId"`
 	VnpVersion         string `json:"vnp_Version"`
 	VnpCommand         string `json:"vnp_Command"`
 	VnpTmnCode         string `json:"vnp_TmnCode"`
@@ -38,7 +38,7 @@ type QueryDataObj struct {
 }
 
 type PostRefundInput struct {
-	OrderId   string `json:"orderId" form:"orderId"`
+	OrderID   string `json:"orderId" form:"orderId"`
 	TransDate string `json:"transDate" form:"transDate"`
 	Amount    int    `json:"amount" form:"amount"`
 	TransType string `json:"transType" form:"transType"`
@@ -46,7 +46,7 @@ type PostRefundInput struct {
 }
 
 type RefundDataObj struct {
-	VnpRequestId       string `json:"vnp_RequestId"`
+	VnpRequestID       string `json:"vnp_RequestId"`
 	VnpVersion         string `json:"vnp_Version"`
 	VnpCommand         string `json:"vnp_Command"`
 	VnpTmnCode         string `json:"vnp_TmnCode"`

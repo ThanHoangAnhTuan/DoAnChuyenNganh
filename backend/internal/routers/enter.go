@@ -9,6 +9,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/manager"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/order"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/payment"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/review"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/upload"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/user"
 )
@@ -24,6 +25,7 @@ type RouterGroup struct {
 	Facility            facility.FacilityRouterGroup
 	FacilityDetail      facilityDetail.FacilityDetailRouterGroup
 	Payment             payment.PaymentRouterGroup
+	Review              review.ReviewRouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)
