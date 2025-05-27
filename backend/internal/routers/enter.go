@@ -5,6 +5,7 @@ import (
 	accommodationDetail "github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/accommodation_detail"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/admin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/facility"
+	facilityDetail "github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/facility_detail"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/manager"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/order"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/payment"
@@ -21,6 +22,7 @@ type RouterGroup struct {
 	Upload              upload.UploadRouterGroup
 	Order               order.OrderRouterGroup
 	Facility            facility.FacilityRouterGroup
+	FacilityDetail      facilityDetail.FacilityDetailRouterGroup
 	Payment             payment.PaymentRouterGroup
 }
 
