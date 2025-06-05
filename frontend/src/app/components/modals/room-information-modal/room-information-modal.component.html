@@ -1,0 +1,25 @@
+<main>
+    <div class="room-image-container">
+        <p-galleria [value]="roomImages" [(activeIndex)]="activeIndex" [showItemNavigators]="true"
+            [showThumbnails]="true" [numVisible]="5" [circular]="true" [responsiveOptions]="responsiveOptions"
+            [containerStyle]="{ 'max-width': '900px', 'margin': 'auto' }" [showThumbnailNavigators]="false"
+            [thumbnailsPosition]="'bottom'" [showIndicators]="false" [autoPlay]="false" [transitionInterval]="0"
+            styleClass="custom-galleria">
+            <ng-template #item let-item>
+                <div class="image-wrapper">
+                    <img [src]="'http://localhost:8080/uploads/' + item" alt="image" class="main-image" />
+                    <p class="number-image">{{ activeIndex + 1 }}/{{ roomImages.length }}</p>
+                </div>
+            </ng-template>
+
+            <ng-template #thumbnail let-item let-index="index">
+                <img [src]="'http://localhost:8080/uploads/' + item" [alt]="'Thumbnail ' + index"
+                    class="thumbnail-image" />
+            </ng-template>
+        </p-galleria>
+    </div>
+
+    <div class="room-information-container">
+        {{ roomName}}
+    </div>
+</main>

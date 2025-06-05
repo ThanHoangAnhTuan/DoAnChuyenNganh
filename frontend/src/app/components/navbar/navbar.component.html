@@ -3,7 +3,8 @@
         <a class="logo" routerLink="/">Booking.com</a>
     </div>
     <div class="navbar-right">
-            <div
+        @if (isLoggedIn) {
+        <div
             class="user-info"
             tuiChevron
             tuiDropdownOpen
@@ -11,11 +12,15 @@
         >
             <img
                 class="avatar"
-                src="images/city_pictures/OIP.png"
+                [src]="userAvatar || 'images/city_pictures/OIP.png'"
                 alt="Avatar"
             />
-            <a class="user-name">Vinh</a>
+            <a class="user-name">{{ userName || "User" }}</a>
         </div>
+        } @else {
+        <button class="register" [routerLink]="['/register']">Register</button>
+        <button class="login" [routerLink]="['/login']">Login</button>
+        }
     </div>
 </nav>
 
@@ -32,7 +37,6 @@
                 [routerLink]="item.routerLink"
             >
                 <div class="menu-item-content">
-                    <!-- Thêm icon vào đây -->
                     <tui-icon
                         [icon]="item.icon || 'tuiIconHelp'"
                         [style.color]="item.icon || 'inherit'"
@@ -42,5 +46,13 @@
                 </div>
             </a>
         </tui-opt-group>
+        @if (isLoggedIn) {
+        <a role="menuitem" tuiOption (click)="logout()">
+            <div class="menu-item-content">
+                <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>
+                Logout
+            </div>
+        </a>
+        }
     </tui-data-list>
 </ng-template>

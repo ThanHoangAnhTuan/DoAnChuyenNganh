@@ -10,13 +10,8 @@
                 @for (item of customCheckboxes;track item.id; let first =
                 $first){
                 <li class="wrapper">
-                    <input
-                        tuiCheckbox
-                        type="checkbox"
-                        [ngModel]="item.checked"
-                        (ngModelChange)="onCheckboxChange(item, $event)"
-                        [size]="getSize(first)"
-                    />
+                    <input tuiCheckbox type="checkbox" [ngModel]="item.checked"
+                        (ngModelChange)="onCheckboxChange(item, $event)" [size]="getSize(first)" />
                     {{ item.label }}
                 </li>
                 }
@@ -43,10 +38,7 @@
         <div class="hotel-card">
             <div class="hotel-image">
                 @for (image of hotel.images; track image){
-                <img
-                    [src]="'http://localhost:8080/uploads/' + image"
-                    [alt]="hotel.name"
-                />
+                <img [src]="'http://localhost:8080/uploads/' + image" [alt]="hotel.name" />
                 }
                 <div class="featured-badge">
                     <tui-icon icon="@tui.heart"></tui-icon>

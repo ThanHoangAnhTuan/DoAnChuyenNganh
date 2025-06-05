@@ -52,6 +52,42 @@
     margin-right: 10px;
 }
 
+.login, .register {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+  }
+  
+  .login, .register {
+    background-color: #4CAF50; /* Màu xanh lá */
+    color: white;
+  }
+
+  .login:hover, .register:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+  
+  .logout {
+    background-color: #f44336; /* Màu đỏ */
+    color: white;
+  }
+  
+  .logout:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+  }
+  
+  /* Hiệu ứng khi click */
+  .login:active, .logout:active {
+    transform: translateY(0);
+  }
+
 //Tablet view
 @media screen and (max-width: 1024px) and (min-width: 768px) {
     .navbar {
