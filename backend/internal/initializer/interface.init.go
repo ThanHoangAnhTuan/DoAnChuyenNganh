@@ -21,4 +21,5 @@ func InitInterface() {
 	services.InitPayment(impl.NewPaymentImpl(queries, db))
 	services.InitFacilityDetail(impl.NewFacilityDetailImpl(queries))
 	services.InitReview(impl.NewReviewImpl(queries))
+	services.InitStats(impl.NewStatsImpl(queries))
 }

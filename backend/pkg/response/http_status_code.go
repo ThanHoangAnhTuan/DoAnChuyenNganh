@@ -133,6 +133,10 @@ const (
 	ErrCodeCreateReviewSuccess            = 180002
 	ErrCodeGetReviewByAccommodationFailed = 180003
 	ErrCodeGetReviewsSuccess              = 180004
+
+	// stats
+	ErrCodeGetMonthlyEarningSuccess = 190001
+	ErrCodeGetMonthlyEarningFailed  = 190002
 )
 
 var message = map[int]string{
@@ -267,4 +271,8 @@ var message = map[int]string{
 	ErrCodeCreateReviewSuccess:            "Create review successfully",
 	ErrCodeGetReviewByAccommodationFailed: "Get reviews by accommodation failed",
 	ErrCodeGetReviewsSuccess:              "Get reviews successfully",
+
+	// stats
+	ErrCodeGetMonthlyEarningSuccess: "Get monthly earning successfully",
+	ErrCodeGetMonthlyEarningFailed:  "Get monthly earning failed",
 }

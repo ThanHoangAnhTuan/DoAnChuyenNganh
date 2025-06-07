@@ -99,7 +99,7 @@ type GetAccommodationByCityInput struct {
 }
 
 // get accommodation by city
-type GetAccommodationsByCity struct {
+type GetAccommodationsByCityOutput struct {
 	ID        string   `json:"id"`
 	Name      string   `json:"name"`
 	City      string   `json:"city"`

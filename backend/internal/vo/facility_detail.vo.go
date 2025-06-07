@@ -1,7 +1,7 @@
 package vo
 
 type CreateFacilityDetailInput struct {
-	Name string `form:"name" validate:"required"`
+	Name string `json:"name" validate:"required"`
 }
 type CreateFacilityDetailOutput struct {
 	ID   string `json:"id"`

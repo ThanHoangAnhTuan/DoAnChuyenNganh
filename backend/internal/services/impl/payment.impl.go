@@ -29,7 +29,6 @@ type PaymentImpl struct {
 	db   *sql.DB
 }
 
-// TODO: admin used to refund user
 func (p *PaymentImpl) PostRefund(ctx *gin.Context, in *vo.PostRefundInput) {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	now := time.Now().In(loc)
@@ -88,7 +87,6 @@ func (p *PaymentImpl) PostRefund(ctx *gin.Context, in *vo.PostRefundInput) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Refund request sent successfully"})
 }
 
-// TODO: manager used to look up orders
 func (p *PaymentImpl) PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput) {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	now := time.Now().In(loc)
@@ -139,7 +137,6 @@ func (p *PaymentImpl) PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Query sent successfully"})
 }
 
-// TODO: after user pays, update database
 func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
 	fmt.Print("VNPayIPN")
 	global.Logger.Info("VNPayIPN")
@@ -218,7 +215,6 @@ func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
 	}
 }
 
-// TODO: after user pays, redirect to frontend to render info to user
 func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) {
 	vnpParams := make(vo.VNPayParams)
 
@@ -306,7 +302,6 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	return response.ErrCodeSuccessfully, nil
 }
 
-// TODO: create payment url to redirect to VNPay
 func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURLInput) (codeStatus int, err error) {
 	// TODO: get userId from context
 	userID, ok := utils.GetUserIDFromGin(ctx)

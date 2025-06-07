@@ -85,8 +85,8 @@ func (t *AccommodationImpl) GetAccommodationById(ctx context.Context, in *vo.Get
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.GetAccommodationByCityInput) (codeStatus int, out []*vo.GetAccommodationsByCity, err error) {
-	out = []*vo.GetAccommodationsByCity{}
+func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.GetAccommodationByCityInput) (codeStatus int, out []*vo.GetAccommodationsByCityOutput, err error) {
+	out = []*vo.GetAccommodationsByCityOutput{}
 	accommodations, err := t.sqlc.GetAccommodationsByCity(ctx, in.City)
 	if err != nil {
 		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
@@ -104,7 +104,7 @@ func (t *AccommodationImpl) GetAccommodationByCity(ctx context.Context, in *vo.G
 			imagesName = append(imagesName, img.Image)
 		}
 
-		out = append(out, &vo.GetAccommodationsByCity{
+		out = append(out, &vo.GetAccommodationsByCityOutput{
 			ID:        accommodation.ID,
 			Name:      accommodation.Name,
 			Country:   accommodation.Country,

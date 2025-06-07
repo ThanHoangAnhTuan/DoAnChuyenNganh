@@ -56,6 +56,7 @@ func (c *CPayment) VNPayIPN(ctx *gin.Context) {
 func (c *CPayment) PostQueryDR(ctx *gin.Context) {
 
 }
+
 func (c *CPayment) PostRefund(ctx *gin.Context) {
 
 }
