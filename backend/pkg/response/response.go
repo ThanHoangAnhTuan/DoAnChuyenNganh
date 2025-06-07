@@ -4,13 +4,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-	Error   interface{} `json:"error,omitempty"`
+	Code       int            `json:"code"`
+	Message    string         `json:"message"`
+	Data       interface{}    `json:"data"`
+	Error      interface{}    `json:"error,omitempty"`
+	Pagination *vo.Pagination `json:"pagination,omitempty"`
 }
 
 func SuccessResponse(c *gin.Context, code int, data interface{}) {
@@ -18,6 +20,15 @@ func SuccessResponse(c *gin.Context, code int, data interface{}) {
 		Code:    code,
 		Message: message[code],
 		Data:    data,
+	})
+}
+
+func SuccessResponseWithPagination(c *gin.Context, code int, data interface{}, pagination *vo.Pagination) {
+	c.JSON(http.StatusOK, Response{
+		Code:       code,
+		Message:    message[code],
+		Data:       data,
+		Pagination: pagination,
 	})
 }
 

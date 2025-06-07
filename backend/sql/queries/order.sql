@@ -11,10 +11,20 @@ INSERT INTO
         `checkout_date`,
         `created_at`,
         `updated_at`
-
     )
 VALUES
     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+-- name: CheckUserBookedOrder :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_order`
+        WHERE
+            `user_id` = ? and `id` = ? and `order_status` = `completed`
+    );
 
 -- name: GetOrdersByUser :many
 SELECT

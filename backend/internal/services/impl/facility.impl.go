@@ -10,6 +10,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
 )
 
@@ -20,15 +21,10 @@ type FacilityImpl struct {
 func (f *FacilityImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInput) (codeStatus int, out *vo.CreateFacilityOutput, err error) {
 	out = &vo.CreateFacilityOutput{}
 
-	// TODO: get user id in gin.Context
-	val, exists := ctx.Get("userId")
-	if !exists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
-	}
-
-	userID, ok := val.(string)
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
 
 	// TODO: check user is admin
@@ -67,7 +63,7 @@ func (f *FacilityImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInp
 		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
-	out.Id = facility.ID
+	out.ID = facility.ID
 	out.Image = facility.Image
 	out.Name = facility.Name
 
@@ -103,7 +99,7 @@ func (f *FacilityImpl) GetFacilities(ctx context.Context) (codeStatus int, out [
 
 	for _, facility := range facilities {
 		out = append(out, &vo.GetFacilitiesOutput{
-			Id:    facility.ID,
+			ID:    facility.ID,
 			Name:  facility.Name,
 			Image: facility.Image,
 		})

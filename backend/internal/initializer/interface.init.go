@@ -19,4 +19,7 @@ func InitInterface() {
 	services.InitOrder(impl.NewOrderImpl(queries, db))
 	services.InitFacility(impl.NewFacilityImpl(queries))
 	services.InitPayment(impl.NewPaymentImpl(queries, db))
+	services.InitFacilityDetail(impl.NewFacilityDetailImpl(queries))
+	services.InitReview(impl.NewReviewImpl(queries))
+	services.InitStats(impl.NewStatsImpl(queries))
 }

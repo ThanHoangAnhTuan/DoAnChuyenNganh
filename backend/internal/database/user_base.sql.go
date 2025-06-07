@@ -119,6 +119,23 @@ func (q *Queries) GetUserBaseByAccount(ctx context.Context, account string) (Get
 	return i, err
 }
 
+const getUserBaseByIdAndReturnAccount = `-- name: GetUserBaseByIdAndReturnAccount :one
+SELECT
+    ` + "`" + `account` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_base` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+func (q *Queries) GetUserBaseByIdAndReturnAccount(ctx context.Context, id string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getUserBaseByIdAndReturnAccount, id)
+	var account string
+	err := row.Scan(&account)
+	return account, err
+}
+
 const loginUserBase = `-- name: LoginUserBase :exec
 UPDATE ` + "`" + `ecommerce_go_user_base` + "`" + `
 SET

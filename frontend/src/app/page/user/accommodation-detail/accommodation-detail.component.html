@@ -23,8 +23,8 @@
     </div>
 
     <div class="image-review-map-container">
-        <div class="accommodation-image-container">
-            <div class="accommodation-image" *ngFor="let image of accommodation.images.slice(0, 8); let i = index">
+        <div class="accommodation-image-container" *ngIf="accommodation">
+            <div class="accommodation-image" *ngFor="let image of accommodation.images?.slice(0, 8); let i = index">
                 <img [src]="'http://localhost:8080/uploads/' + image" alt="accommodation image {{ i + 1 }}"
                     class="accommodation-image-item" (click)="openModal()" />
             </div>
@@ -86,7 +86,7 @@
             <div class="facilities-container">
                 <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
 
-                <div class="facilities-content">
+                <div class="facilities-content" *ngIf="accommodation">
                     <div *ngFor="let facility of accommodation?.facilities">
                         <div class="facility-item">
                             <img [src]="'http://localhost:8080/uploads/' + facility.image" alt="facility.name icon"
@@ -132,7 +132,7 @@
                         </ng-container>
                     </div>
 
-                    <div class="some-room-facilities-container">
+                    <div class="some-room-facilities-container" *ngIf="accommodation">
                         <div class="room-size-container">
                             <img src="icons/accommodation-detail-icon/size-icon.svg" alt="room size icon"
                                 class="room-size-icon">
@@ -204,5 +204,89 @@
                 </div>
             </ng-container>
         </table>
+    </div>
+
+    <div class="review-container">
+        <p class="review-title">Đánh giá của khách</p>
+
+        <div class="total-score-container">
+            <p class="total-score">{{ avarageRating }}</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
+            <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+            <p style="font-size: 16px;">|</p>
+            <p class="total-review">{{ reviews.length }} đánh giá</p>
+            <p class="read-all-reviews" (click)="toggleOpenReviewListModal()">Đọc tất cả đánh giá</p>
+        </div>
+
+        <p class="user-like-title">Khách lưu trú ở đây thích điều gì?</p>
+
+        <div class="review-content-container">
+            <div class="review-item" *ngFor="let review of reviews.slice(0,3)">
+                <div class="review-user-info">
+                    <img [src]="review.avatar" alt="user avatar" class="user-avatar">
+                    <p class="user-name">{{ review.author }}</p>
+                </div>
+
+                <div class="review-content">
+                    <p class="review-text">"{{ review.content }}"</p>
+                    <p class="more" (click)="toggleOpenReviewModal(review)">Tìm hiểu thêm</p>
+
+                    <ng-container *ngIf="isReviewModalOpen">
+                        <div class="outside-review-modal" (click)="toggleCloseReviewModal()">
+                            <div class="review-modal" (click)="$event.stopPropagation()">
+                                <div class="review-modal-header">
+                                    <div class="close-button" (click)="toggleCloseReviewModal()">
+                                        <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close icon"
+                                            class="close-icon">
+                                    </div>
+                                </div>
+
+                                <div class="review-modal-content">
+                                    <div class="review-user-info">
+                                        <img [src]="review.avatar" alt="user avatar" class="user-avatar">
+                                        <p class="user-name">{{ review.author }}</p>
+                                    </div>
+
+                                    <div class="review-content">
+                                        <p class="review-date">Ngày đánh giá: {{ review.created_at | date: 'yyyy-MM-dd'
+                                            }}</p>
+                                        <p class="review-title">{{ review.title }}</p>
+                                        <p class="review-text">"{{ review.content }}"</p>
+                                    </div>
+
+                                    <div class="review-score">
+                                        {{ review.rating }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="isReviewListModalOpen">
+            <div class="review-list-modal-outside" (click)="toggleCloseReviewListModal()">
+                <div class="review-list-modal-container" (click)="$event.stopPropagation()"
+                    [class.show]="isReviewListModalOpen">
+                    <div class="review-list-modal-header">
+                        <p class="review-list-title">Đánh giá của khách về {{ accommodation.name }}</p>
+
+                        <div class="close-button" (click)="toggleCloseReviewListModal()">
+                            <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close icon"
+                                class="close-icon">
+
+                        </div>
+                    </div>
+
+                    <app-review-list-modal [avarageRating]="avarageRating" [reviews]="reviews"
+                        [accommodationId]="accommodation.id" style="width: 100%; overflow-y: auto;" />
+                </div>
+            </div>
+        </ng-container>
     </div>
 </main>

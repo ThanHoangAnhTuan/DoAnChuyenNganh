@@ -28,7 +28,7 @@ type UserLoginImpl struct {
 }
 
 func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error) {
-	// !. check user base exists
+	// TODO: check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, in.VerifyKey)
 	if err != nil {
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check user already exists: %s", err)
@@ -38,7 +38,7 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("user already exists")
 	}
 
-	// !. check user verified otp
+	// TODO: check user verified otp
 	isVerified, err := u.sqlc.CheckUserVerifiedOTP(ctx, in.VerifyKey)
 	if err != nil {
 		return response.ErrCodeOTPAlreadyVerified, fmt.Errorf("error for otp verified: %s", err)
@@ -48,12 +48,12 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		return response.ErrCodeOTPAlreadyVerified, fmt.Errorf("error for otp verified")
 	}
 
-	// !. check user spam / rate limiting by ip
+	// TODO: check user spam / rate limiting by ip
 
-	// !. hash email
+	// TODO: hash email
 	hashKey := crypto.GetHash(strings.ToLower(in.VerifyKey))
 
-	// !. check user already has active otp
+	// TODO: check user already has active otp
 	userKey := utils.GetUserKey(hashKey)
 	otpFound, err := global.Redis.Get(ctx, userKey).Result()
 	switch {
@@ -66,22 +66,22 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		return response.ErrCodeOTPAlreadyExists, fmt.Errorf("otp already exists")
 	}
 
-	// !. generate otp
+	// TODO: generate otp
 	otpNew := random.GenerateOTP()
 	if in.VerifyPurpose == "TEST_USER" {
 		otpNew = 123456
 	}
 
-	// !. save otp in redis
+	// TODO: save otp in redis
 	err = global.Redis.SetEx(ctx, userKey, otpNew, time.Duration(consts.TIME_OTP_REGISTER*time.Minute)).Err()
 	if err != nil {
 		return response.ErrCodeSaveDataFailed, fmt.Errorf("save otp in redis failed: %s", err)
 	}
 
-	// !. send otp to verify type (email, sms)
+	// TODO: send otp to verify type (email, sms)
 	switch in.VerifyType {
 	case consts.EMAIL:
-		// !. Send to kafka -> send email service ->
+		// TODO: Send to kafka -> send email service ->
 		// body := make(map[string]interface{})
 		// body["otp"] = otpNew
 		// body["email"] = in.VerifyKey
@@ -99,7 +99,7 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		// 	return response.ErrCodeSendEmailOTP, err
 		// }
 
-		// !. send to email
+		// TODO: send to email
 		err = sendto.SendEmailOTP([]string{in.VerifyKey}, "otp_auth.html", map[string]interface{}{
 			"otp": otpNew,
 		})
@@ -108,7 +108,7 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		}
 	}
 
-	// !. save otp to mysql
+	// TODO: save otp to mysql
 	id := uuid.New().String()
 	err = u.sqlc.CreateUserVerify(ctx, database.CreateUserVerifyParams{
 		ID:        id,
@@ -124,28 +124,28 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 		return response.ErrCodeSaveDataFailed, fmt.Errorf("save otp to database failed: %s", err)
 	}
 
-	// !. return
+	// TODO: return
 	return response.ErrCodeRegisterSuccess, nil
 }
 
 func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error) {
 	out = &vo.VerifyOTPOutput{}
 
-	// !. hash email
+	// TODO: hash email
 	hashKey := crypto.GetHash(strings.ToLower(in.VerifyKey))
 
-	// !. check otp already exists in redis
+	// TODO: check otp already exists in redis
 	otpFound, err := global.Redis.Get(ctx, utils.GetUserKey(hashKey)).Result()
 	if err != nil {
 		return response.ErrCodeOTPNotExists, nil, fmt.Errorf("error for check otp in redis: %s", err)
 	}
 
-	// !. check otp match
+	// TODO: check otp match
 	if in.VerifyCode != otpFound {
 		return response.ErrCodeOTPNotMatch, nil, fmt.Errorf("OTP not match")
 	}
 
-	// !. if match, get info otp
+	// TODO: if match, get info otp
 	infoOTP, err := u.sqlc.GetUserUnverify(ctx, hashKey)
 	if err != nil {
 		return response.ErrCodeGetInfoOTPFailed, nil, fmt.Errorf("get info otp failed: %s", err)
@@ -155,7 +155,7 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 		return response.ErrCodeOTPAlreadyVerified, nil, fmt.Errorf("otp is verified")
 	}
 
-	// !. update user verify status and delete otp
+	// TODO: update user verify status and delete otp
 	// UpdateUserVerifyStatus
 	err = u.sqlc.UpdateUserVerifyStatus(ctx, database.UpdateUserVerifyStatusParams{
 		UpdatedAt: utiltime.GetTimeNow(),
@@ -166,23 +166,23 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 		return response.ErrCodeUpdateUserVerifyFailed, nil, fmt.Errorf("update user verify failed: %s", err)
 	}
 
-	// !. return
+	// TODO: return
 	out.Token = infoOTP.KeyHash
 	return response.ErrCodeVerifyOTPSuccess, out, nil
 }
 
 func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error) {
-	// !. get info otp by key hash
+	// TODO: get info otp by key hash
 	infoOTP, err := u.sqlc.GetUserVerified(ctx, in.Token)
 	if err != nil {
 		return response.ErrCodeGetInfoOTPFailed, fmt.Errorf("get info otp failed: %s", err)
 	}
-	// !. check otp is verified
+	// TODO: check otp is verified
 	if infoOTP.IsVerified == 0 {
 		return response.ErrCodeOTPNotVerified, fmt.Errorf("user OTP not verified")
 	}
 
-	// !. check user base exists
+	// TODO: check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, infoOTP.VerifyKey)
 	if err != nil {
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check user already exists: %s", err)
@@ -192,7 +192,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("user already exists")
 	}
 
-	// !. update user base
+	// TODO: update user base
 	userBase := database.AddUserBaseParams{}
 	userBase.ID = uuid.New().String()
 	userBase.Account = infoOTP.VerifyKey
@@ -214,7 +214,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 		return response.ErrCodeSaveDataFailed, fmt.Errorf("save user base failed: %s", err)
 	}
 
-	// !. create user info
+	// TODO: create user info
 	now = utiltime.GetTimeNow()
 	err = u.sqlc.CreateUserInfo(ctx, database.CreateUserInfoParams{
 		ID:               uuid.New().String(),
@@ -235,30 +235,30 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
 	out = &vo.LoginOutput{}
 
-	// !. get user info
+	// TODO: get user info
 	userBase, err := u.sqlc.GetUserBaseByAccount(ctx, in.UserAccount)
 	if err != nil {
 		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
-	// !. check password match
+	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userBase.Password) {
 		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
 	}
 
-	// !. check two-factor authentication
+	// TODO: check two-factor authentication
 
-	// !. update login
+	// TODO: update login
 	go u.sqlc.LoginUserBase(ctx, database.LoginUserBaseParams{
 		LoginIp:   "",
 		Account:   in.UserAccount,
 		LoginTime: utiltime.GetTimeNow(),
 	})
 
-	// !. create uuid user
+	// TODO: create uuid user
 	subToken := utils.GenerateCliTokenUUID(userBase.ID)
 
-	// !. get user info
+	// TODO: get user info
 	infoUser, err := u.sqlc.GetUserInfo(ctx, userBase.Account)
 	if err != nil {
 		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
@@ -269,7 +269,7 @@ func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeStatu
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
 	}
 
-	// !. give info user json to redis
+	// TODO: give info user json to redis
 	err = global.Redis.SetEx(ctx, subToken, infoUserJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save user info to redis failed: %s", err)

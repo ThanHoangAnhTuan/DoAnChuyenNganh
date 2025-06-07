@@ -51,7 +51,7 @@ func (c *CFacility) CreateFacility(ctx *gin.Context) {
 	}
 
 	fmt.Printf("CreateFacility success: %s\n", data)
-	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.Id)))
+	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 

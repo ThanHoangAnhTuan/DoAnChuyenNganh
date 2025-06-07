@@ -6,8 +6,8 @@ import (
 )
 
 type IPayment interface {
-	CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURLInput)
-	VNPayReturn(ctx *gin.Context)
+	CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURLInput) (codeStatus int, err error)
+	VNPayReturn(ctx *gin.Context) (codeStatus int, err error)
 	VNPayIPN(ctx *gin.Context)
 	PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput)
 	PostRefund(ctx *gin.Context, in *vo.PostRefundInput)

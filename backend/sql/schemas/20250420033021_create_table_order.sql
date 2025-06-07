@@ -7,8 +7,10 @@ CREATE TABLE
         `final_total` INT UNSIGNED NOT NULL COMMENT 'final total',
         -- `original_total` DECIMAL(10, 2) NOT NULL COMMENT 'original total',
         `order_status` ENUM (
-            'confirmed',
-            'active',
+            'pending_payment',
+            'payment_failed',
+            'payment_success',
+            'checked_in',
             'completed',
             'canceled',
             'refunded'

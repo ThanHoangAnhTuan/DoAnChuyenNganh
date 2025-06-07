@@ -11,6 +11,17 @@ INSERT INTO
 VALUES
     (?, ?, ?, ?, ?, ?);
 
+-- name: GetNameAndImageUserInfo :one
+SELECT
+    `user_name`,
+    `image`
+FROM
+    `ecommerce_go_user_info`
+WHERE
+    `account` = ?
+LIMIT
+    1;
+
 -- name: GetUserInfo :one
 SELECT
     `id`,

@@ -14,6 +14,7 @@ const (
 	ErrCodeValidator              = 20010
 	ErrCodeConvertISOToUnixFailed = 200011
 	ErrCodeConvertUnixToISOFailed = 200012
+	ErrCodeSuccessfully           = 200013
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -116,13 +117,26 @@ const (
 	ErrCodeCommitTransactionFailed = 150002
 
 	// order
-	ErrCodeCreateOrderDetailFailed = 160001
-	ErrCodeCreateOrderFailed       = 160002
-	ErrCodeCreatePaymentFailed     = 160003
-	ErrCodeCreateOrderSuccess      = 160004
+	ErrCodeCreateOrderDetailFailed  = 160001
+	ErrCodeCreateOrderFailed        = 160002
+	ErrCodeCreatePaymentFailed      = 160003
+	ErrCodeCreateOrderSuccess       = 160004
+	ErrCodeGetOrderFailed           = 160005
+	ErrCodeGetOrderByUserIDNotFound = 160006
+	ErrCodeUpdateOrderStatusFailed  = 160007
 
 	// payment
-	ErrCodeCreatePaymentURLSuccess = 1700011
+	ErrCodeCreatePaymentURLSuccess = 170001
+
+	// review
+	ErrCodeCreateReviewFailed             = 180001
+	ErrCodeCreateReviewSuccess            = 180002
+	ErrCodeGetReviewByAccommodationFailed = 180003
+	ErrCodeGetReviewsSuccess              = 180004
+
+	// stats
+	ErrCodeGetMonthlyEarningSuccess = 190001
+	ErrCodeGetMonthlyEarningFailed  = 190002
 )
 
 var message = map[int]string{
@@ -139,6 +153,7 @@ var message = map[int]string{
 	ErrCodeValidator:              "Validator error",
 	ErrCodeConvertISOToUnixFailed: "Convert ISO to Unix failed",
 	ErrCodeConvertUnixToISOFailed: "Convert Unix to ISO failed",
+	ErrCodeSuccessfully:           "Success",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",
@@ -240,11 +255,24 @@ var message = map[int]string{
 	ErrCodeCommitTransactionFailed: "Commit transaction failed",
 
 	// order vs order detail
-	ErrCodeCreateOrderDetailFailed: "Create order detail failed",
-	ErrCodeCreateOrderFailed:       "Create order failed",
-	ErrCodeCreatePaymentFailed:     "Create payment failed",
-	ErrCodeCreateOrderSuccess:      "Create order successfully",
+	ErrCodeCreateOrderDetailFailed:  "Create order detail failed",
+	ErrCodeCreateOrderFailed:        "Create order failed",
+	ErrCodeCreateOrderSuccess:       "Create order successfully",
+	ErrCodeGetOrderFailed:           "Get order failed",
+	ErrCodeGetOrderByUserIDNotFound: "Get order by user id not found",
+	ErrCodeUpdateOrderStatusFailed:  "Update order status failed",
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",
+	ErrCodeCreatePaymentFailed:     "Create payment failed",
+
+	// review
+	ErrCodeCreateReviewFailed:             "Create review failed",
+	ErrCodeCreateReviewSuccess:            "Create review successfully",
+	ErrCodeGetReviewByAccommodationFailed: "Get reviews by accommodation failed",
+	ErrCodeGetReviewsSuccess:              "Get reviews successfully",
+
+	// stats
+	ErrCodeGetMonthlyEarningSuccess: "Get monthly earning successfully",
+	ErrCodeGetMonthlyEarningFailed:  "Get monthly earning failed",
 }

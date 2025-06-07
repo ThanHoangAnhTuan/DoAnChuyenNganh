@@ -25,26 +25,26 @@ type AdminLoginImpl struct {
 func (m *AdminLoginImpl) Login(ctx context.Context, in *vo.AdminLoginInput) (codeStatus int, out *vo.AdminLoginOutput, err error) {
 	out = &vo.AdminLoginOutput{}
 
-	// !. get admin info
+	// TODO: get admin info
 	userAdmin, err := m.sqlc.GetUserAdmin(ctx, in.UserAccount)
 	if err != nil {
 		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
-	// !. check password match
+	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userAdmin.Password) {
 		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
 	}
 
-	// !. check two-factor authentication
+	// TODO: check two-factor authentication
 
-	// !. update login
+	// TODO: update login
 	go m.sqlc.UpdateUserAdminLogin(ctx, database.UpdateUserAdminLoginParams{
 		LoginTime: utiltime.GetTimeNow(),
 		Account:   in.UserAccount,
 	})
 
-	// !. create uuid user
+	// TODO: create uuid user
 	subToken := utils.GenerateCliTokenUUID(userAdmin.ID)
 
 	userAdminInfor := vo.AdminInfor{
@@ -57,7 +57,7 @@ func (m *AdminLoginImpl) Login(ctx context.Context, in *vo.AdminLoginInput) (cod
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
 	}
 
-	// !. save admin info to redis
+	// TODO: save admin info to redis
 	err = global.Redis.SetEx(ctx, subToken, userAdminInforJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save admin info to redis failed: %s", err)
@@ -75,7 +75,7 @@ func (m *AdminLoginImpl) Login(ctx context.Context, in *vo.AdminLoginInput) (cod
 }
 
 func (m *AdminLoginImpl) Register(ctx context.Context, in *vo.AdminRegisterInput) (codeStatus int, err error) {
-	// !. check email exists in user admin
+	// TODO: check email exists in user admin
 	adminFound, err := m.sqlc.CheckUserAdminExistsByEmail(ctx, in.UserAccount)
 	if err != nil {
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check admin already exists: %s", err)
@@ -85,9 +85,9 @@ func (m *AdminLoginImpl) Register(ctx context.Context, in *vo.AdminRegisterInput
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("admin already exists")
 	}
 
-	// !. check user spam / rate limiting by ip
+	// TODO: check user spam / rate limiting by ip
 
-	// !. create admin
+	// TODO: create admin
 	id := uuid.New().String()
 	now := utiltime.GetTimeNow()
 	hashPassword, err := crypto.HashPassword(in.UserPassword)

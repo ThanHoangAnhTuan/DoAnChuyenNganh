@@ -24,7 +24,7 @@ func (i *UploadImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeSta
 	if in.IsDetail {
 
 		// TODO: Check accommodation detail exists
-		isExist, err := i.sqlc.CheckAccommodationDetailExists(ctx, in.Id)
+		isExist, err := i.sqlc.CheckAccommodationDetailExists(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, imagesPath, fmt.Errorf("get accommodation detail failed: %s", err)
 		}
@@ -34,7 +34,7 @@ func (i *UploadImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeSta
 		}
 
 		// TODO: get images
-		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.Id)
+		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailImagesFailed, imagesPath, fmt.Errorf("get images of accommodation detail failed: %s", err)
 		}
@@ -47,7 +47,7 @@ func (i *UploadImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeSta
 
 	} else {
 		// TODO: Check accommodation exists
-		isExist, err := i.sqlc.CheckAccommodationExists(ctx, in.Id)
+		isExist, err := i.sqlc.CheckAccommodationExists(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationFailed, imagesPath, fmt.Errorf("get accommodation failed: %s", err)
 		}
@@ -57,7 +57,7 @@ func (i *UploadImpl) GetImages(ctx *gin.Context, in *vo.GetImagesInput) (codeSta
 		}
 
 		// TODO: get images
-		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.Id)
+		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationImagesFailed, imagesPath, fmt.Errorf("get images of accommodation  failed: %s", err)
 		}
@@ -75,11 +75,9 @@ func (i *UploadImpl) DeleteImage(ctx *gin.Context, fileName string) (err error) 
 }
 
 func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error) {
-	fmt.Printf("UploadImages: %v\n", in)
-
 	// TODO: check accommodation exists in db
 	if !in.IsDetail {
-		isExists, err := i.sqlc.CheckAccommodationExists(ctx, in.Id)
+		isExists, err := i.sqlc.CheckAccommodationExists(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
 		}
@@ -88,7 +86,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 		}
 
 		// TODO: Get all image of accommodation
-		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.Id)
+		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
@@ -105,8 +103,6 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 						break
 					}
 				}
-				fmt.Printf("image: %v\n", accommodationImage.Image)
-				fmt.Printf("is_deleted: %v\n", is_deleted)
 
 				if !is_deleted {
 					err := i.sqlc.DeleteAccommodationImage(ctx, accommodationImage.Image)
@@ -135,7 +131,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 				now := utiltime.GetTimeNow()
 				err := i.sqlc.UpdateAccommodationImages(ctx, database.UpdateAccommodationImagesParams{
 					ID:              id,
-					AccommodationID: in.Id,
+					AccommodationID: in.ID,
 					Image:           image,
 					CreatedAt:       now,
 					UpdatedAt:       now,
@@ -147,7 +143,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 		}
 
 		// TODO: Get all image
-		accommodationImages, err = i.sqlc.GetAccommodationImages(ctx, in.Id)
+		accommodationImages, err = i.sqlc.GetAccommodationImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
@@ -157,7 +153,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 		}
 
 	} else {
-		isExists, err := i.sqlc.CheckAccommodationDetailExists(ctx, in.Id)
+		isExists, err := i.sqlc.CheckAccommodationDetailExists(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, nil, fmt.Errorf("get accommodation detail failed: %s", err)
 		}
@@ -166,7 +162,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 		}
 
 		// TODO: Get all image of accommodation detail
-		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.Id)
+		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get images of accommodation detail failed: %s", err)
 		}
@@ -210,7 +206,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 			now := utiltime.GetTimeNow()
 			err := i.sqlc.UpdateAccommodationDetailImages(ctx, database.UpdateAccommodationDetailImagesParams{
 				ID:                    id,
-				AccommodationDetailID: in.Id,
+				AccommodationDetailID: in.ID,
 				Image:                 image,
 				CreatedAt:             now,
 				UpdatedAt:             now,
@@ -221,7 +217,7 @@ func (i *UploadImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeSt
 		}
 
 		// TODO: Get all image
-		accommodationDetailImages, err = i.sqlc.GetAccommodationDetailImages(ctx, in.Id)
+		accommodationDetailImages, err = i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get images of accommodation detail failed: %s", err)
 		}

@@ -56,11 +56,13 @@ func (ns NullEcommerceGoDiscountDiscountType) Value() (driver.Value, error) {
 type EcommerceGoOrderOrderStatus string
 
 const (
-	EcommerceGoOrderOrderStatusConfirmed EcommerceGoOrderOrderStatus = "confirmed"
-	EcommerceGoOrderOrderStatusActive    EcommerceGoOrderOrderStatus = "active"
-	EcommerceGoOrderOrderStatusCompleted EcommerceGoOrderOrderStatus = "completed"
-	EcommerceGoOrderOrderStatusCanceled  EcommerceGoOrderOrderStatus = "canceled"
-	EcommerceGoOrderOrderStatusRefunded  EcommerceGoOrderOrderStatus = "refunded"
+	EcommerceGoOrderOrderStatusPendingPayment EcommerceGoOrderOrderStatus = "pending_payment"
+	EcommerceGoOrderOrderStatusPaymentFailed  EcommerceGoOrderOrderStatus = "payment_failed"
+	EcommerceGoOrderOrderStatusPaymentSuccess EcommerceGoOrderOrderStatus = "payment_success"
+	EcommerceGoOrderOrderStatusCheckedIn      EcommerceGoOrderOrderStatus = "checked_in"
+	EcommerceGoOrderOrderStatusCompleted      EcommerceGoOrderOrderStatus = "completed"
+	EcommerceGoOrderOrderStatusCanceled       EcommerceGoOrderOrderStatus = "canceled"
+	EcommerceGoOrderOrderStatusRefunded       EcommerceGoOrderOrderStatus = "refunded"
 )
 
 func (e *EcommerceGoOrderOrderStatus) Scan(src interface{}) error {
@@ -481,6 +483,8 @@ type EcommerceGoReview struct {
 	AccommodationID string
 	// comment
 	Comment string
+	// title
+	Title string
 	// rating
 	Rating uint8
 	// manager response

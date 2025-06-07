@@ -1,8 +1,17 @@
 package vo
 
+type RoomSelected struct {
+	ID       string `json:"id"`
+	Quantity uint8  `json:"quantity"`
+}
+
 type CreatePaymentURLInput struct {
-	Amount   int    `json:"amount" form:"amount"`
-	BankCode string `json:"bankCode" form:"bankCode"`
+	CheckIn         string         `json:"check_in"`
+	CheckOut        string         `json:"check_out"`
+	AccommodationID string         `json:"accommodation_id"`
+	RoomSelected    []RoomSelected `json:"room_selected"`
+	// Amount          int            `json:"amount"`
+	BankCode string `json:"bankCode"`
 	Language string `json:"language" form:"language"`
 }
 
@@ -20,12 +29,12 @@ type VNPayResponse struct {
 }
 
 type PostQueryDRInput struct {
-	OrderId   string `json:"orderId" form:"orderId"`
+	OrderID   string `json:"orderId" form:"orderId"`
 	TransDate string `json:"transDate" form:"transDate"`
 }
 
 type QueryDataObj struct {
-	VnpRequestId       string `json:"vnp_RequestId"`
+	VnpRequestID       string `json:"vnp_RequestId"`
 	VnpVersion         string `json:"vnp_Version"`
 	VnpCommand         string `json:"vnp_Command"`
 	VnpTmnCode         string `json:"vnp_TmnCode"`
@@ -38,7 +47,7 @@ type QueryDataObj struct {
 }
 
 type PostRefundInput struct {
-	OrderId   string `json:"orderId" form:"orderId"`
+	OrderID   string `json:"orderId" form:"orderId"`
 	TransDate string `json:"transDate" form:"transDate"`
 	Amount    int    `json:"amount" form:"amount"`
 	TransType string `json:"transType" form:"transType"`
@@ -46,7 +55,7 @@ type PostRefundInput struct {
 }
 
 type RefundDataObj struct {
-	VnpRequestId       string `json:"vnp_RequestId"`
+	VnpRequestID       string `json:"vnp_RequestId"`
 	VnpVersion         string `json:"vnp_Version"`
 	VnpCommand         string `json:"vnp_Command"`
 	VnpTmnCode         string `json:"vnp_TmnCode"`
@@ -63,10 +72,10 @@ type RefundDataObj struct {
 }
 
 type PaymentResultData struct {
-	OrderID       string `json:"order_id"`
-	ResponseCode  string `json:"response_code"`
-	Amount        int    `json:"amount"`
-	BankCode      string `json:"bank_code"`
-	TransactionNo string `json:"transaction_no"`
-	PayDate       string `json:"pay_date"`
+	OrderID      string `json:"order_id"`
+	ResponseCode string `json:"response_code"`
+	Amount       int    `json:"amount"`
+	BankCode     string `json:"bank_code"`
+	// TransactionNo string `json:"transaction_no"`
+	PayDate string `json:"pay_date"`
 }

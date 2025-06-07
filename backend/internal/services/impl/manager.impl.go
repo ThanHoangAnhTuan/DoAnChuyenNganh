@@ -25,26 +25,26 @@ type ManagerLoginImpl struct {
 func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error) {
 	out = &vo.ManagerLoginOutput{}
 
-	// !. get manager info
+	// TODO: get manager info
 	userManager, err := m.sqlc.GetUserManager(ctx, in.UserAccount)
 	if err != nil {
 		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
-	// !. check password match
+	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userManager.Password) {
 		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
 	}
 
-	// !. check two-factor authentication
+	// TODO: check two-factor authentication
 
-	// !. update login
+	// TODO: update login
 	go m.sqlc.UpdateUserManagerLogin(ctx, database.UpdateUserManagerLoginParams{
 		LoginTime: utiltime.GetTimeNow(),
 		Account:   in.UserAccount,
 	})
 
-	// !. create uuid user
+	// TODO: create uuid user
 	subToken := utils.GenerateCliTokenUUID(userManager.ID)
 
 	userManagerInfor := vo.ManagerInfor{
@@ -57,7 +57,7 @@ func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) 
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
 	}
 
-	// !. save manager info to redis
+	// TODO: save manager info to redis
 	err = global.Redis.SetEx(ctx, subToken, userManagerInforJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save manager info to redis failed: %s", err)
@@ -75,7 +75,7 @@ func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) 
 }
 
 func (m *ManagerLoginImpl) Register(ctx context.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error) {
-	// !. check email exists in user manager
+	// TODO: check email exists in user manager
 	managerFound, err := m.sqlc.CheckUserManagerExistsByEmail(ctx, in.UserAccount)
 	if err != nil {
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check manager already exists: %s", err)
@@ -85,9 +85,9 @@ func (m *ManagerLoginImpl) Register(ctx context.Context, in *vo.ManagerRegisterI
 		return response.ErrCodeUserAlreadyExists, fmt.Errorf("manager already exists")
 	}
 
-	// !. check user spam / rate limiting by ip
+	// TODO: check user spam / rate limiting by ip
 
-	// !. create manager
+	// TODO: create manager
 	id := uuid.New().String()
 	now := utiltime.GetTimeNow()
 	hashPassword, err := crypto.HashPassword(in.UserPassword)

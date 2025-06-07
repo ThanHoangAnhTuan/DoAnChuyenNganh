@@ -44,12 +44,15 @@ SELECT EXISTS (
 
 -- name: CheckUserManagerExistsByID :one
 SELECT
-    COUNT(*) as count
-FROM
-    `ecommerce_go_user_manager`
-WHERE
-    `id` = ?
-    AND `is_deleted` = 0;
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_manager`
+        WHERE
+            `id` = ?
+            AND `is_deleted` = 0
+    );
 
 -- name: DeleteUserManager :exec
 UPDATE `ecommerce_go_user_manager`

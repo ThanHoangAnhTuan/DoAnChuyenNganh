@@ -5,16 +5,12 @@ import (
 	"net/url"
 	"sort"
 	"strings"
-
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
-func SortObject(obj vo.VNPayParams) vo.VNPayParams {
-	sorted := make(vo.VNPayParams)
-	keys := make([]string, 0, len(obj))
-
+func SortObject(params map[string]string) map[string]string {
 	// Get all keys
-	for key := range obj {
+	keys := make([]string, 0, len(params))
+	for key := range params {
 		keys = append(keys, key)
 	}
 
@@ -22,38 +18,46 @@ func SortObject(obj vo.VNPayParams) vo.VNPayParams {
 	sort.Strings(keys)
 
 	// Create sorted map
+	sorted := make(map[string]string)
 	for _, key := range keys {
-		sorted[key] = obj[key]
+		// URL encode both key and value, replace %20 with +
+		encodedKey := url.QueryEscape(key)
+		encodedValue := strings.ReplaceAll(url.QueryEscape(params[key]), "%20", "+")
+		sorted[encodedKey] = encodedValue
 	}
 
 	return sorted
 }
 
-func BuildQueryString(params vo.VNPayParams, encode bool) string {
-	var parts []string
-
+func CreateSignData(params map[string]string) string {
+	// Get sorted keys
 	keys := make([]string, 0, len(params))
 	for key := range params {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 
-	// for _, key := range keys {
-	// 	value := params[key]
-	// 	if encode {
-	// 		key = url.QueryEscape(key)
-	// 		value = strings.ReplaceAll(url.QueryEscape(value), "%20", "+")
-	// 	}
-	// 	parts = append(parts, key+"="+value)
-	// }
-
+	// Create query string for signing
+	var parts []string
 	for _, key := range keys {
-		value := params[key]
-		if encode {
-			key = url.QueryEscape(key)
-			value = url.QueryEscape(value)
-		}
-		parts = append(parts, key+"="+value)
+		parts = append(parts, key+"="+params[key])
+	}
+
+	return strings.Join(parts, "&")
+}
+
+func CreateQueryString(params map[string]string) string {
+	// Get sorted keys
+	keys := make([]string, 0, len(params))
+	for key := range params {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	// Create query string
+	var parts []string
+	for _, key := range keys {
+		parts = append(parts, key+"="+params[key])
 	}
 
 	return strings.Join(parts, "&")
