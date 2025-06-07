@@ -7,7 +7,7 @@ import {
     OTP,
     RegisterModel,
     RegisterResponse,
-} from '../../../models/user/register.model';
+} from '../../../models/user/user.model';
 
 @Component({
     selector: 'app-register',
@@ -20,9 +20,9 @@ export class RegisterComponent {
 
     constructor(private router: Router, private userService: UserService) {
         // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến trang chính
-        // if (this.userService.isLoggedIn()) {
-        //     this.router.navigate(['/']);
-        // }
+        if (this.userService.isLoggedIn()) {
+            this.router.navigate(['/']);
+        }
     }
 
     continueWithEmail() {

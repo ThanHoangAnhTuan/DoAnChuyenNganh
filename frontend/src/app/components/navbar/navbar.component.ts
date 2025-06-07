@@ -2,7 +2,7 @@ import { NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
-import { TuiChevron } from '@taiga-ui/kit';
+import { TuiAvatar, TuiChevron } from '@taiga-ui/kit';
 import { UserService } from '../../services/user/user.service';
 
 @Component({
@@ -15,6 +15,7 @@ import { UserService } from '../../services/user/user.service';
         TuiDataList,
         TuiDropdown,
         TuiIcon,
+        TuiAvatar,
     ],
     standalone: true,
     templateUrl: './navbar.component.html',

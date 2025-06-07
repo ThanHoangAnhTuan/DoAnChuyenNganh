@@ -10,11 +10,7 @@
             tuiDropdownOpen
             [tuiDropdown]="content"
         >
-            <img
-                class="avatar"
-                [src]="userAvatar || 'images/city_pictures/OIP.png'"
-                alt="Avatar"
-            />
+            <tui-avatar class="avatar" src="@tui.user" alt="Avatar" />
             <a class="user-name">{{ userName || "User" }}</a>
         </div>
         } @else {

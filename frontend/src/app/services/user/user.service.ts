@@ -1,16 +1,17 @@
 import {
+    LoginModel,
+    LoginResponse,
     OTPResponse,
     UpdateResponse,
-} from './../../models/user/register.model';
+} from '../../models/user/user.model';
 import { HttpClient } from '@angular/common/http';
 import {
     OTP,
     RegisterModel,
     RegisterResponse,
     UpdatePassword,
-} from '../../models/user/register.model';
+} from '../../models/user/user.model';
 import { Observable } from 'rxjs';
-import { LoginModel, LoginResponse } from '../../models/user/login.model';
 import { Injectable } from '@angular/core';
 @Injectable({
     providedIn: 'root',
