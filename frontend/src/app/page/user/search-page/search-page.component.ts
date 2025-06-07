@@ -228,10 +228,8 @@ export class SearchPageComponent implements OnInit {
 
     /**
      * Tạo chuỗi đánh giá sao
-     * @param rating - Số sao đánh giá
-     * @returns Chuỗi sao (★) và sao rỗng (☆)
      */
     getStars(rating: number): string {
-        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        return '★'.repeat(rating) + ''.repeat(5 - rating);
     }
 }

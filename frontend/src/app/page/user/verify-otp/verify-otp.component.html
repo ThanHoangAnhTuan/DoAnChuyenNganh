@@ -1,0 +1,160 @@
+<!-- <div>
+    <input type="text" [(ngModel)]="otp" placeholder="Enter OTP" />
+    <button (click)="verifyOTP()">Verify OTP</button>
+</div>
+
+<div>
+    <input type="text" [(ngModel)]="password" placeholder="Enter Password" />
+    <button (click)="updatePassword()">Update Password</button>
+</div> -->
+<div class="verify-otp-container">
+    <div class="otp-card">
+        <div class="otp-card-header">
+            <h2>Xác thực tài khoản</h2>
+            <p>Xác thực OTP để đặt lại mật khẩu</p>
+        </div>
+
+        <div class="otp-card-body">
+            <!-- Step indicator -->
+            <div class="step-progress">
+                <div
+                    class="step"
+                    [ngClass]="{ active: step === 1, completed: step > 1 }"
+                >
+                    <div class="step-number">1</div>
+                    <div class="step-name">Xác thực OTP</div>
+                </div>
+                <div
+                    class="step-divider"
+                    [ngClass]="{ completed: step > 1 }"
+                ></div>
+                <div class="step" [ngClass]="{ active: step === 2 }">
+                    <div class="step-number">2</div>
+                    <div class="step-name">Đặt mật khẩu mới</div>
+                </div>
+            </div>
+
+            <!-- OTP section -->
+            <div *ngIf="step === 1" class="otp-section">
+                <div class="otp-info">
+                    <!-- <div class="otp-icon">
+                        <i class="fa fa-envelope"></i>
+                    </div> -->
+                    <p>Mã xác thực đã được gửi đến email của bạn</p>
+                </div>
+
+                <div class="otp-input-group">
+                    <input
+                        type="text"
+                        maxlength="1"
+                        class="otp-input"
+                        *ngFor="let i of [0, 1, 2, 3, 4, 5]; let idx = index"
+                        #otpInput
+                        (keyup)="onOtpInput($event, idx, otpInput)"
+                        (paste)="onOtpPaste($event)"
+                    />
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-primary" (click)="verifyOTP()">
+                        <span *ngIf="isVerifying" class="spinner"></span>
+                        <span *ngIf="!isVerifying">Xác thực</span>
+                    </button>
+
+                    <div class="resend-otp">
+                        <span *ngIf="resendCountdown > 0"
+                            >Gửi lại sau {{ resendCountdown }} giây</span
+                        >
+                        <a
+                            *ngIf="resendCountdown === 0"
+                            href="javascript:void(0)"
+                            (click)="resendOTP()"
+                            >Gửi lại mã</a
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password section -->
+            <div *ngIf="step === 2" class="password-section">
+                <div class="form-group">
+                    <label for="password">Mật khẩu mới</label>
+                    <div class="password-input">
+                        <input
+                            [type]="showPassword ? 'text' : 'password'"
+                            [(ngModel)]="password"
+                            id="password"
+                            placeholder="Nhập mật khẩu mới"
+                        />
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            (click)="togglePassword()"
+                        >
+                            <i
+                                [class]="
+                                    showPassword
+                                        ? 'fa fa-eye-slash'
+                                        : 'fa fa-eye'
+                                "
+                            ></i>
+                        </button>
+                    </div>
+
+                    <div class="password-strength" *ngIf="password">
+                        <div class="strength-meter">
+                            <span [ngClass]="getPasswordStrengthClass()"></span>
+                        </div>
+                        <small>{{ getPasswordStrengthText() }}</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input">
+                        <input
+                            [type]="showConfirmPassword ? 'text' : 'password'"
+                            [(ngModel)]="confirmPassword"
+                            id="confirmPassword"
+                            placeholder="Nhập lại mật khẩu mới"
+                        />
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            (click)="toggleConfirmPassword()"
+                        >
+                            <i
+                                [class]="
+                                    showConfirmPassword
+                                        ? 'fa fa-eye-slash'
+                                        : 'fa fa-eye'
+                                "
+                            ></i>
+                        </button>
+                    </div>
+                    <small
+                        class="error-text"
+                        *ngIf="
+                            password &&
+                            confirmPassword &&
+                            password !== confirmPassword
+                        "
+                    >
+                        Mật khẩu không khớp
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <button
+                        class="btn-primary"
+                        [disabled]="!canUpdatePassword()"
+                        (click)="updatePassword()"
+                    >
+                        <span *ngIf="isUpdating" class="spinner"></span>
+                        <span *ngIf="!isUpdating">Cập nhật mật khẩu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

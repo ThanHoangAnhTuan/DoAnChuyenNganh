@@ -11,6 +11,9 @@ import { MediaLibraryComponent } from './page/manager/media-library/media-librar
 import { SearchPageComponent } from './page/user/search-page/search-page.component';
 import { UserProfileComponent } from './page/user/user-profile/user-profile.component';
 import { FacilityComponent } from './page/admin/facility/facility.component';
+import { RegisterComponent } from './page/user/register/register.component';
+import { LoginComponent } from './page/user/login/login.component';
+import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
 
 export const routes: Routes = [
     {
@@ -66,8 +69,20 @@ export const routes: Routes = [
         component: SearchPageComponent,
     },
     {
+        path: 'register',
+        component: RegisterComponent,
+    },
+    {
+        path: 'login',
+        component: LoginComponent,
+    },
+    {
         path: 'user-profile',
         component: UserProfileComponent,
+    },
+    {
+        path: 'verify-otp',
+        component: VerifyOtpComponent,
     },
     {
         path: '**',
