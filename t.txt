@@ -1,9 +1,0 @@
-Biểu đồ cột: Doanh thu theo tháng
-
-Biểu đồ tròn: Trạng thái đơn hàng
-
-Biểu đồ đường: Số lượt đặt phòng theo thời gian
-
-Bản đồ nhiệt: Khu vực thuê nhiều nhất
-
-Bảng dữ liệu top 5 khách sạn có doanh thu cao nhất
