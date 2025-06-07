@@ -17,7 +17,7 @@ type CreateReviewOutput struct {
 }
 
 type GetReviewsInput struct {
-	AccommodationID string `json:"accommodation_id" validate:"required"`
+	AccommodationID string `form:"accommodation_id" validate:"required"`
 	Page            *int   `form:"page" validate:"omitempty,min=1"`
 	Limit           *int   `form:"limit" validate:"omitempty,min=1,max=100"`
 }

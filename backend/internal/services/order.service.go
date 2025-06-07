@@ -8,7 +8,6 @@ import (
 
 type (
 	IOrder interface {
-		CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (codeStatus int, out *vo.CreateOrderOutput, err error)
 		GetOrdersByUser(ctx context.Context, in *vo.GetOrdersByUserInput) (codeStatus int, out *vo.GetOrdersByUserOutput, err error)
 		GetOrdersByManager(ctx context.Context, in *vo.GetOrdersByManagerInput) (codeStatus int, out *vo.GetOrdersByManagerOutput, err error)
 		CancelOrder(ctx context.Context, in *vo.CancelOrderInput) (codeStatus int, out *vo.CancelOrderOutput, err error)

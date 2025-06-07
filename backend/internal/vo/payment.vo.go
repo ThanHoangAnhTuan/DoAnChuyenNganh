@@ -10,9 +10,9 @@ type CreatePaymentURLInput struct {
 	CheckOut        string         `json:"check_out"`
 	AccommodationID string         `json:"accommodation_id"`
 	RoomSelected    []RoomSelected `json:"room_selected"`
-	Amount          int            `json:"amount"`
-	BankCode        string         `json:"bankCode"`
-	Language        string         `json:"language" form:"language"`
+	// Amount          int            `json:"amount"`
+	BankCode string `json:"bankCode"`
+	Language string `json:"language" form:"language"`
 }
 
 type VNPayParams map[string]string

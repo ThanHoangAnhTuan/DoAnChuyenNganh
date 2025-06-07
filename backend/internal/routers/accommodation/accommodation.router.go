@@ -12,7 +12,7 @@ type AccommodationRouter struct {
 func (ur *AccommodationRouter) InitAccommodationRouter(Router *gin.RouterGroup) {
 	userRouterPublic := Router.Group("/accommodation")
 	{
-		// userRouterPublic.GET("/get-accommodations", controllers.Accommodation.GetAccommodations)
+		userRouterPublic.GET("/get-accommodations", controllers.Accommodation.GetAccommodations)
 		userRouterPublic.GET("/get-accommodations-by-city/:city", controllers.Accommodation.GetAccommodationByCity)
 		userRouterPublic.GET("/get-accommodation-by-id/:id", controllers.Accommodation.GetAccommodationById)
 	}

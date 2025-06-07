@@ -7,12 +7,13 @@ CREATE TABLE
         `final_total` INT UNSIGNED NOT NULL COMMENT 'final total',
         -- `original_total` DECIMAL(10, 2) NOT NULL COMMENT 'original total',
         `order_status` ENUM (
-            'confirmed',
-            'active',
+            'pending_payment',
+            'payment_failed',
+            'payment_success',
+            'checked_in',
             'completed',
             'canceled',
-            'refunded',
-            'failed'
+            'refunded'
         ) NOT NULL COMMENT "order status",
         `accommodation_id` VARCHAR(36) NOT NULL COMMENT 'accommodation ID',
         `voucher_id` VARCHAR(36) COMMENT 'voucher ID',
