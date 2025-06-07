@@ -61,6 +61,7 @@ const (
 	EcommerceGoOrderOrderStatusCompleted EcommerceGoOrderOrderStatus = "completed"
 	EcommerceGoOrderOrderStatusCanceled  EcommerceGoOrderOrderStatus = "canceled"
 	EcommerceGoOrderOrderStatusRefunded  EcommerceGoOrderOrderStatus = "refunded"
+	EcommerceGoOrderOrderStatusFailed    EcommerceGoOrderOrderStatus = "failed"
 )
 
 func (e *EcommerceGoOrderOrderStatus) Scan(src interface{}) error {
@@ -481,6 +482,8 @@ type EcommerceGoReview struct {
 	AccommodationID string
 	// comment
 	Comment string
+	// title
+	Title string
 	// rating
 	Rating uint8
 	// manager response

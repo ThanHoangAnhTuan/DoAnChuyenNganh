@@ -10,6 +10,30 @@ import (
 	"database/sql"
 )
 
+const checkUserBookedOrder = `-- name: CheckUserBookedOrder :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_order` + "`" + `
+        WHERE
+            ` + "`" + `user_id` + "`" + ` = ? and ` + "`" + `id` + "`" + ` = ? and ` + "`" + `order_status` + "`" + ` = ` + "`" + `completed` + "`" + `
+    )
+`
+
+type CheckUserBookedOrderParams struct {
+	UserID string
+	ID     string
+}
+
+func (q *Queries) CheckUserBookedOrder(ctx context.Context, arg CheckUserBookedOrderParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserBookedOrder, arg.UserID, arg.ID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createOrder = `-- name: CreateOrder :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_order` + "`" + ` (
@@ -23,7 +47,6 @@ INSERT INTO
         ` + "`" + `checkout_date` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
-
     )
 VALUES
     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

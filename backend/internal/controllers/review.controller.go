@@ -80,7 +80,7 @@ func (c *CReview) GetReviews(ctx *gin.Context) {
 		return
 	}
 
-	codeStatus, data, err := services.Review().GetReviews(ctx, &params)
+	codeStatus, data, pagination, err := services.Review().GetReviews(ctx, &params)
 	if err != nil {
 		fmt.Printf("GetReviews error: %s\n", err.Error())
 		global.Logger.Error("GetReviews error: ", zap.String("error", err.Error()))
@@ -90,5 +90,5 @@ func (c *CReview) GetReviews(ctx *gin.Context) {
 
 	fmt.Printf("GetReviews success")
 	global.Logger.Info("GetReviews success")
-	response.SuccessResponse(ctx, codeStatus, data)
+	response.SuccessResponseWithPagination(ctx, codeStatus, data, pagination)
 }

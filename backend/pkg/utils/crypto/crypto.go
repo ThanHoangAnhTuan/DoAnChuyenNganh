@@ -26,7 +26,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func CreateHMAC(data, secret string) string {
+func CreateHMACSignature(data, secret string) string {
 	h := hmac.New(sha512.New, []byte(secret))
 	h.Write([]byte(data))
 	return hex.EncodeToString(h.Sum(nil))

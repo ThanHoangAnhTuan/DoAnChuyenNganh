@@ -6,6 +6,7 @@ CREATE TABLE
         `user_id` VARCHAR(36) NOT NULL COMMENT 'user ID',
         `accommodation_id` VARCHAR(36) NOT NULL COMMENT 'accommodation ID',
         `comment` TEXT NOT NULL COMMENT 'comment',
+        `title` TEXT NOT NULL COMMENT 'title',
         `rating` TINYINT UNSIGNED NOT NULL COMMENT 'rating',
         `manager_response` TEXT NOT NULL COMMENT 'manager response',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',

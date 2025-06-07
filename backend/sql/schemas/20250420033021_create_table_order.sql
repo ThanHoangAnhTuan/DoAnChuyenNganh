@@ -11,7 +11,8 @@ CREATE TABLE
             'active',
             'completed',
             'canceled',
-            'refunded'
+            'refunded',
+            'failed'
         ) NOT NULL COMMENT "order status",
         `accommodation_id` VARCHAR(36) NOT NULL COMMENT 'accommodation ID',
         `voucher_id` VARCHAR(36) COMMENT 'voucher ID',

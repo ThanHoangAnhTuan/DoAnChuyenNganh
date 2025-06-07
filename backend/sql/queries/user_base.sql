@@ -22,6 +22,15 @@ SELECT
             AND `is_deleted` = 0
     );
 
+-- name: GetUserBaseByIdAnReturnAccount :one
+SELECT
+    `account`
+FROM
+    `ecommerce_go_user_base`
+WHERE
+    `id` = ?
+    AND `is_deleted` = 0;
+
 -- name: GetUserBaseByAccount :one 
 SELECT
     `id`,

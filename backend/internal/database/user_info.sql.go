@@ -55,6 +55,30 @@ func (q *Queries) DeleteUserInfo(ctx context.Context, id string) error {
 	return err
 }
 
+const getNameAndImageUserInfo = `-- name: GetNameAndImageUserInfo :one
+SELECT
+    ` + "`" + `user_name` + "`" + `,
+    ` + "`" + `image` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_info` + "`" + `
+WHERE
+    ` + "`" + `account` + "`" + ` = ?
+LIMIT
+    1
+`
+
+type GetNameAndImageUserInfoRow struct {
+	UserName string
+	Image    string
+}
+
+func (q *Queries) GetNameAndImageUserInfo(ctx context.Context, account string) (GetNameAndImageUserInfoRow, error) {
+	row := q.db.QueryRowContext(ctx, getNameAndImageUserInfo, account)
+	var i GetNameAndImageUserInfoRow
+	err := row.Scan(&i.UserName, &i.Image)
+	return i, err
+}
+
 const getUserInfo = `-- name: GetUserInfo :one
 SELECT
     ` + "`" + `id` + "`" + `,

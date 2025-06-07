@@ -43,4 +43,4 @@ vnpay:
   vnp_hash_secret: "WZ6KK7ELBNIMKTRWW5TUSD6S6NVH9LVG"
   vnp_url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
   vnp_api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
-  vnp_return_url: "http://localhost:8888/order/vnpay_return"
+  vnp_return_url: "http://localhost:8080/api/v1/payment/vnpay_return"

@@ -1,9 +1,18 @@
 package vo
 
+type RoomSelected struct {
+	ID       string `json:"id"`
+	Quantity uint8  `json:"quantity"`
+}
+
 type CreatePaymentURLInput struct {
-	Amount   int    `json:"amount" form:"amount"`
-	BankCode string `json:"bankCode" form:"bankCode"`
-	Language string `json:"language" form:"language"`
+	CheckIn         string         `json:"check_in"`
+	CheckOut        string         `json:"check_out"`
+	AccommodationID string         `json:"accommodation_id"`
+	RoomSelected    []RoomSelected `json:"room_selected"`
+	Amount          int            `json:"amount"`
+	BankCode        string         `json:"bankCode"`
+	Language        string         `json:"language" form:"language"`
 }
 
 type VNPayParams map[string]string
@@ -63,10 +72,10 @@ type RefundDataObj struct {
 }
 
 type PaymentResultData struct {
-	OrderID       string `json:"order_id"`
-	ResponseCode  string `json:"response_code"`
-	Amount        int    `json:"amount"`
-	BankCode      string `json:"bank_code"`
-	TransactionNo string `json:"transaction_no"`
-	PayDate       string `json:"pay_date"`
+	OrderID      string `json:"order_id"`
+	ResponseCode string `json:"response_code"`
+	Amount       int    `json:"amount"`
+	BankCode     string `json:"bank_code"`
+	// TransactionNo string `json:"transaction_no"`
+	PayDate string `json:"pay_date"`
 }
