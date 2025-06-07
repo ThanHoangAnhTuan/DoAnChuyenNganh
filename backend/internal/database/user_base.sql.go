@@ -119,7 +119,7 @@ func (q *Queries) GetUserBaseByAccount(ctx context.Context, account string) (Get
 	return i, err
 }
 
-const getUserBaseByIdAnReturnAccount = `-- name: GetUserBaseByIdAnReturnAccount :one
+const getUserBaseByIdAndReturnAccount = `-- name: GetUserBaseByIdAndReturnAccount :one
 SELECT
     ` + "`" + `account` + "`" + `
 FROM
@@ -129,8 +129,8 @@ WHERE
     AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
-func (q *Queries) GetUserBaseByIdAnReturnAccount(ctx context.Context, id string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getUserBaseByIdAnReturnAccount, id)
+func (q *Queries) GetUserBaseByIdAndReturnAccount(ctx context.Context, id string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getUserBaseByIdAndReturnAccount, id)
 	var account string
 	err := row.Scan(&account)
 	return account, err

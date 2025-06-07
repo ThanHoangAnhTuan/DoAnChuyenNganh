@@ -22,7 +22,7 @@ SELECT
             AND `is_deleted` = 0
     );
 
--- name: GetUserBaseByIdAnReturnAccount :one
+-- name: GetUserBaseByIdAndReturnAccount :one
 SELECT
     `account`
 FROM

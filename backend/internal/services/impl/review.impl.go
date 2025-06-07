@@ -26,7 +26,7 @@ func (r *ReviewImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (c
 	}
 
 	// TODO: check user exists
-	account, err := r.sqlc.GetUserBaseByIdAnReturnAccount(ctx, userID)
+	account, err := r.sqlc.GetUserBaseByIdAndReturnAccount(ctx, userID)
 	if err != nil {
 		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
 	}
@@ -128,7 +128,7 @@ func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeS
 		ID := uuid.NewString()
 
 		// TODO: check user exists
-		account, err := r.sqlc.GetUserBaseByIdAnReturnAccount(ctx, review.UserID)
+		account, err := r.sqlc.GetUserBaseByIdAndReturnAccount(ctx, review.UserID)
 		if err != nil {
 			return response.ErrCodeGetUserBaseFailed, nil, nil, fmt.Errorf("get user base failed: %s", err)
 		}
