@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"context"
 	"fmt"
 	"mime/multipart"
 
@@ -70,7 +69,7 @@ func (f *FacilityImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInp
 	return response.ErrCodeCreateFacilitySuccess, out, nil
 }
 
-func (f *FacilityImpl) GetFacilities(ctx context.Context) (codeStatus int, out []*vo.GetFacilitiesOutput, err error) {
+func (f *FacilityImpl) GetFacilities(ctx *gin.Context) (codeStatus int, out []*vo.GetFacilitiesOutput, err error) {
 	// TODO: get user id in gin.Context
 	// val := ctx.Value("userId")
 	// if val == nil {

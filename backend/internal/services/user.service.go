@@ -1,26 +1,25 @@
 package services
 
 import (
-	"context"
-
+	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 // TODO: Refactor interface
 type (
 	IUserLogin interface {
-		Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error)
-		VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error)
-		UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error)
-		Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error)
+		Register(ctx *gin.Context, in *vo.RegisterInput) (codeStatus int, err error)
+		VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error)
+		UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error)
+		Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error)
 	}
 
 	IUserInfo interface {
-		GetUserById(ctx context.Context) error
+		GetUserById(ctx *gin.Context) error
 	}
 
 	IUserAdmin interface {
-		RemoveUser(ctx context.Context) error
+		RemoveUser(ctx *gin.Context) error
 	}
 )
 

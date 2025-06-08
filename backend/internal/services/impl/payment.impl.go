@@ -230,7 +230,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	responseCode := vnpParams["vnp_ResponseCode"]
 	amount := vnpParams["vnp_Amount"]
 	bankCode := vnpParams["vnp_BankCode"]
-	// transactionNo := vnpParams["vnp_TransactionNo"]
+	transactionNo := vnpParams["vnp_TransactionNo"]
 	payDate := vnpParams["vnp_PayDate"]
 
 	// Remove hash fields for verification
@@ -268,35 +268,57 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 
 	// TODO: update order status
 	now := utiltime.GetTimeNow()
+
+	var (
+		orderStatus   string
+		paymentStatus string
+	)
+
 	if responseCode == "00" {
-		err := p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
-			OrderStatus: database.EcommerceGoOrderOrderStatusPaymentSuccess,
-			UpdatedAt:   now,
-			ID:          orderID,
-		})
-
-		if err != nil {
-			return response.ErrCodeUpdateOrderStatusFailed, err
-		}
+		orderStatus = string(database.EcommerceGoOrderOrderStatusPaymentSuccess)
+		paymentStatus = string(database.EcommerceGoPaymentPaymentStatusSuccess)
 	} else {
-		err := p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
-			OrderStatus: database.EcommerceGoOrderOrderStatusPaymentFailed,
-			UpdatedAt:   now,
-			ID:          orderID,
-		})
+		orderStatus = string(database.EcommerceGoOrderOrderStatusPaymentFailed)
+		paymentStatus = string(database.EcommerceGoPaymentPaymentStatusFailed)
+	}
 
-		if err != nil {
-			return response.ErrCodeUpdateOrderStatusFailed, err
-		}
+	err = p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
+		OrderStatus: database.EcommerceGoOrderOrderStatus(orderStatus),
+		UpdatedAt:   now,
+		ID:          orderID,
+	})
+
+	if err != nil {
+		return response.ErrCodeUpdateOrderStatusFailed, err
+	}
+
+	// Create payment
+	paymentID := uuid.NewString()
+	now = utiltime.GetTimeNow()
+	err = p.sqlc.CreatePayment(ctx, database.CreatePaymentParams{
+		ID:            paymentID,
+		OrderID:       orderID,
+		PaymentStatus: database.EcommerceGoPaymentPaymentStatus(paymentStatus),
+		PaymentMethod: database.EcommerceGoPaymentPaymentMethodCard,
+		TotalPrice:    uint32(amountVND),
+		TransactionID: sql.NullString{
+			String: transactionNo,
+			Valid:  true,
+		},
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+	if err != nil {
+		return 0, err
 	}
 
 	p.redirectToReactWithResult(ctx, vo.PaymentResultData{
-		OrderID:      orderID,
-		ResponseCode: responseCode,
-		Amount:       amountVND,
-		BankCode:     bankCode,
-		// TransactionNo: transactionNo,
-		PayDate: payDate,
+		OrderID:       orderID,
+		ResponseCode:  responseCode,
+		Amount:        amountVND,
+		BankCode:      bankCode,
+		TransactionNo: transactionNo,
+		PayDate:       payDate,
 	})
 
 	return response.ErrCodeSuccessfully, nil
@@ -335,6 +357,20 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		locale = "vn"
 	}
 
+	layout := "02-01-2006"
+	checkInDate, err1 := time.Parse(layout, in.CheckIn)
+	checkOutDate, err2 := time.Parse(layout, in.CheckOut)
+	if err1 != nil || err2 != nil {
+		return response.ErrCodeParseTimeFailed, err1
+	}
+
+	duration := checkOutDate.Sub(checkInDate)
+	numDays := int(duration.Hours() / 24)
+
+	if numDays <= 0 {
+		return response.ErrCodeParamsInvalid, fmt.Errorf("check_out must come after check_in")
+	}
+
 	// TODO: get total price
 	var totalPrice uint32
 	totalPrice = 0
@@ -347,8 +383,10 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, err
 		}
-		totalPrice += accommodationDetail.Price
+		totalPrice += accommodationDetail.Price * uint32(roomSelected.Quantity)
 	}
+
+	totalPrice += totalPrice * uint32(numDays)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",
@@ -400,7 +438,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	createdAt := utiltime.GetTimeNow()
 
-	// TODO: tạo order
+	// TODO: create order
 	err = p.sqlc.CreateOrder(ctx, database.CreateOrderParams{
 		ID:              orderID,
 		UserID:          userID,
@@ -460,8 +498,13 @@ func (p *PaymentImpl) redirectToReactWithResult(ctx *gin.Context, data vo.Paymen
 	if data.BankCode != "" {
 		params.Set("bank_code", data.BankCode)
 	}
+
 	if data.PayDate != "" {
 		params.Set("pay_date", data.PayDate)
+	}
+
+	if data.TransactionNo != "" {
+		params.Set("transaction_no", data.TransactionNo)
 	}
 
 	// TODO: build react frontend url

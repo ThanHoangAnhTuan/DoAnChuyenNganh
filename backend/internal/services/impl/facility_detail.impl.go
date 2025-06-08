@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -60,7 +59,7 @@ func (f *FacilityDetailImpl) CreateFacilityDetail(ctx *gin.Context, in *vo.Creat
 	return response.ErrCodeCreateFacilitySuccess, out, nil
 }
 
-func (f *FacilityDetailImpl) GetFacilityDetail(ctx context.Context) (codeStatus int, out []*vo.GetFacilityDetailOutput, err error) {
+func (f *FacilityDetailImpl) GetFacilityDetail(ctx *gin.Context) (codeStatus int, out []*vo.GetFacilityDetailOutput, err error) {
 	// TODO: get facilities
 	facilities, err := f.sqlc.GetAccommodationFacilityDetail(ctx)
 	if err != nil {

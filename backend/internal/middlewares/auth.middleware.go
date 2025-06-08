@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -46,9 +45,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c := context.WithValue(ctx.Request.Context(), UserIDKey, claims["sub"])
+			// c := context.WithValue(ctx.Request.Context(), UserIDKey, claims["sub"])
 			ctx.Set("userId", claims["sub"])
-			ctx.Request = ctx.Request.WithContext(c)
+			// ctx.Request = ctx.Request.WithContext(c)
 		} else {
 			response.ErrorResponse(ctx, response.ErrCodeInvalidToken, nil)
 			ctx.Abort()

@@ -1,13 +1,13 @@
 package impl
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
@@ -27,7 +27,7 @@ type UserLoginImpl struct {
 	sqlc *database.Queries
 }
 
-func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (codeStatus int, err error) {
+func (u *UserLoginImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStatus int, err error) {
 	// TODO: check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, in.VerifyKey)
 	if err != nil {
@@ -128,7 +128,7 @@ func (u *UserLoginImpl) Register(ctx context.Context, in *vo.RegisterInput) (cod
 	return response.ErrCodeRegisterSuccess, nil
 }
 
-func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error) {
+func (u *UserLoginImpl) VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (codeStatus int, out *vo.VerifyOTPOutput, err error) {
 	out = &vo.VerifyOTPOutput{}
 
 	// TODO: hash email
@@ -156,7 +156,6 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 	}
 
 	// TODO: update user verify status and delete otp
-	// UpdateUserVerifyStatus
 	err = u.sqlc.UpdateUserVerifyStatus(ctx, database.UpdateUserVerifyStatusParams{
 		UpdatedAt: utiltime.GetTimeNow(),
 		KeyHash:   hashKey,
@@ -171,12 +170,13 @@ func (u *UserLoginImpl) VerifyOTP(ctx context.Context, in *vo.VerifyOTPInput) (c
 	return response.ErrCodeVerifyOTPSuccess, out, nil
 }
 
-func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error) {
+func (u *UserLoginImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePasswordRegisterInput) (codeStatus int, err error) {
 	// TODO: get info otp by key hash
 	infoOTP, err := u.sqlc.GetUserVerified(ctx, in.Token)
 	if err != nil {
 		return response.ErrCodeGetInfoOTPFailed, fmt.Errorf("get info otp failed: %s", err)
 	}
+
 	// TODO: check otp is verified
 	if infoOTP.IsVerified == 0 {
 		return response.ErrCodeOTPNotVerified, fmt.Errorf("user OTP not verified")
@@ -232,7 +232,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx context.Context, in *vo.Updat
 	return response.ErrCodeUpdatePasswordRegisterSuccess, nil
 }
 
-func (u *UserLoginImpl) Login(ctx context.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
+func (u *UserLoginImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
 	out = &vo.LoginOutput{}
 
 	// TODO: get user info

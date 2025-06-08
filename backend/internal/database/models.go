@@ -145,6 +145,7 @@ func (ns NullEcommerceGoPaymentPaymentMethod) Value() (driver.Value, error) {
 type EcommerceGoPaymentPaymentStatus string
 
 const (
+	EcommerceGoPaymentPaymentStatusPending  EcommerceGoPaymentPaymentStatus = "pending"
 	EcommerceGoPaymentPaymentStatusFailed   EcommerceGoPaymentPaymentStatus = "failed"
 	EcommerceGoPaymentPaymentStatusSuccess  EcommerceGoPaymentPaymentStatus = "success"
 	EcommerceGoPaymentPaymentStatusRefunded EcommerceGoPaymentPaymentStatus = "refunded"

@@ -1,11 +1,11 @@
 package impl
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
@@ -22,7 +22,7 @@ type AdminLoginImpl struct {
 	sqlc *database.Queries
 }
 
-func (m *AdminLoginImpl) Login(ctx context.Context, in *vo.AdminLoginInput) (codeStatus int, out *vo.AdminLoginOutput, err error) {
+func (m *AdminLoginImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatus int, out *vo.AdminLoginOutput, err error) {
 	out = &vo.AdminLoginOutput{}
 
 	// TODO: get admin info
@@ -74,7 +74,7 @@ func (m *AdminLoginImpl) Login(ctx context.Context, in *vo.AdminLoginInput) (cod
 	return response.ErrCodeLoginSuccess, out, nil
 }
 
-func (m *AdminLoginImpl) Register(ctx context.Context, in *vo.AdminRegisterInput) (codeStatus int, err error) {
+func (m *AdminLoginImpl) Register(ctx *gin.Context, in *vo.AdminRegisterInput) (codeStatus int, err error) {
 	// TODO: check email exists in user admin
 	adminFound, err := m.sqlc.CheckUserAdminExistsByEmail(ctx, in.UserAccount)
 	if err != nil {

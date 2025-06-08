@@ -1,15 +1,14 @@
 package services
 
 import (
-	"context"
-
+	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 type (
 	IAdminLogin interface {
-		Register(ctx context.Context, in *vo.AdminRegisterInput) (codeStatus int, err error)
-		Login(ctx context.Context, in *vo.AdminLoginInput) (codeStatus int, out *vo.AdminLoginOutput, err error)
+		Register(ctx *gin.Context, in *vo.AdminRegisterInput) (codeStatus int, err error)
+		Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatus int, out *vo.AdminLoginOutput, err error)
 	}
 )
 

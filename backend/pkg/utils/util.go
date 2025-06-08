@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -31,11 +30,11 @@ func GetUserIDFromGin(ctx *gin.Context) (string, bool) {
 	return uid, ok
 }
 
-func GetUserIDFromContext(c context.Context) (string, bool) {
-	id := c.Value("userId")
-	uid, ok := id.(string)
-	return uid, ok
-}
+// func GetUserIDFromContext(c context.Context) (string, bool) {
+// 	id := c.Value("userId")
+// 	uid, ok := id.(string)
+// 	return uid, ok
+// }
 
 func FormatCurrency(amount uint32) string {
 	p := message.NewPrinter(language.Vietnamese)

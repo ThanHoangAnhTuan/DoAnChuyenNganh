@@ -72,10 +72,10 @@ type RefundDataObj struct {
 }
 
 type PaymentResultData struct {
-	OrderID      string `json:"order_id"`
-	ResponseCode string `json:"response_code"`
-	Amount       int    `json:"amount"`
-	BankCode     string `json:"bank_code"`
-	// TransactionNo string `json:"transaction_no"`
-	PayDate string `json:"pay_date"`
+	OrderID       string `json:"order_id"`
+	ResponseCode  string `json:"response_code"`
+	Amount        int    `json:"amount"`
+	BankCode      string `json:"bank_code"`
+	TransactionNo string `json:"transaction_no"`
+	PayDate       string `json:"pay_date"`
 }

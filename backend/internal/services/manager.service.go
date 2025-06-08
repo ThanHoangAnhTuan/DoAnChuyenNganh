@@ -1,15 +1,14 @@
 package services
 
 import (
-	"context"
-
+	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 type (
 	IManagerLogin interface {
-		Register(ctx context.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error)
-		Login(ctx context.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error)
+		Register(ctx *gin.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error)
+		Login(ctx *gin.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error)
 	}
 )
 
