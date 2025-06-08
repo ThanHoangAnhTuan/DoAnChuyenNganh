@@ -37,9 +37,10 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("CreateAccommodationDetail validation error: %s\n", err.Error())
-		global.Logger.Error("CreateAccommodationDetail validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("CreateAccommodationDetail validation error: %s\n", validationErrors)
+		global.Logger.Error("CreateAccommodationDetail validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -53,9 +54,10 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("CreateAccommodationDetail success: manager: %s\taccommodation detail: %s\n", userId, data.ID)
-	global.Logger.Info("CreateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager:%s\taccommodation detail:%s", userId, data.ID)))
+	fmt.Printf("CreateAccommodationDetail success: manager: %s, accommodation detail: %s\n", userId, data.ID)
+	global.Logger.Info("CreateAccommodationDetail success",
+		zap.String("managerId", userId),
+		zap.String("accommodationDetailId", data.ID))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -94,8 +96,9 @@ func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("GetAccommodationDetails success: %s\n", "Get accommodations details success")
-	global.Logger.Info("GetAccommodationDetails success: ", zap.String("info", "Get accommodations details success"))
+	fmt.Printf("GetAccommodationDetails success")
+	global.Logger.Info("GetAccommodationDetails success")
+
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -134,9 +137,11 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("UpdateAccommodationDetail success: manager%s\taccommodation detail:%s\n", userId, data.ID)
-	global.Logger.Info("UpdateAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("manager%s\taccommodation detail:%s", userId, data.ID)))
+	fmt.Printf("UpdateAccommodationDetail success: manager: %s, accommodation detail: %s\n", userId, data.ID)
+	global.Logger.Info("UpdateAccommodationDetail success",
+		zap.String("managerId", userId),
+		zap.String("accommodationDetailId", data.ID))
+
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -175,8 +180,10 @@ func (c *CAccommodationDetail) DeleteAccommodationDetail(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("DeleteAccommodationDetail success: userId:%s\taccommodation detail id:%s\n", userId, params.ID)
-	global.Logger.Info("DeleteAccommodationDetail success: ",
-		zap.String("info", fmt.Sprintf("userId:%s\taccommodation detail id:%s", userId, params.ID)))
+	fmt.Printf("DeleteAccommodationDetail success: manager: %s, accommodation detail: %s\n", userId, params.ID)
+	global.Logger.Info("DeleteAccommodationDetail success",
+		zap.String("managerId", userId),
+		zap.String("accommodationDetailId", params.ID))
+
 	response.SuccessResponse(ctx, codeStatus, nil)
 }

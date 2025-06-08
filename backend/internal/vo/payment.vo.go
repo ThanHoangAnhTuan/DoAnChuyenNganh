@@ -11,8 +11,8 @@ type CreatePaymentURLInput struct {
 	AccommodationID string         `json:"accommodation_id"`
 	RoomSelected    []RoomSelected `json:"room_selected"`
 	// Amount          int            `json:"amount"`
-	BankCode string `json:"bankCode"`
-	Language string `json:"language" form:"language"`
+	// BankCode string `json:"bankCode"`
+	// Language string `json:"language" form:"language"`
 }
 
 type VNPayParams map[string]string
@@ -72,10 +72,10 @@ type RefundDataObj struct {
 }
 
 type PaymentResultData struct {
-	OrderID       string `json:"order_id"`
-	ResponseCode  string `json:"response_code"`
-	Amount        int    `json:"amount"`
-	BankCode      string `json:"bank_code"`
-	TransactionNo string `json:"transaction_no"`
-	PayDate       string `json:"pay_date"`
+	OrderIDExternal string `json:"order_id"`
+	ResponseCode    string `json:"response_code"`
+	Amount          int    `json:"amount"`
+	BankCode        string `json:"bank_code"`
+	TransactionNo   string `json:"transaction_no"`
+	PayDate         string `json:"pay_date"`
 }

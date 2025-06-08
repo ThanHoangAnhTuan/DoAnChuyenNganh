@@ -8,11 +8,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
+	"go.uber.org/zap"
 )
 
 type AccommodationDetailImpl struct {
@@ -321,8 +323,12 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 	for _, facilityID := range in.Facilities {
 		facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+			fmt.Printf("Cannot found facility detail: %s", err.Error())
+			global.Logger.Error("Cannot found facility detail: ", zap.Error(err))
+			break
 		}
+
 		out.Facilities = append(out.Facilities, vo.FacilityDetailOutput{
 			ID:   facility.ID,
 			Name: facility.Name,

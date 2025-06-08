@@ -21,6 +21,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/random"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/sendto"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
+	"go.uber.org/zap"
 )
 
 type UserLoginImpl struct {
@@ -115,7 +116,7 @@ func (u *UserLoginImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeSt
 		Otp:       strconv.Itoa(otpNew),
 		VerifyKey: in.VerifyKey,
 		KeyHash:   hashKey,
-		Type:      uint8(in.VerifyType),
+		Type:      in.VerifyType,
 		CreatedAt: utiltime.GetTimeNow(),
 		UpdatedAt: utiltime.GetTimeNow(),
 	})
@@ -165,6 +166,13 @@ func (u *UserLoginImpl) VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (code
 		return response.ErrCodeUpdateUserVerifyFailed, nil, fmt.Errorf("update user verify failed: %s", err)
 	}
 
+	// TODO: delete otp in redis
+	err = global.Redis.Del(ctx, utils.GetUserKey(hashKey)).Err()
+	if err != nil {
+		fmt.Printf("VerifyOTP error: %s\n", err.Error())
+		global.Logger.Error("VerifyOTP error: ", zap.String("error", err.Error()))
+	}
+
 	// TODO: return
 	out.Token = infoOTP.KeyHash
 	return response.ErrCodeVerifyOTPSuccess, out, nil
@@ -193,23 +201,23 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePa
 	}
 
 	// TODO: update user base
-	userBase := database.AddUserBaseParams{}
-	userBase.ID = uuid.New().String()
-	userBase.Account = infoOTP.VerifyKey
 	hashPassword, err := crypto.HashPassword(in.Password)
 	if err != nil {
 		return response.ErrCodeHashPasswordFailed, fmt.Errorf("hash password failed: %s", err)
 	}
-	userBase.Password = hashPassword
 	now := utiltime.GetTimeNow()
-	userBase.CreatedAt = now
-	userBase.IsVerified = 1
-	userBase.UpdatedAt = now
-	userBase.LoginTime = now
-	userBase.LogoutTime = 0
-	userBase.LoginIp = ""
 
-	err = u.sqlc.AddUserBase(ctx, userBase)
+	err = u.sqlc.AddUserBase(ctx, database.AddUserBaseParams{
+		ID:         infoOTP.ID,
+		Account:    infoOTP.VerifyKey,
+		Password:   hashPassword,
+		LoginTime:  now,
+		LoginIp:    "",
+		LogoutTime: 0,
+		IsVerified: 1,
+		CreatedAt:  now,
+		UpdatedAt:  now,
+	})
 	if err != nil {
 		return response.ErrCodeSaveDataFailed, fmt.Errorf("save user base failed: %s", err)
 	}
@@ -217,7 +225,7 @@ func (u *UserLoginImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePa
 	// TODO: create user info
 	now = utiltime.GetTimeNow()
 	err = u.sqlc.CreateUserInfo(ctx, database.CreateUserInfoParams{
-		ID:               uuid.New().String(),
+		ID:               infoOTP.ID,
 		Account:          infoOTP.VerifyKey,
 		Status:           1,
 		IsAuthentication: 1,

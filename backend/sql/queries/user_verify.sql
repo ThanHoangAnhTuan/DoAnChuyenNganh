@@ -58,3 +58,12 @@ SELECT EXISTS (
     WHERE
         `verify_key` = ? and `is_verified` = 1
 );
+
+-- name: GetIDOfUserVerify :one
+SELECT
+    `id`
+FROM
+    `ecommerce_go_user_verify`
+WHERE
+    `key_hash` = ?
+LIMIT 1;

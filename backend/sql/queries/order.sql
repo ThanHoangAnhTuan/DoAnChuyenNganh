@@ -3,6 +3,7 @@ INSERT INTO
     `ecommerce_go_order` (
         `id`,
         `user_id`,
+        `order_id_external`,
         `final_total`,
         `order_status`,
         `accommodation_id`,
@@ -13,7 +14,7 @@ INSERT INTO
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: CheckUserBookedOrder :one
 SELECT
@@ -47,4 +48,12 @@ SET
     `order_status` = ?,
     `updated_at` = ?
 WHERE
-    `id` = ?;
+    `order_id_external` = ?;
+
+-- name: GetOrderIdByOrderIdExternal :one
+SELECT
+    `id`
+FROM
+    `ecommerce_go_order`
+WHERE
+    `order_id_external` = ?;
