@@ -23,11 +23,13 @@
 }
 
 .navbar-right {
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 0 14% 0 0;
+    .register .login{
+    cursor: pointer;
+    }
 }
 
 .list-property {
@@ -57,18 +59,12 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
     margin: 0 5px;
   }
   
   .login, .register {
-    background-color: #4CAF50; /* Màu xanh lá */
-    color: white;
-  }
-
-  .login:hover, .register:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
+    background-color: #ffffff; /* Màu xanh lá */
+    color: #526ed3;
   }
   
   .logout {
