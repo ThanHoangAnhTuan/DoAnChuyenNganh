@@ -1,0 +1,332 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.verify-otp-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.otp-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.otp-card-header {
+  padding: 30px;
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+  text-align: center;
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+}
+
+.otp-card-body {
+  padding: 30px;
+}
+
+/* Step progress */
+.step-progress {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .step-name {
+    font-size: 13px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+  }
+
+  &.active {
+    .step-number {
+      background-color: #4b6cb7;
+      color: white;
+    }
+    .step-name {
+      color: #4b6cb7;
+      font-weight: 600;
+    }
+  }
+
+  &.completed {
+    .step-number {
+      background-color: #28a745;
+      color: white;
+    }
+  }
+}
+
+.step-divider {
+  height: 2px;
+  background-color: #e9ecef;
+  flex: 2;
+  transition: all 0.3s ease;
+  
+  &.completed {
+    background-color: #28a745;
+  }
+}
+
+/* OTP Section */
+.otp-info {
+  text-align: center;
+  margin-bottom: 25px;
+  
+  .otp-icon {
+    background-color: rgba(75, 108, 183, 0.1);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    
+    i {
+      font-size: 28px;
+      color: #4b6cb7;
+    }
+  }
+  
+  p {
+    color: #495057;
+    margin: 0;
+  }
+}
+
+.otp-input-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.otp-input {
+  width: 45px;
+  height: 55px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #495057;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    border-color: #4b6cb7;
+    box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.25);
+    outline: none;
+  }
+}
+
+/* Password section */
+.form-group {
+  margin-bottom: 25px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+  }
+}
+
+.password-input {
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      border-color: #4b6cb7;
+      box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.25);
+      outline: none;
+    }
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 5px;
+    
+    &:hover {
+      color: #495057;
+    }
+  }
+}
+
+.password-strength {
+  margin-top: 8px;
+  
+  .strength-meter {
+    height: 5px;
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    
+    span {
+      display: block;
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      
+      &.weak {
+        width: 33%;
+        background-color: #dc3545;
+      }
+      
+      &.medium {
+        width: 66%;
+        background-color: #ffc107;
+      }
+      
+      &.strong {
+        width: 100%;
+        background-color: #28a745;
+      }
+    }
+  }
+  
+  small {
+    font-size: 12px;
+    color: #6c757d;
+  }
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Button styles */
+.form-actions {
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background-color: #4b6cb7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &:hover {
+    background-color: #3b5998;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+  
+  &:disabled {
+    background-color: #b8c2cc;
+    cursor: not-allowed;
+  }
+}
+
+.resend-otp {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #6c757d;
+  
+  a {
+    color: #4b6cb7;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.otp-section, .password-section {
+  animation: fadeIn 0.3s ease-out;
+}

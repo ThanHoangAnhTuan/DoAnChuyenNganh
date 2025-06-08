@@ -10,26 +10,20 @@
                 [items]="cities | tuiFilterByInput"
             />
             @if (isSearchCityInvalid) {
-                <div>
-                    <small class="text-red-500">City is required</small>
-                </div>
+            <div>
+                <small class="text-red-500">City is required</small>
+            </div>
             }
         </tui-combo-box>
     </div>
     <div class="date-picker">
-        <tui-input-date-range
-            [min]="today"
-            [formControl]="DayControl"
-        >Choose dates
+        <tui-input-date-range [min]="today" [formControl]="DayControl"
+            >Choose dates
         </tui-input-date-range>
     </div>
     <div class="search-button">
-        <button size="l"
-                tuiButton
-                type="button"
-                (click)="search()"
-        >Search
+        <button size="l" tuiButton type="button" (click)="search()">
+            Search
         </button>
     </div>
 </div>
-

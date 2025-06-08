@@ -23,11 +23,13 @@
 }
 
 .navbar-right {
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 0 14% 0 0;
+    .register .login{
+    cursor: pointer;
+    }
 }
 
 .list-property {
@@ -46,11 +48,39 @@
 }
 
 .avatar {
-    width: 50px;
-    height: auto;
-    border-radius: 50%;
+    background-color: #f3f3f3;
     margin-right: 10px;
 }
+
+.login, .register {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  
+  .login, .register {
+    background-color: #ffffff; /* Màu xanh lá */
+    color: #526ed3;
+  }
+  
+  .logout {
+    background-color: #f44336; /* Màu đỏ */
+    color: white;
+  }
+  
+  .logout:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+  }
+  
+  /* Hiệu ứng khi click */
+  .login:active, .logout:active {
+    transform: translateY(0);
+  }
 
 //Tablet view
 @media screen and (max-width: 1024px) and (min-width: 768px) {
