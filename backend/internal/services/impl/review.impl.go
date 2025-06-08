@@ -65,6 +65,7 @@ func (r *ReviewImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (c
 		ID:              ID,
 		UserID:          userID,
 		AccommodationID: in.AccommodationID,
+		Title:           in.Title,
 		Comment:         in.Comment,
 		Rating:          in.Rating,
 		CreatedAt:       now,

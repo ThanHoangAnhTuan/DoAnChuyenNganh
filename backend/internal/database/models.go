@@ -490,7 +490,7 @@ type EcommerceGoReview struct {
 	// rating
 	Rating uint8
 	// manager response
-	ManagerResponse string
+	ManagerResponse sql.NullString
 	// is deleted: 0 - not deleted; 1 - deleted
 	IsDeleted uint8
 	// created at

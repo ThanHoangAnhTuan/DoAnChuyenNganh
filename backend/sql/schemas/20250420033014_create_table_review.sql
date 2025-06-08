@@ -8,7 +8,7 @@ CREATE TABLE
         `comment` TEXT NOT NULL COMMENT 'comment',
         `title` TEXT NOT NULL COMMENT 'title',
         `rating` TINYINT UNSIGNED NOT NULL COMMENT 'rating',
-        `manager_response` TEXT NOT NULL COMMENT 'manager response',
+        `manager_response` TEXT COMMENT 'manager response',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `created_at` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'updated at',
