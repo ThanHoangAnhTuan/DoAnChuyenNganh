@@ -8,11 +8,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
+	"go.uber.org/zap"
 )
 
 type AccommodationImpl struct {
@@ -39,7 +41,10 @@ func (t *AccommodationImpl) GetAccommodationById(ctx *gin.Context, in *vo.GetAcc
 	for _, facilityID := range facilityIDs {
 		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityID)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+			fmt.Printf("Cannot found facility: %s", err.Error())
+			global.Logger.Error("Cannot found facility: ", zap.Error(err))
+			break
 		}
 
 		facilities = append(facilities, vo.FacilitiesOutput{
@@ -144,7 +149,10 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context) (codeSt
 		for _, facilityID := range facilityIDs {
 			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityID)
 			if err != nil {
-				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+				// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+				fmt.Printf("Cannot found facility: %s", err.Error())
+				global.Logger.Error("Cannot found facility: ", zap.Error(err))
+				break
 			}
 
 			facilities = append(facilities, vo.FacilitiesOutput{
@@ -298,8 +306,12 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	for _, facilityID := range in.Facilities {
 		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityID)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+			fmt.Printf("Cannot found facility: %s", err.Error())
+			global.Logger.Error("Cannot found facility: ", zap.Error(err))
+			break
 		}
+
 		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
 			ID:    facility.ID,
 			Name:  facility.Name,
@@ -343,7 +355,10 @@ func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context) (codeStatus int,
 		for _, facilityID := range facilityIDs {
 			facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityID)
 			if err != nil {
-				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+				// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+				fmt.Printf("Cannot found facility: %s", err.Error())
+				global.Logger.Error("Cannot found facility: ", zap.Error(err))
+				break
 			}
 
 			facilities = append(facilities, vo.FacilitiesOutput{

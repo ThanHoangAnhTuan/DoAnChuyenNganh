@@ -51,9 +51,9 @@ func (c *CAccommodation) CreateAccommodation(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("CreateAccommodation success: manager: %s\taccommodation: %s\n", data.ManagerID, data.ID)
+	fmt.Printf("CreateAccommodation success: manager: %s\naccommodation: %s\n", data.ManagerID, data.ID)
 	global.Logger.Info("CreateAccommodation success: ",
-		zap.String("info", fmt.Sprintf("manager:%s\taccommodation:%s", data.ManagerID, data.ID)))
+		zap.String("info", fmt.Sprintf("manager:%s\naccommodation:%s", data.ManagerID, data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -104,9 +104,9 @@ func (c *CAccommodation) UpdateAccommodation(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("UpdateAccommodation success: manager%s\taccommodation:%s\n", data.ManagerID, data.ID)
+	fmt.Printf("UpdateAccommodation success: manager%s\naccommodation:%s\n", data.ManagerID, data.ID)
 	global.Logger.Info("UpdateAccommodation success: ",
-		zap.String("info", fmt.Sprintf("manager%s\taccommodation:%s", data.ManagerID, data.ID)))
+		zap.String("info", fmt.Sprintf("manager%s\naccommodation:%s", data.ManagerID, data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -144,9 +144,9 @@ func (c *CAccommodation) DeleteAccommodation(ctx *gin.Context) {
 
 	userId, _ := utils.GetUserIDFromGin(ctx)
 
-	fmt.Printf("DeleteAccommodation success: userId:%s\taccommodationId:%s\n", userId, params.ID)
+	fmt.Printf("DeleteAccommodation success: userId:%s\naccommodationId:%s\n", userId, params.ID)
 	global.Logger.Info("DeleteAccommodation success: ",
-		zap.String("info", fmt.Sprintf("userId:%s\taccommodationId:%s", userId, params.ID)))
+		zap.String("info", fmt.Sprintf("userId:%s\naccommodationId:%s", userId, params.ID)))
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 

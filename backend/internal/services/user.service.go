@@ -5,7 +5,6 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
-// TODO: Refactor interface
 type (
 	IUserLogin interface {
 		Register(ctx *gin.Context, in *vo.RegisterInput) (codeStatus int, err error)

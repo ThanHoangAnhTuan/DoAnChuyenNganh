@@ -145,7 +145,6 @@ func (ns NullEcommerceGoPaymentPaymentMethod) Value() (driver.Value, error) {
 type EcommerceGoPaymentPaymentStatus string
 
 const (
-	EcommerceGoPaymentPaymentStatusPending  EcommerceGoPaymentPaymentStatus = "pending"
 	EcommerceGoPaymentPaymentStatusFailed   EcommerceGoPaymentPaymentStatus = "failed"
 	EcommerceGoPaymentPaymentStatusSuccess  EcommerceGoPaymentPaymentStatus = "success"
 	EcommerceGoPaymentPaymentStatusRefunded EcommerceGoPaymentPaymentStatus = "refunded"
@@ -422,6 +421,8 @@ type EcommerceGoOrder struct {
 	UserID string
 	// final total
 	FinalTotal uint32
+	// order id external
+	OrderIDExternal string
 	// order status
 	OrderStatus EcommerceGoOrderOrderStatus
 	// accommodation ID
