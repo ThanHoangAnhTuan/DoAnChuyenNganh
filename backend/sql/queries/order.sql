@@ -24,7 +24,7 @@ SELECT
         FROM
             `ecommerce_go_order`
         WHERE
-            `user_id` = ? and `id` = ? and `order_status` = `completed`
+            `user_id` = ? and `order_id_external` = ? and `order_status` = `completed`
     );
 
 -- name: GetOrdersByUser :many

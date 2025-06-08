@@ -1,0 +1,119 @@
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Welcome to Booking</h1>
+
+        <!-- Login Form -->
+        <form
+            [formGroup]="loginForm"
+            (ngSubmit)="onSubmit()"
+            class="login-form"
+        >
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    formControlName="email"
+                    class="form-control"
+                    [class.is-invalid]="
+                        email.invalid && (email.dirty || email.touched)
+                    "
+                />
+                @if (email.invalid && (email.dirty || email.touched)) {
+                <div class="error-message">
+                    @if (email.errors?.['required']) {
+                    <span>Email is required</span>
+                    } @if (email.errors?.['email']) {
+                    <span>Please enter a valid email</span>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input-wrapper">
+                    <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        id="password"
+                        formControlName="password"
+                        class="form-control"
+                        [class.is-invalid]="
+                            password.invalid &&
+                            (password.dirty || password.touched)
+                        "
+                    />
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        (click)="togglePasswordVisibility()"
+                    >
+                        <i
+                            class="fa"
+                            [class.fa-eye]="!showPassword"
+                            [class.fa-eye-slash]="showPassword"
+                        ></i>
+                    </button>
+                </div>
+                @if (password.invalid && (password.dirty || password.touched)) {
+                <div class="error-message">
+                    @if (password.errors?.['required']) {
+                    <span>Password is required</span>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- Error Message -->
+            @if (errorMessage) {
+            <div class="alert alert-danger">
+                {{ errorMessage }}
+            </div>
+            }
+
+            <!-- Login Button -->
+            <button
+                type="submit"
+                class="login-button"
+                [disabled]="loginForm.invalid || isLoading"
+            >
+                @if (isLoading) {
+                <span class="spinner"></span>
+                } @else {
+                <span>Sign In</span>
+                }
+            </button>
+        </form>
+
+        <!-- Separator -->
+        <!-- <div class="separator">
+            <span>or</span>
+        </div> -->
+
+        <!-- Social Login -->
+        <!-- <div class="social-login">
+            <button class="social-button google" (click)="loginWithGoogle()">
+                <i class="fab fa-google"></i>
+                Sign in with Google
+            </button>
+            <button
+                class="social-button facebook"
+                (click)="loginWithFacebook()"
+            >
+                <i class="fab fa-facebook-f"></i>
+                Sign in with Facebook
+            </button>
+            <button class="social-button apple" (click)="loginWithApple()">
+                <i class="fab fa-apple"></i>
+                Sign in with Apple
+            </button>
+        </div> -->
+
+        <!-- Register Link -->
+        <p class="register-link">
+            Don't have an account? <a routerLink="/register">Sign up</a>
+        </p>
+    </div>
+</div>

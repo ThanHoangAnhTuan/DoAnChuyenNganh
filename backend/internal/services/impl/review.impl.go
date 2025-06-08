@@ -47,8 +47,8 @@ func (r *ReviewImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (c
 
 	// TODO: Check if the user has booked a room before
 	booked, err := r.sqlc.CheckUserBookedOrder(ctx, database.CheckUserBookedOrderParams{
-		UserID: userID,
-		ID:     in.OrderID,
+		UserID:          userID,
+		OrderIDExternal: in.OrderIDExternal,
 	})
 	if err != nil {
 		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
