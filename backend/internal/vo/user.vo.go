@@ -3,7 +3,7 @@ package vo
 type RegisterInput struct {
 	VerifyKey     string `json:"verify_key" validate:"required"`
 	VerifyType    int    `json:"verify_type" validate:"required"`
-	VerifyPurpose string `json:"verify_purpose" validate:"required"`
+	VerifyPurpose string `json:"verify_purpose"`
 }
 
 type VerifyOTPInput struct {
