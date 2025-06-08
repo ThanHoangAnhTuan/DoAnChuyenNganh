@@ -18,17 +18,17 @@ SELECT
         FROM
             ` + "`" + `ecommerce_go_order` + "`" + `
         WHERE
-            ` + "`" + `user_id` + "`" + ` = ? and ` + "`" + `id` + "`" + ` = ? and ` + "`" + `order_status` + "`" + ` = ` + "`" + `completed` + "`" + `
+            ` + "`" + `user_id` + "`" + ` = ? and ` + "`" + `order_id_external` + "`" + ` = ? and ` + "`" + `order_status` + "`" + ` = ` + "`" + `completed` + "`" + `
     )
 `
 
 type CheckUserBookedOrderParams struct {
-	UserID string
-	ID     string
+	UserID          string
+	OrderIDExternal string
 }
 
 func (q *Queries) CheckUserBookedOrder(ctx context.Context, arg CheckUserBookedOrderParams) (bool, error) {
-	row := q.db.QueryRowContext(ctx, checkUserBookedOrder, arg.UserID, arg.ID)
+	row := q.db.QueryRowContext(ctx, checkUserBookedOrder, arg.UserID, arg.OrderIDExternal)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
