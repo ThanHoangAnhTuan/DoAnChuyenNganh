@@ -1,11 +1,11 @@
 package impl
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
@@ -22,7 +22,7 @@ type ManagerLoginImpl struct {
 	sqlc *database.Queries
 }
 
-func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error) {
+func (m *ManagerLoginImpl) Login(ctx *gin.Context, in *vo.ManagerLoginInput) (codeStatus int, out *vo.ManagerLoginOutput, err error) {
 	out = &vo.ManagerLoginOutput{}
 
 	// TODO: get manager info
@@ -74,7 +74,7 @@ func (m *ManagerLoginImpl) Login(ctx context.Context, in *vo.ManagerLoginInput) 
 	return response.ErrCodeLoginSuccess, out, nil
 }
 
-func (m *ManagerLoginImpl) Register(ctx context.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error) {
+func (m *ManagerLoginImpl) Register(ctx *gin.Context, in *vo.ManagerRegisterInput) (codeStatus int, err error) {
 	// TODO: check email exists in user manager
 	managerFound, err := m.sqlc.CheckUserManagerExistsByEmail(ctx, in.UserAccount)
 	if err != nil {

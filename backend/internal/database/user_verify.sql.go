@@ -71,6 +71,23 @@ func (q *Queries) CreateUserVerify(ctx context.Context, arg CreateUserVerifyPara
 	return err
 }
 
+const getIDOfUserVerify = `-- name: GetIDOfUserVerify :one
+SELECT
+    ` + "`" + `id` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_verify` + "`" + `
+WHERE
+    ` + "`" + `key_hash` + "`" + ` = ?
+LIMIT 1
+`
+
+func (q *Queries) GetIDOfUserVerify(ctx context.Context, keyHash string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getIDOfUserVerify, keyHash)
+	var id string
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getUserUnverify = `-- name: GetUserUnverify :one
 SELECT
     ` + "`" + `otp` + "`" + `,

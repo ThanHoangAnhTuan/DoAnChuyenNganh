@@ -226,11 +226,11 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	}
 
 	secureHash := vnpParams["vnp_SecureHash"]
-	orderID := vnpParams["vnp_TxnRef"]
+	orderIDExternal := vnpParams["vnp_TxnRef"]
 	responseCode := vnpParams["vnp_ResponseCode"]
 	amount := vnpParams["vnp_Amount"]
 	bankCode := vnpParams["vnp_BankCode"]
-	// transactionNo := vnpParams["vnp_TransactionNo"]
+	transactionNo := vnpParams["vnp_TransactionNo"]
 	payDate := vnpParams["vnp_PayDate"]
 
 	// Remove hash fields for verification
@@ -248,9 +248,9 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		// TODO: update order status
 		now := utiltime.GetTimeNow()
 		err = p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
-			OrderStatus: database.EcommerceGoOrderOrderStatusPaymentFailed,
-			UpdatedAt:   now,
-			ID:          orderID,
+			OrderStatus:     database.EcommerceGoOrderOrderStatusPaymentFailed,
+			UpdatedAt:       now,
+			OrderIDExternal: orderIDExternal,
 		})
 
 		if err != nil {
@@ -258,7 +258,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		}
 
 		// TODO: redirect to frontend
-		p.redirectToReactWithError(ctx, "INVALID SIGNATURE", "Không đúng", orderID)
+		p.redirectToReactWithError(ctx, "INVALID SIGNATURE", "Không đúng", orderIDExternal)
 		return
 	}
 
@@ -268,35 +268,63 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 
 	// TODO: update order status
 	now := utiltime.GetTimeNow()
+
+	var (
+		orderStatus   string
+		paymentStatus string
+	)
+
 	if responseCode == "00" {
-		err := p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
-			OrderStatus: database.EcommerceGoOrderOrderStatusPaymentSuccess,
-			UpdatedAt:   now,
-			ID:          orderID,
-		})
-
-		if err != nil {
-			return response.ErrCodeUpdateOrderStatusFailed, err
-		}
+		orderStatus = string(database.EcommerceGoOrderOrderStatusPaymentSuccess)
+		paymentStatus = string(database.EcommerceGoPaymentPaymentStatusSuccess)
 	} else {
-		err := p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
-			OrderStatus: database.EcommerceGoOrderOrderStatusPaymentFailed,
-			UpdatedAt:   now,
-			ID:          orderID,
-		})
+		orderStatus = string(database.EcommerceGoOrderOrderStatusPaymentFailed)
+		paymentStatus = string(database.EcommerceGoPaymentPaymentStatusFailed)
+	}
 
-		if err != nil {
-			return response.ErrCodeUpdateOrderStatusFailed, err
-		}
+	err = p.sqlc.UpdateOrderStatus(ctx, database.UpdateOrderStatusParams{
+		OrderStatus:     database.EcommerceGoOrderOrderStatus(orderStatus),
+		UpdatedAt:       now,
+		OrderIDExternal: orderIDExternal,
+	})
+
+	if err != nil {
+		return response.ErrCodeUpdateOrderStatusFailed, err
+	}
+
+	// TODO: get order id
+	orderID, err := p.sqlc.GetOrderIdByOrderIdExternal(ctx, orderIDExternal)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, err
+	}
+
+	// Create payment
+	paymentID := uuid.NewString()
+	now = utiltime.GetTimeNow()
+	err = p.sqlc.CreatePayment(ctx, database.CreatePaymentParams{
+		ID:            paymentID,
+		OrderID:       orderID,
+		PaymentStatus: database.EcommerceGoPaymentPaymentStatus(paymentStatus),
+		PaymentMethod: database.EcommerceGoPaymentPaymentMethodCard,
+		TotalPrice:    uint32(amountVND),
+		TransactionID: sql.NullString{
+			String: transactionNo,
+			Valid:  true,
+		},
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+	if err != nil {
+		return 0, err
 	}
 
 	p.redirectToReactWithResult(ctx, vo.PaymentResultData{
-		OrderID:      orderID,
-		ResponseCode: responseCode,
-		Amount:       amountVND,
-		BankCode:     bankCode,
-		// TransactionNo: transactionNo,
-		PayDate: payDate,
+		OrderIDExternal: orderIDExternal,
+		ResponseCode:    responseCode,
+		Amount:          amountVND,
+		BankCode:        bankCode,
+		TransactionNo:   transactionNo,
+		PayDate:         payDate,
 	})
 
 	return response.ErrCodeSuccessfully, nil
@@ -326,13 +354,22 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	createDate := now.Format("20060102150405")
 	expireDate := now.Add(15 * time.Minute).Format("20060102150405")
-	orderID := now.Format("02150405")
+	orderIDExternal := now.Format("02150405")
 
 	ipAddr := ip.GetClientIP(ctx)
 
-	locale := in.Language
-	if locale == "" {
-		locale = "vn"
+	layout := "02-01-2006"
+	checkInDate, err1 := time.Parse(layout, in.CheckIn)
+	checkOutDate, err2 := time.Parse(layout, in.CheckOut)
+	if err1 != nil || err2 != nil {
+		return response.ErrCodeParseTimeFailed, err1
+	}
+
+	duration := checkOutDate.Sub(checkInDate)
+	numDays := int(duration.Hours() / 24)
+
+	if numDays <= 0 {
+		return response.ErrCodeParamsInvalid, fmt.Errorf("check_out must come after check_in")
 	}
 
 	// TODO: get total price
@@ -347,27 +384,25 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, err
 		}
-		totalPrice += accommodationDetail.Price
+		totalPrice += accommodationDetail.Price * uint32(roomSelected.Quantity)
 	}
+
+	totalPrice += totalPrice * uint32(numDays)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",
 		"vnp_Command":    "pay",
 		"vnp_TmnCode":    global.Config.Payment.VnpTmnCode,
-		"vnp_Locale":     locale,
+		"vnp_Locale":     "vn",
 		"vnp_CurrCode":   "VND",
-		"vnp_TxnRef":     orderID,
-		"vnp_OrderInfo":  "Thanh toan cho ma GD:" + orderID,
+		"vnp_TxnRef":     orderIDExternal,
+		"vnp_OrderInfo":  "Thanh toan cho ma GD:" + orderIDExternal,
 		"vnp_OrderType":  "other",
 		"vnp_Amount":     strconv.Itoa(int(totalPrice * 100)),
 		"vnp_ReturnUrl":  global.Config.Payment.VnpReturnUrl,
 		"vnp_IpAddr":     ipAddr,
 		"vnp_CreateDate": createDate,
 		"vnp_ExpireDate": expireDate,
-	}
-
-	if in.BankCode != "" {
-		vnpParams["vnp_BankCode"] = in.BankCode
 	}
 
 	sortedParams := payment.SortObject(vnpParams)
@@ -380,13 +415,13 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	finalURL := global.Config.Payment.VnpUrl + "?" + payment.CreateQueryString(sortedParams)
 
-	fmt.Printf("CreatePaymentURL success: %s\n", orderID)
-	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderID))
+	fmt.Printf("CreatePaymentURL success: %s\n", orderIDExternal)
+	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderIDExternal))
 
 	fmt.Printf("finalURL: %s\n", finalURL)
 
 	// TODO: save order to database
-	orderID = uuid.NewString()
+	orderID := uuid.NewString()
 
 	checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
 	if err != nil {
@@ -400,13 +435,14 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	createdAt := utiltime.GetTimeNow()
 
-	// TODO: tạo order
+	// TODO: create order
 	err = p.sqlc.CreateOrder(ctx, database.CreateOrderParams{
 		ID:              orderID,
 		UserID:          userID,
 		FinalTotal:      totalPrice,
 		OrderStatus:     database.EcommerceGoOrderOrderStatusPendingPayment,
 		AccommodationID: in.AccommodationID,
+		OrderIDExternal: orderIDExternal,
 		VoucherID: sql.NullString{
 			String: "",
 			Valid:  false,
@@ -453,15 +489,20 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 func (p *PaymentImpl) redirectToReactWithResult(ctx *gin.Context, data vo.PaymentResultData) {
 	params := url.Values{}
-	params.Set("order_id", data.OrderID)
+	params.Set("order_id", data.OrderIDExternal)
 	params.Set("response_code", data.ResponseCode)
 	params.Set("amount", strconv.Itoa(data.Amount))
 
 	if data.BankCode != "" {
 		params.Set("bank_code", data.BankCode)
 	}
+
 	if data.PayDate != "" {
 		params.Set("pay_date", data.PayDate)
+	}
+
+	if data.TransactionNo != "" {
+		params.Set("transaction_no", data.TransactionNo)
 	}
 
 	// TODO: build react frontend url

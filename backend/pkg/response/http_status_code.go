@@ -15,6 +15,7 @@ const (
 	ErrCodeConvertISOToUnixFailed = 200011
 	ErrCodeConvertUnixToISOFailed = 200012
 	ErrCodeSuccessfully           = 200013
+	ErrCodeParseTimeFailed        = 200014
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -154,6 +155,7 @@ var message = map[int]string{
 	ErrCodeConvertISOToUnixFailed: "Convert ISO to Unix failed",
 	ErrCodeConvertUnixToISOFailed: "Convert Unix to ISO failed",
 	ErrCodeSuccessfully:           "Success",
+	ErrCodeParseTimeFailed:        "Parse time failed",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",

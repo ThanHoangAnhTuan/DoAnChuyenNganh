@@ -421,6 +421,8 @@ type EcommerceGoOrder struct {
 	UserID string
 	// final total
 	FinalTotal uint32
+	// order id external
+	OrderIDExternal string
 	// order status
 	OrderStatus EcommerceGoOrderOrderStatus
 	// accommodation ID

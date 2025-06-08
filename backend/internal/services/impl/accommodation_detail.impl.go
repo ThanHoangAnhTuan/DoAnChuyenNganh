@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -9,11 +8,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
+	"go.uber.org/zap"
 )
 
 type AccommodationDetailImpl struct {
@@ -112,9 +113,9 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 	return response.ErrCodeCreateAccommodationDetailSuccess, out, nil
 }
 
-func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx context.Context, in *vo.DeleteAccommodationDetailInput) (codeResult int, err error) {
+func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx *gin.Context, in *vo.DeleteAccommodationDetailInput) (codeResult int, err error) {
 	// TODO: get user from context
-	userID, ok := utils.GetUserIDFromContext(ctx)
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
 	}
@@ -159,7 +160,7 @@ func (a *AccommodationDetailImpl) DeleteAccommodationDetail(ctx context.Context,
 	return response.ErrCodeDeleteAccommodationDetailSuccess, nil
 }
 
-func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx context.Context, in *vo.GetAccommodationDetailsInput) (codeStatus int, out []*vo.GetAccommodationDetailsOutput, err error) {
+func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccommodationDetailsInput) (codeStatus int, out []*vo.GetAccommodationDetailsOutput, err error) {
 	out = []*vo.GetAccommodationDetailsOutput{}
 
 	// TODO: check accommodation exists
@@ -322,8 +323,12 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 	for _, facilityID := range in.Facilities {
 		facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			// TODO: Nếu không tìm thấy facility thì bỏ qua luôn thay vì báo lỗi
+			fmt.Printf("Cannot found facility detail: %s", err.Error())
+			global.Logger.Error("Cannot found facility detail: ", zap.Error(err))
+			break
 		}
+
 		out.Facilities = append(out.Facilities, vo.FacilityDetailOutput{
 			ID:   facility.ID,
 			Name: facility.Name,

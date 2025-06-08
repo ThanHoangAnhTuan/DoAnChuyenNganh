@@ -1,10 +1,10 @@
 package impl
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
@@ -20,21 +20,21 @@ type OrderImpl struct {
 	db   *sql.DB
 }
 
-func (o *OrderImpl) CancelOrder(ctx context.Context, in *vo.CancelOrderInput) (codeStatus int, out *vo.CancelOrderOutput, err error) {
+func (o *OrderImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (codeStatus int, out *vo.CancelOrderOutput, err error) {
 	panic("unimplemented")
 }
 
-func (o *OrderImpl) CheckIn(ctx context.Context, in *vo.CheckInInput) (codeStatus int, out *vo.CheckInOutput, err error) {
+func (o *OrderImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, out *vo.CheckInOutput, err error) {
 	panic("unimplemented")
 }
 
-func (o *OrderImpl) CheckOut(ctx context.Context, in *vo.CheckOutInput) (codeStatus int, out *vo.CheckOutOutput, err error) {
+func (o *OrderImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, out *vo.CheckOutOutput, err error) {
 	panic("unimplemented")
 }
 
-func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (codeStatus int, out *vo.CreateOrderOutput, err error) {
+func (o *OrderImpl) CreateOrder(ctx *gin.Context, in *vo.CreateOrderInput) (codeStatus int, out *vo.CreateOrderOutput, err error) {
 	// TODO: get userID from context
-	userID, ok := utils.GetUserIDFromContext(ctx)
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
@@ -209,11 +209,11 @@ func (o *OrderImpl) CreateOrder(ctx context.Context, in *vo.CreateOrderInput) (c
 
 }
 
-func (o *OrderImpl) GetOrdersByManager(ctx context.Context, in *vo.GetOrdersByManagerInput) (codeStatus int, out *vo.GetOrdersByManagerOutput, err error) {
+func (o *OrderImpl) GetOrdersByManager(ctx *gin.Context, in *vo.GetOrdersByManagerInput) (codeStatus int, out *vo.GetOrdersByManagerOutput, err error) {
 	panic("unimplemented")
 }
 
-func (o *OrderImpl) GetOrdersByUser(ctx context.Context, in *vo.GetOrdersByUserInput) (codeStatus int, out *vo.GetOrdersByUserOutput, err error) {
+func (o *OrderImpl) GetOrdersByUser(ctx *gin.Context, in *vo.GetOrdersByUserInput) (codeStatus int, out *vo.GetOrdersByUserOutput, err error) {
 	panic("unimplemented")
 }
 

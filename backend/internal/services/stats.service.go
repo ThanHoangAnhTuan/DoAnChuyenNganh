@@ -1,14 +1,13 @@
 package services
 
 import (
-	"context"
-
+	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 )
 
 type (
 	IStats interface {
-		GetMonthlyEarnings(ctx context.Context) (codeStatus int, out []*vo.GetMonthlyEarningsOuput, err error)
+		GetMonthlyEarnings(ctx *gin.Context) (codeStatus int, out []*vo.GetMonthlyEarningsOuput, err error)
 	}
 )
 

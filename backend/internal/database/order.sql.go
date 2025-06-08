@@ -39,6 +39,7 @@ INSERT INTO
     ` + "`" + `ecommerce_go_order` + "`" + ` (
         ` + "`" + `id` + "`" + `,
         ` + "`" + `user_id` + "`" + `,
+        ` + "`" + `order_id_external` + "`" + `,
         ` + "`" + `final_total` + "`" + `,
         ` + "`" + `order_status` + "`" + `,
         ` + "`" + `accommodation_id` + "`" + `,
@@ -49,12 +50,13 @@ INSERT INTO
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateOrderParams struct {
 	ID              string
 	UserID          string
+	OrderIDExternal string
 	FinalTotal      uint32
 	OrderStatus     EcommerceGoOrderOrderStatus
 	AccommodationID string
@@ -69,6 +71,7 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 	_, err := q.db.ExecContext(ctx, createOrder,
 		arg.ID,
 		arg.UserID,
+		arg.OrderIDExternal,
 		arg.FinalTotal,
 		arg.OrderStatus,
 		arg.AccommodationID,
@@ -79,6 +82,22 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 		arg.UpdatedAt,
 	)
 	return err
+}
+
+const getOrderIdByOrderIdExternal = `-- name: GetOrderIdByOrderIdExternal :one
+SELECT
+    ` + "`" + `id` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_order` + "`" + `
+WHERE
+    ` + "`" + `order_id_external` + "`" + ` = ?
+`
+
+func (q *Queries) GetOrderIdByOrderIdExternal(ctx context.Context, orderIDExternal string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getOrderIdByOrderIdExternal, orderIDExternal)
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getOrdersByUser = `-- name: GetOrdersByUser :many
@@ -144,16 +163,16 @@ SET
     ` + "`" + `order_status` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
-    ` + "`" + `id` + "`" + ` = ?
+    ` + "`" + `order_id_external` + "`" + ` = ?
 `
 
 type UpdateOrderStatusParams struct {
-	OrderStatus EcommerceGoOrderOrderStatus
-	UpdatedAt   uint64
-	ID          string
+	OrderStatus     EcommerceGoOrderOrderStatus
+	UpdatedAt       uint64
+	OrderIDExternal string
 }
 
 func (q *Queries) UpdateOrderStatus(ctx context.Context, arg UpdateOrderStatusParams) error {
-	_, err := q.db.ExecContext(ctx, updateOrderStatus, arg.OrderStatus, arg.UpdatedAt, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateOrderStatus, arg.OrderStatus, arg.UpdatedAt, arg.OrderIDExternal)
 	return err
 }

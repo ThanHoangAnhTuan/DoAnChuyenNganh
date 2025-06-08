@@ -1,10 +1,10 @@
 package impl
 
 import (
-	"context"
 	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
@@ -15,9 +15,9 @@ type StatsImpl struct {
 	sqlc *database.Queries
 }
 
-func (s *StatsImpl) GetMonthlyEarnings(ctx context.Context) (codeStatus int, out []*vo.GetMonthlyEarningsOuput, err error) {
+func (s *StatsImpl) GetMonthlyEarnings(ctx *gin.Context) (codeStatus int, out []*vo.GetMonthlyEarningsOuput, err error) {
 	// TODO: get user from context
-	userID, ok := utils.GetUserIDFromContext(ctx)
+	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
 		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
