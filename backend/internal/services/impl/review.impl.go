@@ -150,7 +150,7 @@ func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeS
 			Image:           userInfo.Image,
 			Title:           review.Title,
 			Comment:         review.Comment,
-			ManagerResponse: review.ManagerResponse,
+			ManagerResponse: review.ManagerResponse.String,
 			Rating:          review.Rating,
 		})
 	}

@@ -41,7 +41,7 @@ func (c *CPayment) CreatePaymentURL(ctx *gin.Context) {
 		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
 		return
 	}
-	codeStatus, err := services.Payment().CreatePaymentURL(ctx, &params)
+	codeStatus, data, err := services.Payment().CreatePaymentURL(ctx, &params)
 	if err != nil {
 		fmt.Printf("CreatePaymentURL error: %s\n", err.Error())
 		global.Logger.Error("CreatePaymentURL error: ", zap.String("error", err.Error()))
@@ -50,6 +50,7 @@ func (c *CPayment) CreatePaymentURL(ctx *gin.Context) {
 	}
 	fmt.Printf("CreatePaymentURL success")
 	global.Logger.Info("CreatePaymentURL success")
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CPayment) VNPayReturn(ctx *gin.Context) {

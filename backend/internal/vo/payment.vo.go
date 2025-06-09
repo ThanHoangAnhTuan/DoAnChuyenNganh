@@ -14,6 +14,9 @@ type CreatePaymentURLInput struct {
 	// BankCode string `json:"bankCode"`
 	// Language string `json:"language" form:"language"`
 }
+type CreatePaymentURLOutput struct {
+	Url string `json:"url"`
+}
 
 type VNPayParams map[string]string
 
