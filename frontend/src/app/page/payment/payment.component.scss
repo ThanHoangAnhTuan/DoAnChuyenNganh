@@ -1,0 +1,153 @@
+// .payment-result-container {
+//     height: 100vh;
+//     width: 100vw;
+//     overflow: hidden;
+//     display: flex;
+//     flex-direction: column;
+//     gap: 20px;
+//     justify-content: center;
+//     align-items: center;
+
+//     .success-text {
+//         font-size: 30px;
+//         font-weight: bold;
+//         color: green;
+//     }
+
+//     .fail-text {
+//         font-size: 30px;
+//         font-weight: bold;
+//         color: red;
+//     }
+
+//     .payment-detail {
+//         width: 50%;
+//         height: auto;
+//         display: flex;
+//         flex-direction: column;
+//         text-align: left;
+
+//         .payment-detail-title {
+//             font-size: 25px;
+//             font-weight: bold;
+//         }
+
+//         .payment-detail-form {
+//             margin: 10px 0;
+//             border: 1px solid #578e7e;
+//             border-collapse: collapse;
+
+//             tr .title {
+//                 font-size: 15px;
+//                 font-weight: bold;
+//                 padding: 10px;
+//             }
+
+//             tr .content {
+//                 font-size: 15px;
+//                 text-align: right;
+//                 padding: 10px;
+//             }
+
+//             td {
+//                 border: none;
+//             }
+
+//             tr + tr {
+//                 border-top: 1px solid #578e7e;
+//             }
+//         }
+
+//         .return-home-page-button {
+//             width: 120px;
+//             padding: 10px 0;
+//             border: none;
+//             border-radius: 5px;
+//             background-color: #56dfcf;
+//             color: white;
+//             font-weight: bold;
+//             cursor: pointer;
+//         }
+//     }
+// }
+
+
+.payment-result-container {
+  max-width: 600px;
+  margin: 40px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.success-text,
+.fail-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.success-text {
+  background-color: #e6ffed;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.fail-text {
+  background-color: #ffe6e6;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+.payment-detail-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+}
+
+.payment-detail-form {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+}
+
+.payment-detail-form td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.payment-detail-form .title {
+  background-color: #f0f0f0;
+  font-weight: 500;
+  width: 40%;
+}
+
+.payment-detail-form .content {
+  background-color: #fff;
+  width: 60%;
+}
+
+.return-home-page-button {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  background-color: #1976d2;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.return-home-page-button:hover {
+  background-color: #1565c0;
+}

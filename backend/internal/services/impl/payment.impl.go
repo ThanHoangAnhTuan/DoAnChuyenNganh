@@ -386,10 +386,22 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailFailed, nil, err
 		}
+
+		fmt.Printf("accommodationDetail.Price: %v\n", accommodationDetail.Price)
+		fmt.Printf("roomSelected.Quantity: %v\n", roomSelected.Quantity)
 		totalPrice += accommodationDetail.Price * uint32(roomSelected.Quantity)
+		fmt.Printf("totalPrice: %v\n", totalPrice)
 	}
 
-	totalPrice += totalPrice * uint32(numDays)
+	fmt.Printf("numDays: %v", numDays)
+
+	totalPrice = totalPrice * uint32(numDays)
+	fmt.Printf("totalPrice: %v\n", totalPrice)
+
+	totalPriceInt := int(totalPrice * 100)
+	fmt.Printf("totalPriceInt: %v\n", totalPriceInt)
+	totalPriceString := strconv.Itoa(int(totalPrice * 100))
+	fmt.Printf("totalPriceString: %v\n", totalPriceString)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",

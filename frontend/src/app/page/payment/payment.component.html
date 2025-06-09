@@ -1,0 +1,81 @@
+<!-- <main class="payment-result-container">
+    <div class="success-text" *ngIf="response_code == '00'">
+        Thanh toán thành công
+    </div>
+
+    <div class="fail-text" *ngIf="response_code != '00'">
+        Thanh toán thất bại
+    </div>
+
+    <div class="payment-detail">
+        <p class="payment-detail-title">Chi tiết đơn hàng</p>
+
+        <table border="1" class="payment-detail-form">
+            <tr>
+                <td class="title">Người thanh toán</td>
+                <td class="content">Nguyen Van A</td>
+            </tr>
+            <tr>
+                <td class="title">Thanh toán lúc</td>
+                <td class="content">{{ pay_date }}</td>
+            </tr>
+            <tr>
+                <td class="title">Tổng số tiền</td>
+                <td class="content">{{ amount | number:'1.0-0' }} VND</td>
+            </tr>
+            <tr>
+                <td class="title">Ngân hàng</td>
+                <td class="content">{{ bank }}</td>
+            </tr>
+            <tr>
+                <td class="title">Mã giao dịch</td>
+                <td class="content">{{ transaction_no }}</td>
+            </tr>
+        </table>
+
+        <button class="return-home-page-button" [routerLink]="['']">
+            Về trang chủ
+        </button>
+    </div>
+</main> -->
+
+<main class="payment-result-container">
+  <div class="success-text" *ngIf="response_code != '00'">
+    Thanh toán thành công
+  </div>
+
+  <div class="fail-text" *ngIf="response_code == '00'">
+    Thanh toán thất bại
+  </div>
+
+  <div class="payment-detail">
+    <p class="payment-detail-title">Chi tiết đơn hàng</p>
+
+    <table class="payment-detail-form">
+      <tr>
+        <td class="title">Người thanh toán</td>
+        <td class="content">Nguyen Van A</td>
+      </tr>
+      <tr>
+        <td class="title">Thanh toán lúc</td>
+        <td class="content">{{ pay_date }}</td>
+      </tr>
+      <tr>
+        <td class="title">Tổng số tiền</td>
+        <td class="content">{{ amount | number:'1.0-0' }} VND</td>
+      </tr>
+      <tr>
+        <td class="title">Ngân hàng</td>
+        <td class="content">{{ bank }}</td>
+      </tr>
+      <tr>
+        <td class="title">Mã giao dịch</td>
+        <td class="content">{{ transaction_no }}</td>
+      </tr>
+    </table>
+
+    <button class="return-home-page-button" [routerLink]="['']">
+      Về trang chủ
+    </button>
+  </div>
+</main>

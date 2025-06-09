@@ -14,6 +14,7 @@ import { FacilityComponent } from './page/admin/facility/facility.component';
 import { RegisterComponent } from './page/user/register/register.component';
 import { LoginComponent } from './page/user/login/login.component';
 import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
+import { PaymentComponent } from './page/payment/payment.component';
 
 export const routes: Routes = [
     {
@@ -83,6 +84,10 @@ export const routes: Routes = [
     {
         path: 'verify-otp',
         component: VerifyOtpComponent,
+    },
+    {
+        path: 'payment/result',
+        component: PaymentComponent,
     },
     {
         path: '**',

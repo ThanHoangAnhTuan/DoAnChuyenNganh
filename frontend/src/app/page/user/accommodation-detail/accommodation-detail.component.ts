@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
@@ -14,6 +14,7 @@ import { GetAccommodationDetailsResponse } from '../../../models/manager/accommo
 import { Review } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from "../../../components/modals/review-list-modal/review-list-modal.component";
 import { PaymentService } from '../../../services/user/payment.service';
+import { TuiAlertService } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -72,13 +73,24 @@ export class AccommodationDetailComponent implements OnInit {
       containerClass: 'full-bed-icon-container'
     }
   ];
-  numberOfRooms: number = 0;
   selectedBedType: string = '';
   selectedRooms: {
     [roomId: number]: { quantity: number; total: number };
   } = {};
   avarageRating: number = 0;
   scrollY: number = 0;
+
+  private readonly alerts = inject(TuiAlertService);
+
+  protected getAlert(label: string, content: string): void {
+    this.alerts
+      .open(content, {
+        label: label,
+        appearance: 'negative',
+        autoClose: 5000,
+      })
+      .subscribe();
+  }
 
   constructor(
     private accommodationDetailService: AccommodationDetailService,
@@ -146,8 +158,8 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   createPayment() {
-    if (Object.keys(this.selectedRooms).length === 0) {
-      alert('Please select at least one room before proceeding to payment.');
+    if (this.numberRoomSelected() === 0) {
+      this.getAlert('Notification', 'Please select at least one room before proceeding to payment.');
       return;
     }
 
@@ -164,28 +176,27 @@ export class AccommodationDetailComponent implements OnInit {
     };
 
     const token = sessionStorage.getItem('token');
-    if (!token) {
-      alert('You need to be logged in to make a payment.');
+
+    if (token == null) {
+      this.getAlert('Notification', 'Please log in before pay for accommodation');
       return;
     }
 
-    this.paymentService.createPayment(payment, token).subscribe({
+    this.paymentService.createPayment(payment).subscribe({
       next: (response) => {
-        console.log('Payment URL created successfully:', response);
+        console.log('Payment URL created successfully:', response.body);
 
-        const finalURL = extractURLFromHTML(response);
-
-        if (!finalURL) {
-          alert('Payment URL is missing in the response.');
+        if (!response.body.data.url) {
+          this.getAlert('Notification', 'Payment URL is missing in the response.');
           return;
         }
 
         // Mở link thanh toán trong tab mới
-        window.open(finalURL, '_blank');
+        window.open(response.body.data.url, '_blank');
       },
       error: (error) => {
         console.error('Error creating payment URL:', error);
-        alert('An error occurred while creating the payment URL. Please try again later.');
+        this.getAlert('Notification', 'An error occurred while creating the payment URL. Please try again later.');
       }
     });
   }
@@ -229,10 +240,18 @@ export class AccommodationDetailComponent implements OnInit {
     };
 
     console.log("Selected Rooms: ", this.selectedRooms);
+    console.log('values:', Object.values(this.selectedRooms));
+  }
+
+  numberRoomSelected(): number {
+    return Object.values(this.selectedRooms)
+      .filter(room => room && typeof room.quantity === 'number')
+      .reduce((sum, room) => sum + room.quantity, 0);
   }
 
   getTotalPrice(): number {
-    return Object.values(this.selectedRooms).reduce((acc, room) => acc + room.total, 0);
+    return Object.values(this.selectedRooms)
+      .reduce((acc, room) => acc + room.total, 0);
   }
 
   getTotalBeds(beds: any): number {
@@ -242,13 +261,24 @@ export class AccommodationDetailComponent implements OnInit {
   toggleOpenModal(room: any) {
     this.roomInformationSelected = room;
     this.isRoomInformationModalOpen = true;
-    document.body.style.overflow = 'hidden';
+    this.scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${this.scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
   }
 
   toggleCloseModal() {
     this.roomInformationSelected = null;
     this.isRoomInformationModalOpen = false;
-    document.body.style.overflow = 'auto';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    // Trả lại vị trí scroll cũ
+    window.scrollTo(0, this.scrollY);
   }
 
   toggleOpenReviewModal(review: any) {
@@ -294,9 +324,4 @@ export class AccommodationDetailComponent implements OnInit {
     // Trả lại vị trí scroll cũ
     window.scrollTo(0, this.scrollY);
   }
-}
-
-function extractURLFromHTML(html: string): string {
-  const match = html.match(/https?:\/\/[^\s"']+/);
-  return match ? match[0] : '';
 }

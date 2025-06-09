@@ -154,24 +154,25 @@
                 </td>
 
                 <td class="price-container">
-                    <p class="original-price">US${{ room.price }}</p>
+                    <p class="original-price">{{ room.price | number:'1.0-0' }} VND</p>
                 </td>
 
                 <td class="select-rooms-container">
                     <select (change)="onRoomSelect(room, $any($event.target).value)">
-                        <option value="">0</option>
+                        <option [value]="(0 + ',' + i)">0</option>
                         <option *ngFor="let index of [].constructor(room.available_rooms); let i = index"
                             [value]="(room.price * (i + 1)) + ',' + (i + 1)">
-                            {{ i + 1 }} (US$ {{ room.price * (i + 1) }})
+                            {{ i + 1 }} ({{ room.price * (i + 1) | number:'1.0-0' }} VND)
                         </option>
                     </select>
                 </td>
 
                 <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="rooms.length">
                     <ng-container *ngIf="getTotalPrice() > 0">
-                        <p *ngIf="numberOfRooms == 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá
+                        <p class="room-for">
+                            <strong>{{ numberRoomSelected() }}</strong> 
+                            phòng giá
                         </p>
-                        <p *ngIf="numberOfRooms > 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
                         <p class="total-price">US${{ getTotalPrice() }}</p>
                     </ng-container>
 
