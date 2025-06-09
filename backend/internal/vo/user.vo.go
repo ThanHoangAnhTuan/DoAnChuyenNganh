@@ -32,3 +32,35 @@ type LoginInput struct {
 type LoginOutput struct {
 	Token string `json:"token" validate:"required"`
 }
+
+type GetUserInfoOutput struct {
+	ID       string `json:"id"`
+	Account  string `json:"account"`
+	Username string `json:"username"`
+	Image    string `json:"image"`
+	Phone    string `json:"phone"`
+	Gender   string `json:"gender"`
+	Birthday string `json:"birthday"`
+	Email    string `json:"email"`
+}
+
+type UpdateUserInfoOutput struct {
+	ID       string `json:"id"`
+	Account  string `json:"account"`
+	Username string `json:"username"`
+	Image    string `json:"image"`
+	Phone    string `json:"phone"`
+	Gender   string `json:"gender"`
+	Birthday string `json:"birthday"`
+	Email    string `json:"email"`
+}
+
+type UpdateUserInfoInput struct {
+	Account  string `json:"account"`
+	Username string `json:"username"`
+	Image    string `json:"image"`
+	Phone    string `json:"phone"`
+	Gender   string `json:"gender"`
+	Birthday string `json:"birthday"`
+	Email    string `json:"email"`
+}

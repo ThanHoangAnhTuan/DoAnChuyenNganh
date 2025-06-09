@@ -35,3 +35,19 @@ SET
 WHERE
     `id` = ?
     and `order_id` = ?;
+
+-- name: GetPaymentInfo :one
+SELECT
+    `id`,
+    `order_id`,
+    `payment_status`,
+    `payment_method`,
+    `total_price`,
+    `transaction_id`
+FROM
+    `ecommerce_go_payment`
+WHERE
+    `order_id` = ?
+    and `transaction_id` = ?
+LIMIT
+    1;

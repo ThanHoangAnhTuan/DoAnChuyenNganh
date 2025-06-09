@@ -9,6 +9,8 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 )
 
 type EcommerceGoDiscountDiscountType string
@@ -322,7 +324,7 @@ type EcommerceGoAccommodationDetail struct {
 	// available rooms
 	AvailableRooms uint8
 	// price
-	Price uint32
+	Price decimal.Decimal
 	// discount ID
 	DiscountID sql.NullString
 	// is verified: 0 - unverified, 1 - verified
@@ -420,7 +422,7 @@ type EcommerceGoOrder struct {
 	// user base ID
 	UserID string
 	// final total
-	FinalTotal uint32
+	FinalTotal decimal.Decimal
 	// order id external
 	OrderIDExternal string
 	// order status
@@ -446,7 +448,7 @@ type EcommerceGoOrderDetail struct {
 	// order ID
 	OrderID string
 	// price
-	Price uint32
+	Price decimal.Decimal
 	// accommodation detail ID
 	AccommodationDetailID string
 	// created at
@@ -466,7 +468,7 @@ type EcommerceGoPayment struct {
 	// payment method
 	PaymentMethod EcommerceGoPaymentPaymentMethod
 	// total price
-	TotalPrice uint32
+	TotalPrice decimal.Decimal
 	// transaction id
 	TransactionID sql.NullString
 	// created at
@@ -560,13 +562,13 @@ type EcommerceGoUserInfo struct {
 	// status: 0-locked, 1-actived, 2-not activated
 	Status uint8
 	// phone
-	Phone string
+	Phone sql.NullString
 	// gender: 0-male, 1-female
 	Gender uint8
 	// birthday
 	Birthday uint64
 	// email
-	Email string
+	Email sql.NullString
 	// authentication status: 0-not authenticated, 1-pending ,2-authenticated
 	IsAuthentication uint8
 	// is deleted: 0 - not deleted; 1 - deleted

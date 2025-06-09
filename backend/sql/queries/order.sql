@@ -24,7 +24,8 @@ SELECT
         FROM
             `ecommerce_go_order`
         WHERE
-            `user_id` = ? and `order_id_external` = ?
+            `user_id` = ?
+            and `order_id_external` = ?
     );
 
 -- name: GetOrdersByUser :many
@@ -57,3 +58,19 @@ FROM
     `ecommerce_go_order`
 WHERE
     `order_id_external` = ?;
+
+-- name: GetOrderInfoByOrderIDExternal :one
+SELECT
+    `id`,
+    `user_id`,
+    `order_id_external`,
+    `final_total`,
+    `order_status`,
+    `checkin_date`,
+    `checkout_date`,
+    `created_at`
+FROM
+    `ecommerce_go_order`
+WHERE
+    `order_id_external` = ?
+LIMIT 1;

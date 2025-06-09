@@ -17,7 +17,7 @@ type CreateAccommodationDetailInput struct {
 	Beds            Beds     `json:"beds" validate:"required"`
 	Facilities      []string `json:"facilities"`
 	AvailableRooms  uint8    `json:"available_rooms" validate:"gte=0"`
-	Price           uint32   `json:"price" validate:"gte=1"`
+	Price           string   `json:"price" validate:"gte=1"`
 	DiscountID      string   `json:"discount_id"`
 }
 
@@ -34,7 +34,7 @@ type CreateAccommodationDetailOutput struct {
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
-	Price           uint32                 `json:"price"`
+	Price           string                 `json:"price"`
 	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }
@@ -47,7 +47,7 @@ type GetAccommodationDetailsOutput struct {
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
-	Price           uint32                 `json:"price"`
+	Price           string                 `json:"price"`
 	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }
@@ -60,7 +60,7 @@ type UpdateAccommodationDetailInput struct {
 	Beds            Beds     `json:"beds"`
 	Facilities      []string `json:"facilities"`
 	AvailableRooms  uint8    `json:"available_rooms"`
-	Price           uint32   `json:"price"`
+	Price           string   `json:"price"`
 	DiscountID      string   `json:"discount_id"`
 }
 
@@ -72,7 +72,7 @@ type UpdateAccommodationDetailOutput struct {
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
 	AvailableRooms  uint8                  `json:"available_rooms"`
-	Price           uint32                 `json:"price"`
+	Price           string                 `json:"price"`
 	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
 }

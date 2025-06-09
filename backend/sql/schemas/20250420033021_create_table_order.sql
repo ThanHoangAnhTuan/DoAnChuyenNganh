@@ -4,7 +4,7 @@ CREATE TABLE
     IF NOT EXISTS `ecommerce_go_order` (
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `user_id` VARCHAR(36) NOT NULL COMMENT 'user base ID',
-        `final_total` INT UNSIGNED NOT NULL COMMENT 'final total',
+        `final_total` DECIMAL(15, 2) NOT NULL COMMENT 'final total',
         -- `original_total` DECIMAL(10, 2) NOT NULL COMMENT 'original total',
         `order_id_external` VARCHAR(8) NOT NULL COMMENT 'order id external',
         `order_status` ENUM (

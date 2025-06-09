@@ -10,6 +10,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"strings"
+
+	"github.com/shopspring/decimal"
 )
 
 const checkAccommodationDetailExists = `-- name: CheckAccommodationDetailExists :one
@@ -57,7 +59,7 @@ type CreateAccommodationDetailParams struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           uint32
+	Price           decimal.Decimal
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -124,7 +126,7 @@ type GetAccommodationDetailRow struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           uint32
+	Price           decimal.Decimal
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -176,7 +178,7 @@ type GetAccommodationDetailsRow struct {
 	DiscountID      sql.NullString
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           uint32
+	Price           decimal.Decimal
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -301,7 +303,7 @@ type UpdateAccommodationDetailParams struct {
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
-	Price           uint32
+	Price           decimal.Decimal
 	UpdatedAt       uint64
 	ID              string
 	AccommodationID string

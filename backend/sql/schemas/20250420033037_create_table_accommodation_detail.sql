@@ -9,7 +9,7 @@ CREATE TABLE
         `beds` JSON NOT NULL COMMENT 'number of beds',
         `facilities` JSON NOT NULL COMMENT 'facilities',
         `available_rooms` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'available rooms',
-        `price` INT UNSIGNED NOT NULL COMMENT 'price',
+        `price` DECIMAL(15, 2) NOT NULL COMMENT 'price',
         `discount_id` VARCHAR(36) COMMENT 'discount ID',
         `is_verified` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is verified: 0 - unverified, 1 - verified',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',

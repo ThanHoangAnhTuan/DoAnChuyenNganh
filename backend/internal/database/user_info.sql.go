@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUserInfo = `-- name: CreateUserInfo :exec
@@ -105,10 +106,10 @@ type GetUserInfoRow struct {
 	UserName         string
 	Image            string
 	Status           uint8
-	Phone            string
+	Phone            sql.NullString
 	Gender           uint8
 	Birthday         uint64
-	Email            string
+	Email            sql.NullString
 	IsAuthentication uint8
 }
 
@@ -154,10 +155,10 @@ type GetUserInfosRow struct {
 	UserName         string
 	Image            string
 	Status           uint8
-	Phone            string
+	Phone            sql.NullString
 	Gender           uint8
 	Birthday         uint64
-	Email            string
+	Email            sql.NullString
 	IsAuthentication uint8
 }
 
@@ -195,6 +196,24 @@ func (q *Queries) GetUserInfos(ctx context.Context, id string) ([]GetUserInfosRo
 	return items, nil
 }
 
+const getUsernameByID = `-- name: GetUsernameByID :one
+SELECT
+    ` + "`" + `user_name` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_info` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+LIMIT
+    1
+`
+
+func (q *Queries) GetUsernameByID(ctx context.Context, id string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getUsernameByID, id)
+	var user_name string
+	err := row.Scan(&user_name)
+	return user_name, err
+}
+
 const updateUserInfo = `-- name: UpdateUserInfo :exec
 UPDATE ` + "`" + `ecommerce_go_user_info` + "`" + `
 SET
@@ -213,10 +232,10 @@ WHERE
 type UpdateUserInfoParams struct {
 	UserName  string
 	Image     string
-	Phone     string
+	Phone     sql.NullString
 	Gender    uint8
 	Birthday  uint64
-	Email     string
+	Email     sql.NullString
 	UpdatedAt uint64
 	ID        string
 }

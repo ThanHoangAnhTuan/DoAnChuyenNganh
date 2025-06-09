@@ -8,6 +8,8 @@ package database
 import (
 	"context"
 	"database/sql"
+
+	"github.com/shopspring/decimal"
 )
 
 const createPayment = `-- name: CreatePayment :exec
@@ -31,7 +33,7 @@ type CreatePaymentParams struct {
 	OrderID       string
 	PaymentStatus EcommerceGoPaymentPaymentStatus
 	PaymentMethod EcommerceGoPaymentPaymentMethod
-	TotalPrice    uint32
+	TotalPrice    decimal.Decimal
 	TransactionID sql.NullString
 	CreatedAt     uint64
 	UpdatedAt     uint64
@@ -79,6 +81,51 @@ func (q *Queries) GetPayment(ctx context.Context, orderID string) (EcommerceGoPa
 		&i.TransactionID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getPaymentInfo = `-- name: GetPaymentInfo :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `order_id` + "`" + `,
+    ` + "`" + `payment_status` + "`" + `,
+    ` + "`" + `payment_method` + "`" + `,
+    ` + "`" + `total_price` + "`" + `,
+    ` + "`" + `transaction_id` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_payment` + "`" + `
+WHERE
+    ` + "`" + `order_id` + "`" + ` = ?
+    and ` + "`" + `transaction_id` + "`" + ` = ?
+LIMIT
+    1
+`
+
+type GetPaymentInfoParams struct {
+	OrderID       string
+	TransactionID sql.NullString
+}
+
+type GetPaymentInfoRow struct {
+	ID            string
+	OrderID       string
+	PaymentStatus EcommerceGoPaymentPaymentStatus
+	PaymentMethod EcommerceGoPaymentPaymentMethod
+	TotalPrice    decimal.Decimal
+	TransactionID sql.NullString
+}
+
+func (q *Queries) GetPaymentInfo(ctx context.Context, arg GetPaymentInfoParams) (GetPaymentInfoRow, error) {
+	row := q.db.QueryRowContext(ctx, getPaymentInfo, arg.OrderID, arg.TransactionID)
+	var i GetPaymentInfoRow
+	err := row.Scan(
+		&i.ID,
+		&i.OrderID,
+		&i.PaymentStatus,
+		&i.PaymentMethod,
+		&i.TotalPrice,
+		&i.TransactionID,
 	)
 	return i, err
 }
