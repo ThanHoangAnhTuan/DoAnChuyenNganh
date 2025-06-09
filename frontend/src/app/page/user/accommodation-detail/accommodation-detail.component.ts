@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { TuiLike } from '@taiga-ui/kit';
 import { ImageListModalComponent } from '../../../components/modals/image-list-modal/image-list-modal.component';
 import { NavbarComponent } from "../../../components/navbar/navbar.component";
@@ -13,6 +13,7 @@ import { GetAccommodationByIdResponse } from '../../../models/manager/accommodat
 import { GetAccommodationDetailsResponse } from '../../../models/manager/accommodation-detail.model';
 import { Review } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from "../../../components/modals/review-list-modal/review-list-modal.component";
+import { PaymentService } from '../../../services/user/payment.service';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -28,7 +29,6 @@ import { ReviewListModalComponent } from "../../../components/modals/review-list
     CommonModule,
     ReviewListModalComponent
   ],
-  providers: [DatePipe],
   templateUrl: './accommodation-detail.component.html',
   styleUrl: './accommodation-detail.component.scss'
 })
@@ -85,7 +85,7 @@ export class AccommodationDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private roomService: RoomService,
     private reviewService: ReviewService,
-    private datePipe: DatePipe,
+    private paymentService: PaymentService,
   ) {
     this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
@@ -141,6 +141,51 @@ export class AccommodationDetailComponent implements OnInit {
         this.reviews = [];
         this.avarageRating = 0;
         console.log("No reviews found for this accommodation.");
+      }
+    });
+  }
+
+  createPayment() {
+    if (Object.keys(this.selectedRooms).length === 0) {
+      alert('Please select at least one room before proceeding to payment.');
+      return;
+    }
+
+    const roomSelected = Object.entries(this.selectedRooms).map(([roomId, { quantity, total }]) => ({
+      id: String(roomId),
+      quantity,
+    }));
+
+    const payment = {
+      check_in: "09-06-2025",
+      check_out: "12-06-2025",
+      accommodation_id: this.accommodation.id,
+      room_selected: roomSelected,
+    };
+
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      alert('You need to be logged in to make a payment.');
+      return;
+    }
+
+    this.paymentService.createPayment(payment, token).subscribe({
+      next: (response) => {
+        console.log('Payment URL created successfully:', response);
+
+        const finalURL = extractURLFromHTML(response);
+
+        if (!finalURL) {
+          alert('Payment URL is missing in the response.');
+          return;
+        }
+
+        // Mở link thanh toán trong tab mới
+        window.open(finalURL, '_blank');
+      },
+      error: (error) => {
+        console.error('Error creating payment URL:', error);
+        alert('An error occurred while creating the payment URL. Please try again later.');
       }
     });
   }
@@ -206,15 +251,6 @@ export class AccommodationDetailComponent implements OnInit {
     document.body.style.overflow = 'auto';
   }
 
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const hoursMinutes = this.datePipe.transform(date, 'HH:mm');
-    const day = date.getUTCDate();
-    const month = date.getUTCMonth() + 1;
-    const year = date.getUTCFullYear();
-    return `${hoursMinutes} ngày ${day} tháng ${month} năm ${year}`;
-  }
-
   toggleOpenReviewModal(review: any) {
     this.reviewSelected = review;
     this.isReviewModalOpen = true;
@@ -258,4 +294,9 @@ export class AccommodationDetailComponent implements OnInit {
     // Trả lại vị trí scroll cũ
     window.scrollTo(0, this.scrollY);
   }
+}
+
+function extractURLFromHTML(html: string): string {
+  const match = html.match(/https?:\/\/[^\s"']+/);
+  return match ? match[0] : '';
 }

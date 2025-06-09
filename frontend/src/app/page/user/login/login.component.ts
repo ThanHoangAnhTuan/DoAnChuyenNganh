@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginModel } from '../../../models/user/user.model';
+import { SaveTokenToCookie } from '../../../shared/token/token';
 
 @Component({
     selector: 'app-login',
@@ -70,6 +71,7 @@ export class LoginComponent implements OnInit {
                 } else {
                     sessionStorage.setItem('token', response.data.token);
                 }
+                SaveTokenToCookie(response.data.token)
 
                 // Navigate to home or dashboard
                 this.router.navigate(['/']);

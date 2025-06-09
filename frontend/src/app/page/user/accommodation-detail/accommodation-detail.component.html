@@ -175,7 +175,7 @@
                         <p class="total-price">US${{ getTotalPrice() }}</p>
                     </ng-container>
 
-                    <button class="reserve-button">
+                    <button class="reserve-button" (click)="createPayment()">
                         Tôi sẽ đặt
                         <ng-container *ngIf="getTotalPrice() == 0">
                             <span class="hover-text">Hãy chọn chỗ nghỉ trước</span>
