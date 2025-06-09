@@ -12,10 +12,10 @@ const (
 	ErrCodeForbidden              = 20008
 	ErrCodeValidatorNotFound      = 20009
 	ErrCodeValidator              = 20010
-	ErrCodeConvertISOToUnixFailed = 200011
-	ErrCodeConvertUnixToISOFailed = 200012
-	ErrCodeSuccessfully           = 200013
-	ErrCodeParseTimeFailed        = 200014
+	ErrCodeConvertISOToUnixFailed = 20011
+	ErrCodeConvertUnixToISOFailed = 20012
+	ErrCodeSuccessfully           = 20013
+	ErrCodeParseTimeFailed        = 20014
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -62,10 +62,10 @@ const (
 	ErrCodeDeleteAccommodationSuccess = 80011
 
 	// accommodation image
-	ErrCodeGetAccommodationImagesFailed    = 800012
-	ErrCodeGetAccommodationImagesSuccess   = 800013
-	ErrCodeDeleteAccommodationImagesFailed = 800014
-	ErrCodeSaveAccommodationImagesFailed   = 800015
+	ErrCodeGetAccommodationImagesFailed    = 80012
+	ErrCodeGetAccommodationImagesSuccess   = 80013
+	ErrCodeDeleteAccommodationImagesFailed = 80014
+	ErrCodeSaveAccommodationImagesFailed   = 80015
 
 	// accommodation detail
 	ErrCodeCreateAccommodationDetailFailed  = 90001
@@ -80,10 +80,10 @@ const (
 	ErrCodeDeleteAccommodationDetailSuccess = 90011
 
 	// accommodation detail image
-	ErrCodeGetAccommodationDetailImagesFailed    = 900012
-	ErrCodeGetAccommodationDetailImagesSuccess   = 900013
-	ErrCodeDeleteAccommodationDetailImagesFailed = 900014
-	ErrCodeSaveAccommodationDetailImagesFailed   = 900015
+	ErrCodeGetAccommodationDetailImagesFailed    = 90012
+	ErrCodeGetAccommodationDetailImagesSuccess   = 90013
+	ErrCodeDeleteAccommodationDetailImagesFailed = 90014
+	ErrCodeSaveAccommodationDetailImagesFailed   = 90015
 
 	// file
 	ErrCodeOpenFileFailed     = 100001
@@ -120,14 +120,16 @@ const (
 	// order
 	ErrCodeCreateOrderDetailFailed  = 160001
 	ErrCodeCreateOrderFailed        = 160002
-	ErrCodeCreatePaymentFailed      = 160003
-	ErrCodeCreateOrderSuccess       = 160004
-	ErrCodeGetOrderFailed           = 160005
-	ErrCodeGetOrderByUserIDNotFound = 160006
-	ErrCodeUpdateOrderStatusFailed  = 160007
+	ErrCodeCreateOrderSuccess       = 160003
+	ErrCodeGetOrderFailed           = 160004
+	ErrCodeGetOrderByUserIDNotFound = 160005
+	ErrCodeUpdateOrderStatusFailed  = 160006
+	ErrCodeGetOrderSuccess          = 160007
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess = 170001
+	ErrCodeCreatePaymentFailed     = 170002
+	ErrCodeGetPaymentFailed        = 170003
 
 	// review
 	ErrCodeCreateReviewFailed             = 180001
@@ -138,6 +140,10 @@ const (
 	// stats
 	ErrCodeGetMonthlyEarningSuccess = 190001
 	ErrCodeGetMonthlyEarningFailed  = 190002
+
+	// Decimal
+	ErrCodeInvalidPriceFormat  = 200001
+	ErrCodePriceMustBePositive = 200002
 )
 
 var message = map[int]string{
@@ -261,12 +267,14 @@ var message = map[int]string{
 	ErrCodeCreateOrderFailed:        "Create order failed",
 	ErrCodeCreateOrderSuccess:       "Create order successfully",
 	ErrCodeGetOrderFailed:           "Get order failed",
+	ErrCodeGetOrderSuccess:          "Get order successfully",
 	ErrCodeGetOrderByUserIDNotFound: "Get order by user id not found",
 	ErrCodeUpdateOrderStatusFailed:  "Update order status failed",
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",
 	ErrCodeCreatePaymentFailed:     "Create payment failed",
+	ErrCodeGetPaymentFailed:        "Get payment failed",
 
 	// review
 	ErrCodeCreateReviewFailed:             "Create review failed",
@@ -277,4 +285,7 @@ var message = map[int]string{
 	// stats
 	ErrCodeGetMonthlyEarningSuccess: "Get monthly earning successfully",
 	ErrCodeGetMonthlyEarningFailed:  "Get monthly earning failed",
+
+	// Decimal
+	ErrCodeInvalidPriceFormat: "Invalid price format",
 }

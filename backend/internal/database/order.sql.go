@@ -8,6 +8,8 @@ package database
 import (
 	"context"
 	"database/sql"
+
+	"github.com/shopspring/decimal"
 )
 
 const checkUserBookedOrder = `-- name: CheckUserBookedOrder :one
@@ -18,7 +20,8 @@ SELECT
         FROM
             ` + "`" + `ecommerce_go_order` + "`" + `
         WHERE
-            ` + "`" + `user_id` + "`" + ` = ? and ` + "`" + `order_id_external` + "`" + ` = ?
+            ` + "`" + `user_id` + "`" + ` = ?
+            and ` + "`" + `order_id_external` + "`" + ` = ?
     )
 `
 
@@ -57,7 +60,7 @@ type CreateOrderParams struct {
 	ID              string
 	UserID          string
 	OrderIDExternal string
-	FinalTotal      uint32
+	FinalTotal      decimal.Decimal
 	OrderStatus     EcommerceGoOrderOrderStatus
 	AccommodationID string
 	VoucherID       sql.NullString
@@ -100,6 +103,50 @@ func (q *Queries) GetOrderIdByOrderIdExternal(ctx context.Context, orderIDExtern
 	return id, err
 }
 
+const getOrderInfoByOrderIDExternal = `-- name: GetOrderInfoByOrderIDExternal :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `user_id` + "`" + `,
+    ` + "`" + `order_id_external` + "`" + `,
+    ` + "`" + `final_total` + "`" + `,
+    ` + "`" + `order_status` + "`" + `,
+    ` + "`" + `checkin_date` + "`" + `,
+    ` + "`" + `checkout_date` + "`" + `,
+    ` + "`" + `created_at` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_order` + "`" + `
+WHERE
+    ` + "`" + `order_id_external` + "`" + ` = ?
+LIMIT 1
+`
+
+type GetOrderInfoByOrderIDExternalRow struct {
+	ID              string
+	UserID          string
+	OrderIDExternal string
+	FinalTotal      decimal.Decimal
+	OrderStatus     EcommerceGoOrderOrderStatus
+	CheckinDate     uint64
+	CheckoutDate    uint64
+	CreatedAt       uint64
+}
+
+func (q *Queries) GetOrderInfoByOrderIDExternal(ctx context.Context, orderIDExternal string) (GetOrderInfoByOrderIDExternalRow, error) {
+	row := q.db.QueryRowContext(ctx, getOrderInfoByOrderIDExternal, orderIDExternal)
+	var i GetOrderInfoByOrderIDExternalRow
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.OrderIDExternal,
+		&i.FinalTotal,
+		&i.OrderStatus,
+		&i.CheckinDate,
+		&i.CheckoutDate,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const getOrdersByUser = `-- name: GetOrdersByUser :many
 SELECT
     ` + "`" + `id` + "`" + `,
@@ -118,7 +165,7 @@ WHERE
 
 type GetOrdersByUserRow struct {
 	ID           string
-	FinalTotal   uint32
+	FinalTotal   decimal.Decimal
 	OrderStatus  EcommerceGoOrderOrderStatus
 	CheckinDate  uint64
 	CheckoutDate uint64

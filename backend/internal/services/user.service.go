@@ -14,7 +14,8 @@ type (
 	}
 
 	IUserInfo interface {
-		GetUserById(ctx *gin.Context) error
+		GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.GetUserInfoOutput, err error)
+		UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInput) (codeStatus int, out *vo.UpdateUserInfoOutput, err error)
 	}
 
 	IUserAdmin interface {

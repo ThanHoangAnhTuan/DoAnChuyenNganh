@@ -43,3 +43,19 @@ type CheckOutInput struct {
 }
 type CheckOutOutput struct {
 }
+
+type GetOrderInfoAfterPaymentInput struct {
+	OrderIDExternal string `json:"order_id"`
+	TransactionID   string `json:"transaction_id"`
+}
+
+type GetOrderInfoAfterPaymentOutput struct {
+	OrderIDExternal string `json:"order_id"`
+	OrderStatus     string `json:"order_status"`
+	TotalPrice      string `json:"total_price"`
+	CheckIn         string `json:"check_in"`
+	CheckOut        string `json:"check_out"`
+	OrderDate       string `json:"order_date"`
+	Username        string `json:"username"`
+	TransactionID   string `json:"transaction_id"`
+}
