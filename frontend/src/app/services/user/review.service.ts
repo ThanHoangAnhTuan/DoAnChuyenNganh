@@ -7,7 +7,7 @@ import { CreateNewReview, Review } from '../../models/user/review.model';
   providedIn: 'root'
 })
 export class ReviewService {
-  private baseUrl = 'http://localhost:3000/reviews';
+  private baseUrl = 'http://localhost:8080/api/v1/review';
 
   constructor(private http: HttpClient) { }
 
@@ -16,6 +16,6 @@ export class ReviewService {
   }
 
   addReview(review: Review): Observable<CreateNewReview> {
-    return this.http.post<CreateNewReview>(this.baseUrl, review);
+    return this.http.post<CreateNewReview>(this.baseUrl + '/', review);
   }
 }

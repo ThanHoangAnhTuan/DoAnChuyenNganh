@@ -40,11 +40,11 @@
 </main> -->
 
 <main class="payment-result-container">
-  <div class="success-text" *ngIf="response_code != '00'">
+  <div class="success-text" *ngIf="response_code == '00'">
     Thanh toán thành công
   </div>
 
-  <div class="fail-text" *ngIf="response_code == '00'">
+  <div class="fail-text" *ngIf="response_code != '00'">
     Thanh toán thất bại
   </div>
 

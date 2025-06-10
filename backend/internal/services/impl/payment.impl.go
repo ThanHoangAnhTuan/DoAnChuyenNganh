@@ -396,7 +396,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		totalPrice = totalPrice.Add(roomSubtotal)
 	}
 
-	numDaysDecimal := decimal.NewFromInt(numDays - 1)
+	numDaysDecimal := decimal.NewFromInt(numDays)
 	totalPrice = totalPrice.Mul(numDaysDecimal)
 
 	vnpParams := map[string]string{

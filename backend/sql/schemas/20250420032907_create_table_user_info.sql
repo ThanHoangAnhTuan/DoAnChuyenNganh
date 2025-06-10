@@ -17,7 +17,7 @@ CREATE TABLE
         `updated_at` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'updated at',
         PRIMARY KEY (`id`),
         UNIQUE KEY `unique_user_info_account` (`account`),
-        -- UNIQUE KEY `unique_user_info_email` (`email`),
+        UNIQUE KEY `unique_user_info_email` (`email`),
         UNIQUE KEY `unique_user_info_phone` (`phone`),
         FULLTEXT KEY `fulltext_user_info_account` (`account`),
         FULLTEXT KEY `fulltext_user_info_user_name` (`user_name`)

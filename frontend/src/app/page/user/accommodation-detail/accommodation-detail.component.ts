@@ -15,6 +15,8 @@ import { Review } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from "../../../components/modals/review-list-modal/review-list-modal.component";
 import { PaymentService } from '../../../services/user/payment.service';
 import { TuiAlertService } from '@taiga-ui/core';
+import { AddressService } from '../../../services/address/address.service';
+import { City } from '../../../models/address/address.model';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -35,6 +37,8 @@ import { TuiAlertService } from '@taiga-ui/core';
 })
 export class AccommodationDetailComponent implements OnInit {
   accommodationId: string = '';
+  accommodationCity: string = '';
+  accommodationDistrict: string = '';
   accommodation: any;
   rooms: any[] = [];
   reviews: any[] = [];
@@ -98,6 +102,7 @@ export class AccommodationDetailComponent implements OnInit {
     private roomService: RoomService,
     private reviewService: ReviewService,
     private paymentService: PaymentService,
+    private addressService: AddressService,
   ) {
     this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
@@ -116,7 +121,7 @@ export class AccommodationDetailComponent implements OnInit {
     if (this.accommodationId) {
       this.getAccommodationById(this.accommodationId);
       this.getRoomByAccommodationId(this.accommodationId);
-      this.getReviewByAccommodationId(this.accommodationId);
+      // this.getReviewByAccommodationId(this.accommodationId);
     } else {
       console.error('Accommodation name is missing in URL');
     }
@@ -124,15 +129,25 @@ export class AccommodationDetailComponent implements OnInit {
 
   getAccommodationById(id: string) {
     this.accommodationDetailService.getAccommodationDetailById(id).subscribe((data: GetAccommodationByIdResponse) => {
-      this.accommodation = data.data;
-      // console.log("accommodation: ", this.accommodation);
+      if (data) {
+        this.accommodation = data.data;
+        // console.log("accommodation: ", this.accommodation);
+
+        this.getCityById(this.accommodation.city);
+      } else {
+        console.log("Can't get accommodation");
+      }
     })
   }
 
   getRoomByAccommodationId(id: string) {
     this.roomService.getRoomDetailByAccommodationId(id).subscribe((data: GetAccommodationDetailsResponse) => {
-      this.rooms = data.data;
-      // console.log("room: ", this.rooms);
+      if (data) {
+        this.rooms = data.data;
+        // console.log("room: ", this.rooms);
+      } else {
+        console.log("Can't get accommodation room");
+      }
     })
   }
 
@@ -199,6 +214,22 @@ export class AccommodationDetailComponent implements OnInit {
         this.getAlert('Notification', 'An error occurred while creating the payment URL. Please try again later.');
       }
     });
+  }
+
+  getCityById(id: string) {
+    this.addressService.getCityByLevel1id(id).subscribe((data: City[]) => {
+      if (data) {
+        this.accommodationCity = data[0].name;
+
+        const district = data[0].level2s.find(d => d.level2_id === this.accommodation.district);
+        this.accommodationDistrict = district?.name ?? '';
+        
+        // console.log("City: ", this.accommodationCity);
+        // console.log("District", this.accommodationDistrict);
+      } else {
+        console.log("Can't get city by id");
+      }
+    })
   }
 
   goToLink(url: string) {
