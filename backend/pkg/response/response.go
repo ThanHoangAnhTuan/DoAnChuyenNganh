@@ -8,11 +8,11 @@ import (
 )
 
 type Response struct {
-	Code       int            `json:"code"`
-	Message    string         `json:"message"`
-	Data       interface{}    `json:"data"`
-	Error      interface{}    `json:"error,omitempty"`
-	Pagination *vo.Pagination `json:"pagination,omitempty"`
+	Code       int                      `json:"code"`
+	Message    string                   `json:"message"`
+	Data       interface{}              `json:"data"`
+	Error      interface{}              `json:"error,omitempty"`
+	Pagination *vo.BasePaginationOutput `json:"pagination,omitempty"`
 }
 
 func SuccessResponse(c *gin.Context, code int, data interface{}) {
@@ -23,7 +23,7 @@ func SuccessResponse(c *gin.Context, code int, data interface{}) {
 	})
 }
 
-func SuccessResponseWithPagination(c *gin.Context, code int, data interface{}, pagination *vo.Pagination) {
+func SuccessResponseWithPagination(c *gin.Context, code int, data interface{}, pagination *vo.BasePaginationOutput) {
 	c.JSON(http.StatusOK, Response{
 		Code:       code,
 		Message:    message[code],

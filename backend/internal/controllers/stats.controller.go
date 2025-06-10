@@ -7,6 +7,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +25,14 @@ func (c *CStats) GetMonthlyEarnings(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("GetMonthlyEarnings success")
-	global.Logger.Info("GetMonthlyEarnings success")
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		fmt.Printf("CreateAccommodationDetail cannot found userID")
+		global.Logger.Error("CreateAccommodationDetail cannot found userID")
+		userID = "unknown"
+	}
+
+	fmt.Printf("GetMonthlyEarnings success: %s\n", userID)
+	global.Logger.Info("GetMonthlyEarnings success", zap.String("info", userID))
 	response.SuccessResponse(ctx, codeStatus, data)
 }

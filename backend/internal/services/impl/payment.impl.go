@@ -372,7 +372,10 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	}
 
 	duration := checkOutDate.Sub(checkInDate)
+	fmt.Printf("duration: %s", duration)
+
 	numDays := int64(duration.Hours() / 24)
+	fmt.Printf("numDays: %v", numDays)
 
 	if numDays <= 0 {
 		return response.ErrCodeParamsInvalid, nil, fmt.Errorf("check_out must come after check_in")
@@ -392,12 +395,18 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		}
 
 		quantity := decimal.NewFromInt(roomSelected.Quantity)
+		fmt.Printf("quantity: %s", quantity)
 		roomSubtotal := accommodationDetail.Price.Mul(quantity)
+		fmt.Printf("roomSubtotal: %s", roomSubtotal)
 		totalPrice = totalPrice.Add(roomSubtotal)
+		fmt.Printf("totalPrice: %s", totalPrice)
 	}
 
-	numDaysDecimal := decimal.NewFromInt(numDays - 1)
+	numDaysDecimal := decimal.NewFromInt(numDays)
+	fmt.Printf("numDaysDecimal: %s", numDaysDecimal)
+
 	totalPrice = totalPrice.Mul(numDaysDecimal)
+	fmt.Printf("totalPrice: %s", totalPrice)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",
@@ -424,11 +433,6 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	sortedParams["vnp_SecureHash"] = signature
 
 	finalURL := global.Config.Payment.VnpUrl + "?" + payment.CreateQueryString(sortedParams)
-
-	fmt.Printf("CreatePaymentURL success: %s\n", orderIDExternal)
-	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderIDExternal))
-
-	fmt.Printf("finalURL: %s\n", finalURL)
 
 	// TODO: save order to database
 	orderID := uuid.NewString()
@@ -482,7 +486,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		err = p.sqlc.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
 			ID:                    orderDetailID,
 			OrderID:               orderID,
-			Price:                 accommodationDetail.Price,
+			Price:                 accommodationDetail.Price.Mul(decimal.NewFromInt(roomSelected.Quantity)),
 			AccommodationDetailID: accommodationDetail.ID,
 			CreatedAt:             createdAt,
 			UpdatedAt:             createdAt,
@@ -493,7 +497,6 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		}
 	}
 
-	// ctx.Redirect(http.StatusFound, finalURL)
 	out.Url = finalURL
 	return response.ErrCodeCreatePaymentURLSuccess, out, nil
 }

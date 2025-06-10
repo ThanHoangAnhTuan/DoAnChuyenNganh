@@ -226,17 +226,24 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx *gin.Context, in *
 			pathNames = append(pathNames, img.Image)
 		}
 
+		// TODO: Get accommodation name by id
+		accommodationName, err := a.sqlc.GetAccommodationNameById(ctx, accommodationDetail.AccommodationID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
+		}
+
 		out = append(out, &vo.GetAccommodationDetailsOutput{
-			ID:              accommodationDetail.ID,
-			AccommodationID: accommodationDetail.AccommodationID,
-			Name:            accommodationDetail.Name,
-			Guests:          accommodationDetail.Guests,
-			Beds:            beds,
-			Facilities:      facilities,
-			AvailableRooms:  accommodationDetail.AvailableRooms,
-			Price:           accommodationDetail.Price.String(),
-			DiscountID:      accommodationDetail.DiscountID.String,
-			Images:          pathNames,
+			ID:                accommodationDetail.ID,
+			AccommodationID:   accommodationDetail.AccommodationID,
+			AccommodationName: accommodationName,
+			Name:              accommodationDetail.Name,
+			Guests:            accommodationDetail.Guests,
+			Beds:              beds,
+			Facilities:        facilities,
+			AvailableRooms:    accommodationDetail.AvailableRooms,
+			Price:             accommodationDetail.Price.String(),
+			DiscountID:        accommodationDetail.DiscountID.String,
+			Images:            pathNames,
 		})
 	}
 	return response.ErrCodeGetAccommodationDetailsSuccess, out, nil

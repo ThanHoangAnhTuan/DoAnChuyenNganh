@@ -10,19 +10,17 @@ type AccommodationRouter struct {
 }
 
 func (ur *AccommodationRouter) InitAccommodationRouter(Router *gin.RouterGroup) {
-	userRouterPublic := Router.Group("/accommodation")
+	accommodationRouterPublic := Router.Group("/accommodations")
 	{
-		userRouterPublic.GET("/get-accommodations", controllers.Accommodation.GetAccommodations)
-		userRouterPublic.GET("/get-accommodations-by-city/:city", controllers.Accommodation.GetAccommodationByCity)
-		userRouterPublic.GET("/get-accommodation-by-id/:id", controllers.Accommodation.GetAccommodationById)
+		accommodationRouterPublic.GET("", controllers.Accommodation.GetAccommodations)
+		accommodationRouterPublic.GET("/:id", controllers.Accommodation.GetAccommodation)
 	}
 
-	userRouterPrivate := Router.Group("/accommodation")
-	userRouterPrivate.Use(middlewares.AuthMiddleware())
+	accommodationRouterPrivate := Router.Group("/accommodations")
+	accommodationRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
-		userRouterPrivate.GET("/get-accommodations-by-manager", controllers.Accommodation.GetAccommodationsByManager)
-		userRouterPrivate.POST("/create-accommodation", controllers.Accommodation.CreateAccommodation)
-		userRouterPrivate.PUT("/update-accommodation", controllers.Accommodation.UpdateAccommodation)
-		userRouterPrivate.DELETE("/delete-accommodation", controllers.Accommodation.DeleteAccommodation)
+		accommodationRouterPrivate.POST("", controllers.Accommodation.CreateAccommodation)
+		accommodationRouterPrivate.PUT("", controllers.Accommodation.UpdateAccommodation)
+		accommodationRouterPrivate.DELETE("", controllers.Accommodation.DeleteAccommodation)
 	}
 }

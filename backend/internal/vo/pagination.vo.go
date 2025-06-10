@@ -1,23 +1,32 @@
 package vo
 
-type Pagination struct {
-	Page       int   `json:"page,omitempty"`
-	Limit      int   `json:"limit,omitempty"`
-	Total      int64 `json:"total,omitempty"`
-	TotalPages int   `json:"total_pages,omitempty"`
+type PaginationInput interface {
+	GetPage() int32
+	GetLimit() int32
 }
 
-func (g *GetReviewsInput) GetPage() int {
-	if g.Page == nil || *g.Page <= 0 {
+type BasePaginationInput struct {
+	Page  *int32 `form:"page,omitempty"`
+	Limit *int32 `form:"limit,omitempty"`
+}
+
+type BasePaginationOutput struct {
+	Page       int32 `json:"page"`
+	Limit      int32 `json:"limit"`
+	Total      int64 `json:"total"`
+	TotalPages int64 `json:"total_pages"`
+}
+
+func (b *BasePaginationInput) GetPage() int32 {
+	if b.Page == nil || *b.Page <= 0 {
 		return 1
 	}
-	return *g.Page
+	return *b.Page
 }
 
-// GetLimit trả về limit với default value là 10
-func (g *GetReviewsInput) GetLimit() int {
-	if g.Limit == nil || *g.Limit <= 0 {
+func (b *BasePaginationInput) GetLimit() int32 {
+	if b.Limit == nil || *b.Limit <= 0 {
 		return 10
 	}
-	return *g.Limit
+	return *b.Limit
 }

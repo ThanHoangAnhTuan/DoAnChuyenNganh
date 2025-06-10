@@ -50,9 +50,10 @@ func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("UpdateUserInfo validation error: %s\n", err.Error())
-		global.Logger.Error("UpdateUserInfo validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("UpdateUserInfo validation error: %s\n", validationErrors)
+		global.Logger.Error("UpdateUserInfo validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 

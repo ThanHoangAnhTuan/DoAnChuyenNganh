@@ -15,14 +15,13 @@ import { environment } from '../../../environments/environment';
     providedIn: 'root',
 })
 export class AccommodationService {
-    private apiUrl = `${environment.apiUrl}/accommodation/`;
+    private readonly accommodationUrl = `${environment.apiUrl}/accommodations/`;
+    private readonly managerUrl = `${environment.apiUrl}/manager/accommodations/`;
 
     constructor(private http: HttpClient) {}
 
     getAccommodations(): Observable<GetAccommodationResponse> {
-        return this.http.get<GetAccommodationResponse>(
-            this.apiUrl + 'get-accommodations-by-manager'
-        );
+        return this.http.get<GetAccommodationResponse>(this.managerUrl);
     }
 
     createAccommodation(
@@ -40,7 +39,7 @@ export class AccommodationService {
             facilities: accommodation.facilities,
         };
         return this.http.post<CreateAccommodationResponse>(
-            this.apiUrl + 'create-accommodation',
+            this.accommodationUrl,
             newAccommodation
         );
     }
@@ -61,14 +60,14 @@ export class AccommodationService {
             facilities: accommodation.facilities,
         };
         return this.http.put<UpdateAccommodationResponse>(
-            this.apiUrl + 'update-accommodation',
+            this.accommodationUrl,
             newAccommodation
         );
     }
 
     deleteAccommodation(id: string): Observable<DeleteAccommodationResponse> {
         return this.http.delete<DeleteAccommodationResponse>(
-            this.apiUrl + 'delete-accommodation',
+            this.accommodationUrl,
             {
                 body: { id: id },
             }

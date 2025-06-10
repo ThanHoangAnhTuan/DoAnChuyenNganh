@@ -33,6 +33,20 @@ func (q *Queries) CheckAccommodationDetailExists(ctx context.Context, id string)
 	return exists, err
 }
 
+const countAccommodationDetail = `-- name: CountAccommodationDetail :one
+SELECT
+    COUNT(*)
+FROM
+    ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
+`
+
+func (q *Queries) CountAccommodationDetail(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countAccommodationDetail)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createAccommodationDetail = `-- name: CreateAccommodationDetail :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` (
@@ -102,9 +116,7 @@ SELECT
     ` + "`" + `beds` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `available_rooms` + "`" + `,
-    ` + "`" + `price` + "`" + `,
-    ` + "`" + `created_at` + "`" + `,
-    ` + "`" + `updated_at` + "`" + `
+    ` + "`" + `price` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
@@ -127,8 +139,6 @@ type GetAccommodationDetailRow struct {
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
 	Price           decimal.Decimal
-	CreatedAt       uint64
-	UpdatedAt       uint64
 }
 
 func (q *Queries) GetAccommodationDetail(ctx context.Context, arg GetAccommodationDetailParams) (GetAccommodationDetailRow, error) {
@@ -143,8 +153,6 @@ func (q *Queries) GetAccommodationDetail(ctx context.Context, arg GetAccommodati
 		&i.Facilities,
 		&i.AvailableRooms,
 		&i.Price,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -159,9 +167,7 @@ SELECT
     ` + "`" + `discount_id` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `available_rooms` + "`" + `,
-    ` + "`" + `price` + "`" + `,
-    ` + "`" + `created_at` + "`" + `,
-    ` + "`" + `updated_at` + "`" + `
+    ` + "`" + `price` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
@@ -179,8 +185,6 @@ type GetAccommodationDetailsRow struct {
 	Facilities      json.RawMessage
 	AvailableRooms  uint8
 	Price           decimal.Decimal
-	CreatedAt       uint64
-	UpdatedAt       uint64
 }
 
 func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID string) ([]GetAccommodationDetailsRow, error) {
@@ -202,8 +206,6 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 			&i.Facilities,
 			&i.AvailableRooms,
 			&i.Price,
-			&i.CreatedAt,
-			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -267,6 +269,75 @@ func (q *Queries) GetAccommodationDetailsByIDs(ctx context.Context, arg GetAccom
 			&i.IsDeleted,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAccommodationDetailsWithPagination = `-- name: GetAccommodationDetailsWithPagination :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `accommodation_id` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `guests` + "`" + `,
+    ` + "`" + `beds` + "`" + `,
+    ` + "`" + `discount_id` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `available_rooms` + "`" + `,
+    ` + "`" + `price` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
+LIMIT
+    ?
+OFFSET
+    ?
+`
+
+type GetAccommodationDetailsWithPaginationParams struct {
+	Limit  int32
+	Offset int32
+}
+
+type GetAccommodationDetailsWithPaginationRow struct {
+	ID              string
+	AccommodationID string
+	Name            string
+	Guests          uint8
+	Beds            json.RawMessage
+	DiscountID      sql.NullString
+	Facilities      json.RawMessage
+	AvailableRooms  uint8
+	Price           decimal.Decimal
+}
+
+func (q *Queries) GetAccommodationDetailsWithPagination(ctx context.Context, arg GetAccommodationDetailsWithPaginationParams) ([]GetAccommodationDetailsWithPaginationRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAccommodationDetailsWithPagination, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAccommodationDetailsWithPaginationRow
+	for rows.Next() {
+		var i GetAccommodationDetailsWithPaginationRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccommodationID,
+			&i.Name,
+			&i.Guests,
+			&i.Beds,
+			&i.DiscountID,
+			&i.Facilities,
+			&i.AvailableRooms,
+			&i.Price,
 		); err != nil {
 			return nil, err
 		}

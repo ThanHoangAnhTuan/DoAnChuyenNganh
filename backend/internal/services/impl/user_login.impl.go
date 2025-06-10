@@ -283,7 +283,7 @@ func (u *UserLoginImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus i
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save user info to redis failed: %s", err)
 	}
 
-	out.Token, err = auth.CreateToken(userBase.ID, global.User)
+	out.Token, err = auth.CreateToken(userBase.ID, consts.USER)
 	if err != nil {
 		return response.ErrCodeCreateJWTTokenFailed, nil, err
 	}

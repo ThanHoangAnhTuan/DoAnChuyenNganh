@@ -19,7 +19,7 @@ sql:
           # Accommodation detail table
           - column: "ecommerce_go_accommodation_detail.price"
             go_type: "github.com/shopspring/decimal.Decimal"
-          
+            
           # Order detail table
           - column: "ecommerce_go_order_detail.price"
             go_type: "github.com/shopspring/decimal.Decimal"
