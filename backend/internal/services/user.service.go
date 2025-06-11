@@ -16,6 +16,7 @@ type (
 	IUserInfo interface {
 		GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.GetUserInfoOutput, err error)
 		UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInput) (codeStatus int, out *vo.UpdateUserInfoOutput, err error)
+		UploadAvatar(ctx *gin.Context, in *vo.UploadAvatarInput) (codeStatus int, avatarPath string, err error)
 	}
 
 	IUserAdmin interface {

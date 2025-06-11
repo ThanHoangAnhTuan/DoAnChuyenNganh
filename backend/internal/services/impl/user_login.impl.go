@@ -101,9 +101,9 @@ func (u *UserLoginImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeSt
 		// }
 
 		// TODO: send to email
-		err = sendto.SendEmailOTP([]string{in.VerifyKey}, "otp_auth.html", map[string]interface{}{
+		err = sendto.SendEmail([]string{in.VerifyKey}, "otp_auth.html", map[string]interface{}{
 			"otp": otpNew,
-		})
+		}, consts.OTP_VERIFY)
 		if err != nil {
 			return response.ErrCodeSendEmailFailed, fmt.Errorf("send email failed: %s", err)
 		}

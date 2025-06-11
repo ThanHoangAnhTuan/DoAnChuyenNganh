@@ -1,5 +1,7 @@
 package vo
 
+import "mime/multipart"
+
 type RegisterInput struct {
 	VerifyKey     string `json:"verify_key" validate:"required"`
 	VerifyType    uint8  `json:"verify_type" validate:"required"`
@@ -48,7 +50,6 @@ type UpdateUserInfoOutput struct {
 	ID       string `json:"id"`
 	Account  string `json:"account"`
 	Username string `json:"username"`
-	Image    string `json:"image"`
 	Phone    string `json:"phone"`
 	Gender   string `json:"gender"`
 	Birthday string `json:"birthday"`
@@ -58,9 +59,12 @@ type UpdateUserInfoOutput struct {
 type UpdateUserInfoInput struct {
 	Account  string `json:"account"`
 	Username string `json:"username"`
-	Image    string `json:"image"`
 	Phone    string `json:"phone"`
-	Gender   string `json:"gender"`
+	Gender   uint8  `json:"gender"`
 	Birthday string `json:"birthday"`
 	Email    string `json:"email"`
+}
+
+type UploadAvatarInput struct {
+	Avatar *multipart.FileHeader `form:"avatar"`
 }
