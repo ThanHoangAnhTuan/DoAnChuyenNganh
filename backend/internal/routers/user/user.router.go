@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/controllers"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 )
 
 type UserRouter struct {
@@ -18,8 +19,11 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		// userRouterPublic.Get("/get-user-info", controllers.UserInfo.)
 	}
 
-	// userRouterPrivate := Router.Group("/user")
-	// userRouterPrivate.Use(middlewares.AuthMiddleware())
-	// {
-	// }
+	userRouterPrivate := Router.Group("/user")
+	userRouterPrivate.Use(middlewares.AuthMiddleware())
+	{
+		userRouterPrivate.GET("/get-user-info", controllers.UserInfo.GetUserInfo)
+		userRouterPrivate.POST("/update-user-info", controllers.UserInfo.UpdateUserInfo)
+		userRouterPrivate.GET("/upload-user-avatar", controllers.UserInfo.UploadUserAvatar)
+	}
 }

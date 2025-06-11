@@ -18,7 +18,7 @@ type UserInfoImpl struct {
 }
 
 // UploadAvatar implements services.IUserInfo.
-func (u *UserInfoImpl) UploadAvatar(ctx *gin.Context, in *vo.UploadAvatarInput) (codeStatus int, avatarPath string, err error) {
+func (u *UserInfoImpl) UploadUserAvatar(ctx *gin.Context, in *vo.UploadUserAvatarInput) (codeStatus int, avatarPath string, err error) {
 	// TODO: get user id in context
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {

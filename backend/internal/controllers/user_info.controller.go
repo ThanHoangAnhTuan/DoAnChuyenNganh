@@ -69,3 +69,42 @@ func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
 	global.Logger.Info("UpdateUserInfo success: ", zap.String("info", params.Account))
 	response.SuccessResponse(ctx, codeResult, data)
 }
+
+func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("UploadUserAvatar validation not found")
+		global.Logger.Error("UploadUserAvatar validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.UploadUserAvatarInput
+	if err := ctx.ShouldBind(&params); err != nil {
+		fmt.Printf("UploadUserAvatar binding error: %s\n", err.Error())
+		global.Logger.Error("UploadUserAvatar binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("UploadUserAvatar validation error: %s\n", validationErrors)
+		global.Logger.Error("UploadUserAvatar validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeResult, data, err := services.UserInfo().UploadUserAvatar(ctx, &params)
+	if err != nil {
+		fmt.Printf("UploadUserAvatar error: %s\n", err.Error())
+		global.Logger.Error("UploadUserAvatar error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeResult, nil)
+		return
+	}
+
+	fmt.Printf("UploadUserAvatar success: %s\n", data)
+	global.Logger.Info("UploadUserAvatar success: ", zap.String("info", data))
+	response.SuccessResponse(ctx, codeResult, data)
+}

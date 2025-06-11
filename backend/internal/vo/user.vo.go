@@ -65,6 +65,6 @@ type UpdateUserInfoInput struct {
 	Email    string `json:"email"`
 }
 
-type UploadAvatarInput struct {
+type UploadUserAvatarInput struct {
 	Avatar *multipart.FileHeader `form:"avatar"`
 }
