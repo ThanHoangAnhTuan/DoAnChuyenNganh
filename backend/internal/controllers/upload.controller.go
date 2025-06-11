@@ -36,9 +36,10 @@ func (c *CUploadImage) UploadImages(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("UploadImages validation error: %s\n", err.Error())
-		global.Logger.Error("UploadImages validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("UploadImages validation error: %s\n", validationErrors)
+		global.Logger.Error("UploadImages validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -50,8 +51,8 @@ func (c *CUploadImage) UploadImages(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("UploadImages success")
-	global.Logger.Info("UploadImages success")
+	fmt.Printf("UploadImages success: %s", params.ID)
+	global.Logger.Info("UploadImages success", zap.String("info", params.ID))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
@@ -81,9 +82,10 @@ func (c *CUploadImage) GetImages(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("GetImages validation error: %s\n", err.Error())
-		global.Logger.Error("GetImages validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("GetImages validation error: %s\n", validationErrors)
+		global.Logger.Error("GetImages validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 

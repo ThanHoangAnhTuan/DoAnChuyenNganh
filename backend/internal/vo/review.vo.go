@@ -5,7 +5,7 @@ type CreateReviewInput struct {
 	Title           string `json:"title" validate:"required"`
 	Comment         string `json:"comment" validate:"required"`
 	Rating          uint8  `json:"rating" validate:"required"`
-	OrderID         string `json:"order_id" validate:"required"`
+	OrderIDExternal string `json:"order_id" validate:"required"`
 }
 type CreateReviewOutput struct {
 	ID      string `json:"id"`
@@ -18,8 +18,7 @@ type CreateReviewOutput struct {
 
 type GetReviewsInput struct {
 	AccommodationID string `form:"accommodation_id" validate:"required"`
-	Page            *int   `form:"page" validate:"omitempty,min=1"`
-	Limit           *int   `form:"limit" validate:"omitempty,min=1,max=100"`
+	BasePaginationInput
 }
 
 type GetReviewOutput struct {

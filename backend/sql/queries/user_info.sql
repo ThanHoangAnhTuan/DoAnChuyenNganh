@@ -76,3 +76,13 @@ WHERE
 DELETE FROM `ecommerce_go_user_info`
 WHERE
     `id` = ?;
+
+-- name: GetUsernameByID :one
+SELECT
+    `user_name`
+FROM
+    `ecommerce_go_user_info`
+WHERE
+    `id` = ?
+LIMIT
+    1;

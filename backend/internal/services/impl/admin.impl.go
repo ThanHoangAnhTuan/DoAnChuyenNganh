@@ -63,7 +63,7 @@ func (m *AdminLoginImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeSt
 		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save admin info to redis failed: %s", err)
 	}
 
-	out.Token, err = auth.CreateToken(userAdmin.ID, global.Admin)
+	out.Token, err = auth.CreateToken(userAdmin.ID, consts.ADMIN)
 	if err != nil {
 		return response.ErrCodeCreateJWTTokenFailed, nil, fmt.Errorf("error for create token failed: %s", err)
 	}

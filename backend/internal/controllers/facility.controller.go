@@ -36,9 +36,10 @@ func (c *CFacility) CreateFacility(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("CreateFacility validation error: %s\n", err.Error())
-		global.Logger.Error("CreateFacility validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("CreateFacility validation error: %s\n", validationErrors)
+		global.Logger.Error("CreateFacility validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -58,7 +59,7 @@ func (c *CFacility) CreateFacility(ctx *gin.Context) {
 func (c *CFacility) GetFacilities(ctx *gin.Context) {
 	codeResult, data, err := services.Facility().GetFacilities(ctx)
 	if err != nil {
-		fmt.Printf("GetFacilities error\n: %s", err.Error())
+		fmt.Printf("GetFacilities error: %s\n", err.Error())
 		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeResult, nil)
 		return

@@ -2,7 +2,7 @@ package vo
 
 type RoomSelected struct {
 	ID       string `json:"id"`
-	Quantity uint8  `json:"quantity"`
+	Quantity int64  `json:"quantity"`
 }
 
 type CreatePaymentURLInput struct {
@@ -10,9 +10,9 @@ type CreatePaymentURLInput struct {
 	CheckOut        string         `json:"check_out"`
 	AccommodationID string         `json:"accommodation_id"`
 	RoomSelected    []RoomSelected `json:"room_selected"`
-	// Amount          int            `json:"amount"`
-	// BankCode string `json:"bankCode"`
-	// Language string `json:"language" form:"language"`
+}
+type CreatePaymentURLOutput struct {
+	Url string `json:"url"`
 }
 
 type VNPayParams map[string]string
@@ -49,7 +49,7 @@ type QueryDataObj struct {
 type PostRefundInput struct {
 	OrderID   string `json:"orderId" form:"orderId"`
 	TransDate string `json:"transDate" form:"transDate"`
-	Amount    int    `json:"amount" form:"amount"`
+	Amount    string `json:"amount" form:"amount"`
 	TransType string `json:"transType" form:"transType"`
 	User      string `json:"user" form:"user"`
 }
@@ -61,7 +61,7 @@ type RefundDataObj struct {
 	VnpTmnCode         string `json:"vnp_TmnCode"`
 	VnpTransactionType string `json:"vnp_TransactionType"`
 	VnpTxnRef          string `json:"vnp_TxnRef"`
-	VnpAmount          int    `json:"vnp_Amount"`
+	VnpAmount          string `json:"vnp_Amount"`
 	VnpTransactionNo   string `json:"vnp_TransactionNo"`
 	VnpCreateBy        string `json:"vnp_CreateBy"`
 	VnpOrderInfo       string `json:"vnp_OrderInfo"`
@@ -74,7 +74,7 @@ type RefundDataObj struct {
 type PaymentResultData struct {
 	OrderIDExternal string `json:"order_id"`
 	ResponseCode    string `json:"response_code"`
-	Amount          int    `json:"amount"`
+	Amount          string `json:"amount"`
 	BankCode        string `json:"bank_code"`
 	TransactionNo   string `json:"transaction_no"`
 	PayDate         string `json:"pay_date"`

@@ -1,4 +1,5 @@
 import { Facility } from '../facility/facility.model';
+import { Pagination } from '../pagination/pagination.model';
 
 export interface Accommodation {
     id: string;
@@ -19,6 +20,7 @@ export interface GetAccommodationResponse {
     data: Accommodation[];
     code: number;
     message: string;
+    pagination: Pagination
 }
 
 export interface GetAccommodationByIdResponse {

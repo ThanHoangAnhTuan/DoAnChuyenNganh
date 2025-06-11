@@ -3,15 +3,14 @@ package impl
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
@@ -30,189 +29,192 @@ type PaymentImpl struct {
 }
 
 func (p *PaymentImpl) PostRefund(ctx *gin.Context, in *vo.PostRefundInput) {
-	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
-	now := time.Now().In(loc)
+	panic("PostRefund")
+	// loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
+	// now := time.Now().In(loc)
 
-	vnpRequestID := now.Format("150405")
-	vnpCreateDate := now.Format("20060102150405")
-	ipAddr := ip.GetClientIP(ctx)
-	vnpOrderInfo := "Hoan tien GD ma:" + in.OrderID
-	vnpTransactionNo := "0"
+	// vnpRequestID := now.Format("150405")
+	// vnpCreateDate := now.Format("20060102150405")
+	// ipAddr := ip.GetClientIP(ctx)
+	// vnpOrderInfo := "Hoan tien GD ma:" + in.OrderID
+	// vnpTransactionNo := "0"
 
-	// Create data string for signature
-	data := strings.Join([]string{
-		vnpRequestID,
-		"2.1.0",
-		"refund",
-		global.Config.Payment.VnpTmnCode,
-		in.TransType,
-		in.OrderID,
-		strconv.Itoa(in.Amount * 100),
-		vnpTransactionNo,
-		in.TransDate,
-		in.User,
-		vnpCreateDate,
-		ipAddr,
-		vnpOrderInfo,
-	}, "|")
+	// // Create data string for signature
+	// data := strings.Join([]string{
+	// 	vnpRequestID,
+	// 	"2.1.0",
+	// 	"refund",
+	// 	global.Config.Payment.VnpTmnCode,
+	// 	in.TransType,
+	// 	in.OrderID,
+	// 	strconv.Itoa(in.Amount * 100),
+	// 	vnpTransactionNo,
+	// 	in.TransDate,
+	// 	in.User,
+	// 	vnpCreateDate,
+	// 	ipAddr,
+	// 	vnpOrderInfo,
+	// }, "|")
 
-	vnpSecureHash := crypto.CreateHMACSignature(data, global.Config.Payment.VnpHashSecret)
+	// vnpSecureHash := crypto.CreateHMACSignature(data, global.Config.Payment.VnpHashSecret)
 
-	dataObj := vo.RefundDataObj{
-		VnpRequestID:       vnpRequestID,
-		VnpVersion:         "2.1.0",
-		VnpCommand:         "refund",
-		VnpTmnCode:         global.Config.Payment.VnpTmnCode,
-		VnpTransactionType: in.TransType,
-		VnpTxnRef:          in.OrderID,
-		VnpAmount:          in.Amount * 100,
-		VnpTransactionNo:   vnpTransactionNo,
-		VnpCreateBy:        in.User,
-		VnpOrderInfo:       vnpOrderInfo,
-		VnpTransactionDate: in.TransDate,
-		VnpCreateDate:      vnpCreateDate,
-		VnpIpAddr:          ipAddr,
-		VnpSecureHash:      vnpSecureHash,
-	}
+	// dataObj := vo.RefundDataObj{
+	// 	VnpRequestID:       vnpRequestID,
+	// 	VnpVersion:         "2.1.0",
+	// 	VnpCommand:         "refund",
+	// 	VnpTmnCode:         global.Config.Payment.VnpTmnCode,
+	// 	VnpTransactionType: in.TransType,
+	// 	VnpTxnRef:          in.OrderID,
+	// 	VnpAmount:          in.Amount * 100,
+	// 	VnpTransactionNo:   vnpTransactionNo,
+	// 	VnpCreateBy:        in.User,
+	// 	VnpOrderInfo:       vnpOrderInfo,
+	// 	VnpTransactionDate: in.TransDate,
+	// 	VnpCreateDate:      vnpCreateDate,
+	// 	VnpIpAddr:          ipAddr,
+	// 	VnpSecureHash:      vnpSecureHash,
+	// }
 
-	// Make HTTP request to VNPay API
-	response, err := payment.MakeAPIRequest(global.Config.Payment.VnpApi, dataObj)
-	if err != nil {
-		log.Printf("Error processing refund: %v", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process refund"})
-		return
-	}
+	// // Make HTTP request to VNPay API
+	// response, err := payment.MakeAPIRequest(global.Config.Payment.VnpApi, dataObj)
+	// if err != nil {
+	// 	log.Printf("Error processing refund: %v", err)
+	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process refund"})
+	// 	return
+	// }
 
-	log.Printf("Refund response: %s", response)
-	ctx.JSON(http.StatusOK, gin.H{"message": "Refund request sent successfully"})
+	// log.Printf("Refund response: %s", response)
+	// ctx.JSON(http.StatusOK, gin.H{"message": "Refund request sent successfully"})
 }
 
 func (p *PaymentImpl) PostQueryDR(ctx *gin.Context, in *vo.PostQueryDRInput) {
-	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
-	now := time.Now().In(loc)
+	panic("PostQueryDR")
+	// loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
+	// now := time.Now().In(loc)
 
-	vnpRequestID := now.Format("150405")
-	vnpCreateDate := now.Format("20060102150405")
-	ipAddr := ip.GetClientIP(ctx)
+	// vnpRequestID := now.Format("150405")
+	// vnpCreateDate := now.Format("20060102150405")
+	// ipAddr := ip.GetClientIP(ctx)
 
-	vnpOrderInfo := "Truy van GD ma:" + in.OrderID
+	// vnpOrderInfo := "Truy van GD ma:" + in.OrderID
 
-	// Create data string for signature
-	data := strings.Join([]string{
-		vnpRequestID,
-		"2.1.0",
-		"querydr",
-		global.Config.Payment.VnpTmnCode,
-		in.OrderID,
-		in.TransDate,
-		vnpCreateDate,
-		ipAddr,
-		vnpOrderInfo,
-	}, "|")
+	// // Create data string for signature
+	// data := strings.Join([]string{
+	// 	vnpRequestID,
+	// 	"2.1.0",
+	// 	"querydr",
+	// 	global.Config.Payment.VnpTmnCode,
+	// 	in.OrderID,
+	// 	in.TransDate,
+	// 	vnpCreateDate,
+	// 	ipAddr,
+	// 	vnpOrderInfo,
+	// }, "|")
 
-	vnpSecureHash := crypto.CreateHMACSignature(data, global.Config.Payment.VnpHashSecret)
+	// vnpSecureHash := crypto.CreateHMACSignature(data, global.Config.Payment.VnpHashSecret)
 
-	dataObj := vo.QueryDataObj{
-		VnpRequestID:       vnpRequestID,
-		VnpVersion:         "2.1.0",
-		VnpCommand:         "querydr",
-		VnpTmnCode:         global.Config.Payment.VnpTmnCode,
-		VnpTxnRef:          in.OrderID,
-		VnpOrderInfo:       vnpOrderInfo,
-		VnpTransactionDate: in.TransDate,
-		VnpCreateDate:      vnpCreateDate,
-		VnpIpAddr:          ipAddr,
-		VnpSecureHash:      vnpSecureHash,
-	}
+	// dataObj := vo.QueryDataObj{
+	// 	VnpRequestID:       vnpRequestID,
+	// 	VnpVersion:         "2.1.0",
+	// 	VnpCommand:         "querydr",
+	// 	VnpTmnCode:         global.Config.Payment.VnpTmnCode,
+	// 	VnpTxnRef:          in.OrderID,
+	// 	VnpOrderInfo:       vnpOrderInfo,
+	// 	VnpTransactionDate: in.TransDate,
+	// 	VnpCreateDate:      vnpCreateDate,
+	// 	VnpIpAddr:          ipAddr,
+	// 	VnpSecureHash:      vnpSecureHash,
+	// }
 
-	// Make HTTP request to VNPay API
-	response, err := payment.MakeAPIRequest(global.Config.Payment.VnpApi, dataObj)
-	if err != nil {
-		log.Printf("Error querying transaction: %v", err)
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query transaction"})
-		return
-	}
+	// // Make HTTP request to VNPay API
+	// response, err := payment.MakeAPIRequest(global.Config.Payment.VnpApi, dataObj)
+	// if err != nil {
+	// 	log.Printf("Error querying transaction: %v", err)
+	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query transaction"})
+	// 	return
+	// }
 
-	log.Printf("Query response: %s", response)
-	ctx.JSON(http.StatusOK, gin.H{"message": "Query sent successfully"})
+	// log.Printf("Query response: %s", response)
+	// ctx.JSON(http.StatusOK, gin.H{"message": "Query sent successfully"})
 }
 
 func (p *PaymentImpl) VNPayIPN(ctx *gin.Context) {
-	fmt.Print("VNPayIPN")
-	global.Logger.Info("VNPayIPN")
+	panic("VNPayIPN")
+	// fmt.Print("VNPayIPN")
+	// global.Logger.Info("VNPayIPN")
 
-	vnpParams := make(vo.VNPayParams)
+	// vnpParams := make(vo.VNPayParams)
 
-	// Get all query parameters
-	for key, values := range ctx.Request.URL.Query() {
-		if len(values) > 0 {
-			vnpParams[key] = values[0]
-		}
-	}
+	// // Get all query parameters
+	// for key, values := range ctx.Request.URL.Query() {
+	// 	if len(values) > 0 {
+	// 		vnpParams[key] = values[0]
+	// 	}
+	// }
 
-	secureHash := vnpParams["vnp_SecureHash"]
-	orderID := vnpParams["vnp_TxnRef"]
-	rspCode := vnpParams["vnp_ResponseCode"]
+	// secureHash := vnpParams["vnp_SecureHash"]
+	// orderID := vnpParams["vnp_TxnRef"]
+	// rspCode := vnpParams["vnp_ResponseCode"]
 
-	// Remove hash fields for verification
-	delete(vnpParams, "vnp_SecureHash")
-	delete(vnpParams, "vnp_SecureHashType")
+	// // Remove hash fields for verification
+	// delete(vnpParams, "vnp_SecureHash")
+	// delete(vnpParams, "vnp_SecureHashType")
 
-	// Sort parameters and verify signature
-	sortedParams := payment.SortObject(vnpParams)
-	signData := payment.CreateQueryString(sortedParams)
-	signed := crypto.CreateHMACSignature(signData, global.Config.Payment.VnpHashSecret)
+	// // Sort parameters and verify signature
+	// sortedParams := payment.SortObject(vnpParams)
+	// signData := payment.CreateQueryString(sortedParams)
+	// signed := crypto.CreateHMACSignature(signData, global.Config.Payment.VnpHashSecret)
 
-	// Payment status simulation
-	paymentStatus := "0" // 0: Initial, 1: Success, 2: Failed
-	checkOrderID := true // Check if order exists in database
-	checkAmount := true  // Check if amount matches
+	// // Payment status simulation
+	// paymentStatus := "0" // 0: Initial, 1: Success, 2: Failed
+	// checkOrderID := true // Check if order exists in database
+	// checkAmount := true  // Check if amount matches
 
-	if secureHash == signed {
-		if checkOrderID {
-			if checkAmount {
-				if paymentStatus == "0" {
-					if rspCode == "00" {
-						// Payment successful
-						// Update payment status to success in database
-						fmt.Printf("Payment successful for order: %s\n", orderID)
-						ctx.JSON(http.StatusOK, vo.VNPayResponse{
-							RspCode: "00",
-							Message: "Success",
-						})
-					} else {
-						// Payment failed
-						// Update payment status to failed in database
-						fmt.Printf("Payment failed for order: %s\n", orderID)
-						ctx.JSON(http.StatusOK, vo.VNPayResponse{
-							RspCode: "00",
-							Message: "Success",
-						})
-					}
-				} else {
-					ctx.JSON(http.StatusOK, vo.VNPayResponse{
-						RspCode: "02",
-						Message: "This order has been updated to the payment status",
-					})
-				}
-			} else {
-				ctx.JSON(http.StatusOK, vo.VNPayResponse{
-					RspCode: "04",
-					Message: "Amount invalid",
-				})
-			}
-		} else {
-			ctx.JSON(http.StatusOK, vo.VNPayResponse{
-				RspCode: "01",
-				Message: "Order not found",
-			})
-		}
-	} else {
-		ctx.JSON(http.StatusOK, vo.VNPayResponse{
-			RspCode: "97",
-			Message: "Checksum failed",
-		})
-	}
+	// if secureHash == signed {
+	// 	if checkOrderID {
+	// 		if checkAmount {
+	// 			if paymentStatus == "0" {
+	// 				if rspCode == "00" {
+	// 					// Payment successful
+	// 					// Update payment status to success in database
+	// 					fmt.Printf("Payment successful for order: %s\n", orderID)
+	// 					ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 						RspCode: "00",
+	// 						Message: "Success",
+	// 					})
+	// 				} else {
+	// 					// Payment failed
+	// 					// Update payment status to failed in database
+	// 					fmt.Printf("Payment failed for order: %s\n", orderID)
+	// 					ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 						RspCode: "00",
+	// 						Message: "Success",
+	// 					})
+	// 				}
+	// 			} else {
+	// 				ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 					RspCode: "02",
+	// 					Message: "This order has been updated to the payment status",
+	// 				})
+	// 			}
+	// 		} else {
+	// 			ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 				RspCode: "04",
+	// 				Message: "Amount invalid",
+	// 			})
+	// 		}
+	// 	} else {
+	// 		ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 			RspCode: "01",
+	// 			Message: "Order not found",
+	// 		})
+	// 	}
+	// } else {
+	// 	ctx.JSON(http.StatusOK, vo.VNPayResponse{
+	// 		RspCode: "97",
+	// 		Message: "Checksum failed",
+	// 	})
+	// }
 }
 
 func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) {
@@ -264,7 +266,8 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 
 	// Convert amount to VND
 	amountInt, _ := strconv.Atoi(amount)
-	amountVND := amountInt / 100
+	// amountVND := amountInt / 100
+	amountVND := decimal.NewFromInt(int64(amountInt)).Div(decimal.NewFromInt(100))
 
 	// TODO: update order status
 	now := utiltime.GetTimeNow()
@@ -306,7 +309,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		OrderID:       orderID,
 		PaymentStatus: database.EcommerceGoPaymentPaymentStatus(paymentStatus),
 		PaymentMethod: database.EcommerceGoPaymentPaymentMethodCard,
-		TotalPrice:    uint32(amountVND),
+		TotalPrice:    amountVND,
 		TransactionID: sql.NullString{
 			String: transactionNo,
 			Valid:  true,
@@ -314,6 +317,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		CreatedAt: now,
 		UpdatedAt: now,
 	})
+
 	if err != nil {
 		return 0, err
 	}
@@ -321,7 +325,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	p.redirectToReactWithResult(ctx, vo.PaymentResultData{
 		OrderIDExternal: orderIDExternal,
 		ResponseCode:    responseCode,
-		Amount:          amountVND,
+		Amount:          amountVND.String(),
 		BankCode:        bankCode,
 		TransactionNo:   transactionNo,
 		PayDate:         payDate,
@@ -330,21 +334,23 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	return response.ErrCodeSuccessfully, nil
 }
 
-func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURLInput) (codeStatus int, err error) {
+func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURLInput) (codeStatus int, out *vo.CreatePaymentURLOutput, err error) {
+	out = &vo.CreatePaymentURLOutput{}
+
 	// TODO: get userId from context
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
 	}
 
 	// TODO: check user exists
 	exists, err := p.sqlc.CheckUserBaseExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
 	}
 
 	// TODO: create payment url
@@ -362,19 +368,22 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	checkInDate, err1 := time.Parse(layout, in.CheckIn)
 	checkOutDate, err2 := time.Parse(layout, in.CheckOut)
 	if err1 != nil || err2 != nil {
-		return response.ErrCodeParseTimeFailed, err1
+		return response.ErrCodeParseTimeFailed, nil, err1
 	}
 
 	duration := checkOutDate.Sub(checkInDate)
-	numDays := int(duration.Hours() / 24)
+	fmt.Printf("duration: %s", duration)
+
+	numDays := int64(duration.Hours() / 24)
+	fmt.Printf("numDays: %v", numDays)
 
 	if numDays <= 0 {
-		return response.ErrCodeParamsInvalid, fmt.Errorf("check_out must come after check_in")
+		return response.ErrCodeParamsInvalid, nil, fmt.Errorf("check_out must come after check_in")
 	}
 
 	// TODO: get total price
-	var totalPrice uint32
-	totalPrice = 0
+	var totalPrice decimal.Decimal
+	totalPrice = decimal.Zero
 	for _, roomSelected := range in.RoomSelected {
 		accommodationDetail, err := p.sqlc.GetAccommodationDetail(ctx, database.GetAccommodationDetailParams{
 			ID:              roomSelected.ID,
@@ -382,12 +391,22 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		})
 
 		if err != nil {
-			return response.ErrCodeGetAccommodationDetailFailed, err
+			return response.ErrCodeGetAccommodationDetailFailed, nil, err
 		}
-		totalPrice += accommodationDetail.Price * uint32(roomSelected.Quantity)
+
+		quantity := decimal.NewFromInt(roomSelected.Quantity)
+		fmt.Printf("quantity: %s", quantity)
+		roomSubtotal := accommodationDetail.Price.Mul(quantity)
+		fmt.Printf("roomSubtotal: %s", roomSubtotal)
+		totalPrice = totalPrice.Add(roomSubtotal)
+		fmt.Printf("totalPrice: %s", totalPrice)
 	}
 
-	totalPrice += totalPrice * uint32(numDays)
+	numDaysDecimal := decimal.NewFromInt(numDays)
+	fmt.Printf("numDaysDecimal: %s", numDaysDecimal)
+
+	totalPrice = totalPrice.Mul(numDaysDecimal)
+	fmt.Printf("totalPrice: %s", totalPrice)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",
@@ -398,7 +417,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		"vnp_TxnRef":     orderIDExternal,
 		"vnp_OrderInfo":  "Thanh toan cho ma GD:" + orderIDExternal,
 		"vnp_OrderType":  "other",
-		"vnp_Amount":     strconv.Itoa(int(totalPrice * 100)),
+		"vnp_Amount":     totalPrice.Mul(decimal.NewFromInt(100)).String(),
 		"vnp_ReturnUrl":  global.Config.Payment.VnpReturnUrl,
 		"vnp_IpAddr":     ipAddr,
 		"vnp_CreateDate": createDate,
@@ -415,22 +434,17 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	finalURL := global.Config.Payment.VnpUrl + "?" + payment.CreateQueryString(sortedParams)
 
-	fmt.Printf("CreatePaymentURL success: %s\n", orderIDExternal)
-	global.Logger.Info("CreatePaymentURL success: ", zap.String("info", orderIDExternal))
-
-	fmt.Printf("finalURL: %s\n", finalURL)
-
 	// TODO: save order to database
 	orderID := uuid.NewString()
 
 	checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
 	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, err
+		return response.ErrCodeConvertISOToUnixFailed, nil, err
 	}
 
 	checkOut, err := utiltime.ConvertISOToUnixTimestamp(in.CheckOut)
 	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, err
+		return response.ErrCodeConvertISOToUnixFailed, nil, err
 	}
 
 	createdAt := utiltime.GetTimeNow()
@@ -454,7 +468,7 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	})
 
 	if err != nil {
-		return response.ErrCodeCreateOrderFailed, err
+		return response.ErrCodeCreateOrderFailed, nil, err
 	}
 
 	// TODO: lấy thông tin của accommodation detail
@@ -465,33 +479,33 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		})
 
 		if err != nil {
-			return response.ErrCodeGetAccommodationDetailFailed, err
+			return response.ErrCodeGetAccommodationDetailFailed, nil, err
 		}
 
 		orderDetailID := uuid.NewString()
 		err = p.sqlc.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
 			ID:                    orderDetailID,
 			OrderID:               orderID,
-			Price:                 accommodationDetail.Price,
+			Price:                 accommodationDetail.Price.Mul(decimal.NewFromInt(roomSelected.Quantity)),
 			AccommodationDetailID: accommodationDetail.ID,
 			CreatedAt:             createdAt,
 			UpdatedAt:             createdAt,
 		})
 
 		if err != nil {
-			return response.ErrCodeCreateOrderDetailFailed, err
+			return response.ErrCodeCreateOrderDetailFailed, nil, err
 		}
 	}
 
-	ctx.Redirect(http.StatusFound, finalURL)
-	return response.ErrCodeCreatePaymentURLSuccess, nil
+	out.Url = finalURL
+	return response.ErrCodeCreatePaymentURLSuccess, out, nil
 }
 
 func (p *PaymentImpl) redirectToReactWithResult(ctx *gin.Context, data vo.PaymentResultData) {
 	params := url.Values{}
 	params.Set("order_id", data.OrderIDExternal)
 	params.Set("response_code", data.ResponseCode)
-	params.Set("amount", strconv.Itoa(data.Amount))
+	params.Set("amount", data.Amount)
 
 	if data.BankCode != "" {
 		params.Set("bank_code", data.BankCode)

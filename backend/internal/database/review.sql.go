@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
 
 const countReviewsByAccommodation = `-- name: CountReviewsByAccommodation :one
@@ -105,7 +106,7 @@ type GetReviewsRow struct {
 	Comment         string
 	Rating          uint8
 	Title           string
-	ManagerResponse string
+	ManagerResponse sql.NullString
 	CreatedAt       uint64
 }
 
@@ -169,7 +170,7 @@ type GetReviewsWithPaginationRow struct {
 	Comment         string
 	Rating          uint8
 	Title           string
-	ManagerResponse string
+	ManagerResponse sql.NullString
 	CreatedAt       uint64
 }
 
@@ -220,7 +221,7 @@ type UpdateReviewParams struct {
 	Comment         string
 	Rating          uint8
 	Title           string
-	ManagerResponse string
+	ManagerResponse sql.NullString
 	ID              string
 	UserID          string
 }

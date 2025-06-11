@@ -12,6 +12,7 @@ type (
 		CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (codeStatus int, out *vo.CancelOrderOutput, err error)
 		CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, out *vo.CheckInOutput, err error)
 		CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, out *vo.CheckOutOutput, err error)
+		GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderInfoAfterPaymentInput) (codeStatus int, out *vo.GetOrderInfoAfterPaymentOutput, err error)
 	}
 )
 

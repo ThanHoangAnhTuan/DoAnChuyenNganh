@@ -20,38 +20,39 @@ type CAdminLogin struct {
 func (c *CAdminLogin) Register(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("Admin Register validation not found\n")
-		global.Logger.Error("Admin Register validation not found")
+		fmt.Printf("Admin register validation not found\n")
+		global.Logger.Error("Admin register validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
 
 	var params vo.AdminRegisterInput
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("Admin Register binding error: %s\n", err.Error())
-		global.Logger.Error("Admin Register binding error: ", zap.String("error", err.Error()))
+		fmt.Printf("Admin register binding error: %s\n", err.Error())
+		global.Logger.Error("Admin register binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Admin Register validation error: %s\n", err.Error())
-		global.Logger.Error("Admin Register validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("Admin register validation error: %s\n", validationErrors)
+		global.Logger.Error("Admin register validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
 	codeStatus, err := services.AdminLogin().Register(ctx, &params)
 	if err != nil {
-		fmt.Printf("Admin Register error: %s\n", err.Error())
-		global.Logger.Error("Admin Register error: ", zap.String("error", err.Error()))
+		fmt.Printf("Admin register error: %s\n", err.Error())
+		global.Logger.Error("Admin register error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("Admin Register success: %s\n", params.UserAccount)
-	global.Logger.Info("Admin Register success: ", zap.String("info", params.UserAccount))
+	fmt.Printf("Admin register success: %s\n", params.UserAccount)
+	global.Logger.Info("Admin register success: ", zap.String("info", params.UserAccount))
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
@@ -66,7 +67,7 @@ func (c *CAdminLogin) Login(ctx *gin.Context) {
 
 	var params vo.AdminLoginInput
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("Admin login binding error\n: %s", err.Error())
+		fmt.Printf("Admin login binding error: %s\n", err.Error())
 		global.Logger.Error("Admin login binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
@@ -74,21 +75,22 @@ func (c *CAdminLogin) Login(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Admin login validation error\n: %s", err.Error())
-		global.Logger.Error("Admin login validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("Admin login validation error: %s\n", validationErrors)
+		global.Logger.Error("Admin login validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
 	codeResult, data, err := services.AdminLogin().Login(ctx, &params)
 	if err != nil {
-		fmt.Printf("Admin login error\n: %s", err.Error())
+		fmt.Printf("Admin login error: %s\n", err.Error())
 		global.Logger.Error("Admin login error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeResult, nil)
 		return
 	}
 
-	fmt.Printf("Admin login success\n: %s", data.Token)
+	fmt.Printf("Admin login success: %s\n", data.Token)
 	global.Logger.Info("Admin login success: ", zap.String("info", data.Token))
 	response.SuccessResponse(ctx, codeResult, data)
 }

@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
@@ -67,6 +69,15 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 	accommodationDetailID := uuid.New().String()
 	now := utiltime.GetTimeNow()
 
+	price, err := decimal.NewFromString(strings.TrimSpace(in.Price))
+	if err != nil {
+		return response.ErrCodeInvalidPriceFormat, nil, fmt.Errorf("invalid price format: %v", err)
+	}
+
+	if price.LessThanOrEqual(decimal.Zero) {
+		return response.ErrCodePriceMustBePositive, nil, fmt.Errorf("price must be positive")
+	}
+
 	// TODO: create accommodation detail
 	err = a.sqlc.CreateAccommodationDetail(ctx, database.CreateAccommodationDetailParams{
 		ID:              accommodationDetailID,
@@ -74,7 +85,7 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 		Name:            in.Name,
 		Guests:          in.Guests,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           in.Price,
+		Price:           price,
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		CreatedAt:       now,
@@ -109,7 +120,7 @@ func (a *AccommodationDetailImpl) CreateAccommodationDetail(ctx *gin.Context, in
 	out.DiscountID = in.DiscountID
 	out.Guests = in.Guests
 	out.Name = in.Name
-	out.Price = in.Price
+	out.Price = price.String()
 	return response.ErrCodeCreateAccommodationDetailSuccess, out, nil
 }
 
@@ -215,17 +226,24 @@ func (a *AccommodationDetailImpl) GetAccommodationDetails(ctx *gin.Context, in *
 			pathNames = append(pathNames, img.Image)
 		}
 
+		// TODO: Get accommodation name by id
+		accommodationName, err := a.sqlc.GetAccommodationNameById(ctx, accommodationDetail.AccommodationID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
+		}
+
 		out = append(out, &vo.GetAccommodationDetailsOutput{
-			ID:              accommodationDetail.ID,
-			AccommodationID: accommodationDetail.AccommodationID,
-			Name:            accommodationDetail.Name,
-			Guests:          accommodationDetail.Guests,
-			Beds:            beds,
-			Facilities:      facilities,
-			AvailableRooms:  accommodationDetail.AvailableRooms,
-			Price:           accommodationDetail.Price,
-			DiscountID:      accommodationDetail.DiscountID.String,
-			Images:          pathNames,
+			ID:                accommodationDetail.ID,
+			AccommodationID:   accommodationDetail.AccommodationID,
+			AccommodationName: accommodationName,
+			Name:              accommodationDetail.Name,
+			Guests:            accommodationDetail.Guests,
+			Beds:              beds,
+			Facilities:        facilities,
+			AvailableRooms:    accommodationDetail.AvailableRooms,
+			Price:             accommodationDetail.Price.String(),
+			DiscountID:        accommodationDetail.DiscountID.String,
+			Images:            pathNames,
 		})
 	}
 	return response.ErrCodeGetAccommodationDetailsSuccess, out, nil
@@ -292,6 +310,15 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
+	price, err := decimal.NewFromString(strings.TrimSpace(in.Price))
+	if err != nil {
+		return response.ErrCodeInvalidPriceFormat, nil, fmt.Errorf("invalid price format: %v", err)
+	}
+
+	if price.LessThanOrEqual(decimal.Zero) {
+		return response.ErrCodePriceMustBePositive, nil, errors.New("price must be positive")
+	}
+
 	now := utiltime.GetTimeNow()
 	err = a.sqlc.UpdateAccommodationDetail(ctx, database.UpdateAccommodationDetailParams{
 		Name:            in.Name,
@@ -299,7 +326,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 		Beds:            bedsJson,
 		Facilities:      facilitiesJson,
 		AvailableRooms:  in.AvailableRooms,
-		Price:           in.Price,
+		Price:           price,
 		UpdatedAt:       now,
 		ID:              in.ID,
 		AccommodationID: in.AccommodationID,
@@ -342,7 +369,7 @@ func (a *AccommodationDetailImpl) UpdateAccommodationDetail(ctx *gin.Context, in
 	out.Guests = in.Guests
 	out.ID = in.ID
 	out.Name = in.Name
-	out.Price = in.Price
+	out.Price = price.String()
 	out.Images = pathNames
 
 	return response.ErrCodeUpdateAccommodationDetailSuccess, out, nil

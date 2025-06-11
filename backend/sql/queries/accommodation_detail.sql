@@ -24,9 +24,7 @@ SELECT
     `beds`,
     `facilities`,
     `available_rooms`,
-    `price`,
-    `created_at`,
-    `updated_at`
+    `price`
 FROM
     `ecommerce_go_accommodation_detail`
 WHERE
@@ -44,9 +42,7 @@ SELECT
     `discount_id`,
     `facilities`,
     `available_rooms`,
-    `price`,
-    `created_at`,
-    `updated_at`
+    `price`
 FROM
     `ecommerce_go_accommodation_detail`
 WHERE
@@ -92,5 +88,29 @@ SELECT
 FROM
     `ecommerce_go_accommodation_detail`
 WHERE
-    `id` IN (sqlc.slice('ids'))
+    `id` IN (sqlc.slice ('ids'))
     AND `accommodation_id` = ?;
+
+-- name: CountAccommodationDetail :one
+SELECT
+    COUNT(*)
+FROM
+    `ecommerce_go_accommodation_detail`;
+
+-- name: GetAccommodationDetailsWithPagination :many
+SELECT
+    `id`,
+    `accommodation_id`,
+    `name`,
+    `guests`,
+    `beds`,
+    `discount_id`,
+    `facilities`,
+    `available_rooms`,
+    `price`
+FROM
+    `ecommerce_go_accommodation_detail`
+LIMIT
+    ?
+OFFSET
+    ?;

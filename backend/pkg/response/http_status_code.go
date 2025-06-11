@@ -12,10 +12,10 @@ const (
 	ErrCodeForbidden              = 20008
 	ErrCodeValidatorNotFound      = 20009
 	ErrCodeValidator              = 20010
-	ErrCodeConvertISOToUnixFailed = 200011
-	ErrCodeConvertUnixToISOFailed = 200012
-	ErrCodeSuccessfully           = 200013
-	ErrCodeParseTimeFailed        = 200014
+	ErrCodeConvertISOToUnixFailed = 20011
+	ErrCodeConvertUnixToISOFailed = 20012
+	ErrCodeSuccessfully           = 20013
+	ErrCodeParseTimeFailed        = 20014
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -49,41 +49,43 @@ const (
 	ErrCodeInvalidToken               = 70003
 
 	// accommodation
-	ErrCodeCreateAccommodationFailed  = 80001
-	ErrCodeCreateAccommodationSuccess = 80002
-	ErrCodeManagerNotFound            = 80003
-	ErrCodeGetAccommodationsFailed    = 80004
-	ErrCodeGetAccommodationSuccess    = 80005
-	ErrCodeGetAccommodationFailed     = 80006
-	ErrCodeAccommodationNotFound      = 80007
-	ErrCodeUpdateAccommodationSuccess = 80008
-	ErrCodeUpdateAccommodationFailed  = 80009
-	ErrCodeDeleteAccommodationFailed  = 80010
-	ErrCodeDeleteAccommodationSuccess = 80011
+	ErrCodeCreateAccommodationFailed   = 80001
+	ErrCodeCreateAccommodationSuccess  = 80002
+	ErrCodeManagerNotFound             = 80003
+	ErrCodeGetAccommodationsFailed     = 80004
+	ErrCodeGetAccommodationSuccess     = 80005
+	ErrCodeGetAccommodationFailed      = 80006
+	ErrCodeAccommodationNotFound       = 80007
+	ErrCodeUpdateAccommodationSuccess  = 80008
+	ErrCodeUpdateAccommodationFailed   = 80009
+	ErrCodeDeleteAccommodationFailed   = 80010
+	ErrCodeDeleteAccommodationSuccess  = 80011
+	ErrCodeGetCountAccommodationFailed = 80012
 
 	// accommodation image
-	ErrCodeGetAccommodationImagesFailed    = 800012
-	ErrCodeGetAccommodationImagesSuccess   = 800013
-	ErrCodeDeleteAccommodationImagesFailed = 800014
-	ErrCodeSaveAccommodationImagesFailed   = 800015
+	ErrCodeGetAccommodationImagesFailed    = 80013
+	ErrCodeGetAccommodationImagesSuccess   = 80014
+	ErrCodeDeleteAccommodationImagesFailed = 80015
+	ErrCodeSaveAccommodationImagesFailed   = 80016
 
 	// accommodation detail
-	ErrCodeCreateAccommodationDetailFailed  = 90001
-	ErrCodeCreateAccommodationDetailSuccess = 90002
-	ErrCodeGetAccommodationDetailsFailed    = 90004
-	ErrCodeGetAccommodationDetailsSuccess   = 90005
-	ErrCodeGetAccommodationDetailFailed     = 90006
-	ErrCodeAccommodationDetailNotFound      = 90007
-	ErrCodeUpdateAccommodationDetailSuccess = 90008
-	ErrCodeUpdateAccommodationDetailFailed  = 90009
-	ErrCodeDeleteAccommodationDetailFailed  = 90010
-	ErrCodeDeleteAccommodationDetailSuccess = 90011
+	ErrCodeCreateAccommodationDetailFailed   = 90001
+	ErrCodeCreateAccommodationDetailSuccess  = 90002
+	ErrCodeGetAccommodationDetailsFailed     = 90004
+	ErrCodeGetAccommodationDetailsSuccess    = 90005
+	ErrCodeGetAccommodationDetailFailed      = 90006
+	ErrCodeAccommodationDetailNotFound       = 90007
+	ErrCodeUpdateAccommodationDetailSuccess  = 90008
+	ErrCodeUpdateAccommodationDetailFailed   = 90009
+	ErrCodeDeleteAccommodationDetailFailed   = 90010
+	ErrCodeDeleteAccommodationDetailSuccess  = 90011
+	ErrCodeGetCountAccommodationDetailFailed = 90012
 
 	// accommodation detail image
-	ErrCodeGetAccommodationDetailImagesFailed    = 900012
-	ErrCodeGetAccommodationDetailImagesSuccess   = 900013
-	ErrCodeDeleteAccommodationDetailImagesFailed = 900014
-	ErrCodeSaveAccommodationDetailImagesFailed   = 900015
+	ErrCodeGetAccommodationDetailImagesFailed    = 90013
+	ErrCodeGetAccommodationDetailImagesSuccess   = 90014
+	ErrCodeDeleteAccommodationDetailImagesFailed = 90015
+	ErrCodeSaveAccommodationDetailImagesFailed   = 90016
 
 	// file
 	ErrCodeOpenFileFailed     = 100001
@@ -120,14 +122,16 @@ const (
 	// order
 	ErrCodeCreateOrderDetailFailed  = 160001
 	ErrCodeCreateOrderFailed        = 160002
-	ErrCodeCreatePaymentFailed      = 160003
-	ErrCodeCreateOrderSuccess       = 160004
-	ErrCodeGetOrderFailed           = 160005
-	ErrCodeGetOrderByUserIDNotFound = 160006
-	ErrCodeUpdateOrderStatusFailed  = 160007
+	ErrCodeCreateOrderSuccess       = 160003
+	ErrCodeGetOrderFailed           = 160004
+	ErrCodeGetOrderByUserIDNotFound = 160005
+	ErrCodeUpdateOrderStatusFailed  = 160006
+	ErrCodeGetOrderSuccess          = 160007
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess = 170001
+	ErrCodeCreatePaymentFailed     = 170002
+	ErrCodeGetPaymentFailed        = 170003
 
 	// review
 	ErrCodeCreateReviewFailed             = 180001
@@ -138,6 +142,10 @@ const (
 	// stats
 	ErrCodeGetMonthlyEarningSuccess = 190001
 	ErrCodeGetMonthlyEarningFailed  = 190002
+
+	// Decimal
+	ErrCodeInvalidPriceFormat  = 200001
+	ErrCodePriceMustBePositive = 200002
 )
 
 var message = map[int]string{
@@ -189,17 +197,18 @@ var message = map[int]string{
 	ErrCodeInvalidToken:               "Invalid token",
 
 	// accommodation
-	ErrCodeCreateAccommodationFailed:  "Create accommodation failed",
-	ErrCodeCreateAccommodationSuccess: "Create accommodation successfully",
-	ErrCodeGetAccommodationsFailed:    "Get accommodations failed",
-	ErrCodeManagerNotFound:            "Manager not found",
-	ErrCodeGetAccommodationSuccess:    "Get accommodations successfully",
-	ErrCodeGetAccommodationFailed:     "Get accommodation failed",
-	ErrCodeAccommodationNotFound:      "Accommodation not found",
-	ErrCodeUpdateAccommodationSuccess: "Update accommodation successfully",
-	ErrCodeUpdateAccommodationFailed:  "Update accommodation failed",
-	ErrCodeDeleteAccommodationFailed:  "Delete accommodation failed",
-	ErrCodeDeleteAccommodationSuccess: "Delete accommodation successfully",
+	ErrCodeCreateAccommodationFailed:   "Create accommodation failed",
+	ErrCodeCreateAccommodationSuccess:  "Create accommodation successfully",
+	ErrCodeGetAccommodationsFailed:     "Get accommodations failed",
+	ErrCodeManagerNotFound:             "Manager not found",
+	ErrCodeGetAccommodationSuccess:     "Get accommodations successfully",
+	ErrCodeGetAccommodationFailed:      "Get accommodation failed",
+	ErrCodeAccommodationNotFound:       "Accommodation not found",
+	ErrCodeUpdateAccommodationSuccess:  "Update accommodation successfully",
+	ErrCodeUpdateAccommodationFailed:   "Update accommodation failed",
+	ErrCodeDeleteAccommodationFailed:   "Delete accommodation failed",
+	ErrCodeDeleteAccommodationSuccess:  "Delete accommodation successfully",
+	ErrCodeGetCountAccommodationFailed: "Get count accommodation failed",
 
 	// accommodation image
 	ErrCodeGetAccommodationImagesFailed:    "Get images of accommodation failed",
@@ -208,16 +217,17 @@ var message = map[int]string{
 	ErrCodeSaveAccommodationImagesFailed:   "Save images of accommodation failed",
 
 	// accommodation detail
-	ErrCodeCreateAccommodationDetailFailed:  "Create accommodation details failed",
-	ErrCodeCreateAccommodationDetailSuccess: "Create accommodation details successfully",
-	ErrCodeGetAccommodationDetailsFailed:    "Get accommodation details failed",
-	ErrCodeGetAccommodationDetailsSuccess:   "Get accommodation details successfully",
-	ErrCodeGetAccommodationDetailFailed:     "Get accommodation details failed",
-	ErrCodeAccommodationDetailNotFound:      "Accommodation details not found",
-	ErrCodeUpdateAccommodationDetailSuccess: "Update accommodation detail successfully",
-	ErrCodeUpdateAccommodationDetailFailed:  "Update accommodation detail failed",
-	ErrCodeDeleteAccommodationDetailFailed:  "Delete accommodation detail failed",
-	ErrCodeDeleteAccommodationDetailSuccess: "Delete accommodation detail successfully",
+	ErrCodeCreateAccommodationDetailFailed:   "Create accommodation details failed",
+	ErrCodeCreateAccommodationDetailSuccess:  "Create accommodation details successfully",
+	ErrCodeGetAccommodationDetailsFailed:     "Get accommodation details failed",
+	ErrCodeGetAccommodationDetailsSuccess:    "Get accommodation details successfully",
+	ErrCodeGetAccommodationDetailFailed:      "Get accommodation details failed",
+	ErrCodeAccommodationDetailNotFound:       "Accommodation details not found",
+	ErrCodeUpdateAccommodationDetailSuccess:  "Update accommodation detail successfully",
+	ErrCodeUpdateAccommodationDetailFailed:   "Update accommodation detail failed",
+	ErrCodeDeleteAccommodationDetailFailed:   "Delete accommodation detail failed",
+	ErrCodeDeleteAccommodationDetailSuccess:  "Delete accommodation detail successfully",
+	ErrCodeGetCountAccommodationDetailFailed: "Get count accommodation detail failed",
 
 	// accommodation detail image
 	ErrCodeGetAccommodationDetailImagesFailed:    "Get images of accommodation detail failed",
@@ -261,12 +271,14 @@ var message = map[int]string{
 	ErrCodeCreateOrderFailed:        "Create order failed",
 	ErrCodeCreateOrderSuccess:       "Create order successfully",
 	ErrCodeGetOrderFailed:           "Get order failed",
+	ErrCodeGetOrderSuccess:          "Get order successfully",
 	ErrCodeGetOrderByUserIDNotFound: "Get order by user id not found",
 	ErrCodeUpdateOrderStatusFailed:  "Update order status failed",
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",
 	ErrCodeCreatePaymentFailed:     "Create payment failed",
+	ErrCodeGetPaymentFailed:        "Get payment failed",
 
 	// review
 	ErrCodeCreateReviewFailed:             "Create review failed",
@@ -277,4 +289,7 @@ var message = map[int]string{
 	// stats
 	ErrCodeGetMonthlyEarningSuccess: "Get monthly earning successfully",
 	ErrCodeGetMonthlyEarningFailed:  "Get monthly earning failed",
+
+	// Decimal
+	ErrCodeInvalidPriceFormat: "Invalid price format",
 }

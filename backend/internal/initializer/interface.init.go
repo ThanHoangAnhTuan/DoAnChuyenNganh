@@ -11,6 +11,7 @@ func InitInterface() {
 	db := global.Mysql
 	queries := database.New(db)
 	services.InitUserLogin(impl.NewUserLoginImpl(queries))
+	services.InitUserInfo(impl.NewUserInfoImpl(queries))
 	services.InitAccommodation(impl.NewAccommodationImpl(queries))
 	services.InitAccommodationDetail(impl.NewAccommodationDetailImpl(queries))
 	services.InitManagerLogin(impl.NewManagerLoginImpl(queries))

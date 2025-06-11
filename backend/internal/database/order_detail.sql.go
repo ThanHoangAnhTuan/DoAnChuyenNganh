@@ -7,6 +7,8 @@ package database
 
 import (
 	"context"
+
+	"github.com/shopspring/decimal"
 )
 
 const createOrderDetail = `-- name: CreateOrderDetail :exec
@@ -26,7 +28,7 @@ VALUES
 type CreateOrderDetailParams struct {
 	ID                    string
 	OrderID               string
-	Price                 uint32
+	Price                 decimal.Decimal
 	AccommodationDetailID string
 	CreatedAt             uint64
 	UpdatedAt             uint64
