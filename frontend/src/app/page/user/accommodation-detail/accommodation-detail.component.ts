@@ -11,7 +11,7 @@ import { RoomInformationModalComponent } from "../../../components/modals/room-i
 import { ReviewService } from '../../../services/user/review.service';
 import { GetAccommodationByIdResponse } from '../../../models/manager/accommodation.model';
 import { GetAccommodationDetailsResponse } from '../../../models/manager/accommodation-detail.model';
-import { Review } from '../../../models/user/review.model';
+import { GetReviewsByAccommodationIdResponse, Review } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from "../../../components/modals/review-list-modal/review-list-modal.component";
 import { PaymentService } from '../../../services/user/payment.service';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -121,7 +121,7 @@ export class AccommodationDetailComponent implements OnInit {
     if (this.accommodationId) {
       this.getAccommodationById(this.accommodationId);
       this.getRoomByAccommodationId(this.accommodationId);
-      // this.getReviewByAccommodationId(this.accommodationId);
+      this.getReviewByAccommodationId(this.accommodationId);
     } else {
       console.error('Accommodation name is missing in URL');
     }
@@ -152,16 +152,20 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   getReviewByAccommodationId(id: string) {
-    this.reviewService.getReviewsByAccommodationId(id).subscribe((data: Review[]) => {
-      if (data && data.length > 0) {
-        const sortedReviews = data.sort((a, b) => {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
+    console.log(id);
 
-        this.reviews = sortedReviews;
+    this.reviewService.getReviewsByAccommodationId(id).subscribe((data: GetReviewsByAccommodationIdResponse) => {
+      if (data) {
+        console.log("review data: ", data);
 
-        const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-        this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
+        // const sortedReviews = data.sort((a, b) => {
+        //   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        // });
+
+        // this.reviews = sortedReviews;
+
+        // const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
+        // this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
 
         // console.log("reviews: ", this.reviews);
       } else {

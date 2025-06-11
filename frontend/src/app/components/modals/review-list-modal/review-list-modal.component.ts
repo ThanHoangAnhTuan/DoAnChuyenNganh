@@ -31,7 +31,7 @@ export class ReviewListModalComponent implements OnInit {
   currentPage: number = 1;
   isAddRivewModalOpen: boolean = false;
   newTitle: string = '';
-  newContent: string = '';
+  newComment: string = '';
   newRating: number = 0;
   totalPages: number = 0
 
@@ -47,7 +47,7 @@ export class ReviewListModalComponent implements OnInit {
     if (!this.newTitle || this.newTitle.trim() === '') {
       alert('Please enter review title.');
       return;
-    } else if (!this.newContent || this.newContent.trim() === '') {
+    } else if (!this.newComment || this.newComment.trim() === '') {
       alert('Please enter review content.');
       return;
     } else if (this.newRating <= 0 || this.newRating > 5) {
@@ -56,14 +56,11 @@ export class ReviewListModalComponent implements OnInit {
     }
 
     const newReview: CreateNewReview = {
-      id: uuidv4(),
       accommodation_id: this.accommodationId,
       title: this.newTitle,
-      content: this.newContent,
+      comment: this.newComment,
       rating: this.newRating,
-      author: 'anonymous',
-      avatar: 'images/avatar/default.png',
-      created_at: new Date().toISOString(),
+      order_id: '',
     }
 
     this.reviewService.addReview(newReview).subscribe({
@@ -79,7 +76,7 @@ export class ReviewListModalComponent implements OnInit {
 
         // Reset form fields
         this.newTitle = '';
-        this.newContent = '';
+        this.newComment = '';
         this.newRating = 0;
         this.isAddRivewModalOpen = false;
       },
@@ -89,7 +86,7 @@ export class ReviewListModalComponent implements OnInit {
 
         // Reset form fields
         this.newTitle = '';
-        this.newContent = '';
+        this.newComment = '';
         this.newRating = 0;
         this.isAddRivewModalOpen = false;
       }

@@ -31,7 +31,6 @@ import { City } from '../../models/address/address.model';
         ReactiveFormsModule,
         TuiButton,
         TuiTextfield,
-        TuiChevron,
 
     ],
     standalone: true,
@@ -44,6 +43,7 @@ export default class SearchBoxComponent implements OnInit {
     protected cities: City[] = [];
     protected cityNames: string[] = [];
     protected selectedCityId: string = '';
+    protected level2Adress: any;
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
     protected readonly today = TuiDay.currentLocal(); // Lấy ngày hiện tại
@@ -90,9 +90,8 @@ export default class SearchBoxComponent implements OnInit {
         this.addressService.getCities().subscribe((data: City[]) => {
             this.cities = data;
             this.cityNames = this.cities.map(city => city.name);
-            console.log("data:", this.cities);
-        }
-        )
+            // console.log("data:", this.cities);
+        })
 
         // Lấy thành phố từ URL parameter
         this.activatedRoute.params.subscribe((params) => {
@@ -166,15 +165,16 @@ export default class SearchBoxComponent implements OnInit {
         }
         this.searchChanged.emit(this.searchCityControl.value ?? undefined);
         const city_name = this.searchCityControl.value;
+        const level1_id = this.selectedCityId;
 
         if (this.DayControl.value) {
             // Định dạng ngày check-in và check-out
             const checkIn = `${this.DayControl.value?.from.formattedDayPart}-${this.DayControl.value?.from.formattedMonthPart}-${this.DayControl.value?.from.formattedYear}`;
             const checkOut = `${this.DayControl.value?.to.formattedDayPart}-${this.DayControl.value?.to.formattedMonthPart}-${this.DayControl.value?.to.formattedYear}`;
             //Chuyển hướng với thành phố và ngày người dùng đã nhập
-            this.router.navigate(['/search', this.selectedCityId], {
+            this.router.navigate(['/search', city_name], {
                 queryParams: {
-                    city_name,
+                    level1_id,
                     checkIn,
                     checkOut,
                 },
@@ -182,9 +182,9 @@ export default class SearchBoxComponent implements OnInit {
             return;
         }
         //chuyển hướng chỉ với thành phố
-        this.router.navigate(['/search', this.selectedCityId], {
+        this.router.navigate(['/search', city_name], {
             queryParams: {
-                city_name,
+                level1_id,
             }
         });
         return;
