@@ -8,6 +8,7 @@ import {
     RegisterModel,
     RegisterResponse,
 } from '../../../models/user/user.model';
+import { IsLoggedIn } from '../../../shared/token/token';
 
 @Component({
     selector: 'app-register',
@@ -20,7 +21,7 @@ export class RegisterComponent {
 
     constructor(private router: Router, private userService: UserService) {
         // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến trang chính
-        if (this.userService.isLoggedIn()) {
+        if (IsLoggedIn()) {
             this.router.navigate(['/']);
         }
     }

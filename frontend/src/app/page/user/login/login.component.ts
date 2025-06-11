@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginModel } from '../../../models/user/user.model';
+import { SaveTokenToCookie } from '../../../shared/token/token';
 
 @Component({
     selector: 'app-login',
@@ -64,12 +65,7 @@ export class LoginComponent implements OnInit {
             next: (response) => {
                 console.log('Login successful:', response);
 
-                // Store token or user info in localStorage/sessionStorage
-                if (this.loginForm.value.rememberMe) {
-                    localStorage.setItem('token', response.data.token);
-                } else {
-                    sessionStorage.setItem('token', response.data.token);
-                }
+                SaveTokenToCookie(response.data.token);
 
                 // Navigate to home or dashboard
                 this.router.navigate(['/']);

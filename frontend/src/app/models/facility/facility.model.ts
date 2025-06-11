@@ -9,3 +9,14 @@ export interface GetFacilitiesOutput {
     message: string;
     data: Facility[];
 }
+
+export interface FacilityDetail {
+    id: string;
+    name: string;
+}
+
+export interface GetFacilitiesDetailOutput {
+    code: number;
+    message: string;
+    data: FacilityDetail[];
+}

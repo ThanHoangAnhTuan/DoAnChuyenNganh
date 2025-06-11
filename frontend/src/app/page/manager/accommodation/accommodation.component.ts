@@ -46,6 +46,7 @@ import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     standalone: true,
@@ -65,6 +66,7 @@ import { FacilityService } from '../../../services/facility/facility.service';
         TuiInputTimeModule,
         TuiRating,
         TuiSelect,
+        NavbarComponent,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
