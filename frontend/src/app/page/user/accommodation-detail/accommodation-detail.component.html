@@ -8,7 +8,7 @@
             <!-- Icon like của TaigaUI -->
             <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
             <img src="icons/accommodation-detail-icon/share-icon.svg" alt="Share Icon " class="share-icon">
-            <button class="order-btn">Đặt ngay</button>
+            <button class="order-btn" (click)="goToSelectRoom()">Đặt ngay</button>
         </div>
     </div>
 
@@ -99,6 +99,7 @@
         </div>
     </div>
 
+    <div #availablilityRoomTop></div>
     <div class="availability-room-container">
         <p class="availability-room-title">Phòng còn trống</p>
 
@@ -170,10 +171,10 @@
                 <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="rooms.length">
                     <ng-container *ngIf="getTotalPrice() > 0">
                         <p class="room-for">
-                            <strong>{{ numberRoomSelected() }}</strong> 
+                            <strong>{{ numberRoomSelected() }}</strong>
                             phòng giá
                         </p>
-                        <p class="total-price">US${{ getTotalPrice() }}</p>
+                        <p class="total-price">{{ getTotalPrice() | number:'1.0-0' }} VND</p>
                     </ng-container>
 
                     <button class="reserve-button" (click)="createPayment()">
@@ -228,12 +229,16 @@
         <div class="review-content-container">
             <div class="review-item" *ngFor="let review of reviews.slice(0,3)">
                 <div class="review-user-info">
-                    <img [src]="review.avatar" alt="user avatar" class="user-avatar">
-                    <p class="user-name">{{ review.author }}</p>
+                    <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                        *ngIf="review.image == ''">
+                    <img [src]="review.image" alt="user avatar" class="user-avatar" *ngIf="review.image != ''">
+
+                    <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
+                    <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
                 </div>
 
                 <div class="review-content">
-                    <p class="review-text">"{{ review.content }}"</p>
+                    <p class="review-text">"{{ review.comment }}"</p>
                     <p class="more" (click)="toggleOpenReviewModal(review)">Tìm hiểu thêm</p>
 
                     <ng-container *ngIf="isReviewModalOpen">
@@ -248,19 +253,24 @@
 
                                 <div class="review-modal-content">
                                     <div class="review-user-info">
-                                        <img [src]="review.avatar" alt="user avatar" class="user-avatar">
-                                        <p class="user-name">{{ review.author }}</p>
+                                        <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                                            *ngIf="reviewSelected.image == ''">
+                                        <img [src]="reviewSelected.image" alt="user avatar" class="user-avatar"
+                                            *ngIf="reviewSelected.image != ''">
+
+                                        <p class="user-name" *ngIf="reviewSelected.name == ''">Anonymous</p>
+                                        <p class="user-name" *ngIf="reviewSelected.name != ''">{{ reviewSelected.name }}</p>
                                     </div>
 
                                     <div class="review-content">
-                                        <p class="review-date">Ngày đánh giá: {{ review.created_at | date: 'yyyy-MM-dd'
+                                        <p class="review-date">Ngày đánh giá: {{ reviewSelected.created_at | date: 'yyyy-MM-dd'
                                             }}</p>
-                                        <p class="review-title">{{ review.title }}</p>
-                                        <p class="review-text">"{{ review.content }}"</p>
+                                        <p class="review-title">{{ reviewSelected.title }}</p>
+                                        <p class="review-text">"{{ reviewSelected.comment }}"</p>
                                     </div>
 
                                     <div class="review-score">
-                                        {{ review.rating }}
+                                        {{ reviewSelected.rating }}
                                     </div>
                                 </div>
                             </div>

@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
@@ -36,6 +36,7 @@ import { City } from '../../../models/address/address.model';
   styleUrl: './accommodation-detail.component.scss'
 })
 export class AccommodationDetailComponent implements OnInit {
+  @ViewChild('availablilityRoomTop') availablilityRoomTop!: ElementRef;
   accommodationId: string = '';
   accommodationCity: string = '';
   accommodationDistrict: string = '';
@@ -156,18 +157,16 @@ export class AccommodationDetailComponent implements OnInit {
 
     this.reviewService.getReviewsByAccommodationId(id).subscribe((data: GetReviewsByAccommodationIdResponse) => {
       if (data) {
-        console.log("review data: ", data);
-
-        // const sortedReviews = data.sort((a, b) => {
+        // const sortedReviews = data.data.sort((a, b) => {
         //   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         // });
 
-        // this.reviews = sortedReviews;
+        this.reviews = data.data;
 
-        // const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-        // this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
+        const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
+        this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
 
-        // console.log("reviews: ", this.reviews);
+        console.log("reviews: ", this.reviews);
       } else {
         this.reviews = [];
         this.avarageRating = 0;
@@ -358,5 +357,10 @@ export class AccommodationDetailComponent implements OnInit {
     document.body.style.width = '';
     // Trả lại vị trí scroll cũ
     window.scrollTo(0, this.scrollY);
+  }
+
+  goToSelectRoom() {
+    // Cuộn đến phần tử
+    this.availablilityRoomTop.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 }

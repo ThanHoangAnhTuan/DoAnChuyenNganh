@@ -19,7 +19,7 @@
             Chúng tôi cố gắng mang đến 100% đánh giá thật
         </div>
 
-        <div class="add-review-button" (click)="onOpenAddReviewModal()">
+        <div class="add-review-button" (click)="onOpenInputOrderIdModal()">
             Thêm đánh giá
         </div>
     </div>
@@ -31,14 +31,18 @@
         <div class="review-list" *ngFor="let review of reviews.slice((currentPage - 1) * 10, currentPage * 10)">
             <div class="review-item">
                 <div class="user-info">
-                    <img [src]="review.avatar" alt="user avatar" class="user-avatar">
-                    <p class="user-name">{{ review.author }}</p>
+                    <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                        *ngIf="review.image == ''">
+                    <img [src]="review.image" alt="user avatar" class="user-avatar" *ngIf="review.image != ''">
+
+                    <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
+                    <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
                 </div>
 
                 <div class="review-item-content">
-                    <p class="review-date">Ngày đánh giá {{ formatDate(review.created_at) }}</p>
+                    <!-- <p class="review-date">Ngày đánh giá {{ formatDate(review.created_at) }}</p> -->
                     <p class="review-title">{{ review.title }}</p>
-                    <p class="review-content">{{ review.content }}</p>
+                    <p class="review-content">{{ review.comment }}</p>
                 </div>
 
                 <div class="review-item-rating">
@@ -69,6 +73,36 @@
         </div>
     </div>
 </main>
+
+<ng-container *ngIf="isInputOrderIdModalOpen">
+    <div class="outside-input-order-id-modal" (click)="onCloseInputOrderIdModal()">
+        <div class="input-order-id-modal" (click)="$event.stopPropagation()">
+            <div class="input-order-id-modal-header">
+                <div></div>
+                <p class="input-order-id-title">Enter the order id</p>
+                <div class="close-button">
+                    <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close button" class="close-icon"
+                        (click)="onCloseInputOrderIdModal()" />
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input">
+                    <form [formGroup]="inputForm">
+                        <tui-input formControlName="orderId">
+                            Type your order id
+                            <input tuiTextfieldLegacy />
+                        </tui-input>
+                    </form>
+                </div>
+
+                <button class="submit-button" (click)="submitOrderId()" >
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-container>
 
 <ng-container *ngIf="isAddRivewModalOpen">
     <div class="outside-add-review-modal" (click)="onCloseAddReviewModal()">

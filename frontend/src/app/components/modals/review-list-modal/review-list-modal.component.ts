@@ -1,11 +1,11 @@
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { TuiIcon } from '@taiga-ui/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { TuiAlertService, TuiIcon } from '@taiga-ui/core';
 import { CreateNewReview } from '../../../models/user/review.model';
-import { v4 as uuidv4 } from 'uuid';
 import { ReviewService } from '../../../services/user/review.service';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiRating } from '@taiga-ui/kit';
+import { TuiInputModule } from '@taiga-ui/legacy';
 
 @Component({
   selector: 'app-review-list-modal',
@@ -16,12 +16,14 @@ import { TuiRating } from '@taiga-ui/kit';
     TuiIcon,
     FormsModule,
     TuiRating,
+    TuiInputModule,
+    ReactiveFormsModule,
   ],
   providers: [
     DatePipe,
   ],
   templateUrl: './review-list-modal.component.html',
-  styleUrl: './review-list-modal.component.scss'
+  styleUrl: './review-list-modal.component.scss',
 })
 export class ReviewListModalComponent implements OnInit {
   @Input() reviews: any[] = [];
@@ -29,30 +31,55 @@ export class ReviewListModalComponent implements OnInit {
   @Input() accommodationId: string = '';
   @ViewChild('listTop') listTop!: ElementRef;
   currentPage: number = 1;
+  isInputOrderIdModalOpen: boolean = false;
   isAddRivewModalOpen: boolean = false;
   newTitle: string = '';
   newComment: string = '';
   newRating: number = 0;
   totalPages: number = 0
+  inputForm = new FormGroup({
+    orderId: new FormControl('', Validators.minLength(8)),
+  });
+  orderIdValue: string = '';
+
+  private readonly alerts = inject(TuiAlertService);
+
+  protected getAlert(label: string, content: string): void {
+    this.alerts
+      .open(content, {
+        label: label,
+        appearance: 'negative',
+        autoClose: 5000,
+      })
+      .subscribe();
+  }
 
   constructor(private datePipe: DatePipe, private reviewService: ReviewService) { }
 
   ngOnInit(): void {
+    console.log("reviews: ", this.reviews);
+
     this.totalPages = Math.ceil(this.reviews.length / 10);
     console.log("accommodation id: ", this.accommodationId);
     console.log("total page: ", this.totalPages);
+    console.log("current page: ", this.currentPage);
   }
 
   addReview() {
+    const token = sessionStorage.getItem('token');
+
     if (!this.newTitle || this.newTitle.trim() === '') {
-      alert('Please enter review title.');
+      this.getAlert('Notification', 'Please enter review title.');
       return;
     } else if (!this.newComment || this.newComment.trim() === '') {
-      alert('Please enter review content.');
+      this.getAlert('Notification', 'Please enter review content.');
       return;
     } else if (this.newRating <= 0 || this.newRating > 5) {
-      alert('Please select a rating between 1 and 5.');
+      this.getAlert('Notification', 'Please select a rating between 1 and 5.');
       return;
+    } else if (!token ) {
+      this.getAlert('Notification', 'Please log in first');
+      return
     }
 
     const newReview: CreateNewReview = {
@@ -60,7 +87,7 @@ export class ReviewListModalComponent implements OnInit {
       title: this.newTitle,
       comment: this.newComment,
       rating: this.newRating,
-      order_id: '',
+      order_id: this.orderIdValue,
     }
 
     this.reviewService.addReview(newReview).subscribe({
@@ -82,7 +109,7 @@ export class ReviewListModalComponent implements OnInit {
       },
       error: (error) => {
         console.error('Lỗi khi thêm đánh giá:', error);
-        alert('Have error when add review. Please try again later.');
+        this.getAlert('Notification', 'Have error when add review. Please try again later.');
 
         // Reset form fields
         this.newTitle = '';
@@ -123,6 +150,33 @@ export class ReviewListModalComponent implements OnInit {
       this.listTop.nativeElement.scrollIntoView({ behavior: 'smooth' });
     } else {
       document.getElementById('next-page')?.blur();
+    }
+  }
+
+  onOpenInputOrderIdModal(): void {
+    this.isInputOrderIdModalOpen = true;
+    console.log("Đã bật modal")
+  }
+
+  onCloseInputOrderIdModal(): void {
+    this.isInputOrderIdModalOpen = false;
+  }
+
+  submitOrderId(): void {
+    const orderId = this.inputForm.value.orderId ?? '';
+    const token = sessionStorage.getItem('token');
+
+    if (!token) {
+      this.getAlert('Notification', 'Please log in first');
+      return
+    } else if (orderId == '' || orderId.length < 8) {
+      this.getAlert('Notification', 'Please input order id');
+      return
+    } else {
+      this.onCloseInputOrderIdModal();
+      this.onOpenAddReviewModal();
+      this.orderIdValue = orderId;
+      return
     }
   }
 
