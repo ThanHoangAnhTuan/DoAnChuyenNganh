@@ -1,1 +1,176 @@
-<p>facility works!</p>
+<app-navbar></app-navbar>
+<main>
+    <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="openDialogCreate(createForm)"
+    >
+        New
+    </button>
+
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+        <tbody tuiTbody>
+            @for(facility of facilities; track facility.id) {
+            <tr tuiTr>
+                <td *tuiCell="'Id'" tuiTd>
+                    {{ facility.id }}
+                </td>
+                <td *tuiCell="'Name'" tuiTd>
+                    {{ facility.name }}
+                </td>
+                <td *tuiCell="'Image'" tuiTd>
+                    <img
+                        [src]="
+                            'http://localhost:8080/uploads/' + facility.image
+                        "
+                        alt="Facility icon"
+                        class="svg-icon"
+                    />
+                </td>
+                <!-- <td *tuiCell="'Image'" tuiTd>
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
+                            '/admin/facility/',
+                            facility.image,
+                            'images'
+                        ]"
+                        >Quản lý hình ảnh</a
+                    >
+                </td> -->
+                <td *tuiCell="'Action'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            (click)="openDialogUpdate(updateForm, facility)"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            appearance="action"
+                            iconStart="@tui.trash"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.color]="'red'"
+                            (click)="deleteFacility(facility.id)"
+                        >
+                            Delete
+                        </button>
+                    </span>
+                </td>
+                <td *tuiCell="'Show Facility Detail'" tuiTd>
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
+                            '/admin/facility/',
+                            facility.id,
+                            'details'
+                        ]"
+                        >Show</a
+                    >
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <ng-template #createForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formFacility"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="CreateFacilityInput()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Name</label>
+                <input formControlName="name" placeholder="Name" tuiTextfield />
+                @if(formFacility.get('name')?.invalid &&
+                formFacility.get('name')?.touched) {
+                <div>
+                    <small class="text-red-500">Name is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <label *ngIf="!control.value" tuiInputFiles>
+                <input accept="image/*" tuiInputFiles [formControl]="control" />
+            </label>
+
+            <tui-files class="tui-space_top-1">
+                <tui-file
+                    *ngIf="
+                        control.value
+                            | tuiFileRejected : { accept: 'image/*' }
+                            | async as file
+                    "
+                    state="error"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+
+                <tui-file
+                    *ngIf="loadedFiles$ | async as file"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+
+                <tui-file
+                    *ngIf="failedFiles$ | async as file"
+                    state="error"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+
+                <tui-file
+                    *ngIf="loadingFiles$ | async as file"
+                    state="loading"
+                    [file]="file"
+                    (remove)="removeFile()"
+                />
+            </tui-files>
+
+            <button tuiButton type="button" (click)="CreateFacilityInput()">
+                Submit
+            </button>
+        </form>
+    </ng-template>
+
+    <ng-template #updateForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formFacility"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="updateFacility()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Name</label>
+                <input formControlName="name" placeholder="Name" tuiTextfield />
+                @if(formFacility.get('name')?.invalid &&
+                formFacility.get('name')?.touched) {
+                <div>
+                    <small class="text-red-500">Name is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <button tuiButton type="button" (click)="updateFacility()">
+                Submit
+            </button>
+        </form>
+    </ng-template>
+</main>

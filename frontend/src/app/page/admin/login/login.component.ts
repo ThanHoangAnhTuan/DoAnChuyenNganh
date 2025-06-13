@@ -38,7 +38,7 @@ export class LoginComponent {
 
         this.authSerivce.login(adminLogin).subscribe((response) => {
             this.saveTokenToCookie(response.data.token);
-            this.router.navigate(['/admin/']);
+            this.router.navigate(['/admin/facility']);
         });
     }
 

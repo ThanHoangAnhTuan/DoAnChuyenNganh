@@ -23,6 +23,16 @@
             <tui-avatar class="avatar" src="@tui.user" alt="Avatar" />
             <a class="user-name">{{ userName || "Manager" }}</a>
         </div>
+        } @else if (isAdminLoggedIn) {
+        <div
+            class="user-info"
+            tuiChevron
+            tuiDropdownOpen
+            [tuiDropdown]="content"
+        >
+            <tui-avatar class="avatar" src="@tui.user" alt="Avatar" />
+            <a class="user-name">{{ userName || "Admin" }}</a>
+        </div>
         } @else {
         <button class="register" [routerLink]="['/register']">Register</button>
         <button class="login" [routerLink]="['/login']">Login</button>
@@ -111,6 +121,23 @@
                     class="menu-item-icon"
                 ></tui-icon>
                 Your Accommodations
+            </div>
+        </a>
+        <a role="menuitem" tuiOption (click)="logout()">
+            <div class="menu-item-content">
+                <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>
+                Logout
+            </div>
+        </a>
+        } @if (isAdminLoggedIn) {
+        <!-- Chỉ hiển thị logout cho Admin -->
+        <a role="menuitem" tuiOption [routerLink]="['/admin/facility']">
+            <div class="menu-item-content">
+                <tui-icon
+                    icon="@tui.layout-dashboard"
+                    class="menu-item-icon"
+                ></tui-icon>
+                Your Facilities
             </div>
         </a>
         <a role="menuitem" tuiOption (click)="logout()">
