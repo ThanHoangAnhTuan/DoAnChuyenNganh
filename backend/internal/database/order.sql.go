@@ -87,20 +87,26 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 	return err
 }
 
-const getOrderIdByOrderIdExternal = `-- name: GetOrderIdByOrderIdExternal :one
+const getOrderIdAndUserIdByOrderIdExternal = `-- name: GetOrderIdAndUserIdByOrderIdExternal :one
 SELECT
-    ` + "`" + `id` + "`" + `
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `user_id` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_order` + "`" + `
 WHERE
     ` + "`" + `order_id_external` + "`" + ` = ?
 `
 
-func (q *Queries) GetOrderIdByOrderIdExternal(ctx context.Context, orderIDExternal string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getOrderIdByOrderIdExternal, orderIDExternal)
-	var id string
-	err := row.Scan(&id)
-	return id, err
+type GetOrderIdAndUserIdByOrderIdExternalRow struct {
+	ID     string
+	UserID string
+}
+
+func (q *Queries) GetOrderIdAndUserIdByOrderIdExternal(ctx context.Context, orderIDExternal string) (GetOrderIdAndUserIdByOrderIdExternalRow, error) {
+	row := q.db.QueryRowContext(ctx, getOrderIdAndUserIdByOrderIdExternal, orderIDExternal)
+	var i GetOrderIdAndUserIdByOrderIdExternalRow
+	err := row.Scan(&i.ID, &i.UserID)
+	return i, err
 }
 
 const getOrderInfoByOrderIDExternal = `-- name: GetOrderInfoByOrderIDExternal :one

@@ -51,9 +51,10 @@ SET
 WHERE
     `order_id_external` = ?;
 
--- name: GetOrderIdByOrderIdExternal :one
+-- name: GetOrderIdAndUserIdByOrderIdExternal :one
 SELECT
-    `id`
+    `id`,
+    `user_id`
 FROM
     `ecommerce_go_order`
 WHERE

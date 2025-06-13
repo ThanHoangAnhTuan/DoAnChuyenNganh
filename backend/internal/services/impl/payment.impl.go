@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
@@ -19,6 +20,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/crypto"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/ip"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/payment"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/sendto"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
 	"go.uber.org/zap"
 )
@@ -296,7 +298,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	}
 
 	// TODO: get order id
-	orderID, err := p.sqlc.GetOrderIdByOrderIdExternal(ctx, orderIDExternal)
+	orderAndUserID, err := p.sqlc.GetOrderIdAndUserIdByOrderIdExternal(ctx, orderIDExternal)
 	if err != nil {
 		return response.ErrCodeGetOrderFailed, err
 	}
@@ -306,7 +308,7 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	now = utiltime.GetTimeNow()
 	err = p.sqlc.CreatePayment(ctx, database.CreatePaymentParams{
 		ID:            paymentID,
-		OrderID:       orderID,
+		OrderID:       orderAndUserID.ID,
 		PaymentStatus: database.EcommerceGoPaymentPaymentStatus(paymentStatus),
 		PaymentMethod: database.EcommerceGoPaymentPaymentMethodCard,
 		TotalPrice:    amountVND,
@@ -330,6 +332,29 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		TransactionNo:   transactionNo,
 		PayDate:         payDate,
 	})
+
+	formatted, err := utiltime.FormatVNPayTime(payDate)
+	if err != nil {
+		return response.ErrCodeParseTimeFailed, fmt.Errorf("format time from vnpay failed: %s", err)
+	}
+
+	// TODO: get email of user payment
+	emailAndUsername, err := p.sqlc.GetEmailAndUsernameByID(ctx, orderAndUserID.UserID)
+	if err != nil {
+		return response.ErrCodeGetUserInfoFailed, fmt.Errorf("get email of user info failed: %s", err)
+	}
+
+	// TODO: send email
+	err = sendto.SendEmail([]string{emailAndUsername.Account}, "payment_confirmation.html", map[string]interface{}{
+		"username":     emailAndUsername.UserName,
+		"orderId":      orderIDExternal,
+		"amount":       amountVND,
+		"orderDate":    formatted,
+		"responseCode": responseCode,
+	}, consts.PAYMENT_CONFIRMATION)
+	if err != nil {
+		return response.ErrCodeSendEmailFailed, fmt.Errorf("send email failed: %s", err)
+	}
 
 	return response.ErrCodeSuccessfully, nil
 }

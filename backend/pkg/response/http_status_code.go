@@ -39,9 +39,13 @@ const (
 	ErrCodeUpdatePasswordRegisterSuccess = 50003
 
 	// login
-	ErrCodeGetUserInfoFailed = 60001
-	ErrCodePasswordNotMatch  = 60002
-	ErrCodeLoginSuccess      = 60003
+	ErrCodeGetUserInfoFailed     = 60001
+	ErrCodePasswordNotMatch      = 60002
+	ErrCodeLoginSuccess          = 60003
+	ErrCodeGetUserInfoSuccess    = 60004
+	ErrCodeGetUserInfoNotFound   = 60005
+	ErrCodeUpdateUserInfoFailed  = 60006
+	ErrCodeUpdateUserInfoSuccess = 60007
 
 	// jwt
 	ErrCodeMissAuthorizationHeader    = 70001
@@ -187,9 +191,13 @@ var message = map[int]string{
 	ErrCodeUpdatePasswordRegisterSuccess: "Update password register successfully",
 
 	// login
-	ErrCodeGetUserInfoFailed: "Get user infor failed",
-	ErrCodePasswordNotMatch:  "Password not match",
-	ErrCodeLoginSuccess:      "Login successfully",
+	ErrCodeGetUserInfoFailed:     "Get user infor failed",
+	ErrCodePasswordNotMatch:      "Password not match",
+	ErrCodeLoginSuccess:          "Login successfully",
+	ErrCodeGetUserInfoSuccess:    "Get user infor successfully",
+	ErrCodeGetUserInfoNotFound:   "User info not found",
+	ErrCodeUpdateUserInfoFailed:  "Update user info failed",
+	ErrCodeUpdateUserInfoSuccess: "Update user info successfully",
 
 	// jwt
 	ErrCodeMissAuthorizationHeader:    "Missing authorization header",

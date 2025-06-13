@@ -11,4 +11,7 @@ const (
 	MANAGER = "manager"
 	ADMIN   = "admin"
 	UNKNOWN = "unknown"
+
+	OTP_VERIFY           = "OTP Verification"
+	PAYMENT_CONFIRMATION = "Payment Confirmation"
 )

@@ -52,8 +52,6 @@ export const routes: Routes = [
     {
         path: 'admin/login',
         component: AdminLoginComponent,
-        // canActivate: [RoleGuard],
-        // data: { expectedRole: 'admin' },
     },
     {
         path: 'admin/facility',

@@ -566,7 +566,7 @@ type EcommerceGoUserInfo struct {
 	// gender: 0-male, 1-female
 	Gender uint8
 	// birthday
-	Birthday uint64
+	Birthday string
 	// email
 	Email sql.NullString
 	// authentication status: 0-not authenticated, 1-pending ,2-authenticated
