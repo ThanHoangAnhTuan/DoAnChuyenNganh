@@ -213,14 +213,16 @@
 
         <div class="total-score-container">
             <p class="total-score">{{ avarageRating }}</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
-            <p style="font-size: 16px;">|</p>
-            <p class="total-review">{{ reviews.length }} đánh giá</p>
+            <div class="text-container">
+                <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+                <p class="between-score-and-review">|</p>
+                <p class="total-review">{{ reviews.length }} đánh giá</p>
+            </div>
             <p class="read-all-reviews" (click)="toggleOpenReviewListModal()">Đọc tất cả đánh giá</p>
         </div>
 
@@ -259,11 +261,13 @@
                                             *ngIf="reviewSelected.image != ''">
 
                                         <p class="user-name" *ngIf="reviewSelected.name == ''">Anonymous</p>
-                                        <p class="user-name" *ngIf="reviewSelected.name != ''">{{ reviewSelected.name }}</p>
+                                        <p class="user-name" *ngIf="reviewSelected.name != ''">{{ reviewSelected.name }}
+                                        </p>
                                     </div>
 
                                     <div class="review-content">
-                                        <p class="review-date">Ngày đánh giá: {{ reviewSelected.created_at | date: 'yyyy-MM-dd'
+                                        <p class="review-date">Ngày đánh giá: {{ reviewSelected.created_at | date:
+                                            'yyyy-MM-dd'
                                             }}</p>
                                         <p class="review-title">{{ reviewSelected.title }}</p>
                                         <p class="review-text">"{{ reviewSelected.comment }}"</p>

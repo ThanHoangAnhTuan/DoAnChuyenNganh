@@ -525,12 +525,21 @@
                 border-radius: 5px 5px 5px 0;
             }
 
-            .title-by-score {
-                font-size: 16px;
-            }
+            .text-container {
+                display: flex;
+                gap: 10px;
 
-            .total-review {
-                font-size: 16px;
+                .title-by-score {
+                    font-size: 16px;
+                }
+
+                .between-score-and-review {
+                    font-size: 16px;
+                }
+
+                .total-review {
+                    font-size: 16px;
+                }
             }
 
             .read-all-reviews {
@@ -967,6 +976,34 @@
 
             .accommodation-highlight-container {
                 display: none;
+            }
+        }
+
+        .review-container {
+            .total-score-container {
+                .text-container {
+                    flex-direction: column !important;
+                    gap: 0 !important;
+
+                    .between-score-and-review {
+                        display: none;
+                    }
+                }
+            }
+
+            .user-like-title {
+                display: none !important;
+            }
+
+            .review-content-container {
+                display: none !important;
+            }
+
+            .review-list-modal-outside {
+                .review-list-modal-container {
+                    width: 100% !important;
+                    border-radius: 0 !important;
+                }
             }
         }
     }
