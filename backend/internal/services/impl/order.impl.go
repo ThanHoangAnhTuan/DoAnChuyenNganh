@@ -37,23 +37,13 @@ func (o *OrderImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderIn
 		return response.ErrCodeGetPaymentFailed, nil, err
 	}
 
-	checkInOutput, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckinDate))
-	if err != nil {
-		return response.ErrCodeConvertUnixToISOFailed, nil, err
-	}
-
-	checkOutOutput, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckoutDate))
-	if err != nil {
-		return response.ErrCodeConvertUnixToISOFailed, nil, err
-	}
-
 	orderDate, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CreatedAt))
 	if err != nil {
 		return response.ErrCodeConvertUnixToISOFailed, nil, err
 	}
 
-	out.CheckIn = checkInOutput
-	out.CheckOut = checkOutOutput
+	out.CheckIn = order.CheckinDate
+	out.CheckOut = order.CheckoutDate
 	out.OrderDate = orderDate
 	out.OrderIDExternal = order.OrderIDExternal
 	out.OrderStatus = string(order.OrderStatus)

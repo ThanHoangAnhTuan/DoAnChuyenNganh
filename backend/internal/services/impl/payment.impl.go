@@ -380,7 +380,6 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	// TODO: create payment url
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
-
 	now := time.Now().In(loc)
 
 	createDate := now.Format("20060102150405")
@@ -462,17 +461,11 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	// TODO: save order to database
 	orderID := uuid.NewString()
 
-	checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
-	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, nil, err
-	}
+	// createdAt := utiltime.GetTimeNow()
+	createdAt := uint64(time.Date(2025, time.June, 13, 0, 0, 0, 0, time.UTC).UnixMilli())
 
-	checkOut, err := utiltime.ConvertISOToUnixTimestamp(in.CheckOut)
-	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, nil, err
-	}
-
-	createdAt := utiltime.GetTimeNow()
+	fmt.Printf("in.CheckIn: %v", in.CheckIn)
+	fmt.Printf("in.CheckOut: %v", in.CheckOut)
 
 	// TODO: create order
 	err = p.sqlc.CreateOrder(ctx, database.CreateOrderParams{
@@ -486,8 +479,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 			String: "",
 			Valid:  false,
 		},
-		CheckinDate:  checkIn,
-		CheckoutDate: checkOut,
+		CheckinDate:  in.CheckIn,
+		CheckoutDate: in.CheckOut,
 		CreatedAt:    createdAt,
 		UpdatedAt:    createdAt,
 	})

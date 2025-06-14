@@ -9,7 +9,7 @@ import (
 )
 
 func GetTimeNow() uint64 {
-	now := time.Now()
+	now := time.Now().UTC()
 	epochMillis := now.UnixMilli()
 	return uint64(epochMillis)
 }
