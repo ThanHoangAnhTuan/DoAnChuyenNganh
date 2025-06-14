@@ -57,12 +57,12 @@ type UpdateUserInfoOutput struct {
 }
 
 type UpdateUserInfoInput struct {
-	Account  string `json:"account"`
+	// Account  string `json:"account"`
 	Username string `json:"username"`
 	Phone    string `json:"phone"`
 	Gender   uint8  `json:"gender"`
 	Birthday string `json:"birthday"`
-	Email    string `json:"email"`
+	// Email    string `json:"email"`
 }
 
 type UploadUserAvatarInput struct {

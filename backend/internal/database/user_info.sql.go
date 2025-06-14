@@ -335,7 +335,7 @@ SET
     ` + "`" + `phone` + "`" + ` = ?,
     ` + "`" + `gender` + "`" + ` = ?,
     ` + "`" + `birthday` + "`" + ` = ?,
-    ` + "`" + `email` + "`" + ` = ?,
+    -- ` + "`" + `email` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
@@ -347,7 +347,6 @@ type UpdateUserInfoParams struct {
 	Phone     sql.NullString
 	Gender    uint8
 	Birthday  string
-	Email     sql.NullString
 	UpdatedAt uint64
 	ID        string
 }
@@ -358,7 +357,6 @@ func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) 
 		arg.Phone,
 		arg.Gender,
 		arg.Birthday,
-		arg.Email,
 		arg.UpdatedAt,
 		arg.ID,
 	)

@@ -2,17 +2,31 @@ package impl
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/database"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
 )
 
 type OrderImpl struct {
 	sqlc *database.Queries
 	db   *sql.DB
+}
+
+func (o *OrderImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (codeStatus int, err error) {
+	panic("unimplemented")
+}
+
+func (o *OrderImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, err error) {
+	panic("unimplemented")
+}
+
+func (o *OrderImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, err error) {
+	panic("unimplemented")
 }
 
 func (o *OrderImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderInfoAfterPaymentInput) (codeStatus int, out *vo.GetOrderInfoAfterPaymentOutput, err error) {
@@ -61,24 +75,110 @@ func (o *OrderImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderIn
 	return response.ErrCodeGetOrderSuccess, out, nil
 }
 
-func (o *OrderImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (codeStatus int, out *vo.CancelOrderOutput, err error) {
-	panic("unimplemented")
+func (o *OrderImpl) GetOrdersByManager(ctx *gin.Context) (codeStatus int, out []*vo.GetOrdersByManagerOutput, err error) {
+	out = []*vo.GetOrdersByManagerOutput{}
+
+	// TODO: get userId from context
+	managerID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("managerID not found in context")
+	}
+
+	// TODO: check user exists
+	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+	}
+
+	if !exists {
+		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+	}
+	orders, err := o.sqlc.GetOrdersByManager(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
+	}
+
+	for _, order := range orders {
+		// TODO: get order detail:
+		orderDetails, err := o.sqlc.GetOrderDetailsByManager(ctx, order.OrderID)
+		if err != nil {
+			return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order detail failed: %s", err)
+		}
+		detail := []vo.OrderDetailOutput{}
+		for _, orderDetail := range orderDetails {
+			detail = append(detail, vo.OrderDetailOutput{
+				AccommodationDetailID:   orderDetail.AccommodationDetailID,
+				AccommodationDetailName: orderDetail.AccommodationDetailName,
+				Price:                   orderDetail.Price.String(),
+			})
+		}
+		out = append(out, &vo.GetOrdersByManagerOutput{
+			ID:                order.OrderID,
+			FinalTotal:        order.FinalTotal.String(),
+			OrderStatus:       string(order.OrderStatus),
+			AccommodationID:   order.AccommodationID,
+			AccommodationName: order.AccommodationName,
+			CheckIn:           order.CheckinDate,
+			CheckOut:          order.CheckoutDate,
+			OrderDetail:       detail,
+			Email:             order.Email,
+			Username:          order.Username,
+			Phone:             order.Phone.String,
+		})
+	}
+	return response.ErrCodeGetOrderSuccess, out, nil
 }
 
-func (o *OrderImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, out *vo.CheckInOutput, err error) {
-	panic("unimplemented")
-}
+func (o *OrderImpl) GetOrdersByUser(ctx *gin.Context) (codeStatus int, out []*vo.GetOrdersByUserOutput, err error) {
+	out = []*vo.GetOrdersByUserOutput{}
 
-func (o *OrderImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, out *vo.CheckOutOutput, err error) {
-	panic("unimplemented")
-}
+	// TODO: get userId from context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
+	}
 
-func (o *OrderImpl) GetOrdersByManager(ctx *gin.Context, in *vo.GetOrdersByManagerInput) (codeStatus int, out *vo.GetOrdersByManagerOutput, err error) {
-	panic("unimplemented")
-}
+	// TODO: check user exists
+	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+	}
 
-func (o *OrderImpl) GetOrdersByUser(ctx *gin.Context, in *vo.GetOrdersByUserInput) (codeStatus int, out *vo.GetOrdersByUserOutput, err error) {
-	panic("unimplemented")
+	if !exists {
+		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+	}
+	orders, err := o.sqlc.GetOrdersByUser(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
+	}
+
+	for _, order := range orders {
+		// TODO: get order detail:
+		orderDetails, err := o.sqlc.GetOrderDetailsByUser(ctx, order.OrderID)
+		if err != nil {
+			return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order detail failed: %s", err)
+		}
+		detail := []vo.OrderDetailOutput{}
+		for _, orderDetail := range orderDetails {
+			detail = append(detail, vo.OrderDetailOutput{
+				AccommodationDetailID:   orderDetail.AccommodationDetailID,
+				AccommodationDetailName: orderDetail.AccommodationDetailName,
+				Price:                   orderDetail.Price.String(),
+				Guests:                  orderDetail.Guests,
+			})
+		}
+		out = append(out, &vo.GetOrdersByUserOutput{
+			ID:                order.OrderID,
+			FinalTotal:        order.FinalTotal.String(),
+			OrderStatus:       string(order.OrderStatus),
+			AccommodationID:   order.AccommodationID,
+			AccommodationName: order.AccommodationName,
+			CheckIn:           order.CheckinDate,
+			CheckOut:          order.CheckoutDate,
+			OrderDetail:       detail,
+		})
+	}
+	return response.ErrCodeGetOrderSuccess, out, nil
 }
 
 func NewOrderImpl(sqlc *database.Queries, db *sql.DB) *OrderImpl {

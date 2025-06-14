@@ -84,7 +84,7 @@ SET
     `phone` = ?,
     `gender` = ?,
     `birthday` = ?,
-    `email` = ?,
+    -- `email` = ?,
     `updated_at` = ?
 WHERE
     `id` = ?

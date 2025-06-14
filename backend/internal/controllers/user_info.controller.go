@@ -65,8 +65,8 @@ func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("UpdateUserInfo success: %s\n", params.Account)
-	global.Logger.Info("UpdateUserInfo success: ", zap.String("info", params.Account))
+	fmt.Printf("UpdateUserInfo success: %s\n", params.Username)
+	global.Logger.Info("UpdateUserInfo success: ", zap.String("info", params.Username))
 	response.SuccessResponse(ctx, codeResult, data)
 }
 
