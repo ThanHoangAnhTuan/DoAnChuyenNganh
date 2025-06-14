@@ -17,7 +17,6 @@ type UserInfoImpl struct {
 	sqlc *database.Queries
 }
 
-// UploadAvatar implements services.IUserInfo.
 func (u *UserInfoImpl) UploadUserAvatar(ctx *gin.Context, in *vo.UploadUserAvatarInput) (codeStatus int, avatarPath string, err error) {
 	// TODO: get user id in context
 	userID, ok := utils.GetUserIDFromGin(ctx)
@@ -72,7 +71,6 @@ func (u *UserInfoImpl) GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.Ge
 
 	out.Account = user.Account
 	out.Birthday = user.Birthday
-	out.Email = user.Email.String
 	out.Gender = map[uint8]string{0: "male", 1: "female"}[user.Gender]
 	out.ID = user.ID
 	out.Image = user.Image
@@ -122,13 +120,18 @@ func (u *UserInfoImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInp
 		return response.ErrCodeUpdateUserInfoSuccess, nil, fmt.Errorf("update user info failed: %s", err)
 	}
 
-	// out.Account = in.Account
-	out.Birthday = in.Birthday
-	// out.Email = in.Email
-	out.Gender = map[uint8]string{0: "male", 1: "female"}[in.Gender]
-	out.ID = userID
-	out.Phone = in.Phone
-	out.Username = in.Username
+	// TODO: get user info
+	user, err := u.sqlc.GetUserInfoByID(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+	}
+
+	out.Account = user.Account
+	out.Birthday = user.Birthday
+	out.Gender = map[uint8]string{0: "male", 1: "female"}[user.Gender]
+	out.ID = user.ID
+	out.Phone = user.Phone.String
+	out.Username = user.UserName
 
 	return response.ErrCodeUpdateUserInfoSuccess, out, nil
 }

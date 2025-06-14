@@ -18,15 +18,138 @@ type OrderImpl struct {
 }
 
 func (o *OrderImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (codeStatus int, err error) {
-	panic("unimplemented")
+	// TODO: get userId from context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check user exists
+	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+	}
+
+	if !exists {
+		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+	}
+
+	// TODO: check order exists
+	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+	}
+
+	if !isExists {
+		return response.ErrCodeOrderNotFound, fmt.Errorf("order not found")
+	}
+
+	// TODO: kiểm tra xem người dùng xoá quyền huỷ order hay không
+	// TODO: 1. trước thời gian quy định của khách sạn
+
+	// TODO: update status of order
+	now := utiltime.GetTimeNow()
+	err = o.sqlc.UpdateOrderStatusByID(ctx, database.UpdateOrderStatusByIDParams{
+		OrderStatus: database.EcommerceGoOrderOrderStatusCanceled,
+		UpdatedAt:   now,
+		ID:          in.OrderID,
+	})
+
+	if err != nil {
+		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+	}
+
+	return response.ErrCodeUpdateOrderStatusSuccess, nil
 }
 
 func (o *OrderImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, err error) {
-	panic("unimplemented")
+	// TODO: get userId from context
+	managerID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("managerID not found in context")
+	}
+
+	// TODO: check user exists
+	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+	}
+
+	if !exists {
+		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+	}
+
+	// TODO: check order exists
+	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+	}
+
+	if !isExists {
+		return response.ErrCodeOrderNotFound, fmt.Errorf("order not found")
+	}
+
+	// TODO: check manager có được đổi status của order hay không
+	// TODO: 1. thời gian update chính là thời gian checkin
+
+	// TODO: update status of order
+	now := utiltime.GetTimeNow()
+	err = o.sqlc.UpdateOrderStatusByID(ctx, database.UpdateOrderStatusByIDParams{
+		OrderStatus: database.EcommerceGoOrderOrderStatusCheckedIn,
+		UpdatedAt:   now,
+		ID:          in.OrderID,
+	})
+
+	if err != nil {
+		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+	}
+
+	return response.ErrCodeUpdateOrderStatusSuccess, nil
 }
 
 func (o *OrderImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, err error) {
-	panic("unimplemented")
+	// TODO: get userId from context
+	managerID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("managerID not found in context")
+	}
+
+	// TODO: check user exists
+	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+	}
+
+	if !exists {
+		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+	}
+
+	// TODO: check order exists
+	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
+	if err != nil {
+		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+	}
+
+	if !isExists {
+		return response.ErrCodeOrderNotFound, fmt.Errorf("order not found")
+	}
+
+	// TODO: check manager có được đổi status của order hay không
+	// TODO: 1. thời gian update chính là thời gian checkout
+
+	// TODO: update status of order
+	now := utiltime.GetTimeNow()
+	err = o.sqlc.UpdateOrderStatusByID(ctx, database.UpdateOrderStatusByIDParams{
+		OrderStatus: database.EcommerceGoOrderOrderStatusCompleted,
+		UpdatedAt:   now,
+		ID:          in.OrderID,
+	})
+
+	if err != nil {
+		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+	}
+
+	return response.ErrCodeUpdateOrderStatusSuccess, nil
 }
 
 func (o *OrderImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderInfoAfterPaymentInput) (codeStatus int, out *vo.GetOrderInfoAfterPaymentOutput, err error) {
@@ -85,7 +208,7 @@ func (o *OrderImpl) GetOrdersByManager(ctx *gin.Context) (codeStatus int, out []
 	}
 
 	// TODO: check user exists
-	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, managerID)
+	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
 	if err != nil {
 		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
 	}

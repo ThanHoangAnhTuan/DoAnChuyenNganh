@@ -24,6 +24,6 @@ func (ur *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	{
 		userRouterPrivate.GET("/get-user-info", controllers.UserInfo.GetUserInfo)
 		userRouterPrivate.POST("/update-user-info", controllers.UserInfo.UpdateUserInfo)
-		userRouterPrivate.GET("/upload-user-avatar", controllers.UserInfo.UploadUserAvatar)
+		userRouterPrivate.POST("/upload-user-avatar", controllers.UserInfo.UploadUserAvatar)
 	}
 }

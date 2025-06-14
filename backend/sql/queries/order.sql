@@ -59,26 +59,26 @@ FROM
     `ecommerce_go_order`
 WHERE
     `order_id_external` = ?
-LIMIT 1;
+LIMIT
+    1;
 
 -- name: GetOrdersByUser :many
 SELECT
-    o.id AS order_id,
-    o.final_total,
-    o.order_status,
-    o.checkin_date,
-    o.checkout_date,
-    a.name AS accommodation_name,
-    a.id AS accommodation_id
+    ego.id AS order_id,
+    ego.final_total,
+    ego.order_status,
+    ego.checkin_date,
+    ego.checkout_date,
+    ega.name AS accommodation_name,
+    ega.id AS accommodation_id
 FROM
-    `ecommerce_go_order` o
-JOIN
-    `ecommerce_go_accommodation` a ON o.accommodation_id = a.id
+    `ecommerce_go_order` ego
+    JOIN `ecommerce_go_accommodation` ega ON ego.accommodation_id = ega.id
 WHERE
-    o.user_id = ?
+    ego.user_id = ?
 ORDER BY
-    FIELD(
-        o.order_status,
+    FIELD (
+        ego.order_status,
         'payment_success',
         'checked_in',
         'completed',
@@ -87,7 +87,7 @@ ORDER BY
         'refunded',
         'payment_failed'
     ),
-    o.created_at ASC;
+    ego.created_at ASC;
 
 -- name: GetOrderDetailsByUser :many
 SELECT
@@ -97,14 +97,11 @@ SELECT
     egad.guests AS `guests`
 FROM
     `ecommerce_go_order_detail` egod
-JOIN
-    `ecommerce_go_accommodation_detail` egad
-ON 
-    egod.accommodation_detail_id = egad.id
+    JOIN `ecommerce_go_accommodation_detail` egad ON egod.accommodation_detail_id = egad.id
 WHERE
-    egod.order_id = sqlc.arg('order_id')
+    egod.order_id = sqlc.arg ('order_id')
 ORDER BY
-    o.created_at ASC;
+    egod.created_at ASC;
 
 -- name: GetOrdersByManager :many
 SELECT
@@ -120,17 +117,14 @@ SELECT
     ega.id AS accommodation_id
 FROM
     `ecommerce_go_order` ego
-JOIN
-    `ecommerce_go_accommodation` ega ON ego.accommodation_id = eca.id
-JOIN
-    `ecommerce_go_user_manager` egum ON egum.id = ega.manager_id
-JOIN
-    `ecommerce_go_user_info` egui ON egui.id = ego.user_id
+    JOIN `ecommerce_go_accommodation` ega ON ego.accommodation_id = ega.id
+    JOIN `ecommerce_go_user_manager` egum ON egum.id = ega.manager_id
+    JOIN `ecommerce_go_user_info` egui ON egui.id = ego.user_id
 WHERE
-    egum.id = sqlc.arg('manager_id')
+    egum.id = sqlc.arg ('manager_id')
 ORDER BY
-    FIELD(
-        o.order_status,
+    FIELD (
+        ego.order_status,
         'payment_success',
         'checked_in',
         'completed',
@@ -139,7 +133,7 @@ ORDER BY
         'refunded',
         'payment_failed'
     ),
-    o.created_at ASC;
+    ego.created_at ASC;
 
 -- name: GetOrderDetailsByManager :many
 SELECT
@@ -148,11 +142,28 @@ SELECT
     egad.name AS `accommodation_detail_name`
 FROM
     `ecommerce_go_order_detail` egod
-JOIN
-    `ecommerce_go_accommodation_detail` egad
-ON 
-    egod.accommodation_detail_id = egad.id
+    JOIN `ecommerce_go_accommodation_detail` egad ON egod.accommodation_detail_id = egad.id
 WHERE
-    egod.order_id = sqlc.arg('order_id')
+    egod.order_id = sqlc.arg ('order_id')
 ORDER BY
-    o.created_at ASC;
+    egod.created_at ASC;
+
+-- name: CheckOrderExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_order`
+        WHERE
+            `id` = ?
+    );
+
+-- name: UpdateOrderStatusByID :exec
+UPDATE `ecommerce_go_order`
+SET
+    `order_status` = ?,
+    `updated_at` = ?
+WHERE
+    `id` = ?;
+
