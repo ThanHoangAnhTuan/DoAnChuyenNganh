@@ -34,10 +34,21 @@ export class FacilityService {
     //     };
     //     return this.http.post<CreateFacilityOutput>(
     //         this.facilityUrl,
-    //         +newFacility
+    //         newFacility
     //     );
     // }
-
+    createFacility(formData: FormData): Observable<CreateFacilityOutput> {
+        return this.http.post<CreateFacilityOutput>(
+            `${this.facilityUrl}/create-facility`,
+            formData
+        );
+    }
+    updateFacility(formData: FormData): Observable<UpdateFacilityResponse> {
+        return this.http.put<UpdateFacilityResponse>(
+            `${this.facilityUrl}/update-facility`,
+            formData
+        );
+    }
     // updateFacility(
     //     facility: UpdateFacility
     // ): Observable<UpdateFacilityResponse> {
@@ -51,25 +62,20 @@ export class FacilityService {
     //         newFacility
     //     );
     // }
-    createFacility(formData: FormData): Observable<CreateFacilityOutput> {
-        return this.http.post<CreateFacilityOutput>(
-            `${this.facilityUrl}/create-facility`,
-            formData
-        );
-    }
-
-    updateFacility(formData: FormData): Observable<UpdateFacilityResponse> {
-        return this.http.put<UpdateFacilityResponse>(
-            `${this.facilityUrl}/update-facility`,
-            formData
-        );
-    }
 
     deleteFacility(id: string): Observable<DeleteFacilityResponse> {
         return this.http.delete<DeleteFacilityResponse>(this.facilityUrl, {
             body: { id },
         });
     }
+    // deleteAccommodation(id: string): Observable<DeleteAccommodationResponse> {
+    //         return this.http.delete<DeleteAccommodationResponse>(
+    //             this.accommodationUrl,
+    //             {
+    //                 body: { id: id },
+    //             }
+    //         );
+    //     }
 
     // getFacilityDetail(): Observable<GetFacilitiesDetailOutput> {
     //     return this.http.get<GetFacilitiesDetailOutput>(

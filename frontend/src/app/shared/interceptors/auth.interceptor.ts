@@ -27,7 +27,6 @@ export class AuthInterceptor implements HttpInterceptor {
                     `Bearer ${token}`
                 ),
             });
-            console.log('authReq: ', authReq);
             return next.handle(authReq);
         }
 

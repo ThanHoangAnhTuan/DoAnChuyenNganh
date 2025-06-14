@@ -29,27 +29,16 @@
                         "
                         alt="Facility icon"
                         class="svg-icon"
+                        style="width: 50px; height: 50px"
                     />
                 </td>
-                <!-- <td *tuiCell="'Image'" tuiTd>
-                    <a
-                        class="button"
-                        target="_blank"
-                        [routerLink]="[
-                            '/admin/facility/',
-                            facility.image,
-                            'images'
-                        ]"
-                        >Quản lý hình ảnh</a
-                    >
-                </td> -->
                 <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
                         <button
+                            tuiIconButton
                             appearance="primary"
                             iconStart="@tui.pencil"
                             size="xs"
-                            tuiIconButton
                             type="button"
                             [style.border-radius.%]="100"
                             [style.background]="'white'"
@@ -72,7 +61,7 @@
                         </button>
                     </span>
                 </td>
-                <td *tuiCell="'Show Facility Detail'" tuiTd>
+                <!-- <td *tuiCell="'Show Facility Detail'" tuiTd>
                     <a
                         class="button"
                         target="_blank"
@@ -83,19 +72,88 @@
                         ]"
                         >Show</a
                     >
-                </td>
+                </td> -->
             </tr>
             }
         </tbody>
     </table>
 
     <ng-template #createForm>
+        <div class="centered-form-container">
+            <form
+                tuiCardLarge
+                [formGroup]="formFacility"
+                [style.max-width.rem]="32"
+                [style.padding.px]="5"
+                (ngSubmit)="CreateFacilityInput()"
+            >
+                <tui-textfield>
+                    <label tuiLabel>Name</label>
+                    <input
+                        formControlName="name"
+                        placeholder="Name"
+                        tuiTextfield
+                    />
+                    @if(formFacility.get('name')?.invalid &&
+                    formFacility.get('name')?.touched) {
+                    <div>
+                        <small class="text-red-500">Name is required</small>
+                    </div>
+                    }
+                </tui-textfield>
+                <label *ngIf="!control.value" tuiInputFiles>
+                    <input
+                        accept="image/*"
+                        tuiInputFiles
+                        [formControl]="control"
+                    />
+                </label>
+
+                <tui-files class="tui-space_top-1">
+                    <tui-file
+                        *ngIf="
+                            control.value
+                                | tuiFileRejected : { accept: 'image/*' }
+                                | async as file
+                        "
+                        state="error"
+                        [file]="file"
+                        (remove)="removeFile()"
+                    />
+
+                    <tui-file
+                        *ngIf="loadedFiles$ | async as file"
+                        [file]="file"
+                        (remove)="removeFile()"
+                    />
+
+                    <tui-file
+                        *ngIf="failedFiles$ | async as file"
+                        state="error"
+                        [file]="file"
+                        (remove)="removeFile()"
+                    />
+
+                    <tui-file
+                        *ngIf="loadingFiles$ | async as file"
+                        state="loading"
+                        [file]="file"
+                        (remove)="removeFile()"
+                    />
+                </tui-files>
+                <button tuiButton type="button" (click)="CreateFacilityInput()">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </ng-template>
+    <ng-template #updateForm>
         <form
             tuiCardLarge
             [formGroup]="formFacility"
             [style.max-width.rem]="32"
             [style.padding.px]="5"
-            (ngSubmit)="CreateFacilityInput()"
+            (ngSubmit)="updateFacility()"
         >
             <tui-textfield>
                 <label tuiLabel>Name</label>
@@ -107,50 +165,61 @@
                 </div>
                 }
             </tui-textfield>
-            <label *ngIf="!control.value" tuiInputFiles>
-                <input accept="image/*" tuiInputFiles [formControl]="control" />
-            </label>
 
-            <tui-files class="tui-space_top-1">
-                <tui-file
-                    *ngIf="
-                        control.value
-                            | tuiFileRejected : { accept: 'image/*' }
-                            | async as file
-                    "
-                    state="error"
-                    [file]="file"
-                    (remove)="removeFile()"
-                />
+            <!-- Phần upload hình ảnh -->
+            <div class="image-upload-section tui-space_top-3">
+                <label tuiLabel>Image</label>
 
-                <tui-file
-                    *ngIf="loadedFiles$ | async as file"
-                    [file]="file"
-                    (remove)="removeFile()"
-                />
+                <!-- Hiển thị hình ảnh hiện tại nếu đang update và chưa chọn file mới -->
+                <!-- @if(!control.value && idFacilityUpdating) {
+                <div class="current-image">
+                    <img
+                        [src]="getCurrentFacilityImageUrl()"
+                        alt="Current facility image"
+                        class="preview-image"
+                    />
+                    <span class="image-caption">Current image</span>
+                </div>
+                } -->
 
-                <tui-file
-                    *ngIf="failedFiles$ | async as file"
-                    state="error"
-                    [file]="file"
-                    (remove)="removeFile()"
-                />
+                <!-- Input cho upload file mới -->
+                <label
+                    *ngIf="!control.value"
+                    tuiInputFiles
+                    class="tui-space_top-2"
+                >
+                    <input
+                        tuiInputFiles
+                        [multiple]="false"
+                        accept="image/*"
+                        [formControl]="control"
+                    />
+                    <span>Choose new image</span>
+                </label>
 
-                <tui-file
-                    *ngIf="loadingFiles$ | async as file"
-                    state="loading"
-                    [file]="file"
-                    (remove)="removeFile()"
-                />
-            </tui-files>
+                <!-- Hiển thị file đã chọn -->
+                <tui-files class="tui-space_top-2">
+                    <tui-file
+                        *ngIf="control.value"
+                        [file]="control.value"
+                        (remove)="control.reset()"
+                    ></tui-file>
+                </tui-files>
+            </div>
 
-            <button tuiButton type="button" (click)="CreateFacilityInput()">
-                Submit
-            </button>
+            <div class="tui-form__buttons tui-space_top-3">
+                <button
+                    tuiButton
+                    type="button"
+                    appearance="primary"
+                    (click)="updateFacility()"
+                >
+                    Update Facility
+                </button>
+            </div>
         </form>
     </ng-template>
-
-    <ng-template #updateForm>
+    <!-- <ng-template #updateForm>
         <form
             tuiCardLarge
             [formGroup]="formFacility"
@@ -172,5 +241,5 @@
                 Submit
             </button>
         </form>
-    </ng-template>
+    </ng-template> -->
 </main>

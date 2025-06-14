@@ -111,8 +111,8 @@ func (u *UserInfoImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInp
 		Gender:   in.Gender,
 		Birthday: in.Birthday,
 		Email: sql.NullString{
-			String: in.Email,
-			Valid:  true,
+			String: "",
+			Valid:  false,
 		},
 		UpdatedAt: now,
 		ID:        userID,
@@ -122,9 +122,9 @@ func (u *UserInfoImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInp
 		return response.ErrCodeUpdateUserInfoSuccess, nil, fmt.Errorf("update user info failed: %s", err)
 	}
 
-	out.Account = in.Account
+	// out.Account = in.Account
 	out.Birthday = in.Birthday
-	out.Email = in.Email
+	// out.Email = in.Email
 	out.Gender = map[uint8]string{0: "male", 1: "female"}[in.Gender]
 	out.ID = userID
 	out.Phone = in.Phone

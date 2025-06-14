@@ -1,11 +1,4 @@
-import { CreateFacilityInput } from './../../../models/facility/facility.model';
-import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    Injector,
-    OnInit,
-} from '@angular/core';
+import { Component, inject, Injector, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -13,7 +6,6 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
@@ -22,38 +14,33 @@ import {
     TuiDialogService,
     TuiTextfield,
     TuiAppearance,
-    TuiGroup,
 } from '@taiga-ui/core';
 import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule } from '@taiga-ui/legacy';
 import {
     TuiConfirmService,
     TuiFiles,
-    TuiCheckbox,
     tuiCreateTimePeriods,
-    TuiRating,
     TuiSelect,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import {
     TUI_EDITOR_DEFAULT_EXTENSIONS,
-    TUI_EDITOR_DEFAULT_TOOLS,
     TUI_EDITOR_EXTENSIONS,
-    TuiEditor,
 } from '@taiga-ui/editor';
 import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import {
+    CreateFacilityInput,
     Facility,
-    UpdateFacility,
 } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 
 import type { TuiFileLike } from '@taiga-ui/kit';
-import { finalize, map, of, Subject, switchMap, timer } from 'rxjs';
+import { finalize, of, Subject, switchMap } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 @Component({
@@ -68,13 +55,13 @@ import type { Observable } from 'rxjs';
         TuiAppearance,
         TuiCardLarge,
         TuiFiles,
+        TuiIcon,
         RouterLink,
         TuiInputTimeModule,
         TuiSelect,
         NavbarComponent,
         AsyncPipe,
         FormsModule,
-        NgForOf,
         TuiFiles,
         NgIf,
     ],
@@ -100,13 +87,14 @@ import type { Observable } from 'rxjs';
 })
 export class FacilityComponent implements OnInit {
     protected facilities!: Facility[];
-    protected columns: string[] = ['Id', 'Name', 'Image', 'Actions'];
+    protected columns: string[] = ['Id', 'Name', 'Image', 'Action'];
     protected idFacilityUpdating = '';
 
     private readonly dialogs = inject(TuiDialogService);
 
     protected formFacility = new FormGroup({
         name: new FormControl('', Validators.required),
+        image: new FormControl<TuiFileLike | null>(null, Validators.required),
     });
 
     protected timePeriods = tuiCreateTimePeriods();
@@ -144,14 +132,13 @@ export class FacilityComponent implements OnInit {
         facility: Facility
     ) {
         this.formFacility.reset();
-        // this.formFacilities.reset();
 
         this.formFacility.patchValue({
             name: facility.name,
-            // image: null, // or set to a File object if available
+            image: null, // or set to a File object if available
         });
 
-        console.log('facility: ', facility);
+        // console.log('facility: ', facility);
 
         this.idFacilityUpdating = facility.id;
 
@@ -167,49 +154,102 @@ export class FacilityComponent implements OnInit {
     }
 
     protected CreateFacilityInput(): void {
-        // if (this.formFacility.invalid) {
-        //     this.formFacility.markAllAsTouched();
-        //     console.log('Form invalid:', this.formFacility.errors);
-        //     console.log('Image value:', this.formFacility.get('image')?.value);
-        //     return;
-        // }
-        console.log('name', this.formFacility.get('name')?.value);
-        // console.log(this.loadedFiles$);
-        console.log(this.control.value);
+        // console.log('name', this.formFacility.get('name')?.value);
+        // console.log(this.control.value);
+        // console.log('Thực hiện create facility...');
+        const nameControl = this.formFacility.get('name');
+        const imageControl = this.formFacility.get('image');
+        // const nameValid = nameControl?.valid;
+        const nameValue = nameControl?.value;
+        const imageValue = imageControl?.value;
 
-        // Tạo FormData để gửi dữ liệu multipart (bao gồm file)
-        // const formData = new FormData();
-        // formData.append('name', this.formFacility.get('name')?.value || '');
+        // console.log('Name:', nameValue, 'valid?', nameValid);
 
-        // // Lấy file từ form control
-        // const imageFile = this.formFacility.get('image')?.value;
-        // if (imageFile instanceof File) {
-        //     const isSvg =
-        //         imageFile.type === 'image/svg+xml' ||
-        //         imageFile.type === 'image/svg';
+        // Thay vì kiểm tra this.formFacility.invalid, ta sẽ chỉ đảm bảo có tên facility
 
+        if (!nameValue) {
+            alert('Vui lòng nhập tên facility');
+            this.formFacility.markAllAsTouched();
+            return;
+        }
+
+        if (!imageValue) {
+            alert('Vui lòng chọn hình ảnh cho facility');
+            this.formFacility.markAllAsTouched();
+            return;
+        }
+        if (!nameValue) {
+            alert('Vui lòng nhập tên facility');
+            this.formFacility.markAllAsTouched();
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append('name', nameValue);
+
+        let image: File | null = null;
+
+        if (this.control?.value instanceof File) {
+            image = this.control.value;
+        } else if (this.formFacility.get('image')?.value instanceof File) {
+            image = this.formFacility.get('image')?.value as File;
+        } else if (this.control?.value) {
+            const tuiFile = this.control.value as any;
+
+            if (tuiFile.file instanceof File) {
+                image = tuiFile.file;
+            }
+        }
+
+        // console.log(
+        //     'File được tìm thấy:',
+        //     image ? image.name : 'KHÔNG CÓ FILE'
+        // );
+
+        if (image) {
+            formData.append('image', image, image.name);
+            // console.log('Đã thêm file vào request:', image.name);
+        } else {
+            const fileName = this.control?.value?.name || '';
+            formData.append('image', fileName);
+            // console.log('Không có file, sử dụng filename:', fileName);
+        }
+        // formData.forEach((value, key) => {
         //     console.log(
-        //         'Uploading SVG file:',
-        //         imageFile.name,
-        //         'Type:',
-        //         imageFile.type
+        //         `FormData: ${key} = ${
+        //             value instanceof File ? value.name : value
+        //         }`
         //     );
-        //     formData.append('image', imageFile, imageFile.name);
-        // } else {
-        //     console.error('Image is not a File object:', imageFile);
-        //     alert('Vui lòng chọn một hình ảnh');
-        //     return;
-        // }
-
-        // this.facilityService.createFacility(formData).subscribe({
-        //     next: (response) => {
-        //         this.facilities.push(...response.data);
-        //         // this.createFacilityControls();
-        //     },
-        //     error: (error) => {
-        //         console.error('Error creating facility:', error);
-        //     },
         // });
+        // console.log('Gửi request đến server...');
+        this.facilityService.createFacility(formData).subscribe({
+            next: (response) => {
+                // console.log('Server trả về thành công:', response);
+
+                // Cập nhật danh sách facility
+                if (Array.isArray(response.data)) {
+                    this.facilities.push(...response.data);
+                } else if (response.data) {
+                    this.facilities.push(response.data);
+                }
+
+                // Reset form và đóng dialog
+                this.formFacility.reset();
+                if (
+                    this.control &&
+                    this.control !== this.formFacility.get('image')
+                ) {
+                    this.control.reset();
+                }
+            },
+            error: (error) => {
+                console.error('Lỗi từ server:', error);
+                alert(
+                    `Lỗi khi tạo facility: ${error.message || 'Unknown error'}`
+                );
+            },
+        });
     }
 
     protected updateFacility(): void {
@@ -219,12 +259,14 @@ export class FacilityComponent implements OnInit {
         //     return;
         // }
 
-        // Tạo FormData để gửi dữ liệu multipart (bao gồm file)
+        // // Show loading indicator
+
+        // // Create FormData for multipart data submission
         // const formData = new FormData();
         // formData.append('id', this.idFacilityUpdating);
         // formData.append('name', this.formFacility.get('name')?.value || '');
 
-        // // Lấy file từ form control
+        // // Handle image file if present
         // const imageFile = this.formFacility.get('image')?.value;
         // if (imageFile instanceof File) {
         //     formData.append('image', imageFile, imageFile.name);
@@ -232,22 +274,33 @@ export class FacilityComponent implements OnInit {
 
         // this.facilityService.updateFacility(formData).subscribe({
         //     next: (response) => {
-        //         // Cập nhật facility trong danh sách
+        //         // Update facility in the list
         //         const updatedFacility = response.data[0] as Facility;
         //         this.facilities = this.facilities.map((facility) => {
-        //             if (facility.id === updatedFacility.id) {
-        //                 return updatedFacility;
-        //             } else {
-        //                 return facility;
-        //             }
+        //             return facility.id === updatedFacility.id
+        //                 ? updatedFacility
+        //                 : facility;
         //         });
+
+        //         // Show success message
+        //         this.showMessage('Cập nhật cơ sở thành công');
+
+        //         // Reset the form or close the dialog if needed
+        //         this.resetFormOrCloseDialog();
         //     },
         //     error: (error) => {
         //         console.error('Error updating facility:', error);
+        //         this.showMessage(
+        //             'Cập nhật cơ sở thất bại: ' +
+        //                 (error.message || 'Đã xảy ra lỗi')
+        //         );
+        //     },
+        //     complete: () => {
+        //         // Hide loading indicator
+        //         console.log('Update facility request completed');
         //     },
         // });
     }
-
     protected deleteFacility(id: string) {
         this.facilityService.deleteFacility(id).subscribe((_) => {
             this.facilities = this.facilities.filter(
@@ -255,7 +308,6 @@ export class FacilityComponent implements OnInit {
             );
         });
     }
-
     protected readonly control = new FormControl<TuiFileLike | null>(
         null,
         Validators.required
@@ -283,5 +335,12 @@ export class FacilityComponent implements OnInit {
         this.loadingFiles$.next(file);
 
         return of(file).pipe(finalize(() => this.loadingFiles$.next(null)));
+    }
+
+    onChange(files: File[] | null): void {
+        if (!files || files.length === 0) {
+            return;
+        }
+        this.control.setValue(files[0]);
     }
 }
