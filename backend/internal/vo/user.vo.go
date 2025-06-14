@@ -43,7 +43,6 @@ type GetUserInfoOutput struct {
 	Phone    string `json:"phone"`
 	Gender   string `json:"gender"`
 	Birthday string `json:"birthday"`
-	Email    string `json:"email"`
 }
 
 type UpdateUserInfoOutput struct {
@@ -53,7 +52,7 @@ type UpdateUserInfoOutput struct {
 	Phone    string `json:"phone"`
 	Gender   string `json:"gender"`
 	Birthday string `json:"birthday"`
-	Email    string `json:"email"`
+	// Email    string `json:"email"`
 }
 
 type UpdateUserInfoInput struct {

@@ -12,6 +12,25 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+const checkOrderExists = `-- name: CheckOrderExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_order` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+    )
+`
+
+func (q *Queries) CheckOrderExists(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkOrderExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const checkUserBookedOrder = `-- name: CheckUserBookedOrder :one
 SELECT
     EXISTS (
@@ -64,8 +83,8 @@ type CreateOrderParams struct {
 	OrderStatus     EcommerceGoOrderOrderStatus
 	AccommodationID string
 	VoucherID       sql.NullString
-	CheckinDate     uint64
-	CheckoutDate    uint64
+	CheckinDate     string
+	CheckoutDate    string
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -85,6 +104,99 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 		arg.UpdatedAt,
 	)
 	return err
+}
+
+const getOrderDetailsByManager = `-- name: GetOrderDetailsByManager :many
+SELECT
+    egod.accommodation_detail_id AS ` + "`" + `accommodation_detail_id` + "`" + `,
+    egod.price AS ` + "`" + `price` + "`" + `,
+    egad.name AS ` + "`" + `accommodation_detail_name` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_order_detail` + "`" + ` egod
+    JOIN ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` egad ON egod.accommodation_detail_id = egad.id
+WHERE
+    egod.order_id = ?
+ORDER BY
+    egod.created_at ASC
+`
+
+type GetOrderDetailsByManagerRow struct {
+	AccommodationDetailID   string
+	Price                   decimal.Decimal
+	AccommodationDetailName string
+}
+
+func (q *Queries) GetOrderDetailsByManager(ctx context.Context, orderID string) ([]GetOrderDetailsByManagerRow, error) {
+	rows, err := q.db.QueryContext(ctx, getOrderDetailsByManager, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOrderDetailsByManagerRow
+	for rows.Next() {
+		var i GetOrderDetailsByManagerRow
+		if err := rows.Scan(&i.AccommodationDetailID, &i.Price, &i.AccommodationDetailName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getOrderDetailsByUser = `-- name: GetOrderDetailsByUser :many
+SELECT
+    egod.accommodation_detail_id AS ` + "`" + `accommodation_detail_id` + "`" + `,
+    egod.price AS ` + "`" + `price` + "`" + `,
+    egad.name AS ` + "`" + `accommodation_detail_name` + "`" + `,
+    egad.guests AS ` + "`" + `guests` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_order_detail` + "`" + ` egod
+    JOIN ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` egad ON egod.accommodation_detail_id = egad.id
+WHERE
+    egod.order_id = ?
+ORDER BY
+    egod.created_at ASC
+`
+
+type GetOrderDetailsByUserRow struct {
+	AccommodationDetailID   string
+	Price                   decimal.Decimal
+	AccommodationDetailName string
+	Guests                  uint8
+}
+
+func (q *Queries) GetOrderDetailsByUser(ctx context.Context, orderID string) ([]GetOrderDetailsByUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, getOrderDetailsByUser, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOrderDetailsByUserRow
+	for rows.Next() {
+		var i GetOrderDetailsByUserRow
+		if err := rows.Scan(
+			&i.AccommodationDetailID,
+			&i.Price,
+			&i.AccommodationDetailName,
+			&i.Guests,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getOrderIdAndUserIdByOrderIdExternal = `-- name: GetOrderIdAndUserIdByOrderIdExternal :one
@@ -123,7 +235,8 @@ FROM
     ` + "`" + `ecommerce_go_order` + "`" + `
 WHERE
     ` + "`" + `order_id_external` + "`" + ` = ?
-LIMIT 1
+LIMIT
+    1
 `
 
 type GetOrderInfoByOrderIDExternalRow struct {
@@ -132,8 +245,8 @@ type GetOrderInfoByOrderIDExternalRow struct {
 	OrderIDExternal string
 	FinalTotal      decimal.Decimal
 	OrderStatus     EcommerceGoOrderOrderStatus
-	CheckinDate     uint64
-	CheckoutDate    uint64
+	CheckinDate     string
+	CheckoutDate    string
 	CreatedAt       uint64
 }
 
@@ -153,30 +266,122 @@ func (q *Queries) GetOrderInfoByOrderIDExternal(ctx context.Context, orderIDExte
 	return i, err
 }
 
+const getOrdersByManager = `-- name: GetOrdersByManager :many
+SELECT
+    ego.id AS order_id,
+    ego.final_total,
+    ego.order_status,
+    ego.checkin_date,
+    ego.checkout_date,
+    egui.account AS email,
+    egui.user_name AS username,
+    egui.phone AS phone,
+    ega.name AS accommodation_name,
+    ega.id AS accommodation_id
+FROM
+    ` + "`" + `ecommerce_go_order` + "`" + ` ego
+    JOIN ` + "`" + `ecommerce_go_accommodation` + "`" + ` ega ON ego.accommodation_id = ega.id
+    JOIN ` + "`" + `ecommerce_go_user_manager` + "`" + ` egum ON egum.id = ega.manager_id
+    JOIN ` + "`" + `ecommerce_go_user_info` + "`" + ` egui ON egui.id = ego.user_id
+WHERE
+    egum.id = ?
+ORDER BY
+    FIELD (
+        ego.order_status,
+        'payment_success',
+        'checked_in',
+        'completed',
+        'pending_payment',
+        'canceled',
+        'refunded',
+        'payment_failed'
+    ),
+    ego.created_at ASC
+`
+
+type GetOrdersByManagerRow struct {
+	OrderID           string
+	FinalTotal        decimal.Decimal
+	OrderStatus       EcommerceGoOrderOrderStatus
+	CheckinDate       string
+	CheckoutDate      string
+	Email             string
+	Username          string
+	Phone             sql.NullString
+	AccommodationName string
+	AccommodationID   string
+}
+
+func (q *Queries) GetOrdersByManager(ctx context.Context, managerID string) ([]GetOrdersByManagerRow, error) {
+	rows, err := q.db.QueryContext(ctx, getOrdersByManager, managerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOrdersByManagerRow
+	for rows.Next() {
+		var i GetOrdersByManagerRow
+		if err := rows.Scan(
+			&i.OrderID,
+			&i.FinalTotal,
+			&i.OrderStatus,
+			&i.CheckinDate,
+			&i.CheckoutDate,
+			&i.Email,
+			&i.Username,
+			&i.Phone,
+			&i.AccommodationName,
+			&i.AccommodationID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getOrdersByUser = `-- name: GetOrdersByUser :many
 SELECT
-    ` + "`" + `id` + "`" + `,
-    ` + "`" + `final_total` + "`" + `,
-    ` + "`" + `order_status` + "`" + `,
-    -- ` + "`" + `voucher_id` + "`" + `,
-    ` + "`" + `checkin_date` + "`" + `,
-    ` + "`" + `checkout_date` + "`" + `,
-    ` + "`" + `created_at` + "`" + `,
-    ` + "`" + `updated_at` + "`" + `
+    ego.id AS order_id,
+    ego.final_total,
+    ego.order_status,
+    ego.checkin_date,
+    ego.checkout_date,
+    ega.name AS accommodation_name,
+    ega.id AS accommodation_id
 FROM
-    ` + "`" + `ecommerce_go_order` + "`" + `
+    ` + "`" + `ecommerce_go_order` + "`" + ` ego
+    JOIN ` + "`" + `ecommerce_go_accommodation` + "`" + ` ega ON ego.accommodation_id = ega.id
 WHERE
-    ` + "`" + `user_id` + "`" + ` = ?
+    ego.user_id = ?
+ORDER BY
+    FIELD (
+        ego.order_status,
+        'payment_success',
+        'checked_in',
+        'completed',
+        'pending_payment',
+        'canceled',
+        'refunded',
+        'payment_failed'
+    ),
+    ego.created_at ASC
 `
 
 type GetOrdersByUserRow struct {
-	ID           string
-	FinalTotal   decimal.Decimal
-	OrderStatus  EcommerceGoOrderOrderStatus
-	CheckinDate  uint64
-	CheckoutDate uint64
-	CreatedAt    uint64
-	UpdatedAt    uint64
+	OrderID           string
+	FinalTotal        decimal.Decimal
+	OrderStatus       EcommerceGoOrderOrderStatus
+	CheckinDate       string
+	CheckoutDate      string
+	AccommodationName string
+	AccommodationID   string
 }
 
 func (q *Queries) GetOrdersByUser(ctx context.Context, userID string) ([]GetOrdersByUserRow, error) {
@@ -189,13 +394,13 @@ func (q *Queries) GetOrdersByUser(ctx context.Context, userID string) ([]GetOrde
 	for rows.Next() {
 		var i GetOrdersByUserRow
 		if err := rows.Scan(
-			&i.ID,
+			&i.OrderID,
 			&i.FinalTotal,
 			&i.OrderStatus,
 			&i.CheckinDate,
 			&i.CheckoutDate,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.AccommodationName,
+			&i.AccommodationID,
 		); err != nil {
 			return nil, err
 		}
@@ -227,5 +432,25 @@ type UpdateOrderStatusParams struct {
 
 func (q *Queries) UpdateOrderStatus(ctx context.Context, arg UpdateOrderStatusParams) error {
 	_, err := q.db.ExecContext(ctx, updateOrderStatus, arg.OrderStatus, arg.UpdatedAt, arg.OrderIDExternal)
+	return err
+}
+
+const updateOrderStatusByID = `-- name: UpdateOrderStatusByID :exec
+UPDATE ` + "`" + `ecommerce_go_order` + "`" + `
+SET
+    ` + "`" + `order_status` + "`" + ` = ?,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateOrderStatusByIDParams struct {
+	OrderStatus EcommerceGoOrderOrderStatus
+	UpdatedAt   uint64
+	ID          string
+}
+
+func (q *Queries) UpdateOrderStatusByID(ctx context.Context, arg UpdateOrderStatusByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateOrderStatusByID, arg.OrderStatus, arg.UpdatedAt, arg.ID)
 	return err
 }

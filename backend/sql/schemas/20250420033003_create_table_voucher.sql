@@ -6,7 +6,7 @@ CREATE TABLE
         `user_operator_id` VARCHAR(36) NOT NULL COMMENT 'user operator ID',
         `code` VARCHAR(36) NOT NULL COMMENT 'code',
         `discount_type` ENUM ('fixed', 'percentage') NOT NULL COMMENT 'discount type',
-        `discount_value` DECIMAL(10, 2) NOT NULL COMMENT 'discount value',
+        `discount_value` DECIMAL(15, 0) NOT NULL COMMENT 'discount value',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `is_active` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 - inactivated; 1 - activated',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',

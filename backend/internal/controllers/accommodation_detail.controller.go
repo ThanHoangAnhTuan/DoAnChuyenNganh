@@ -145,8 +145,8 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		fmt.Printf("CreateAccommodationDetail cannot found userID")
-		global.Logger.Error("CreateAccommodationDetail cannot found userID")
+		fmt.Printf("UpdateAccommodationDetail cannot found userID")
+		global.Logger.Error("UpdateAccommodationDetail cannot found userID")
 		userID = "unknown"
 	}
 

@@ -4,7 +4,7 @@ CREATE TABLE
     IF NOT EXISTS `ecommerce_go_order` (
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `user_id` VARCHAR(36) NOT NULL COMMENT 'user base ID',
-        `final_total` DECIMAL(15, 2) NOT NULL COMMENT 'final total',
+        `final_total` DECIMAL(15, 0) NOT NULL COMMENT 'final total',
         -- `original_total` DECIMAL(10, 2) NOT NULL COMMENT 'original total',
         `order_id_external` VARCHAR(8) NOT NULL COMMENT 'order id external',
         `order_status` ENUM (
@@ -18,8 +18,8 @@ CREATE TABLE
         ) NOT NULL COMMENT "order status",
         `accommodation_id` VARCHAR(36) NOT NULL COMMENT 'accommodation ID',
         `voucher_id` VARCHAR(36) COMMENT 'voucher ID',
-        `checkin_date` BIGINT UNSIGNED NOT NULL COMMENT 'Checkin date',
-        `checkout_date` BIGINT UNSIGNED NOT NULL COMMENT 'checkout date',
+        `checkin_date` VARCHAR(10) NOT NULL COMMENT 'Checkin date',
+        `checkout_date` VARCHAR(10) NOT NULL COMMENT 'checkout date',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),

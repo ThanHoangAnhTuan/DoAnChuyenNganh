@@ -181,12 +181,10 @@ SELECT
     ` + "`" + `account` + "`" + `,
     ` + "`" + `user_name` + "`" + `,
     ` + "`" + `image` + "`" + `,
-    ` + "`" + `status` + "`" + `,
     ` + "`" + `phone` + "`" + `,
     ` + "`" + `gender` + "`" + `,
     ` + "`" + `birthday` + "`" + `,
-    ` + "`" + `email` + "`" + `,
-    ` + "`" + `is_authentication` + "`" + `
+    ` + "`" + `email` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_user_info` + "`" + `
 WHERE
@@ -196,16 +194,14 @@ LIMIT
 `
 
 type GetUserInfoByIDRow struct {
-	ID               string
-	Account          string
-	UserName         string
-	Image            string
-	Status           uint8
-	Phone            sql.NullString
-	Gender           uint8
-	Birthday         string
-	Email            sql.NullString
-	IsAuthentication uint8
+	ID       string
+	Account  string
+	UserName string
+	Image    string
+	Phone    sql.NullString
+	Gender   uint8
+	Birthday string
+	Email    sql.NullString
 }
 
 func (q *Queries) GetUserInfoByID(ctx context.Context, id string) (GetUserInfoByIDRow, error) {
@@ -216,12 +212,10 @@ func (q *Queries) GetUserInfoByID(ctx context.Context, id string) (GetUserInfoBy
 		&i.Account,
 		&i.UserName,
 		&i.Image,
-		&i.Status,
 		&i.Phone,
 		&i.Gender,
 		&i.Birthday,
 		&i.Email,
-		&i.IsAuthentication,
 	)
 	return i, err
 }
@@ -335,7 +329,7 @@ SET
     ` + "`" + `phone` + "`" + ` = ?,
     ` + "`" + `gender` + "`" + ` = ?,
     ` + "`" + `birthday` + "`" + ` = ?,
-    ` + "`" + `email` + "`" + ` = ?,
+    -- ` + "`" + `email` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
@@ -347,7 +341,6 @@ type UpdateUserInfoParams struct {
 	Phone     sql.NullString
 	Gender    uint8
 	Birthday  string
-	Email     sql.NullString
 	UpdatedAt uint64
 	ID        string
 }
@@ -358,7 +351,6 @@ func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) 
 		arg.Phone,
 		arg.Gender,
 		arg.Birthday,
-		arg.Email,
 		arg.UpdatedAt,
 		arg.ID,
 	)

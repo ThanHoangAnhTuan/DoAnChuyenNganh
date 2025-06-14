@@ -25,23 +25,49 @@ type CreateOrderOutput struct {
 
 type GetOrdersByUserInput struct {
 }
-type GetOrdersByUserOutput struct {
+
+type OrderDetailOutput struct {
+	AccommodationDetailID   string `json:"accommodation_detail_id"`
+	AccommodationDetailName string `json:"accommodation_detail_name"`
+	Price                   string `json:"price"`
+	Guests                  uint8  `json:"guests"`
 }
+type GetOrdersByUserOutput struct {
+	ID                string              `json:"id"`
+	FinalTotal        string              `json:"final_total"`
+	OrderStatus       string              `json:"order_status"`
+	AccommodationID   string              `json:"accommodation_id"`
+	AccommodationName string              `json:"accommodation_name"`
+	CheckIn           string              `json:"check_in"`
+	CheckOut          string              `json:"check_out"`
+	OrderDetail       []OrderDetailOutput `json:"order_detail"`
+}
+
 type GetOrdersByManagerInput struct {
 }
 type GetOrdersByManagerOutput struct {
+	ID                string              `json:"id"`
+	FinalTotal        string              `json:"final_total"`
+	OrderStatus       string              `json:"order_status"`
+	AccommodationID   string              `json:"accommodation_id"`
+	AccommodationName string              `json:"accommodation_name"`
+	CheckIn           string              `json:"check_in"`
+	CheckOut          string              `json:"check_out"`
+	OrderDetail       []OrderDetailOutput `json:"order_detail"`
+	Email             string              `json:"email"`
+	Username          string              `json:"username"`
+	Phone             string              `json:"phone"`
 }
 type CancelOrderInput struct {
+	OrderID string `json:"order_id"`
 }
-type CancelOrderOutput struct {
-}
+
 type CheckInInput struct {
+	OrderID string `json:"order_id"`
 }
-type CheckInOutput struct {
-}
+
 type CheckOutInput struct {
-}
-type CheckOutOutput struct {
+	OrderID string `json:"order_id"`
 }
 
 type GetOrderInfoAfterPaymentInput struct {

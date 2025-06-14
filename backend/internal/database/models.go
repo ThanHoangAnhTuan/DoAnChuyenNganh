@@ -432,9 +432,9 @@ type EcommerceGoOrder struct {
 	// voucher ID
 	VoucherID sql.NullString
 	// Checkin date
-	CheckinDate uint64
+	CheckinDate string
 	// checkout date
-	CheckoutDate uint64
+	CheckoutDate string
 	// created at
 	CreatedAt uint64
 	// updated at

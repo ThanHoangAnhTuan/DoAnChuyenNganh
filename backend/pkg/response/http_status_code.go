@@ -130,7 +130,9 @@ const (
 	ErrCodeGetOrderFailed           = 160004
 	ErrCodeGetOrderByUserIDNotFound = 160005
 	ErrCodeUpdateOrderStatusFailed  = 160006
-	ErrCodeGetOrderSuccess          = 160007
+	ErrCodeUpdateOrderStatusSuccess = 160007
+	ErrCodeGetOrderSuccess          = 160008
+	ErrCodeOrderNotFound            = 160009
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess = 170001
@@ -282,6 +284,8 @@ var message = map[int]string{
 	ErrCodeGetOrderSuccess:          "Get order successfully",
 	ErrCodeGetOrderByUserIDNotFound: "Get order by user id not found",
 	ErrCodeUpdateOrderStatusFailed:  "Update order status failed",
+	ErrCodeUpdateOrderStatusSuccess: "Update order status successfully",
+	ErrCodeOrderNotFound:            "Order not found",
 
 	// payment
 	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",

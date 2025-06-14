@@ -7,7 +7,7 @@ CREATE TABLE
         `name` VARCHAR(100) NOT NULL COMMENT 'name',
         `description` VARCHAR(255) COMMENT 'description',
         `discount_type` ENUM ('fixed', 'percentage') NOT NULL COMMENT 'discount type',
-        `discount_value` DECIMAL(10, 2) NOT NULL COMMENT 'discount value',
+        `discount_value` DECIMAL(15, 0) NOT NULL COMMENT 'discount value',
         `is_deleted` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is deleted: 0 - not deleted; 1 - deleted',
         `is_active` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 - inactivated; 1 - activated',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',

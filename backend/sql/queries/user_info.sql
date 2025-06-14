@@ -47,12 +47,10 @@ SELECT
     `account`,
     `user_name`,
     `image`,
-    `status`,
     `phone`,
     `gender`,
     `birthday`,
-    `email`,
-    `is_authentication`
+    `email`
 FROM
     `ecommerce_go_user_info`
 WHERE
@@ -84,7 +82,7 @@ SET
     `phone` = ?,
     `gender` = ?,
     `birthday` = ?,
-    `email` = ?,
+    -- `email` = ?,
     `updated_at` = ?
 WHERE
     `id` = ?
