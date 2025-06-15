@@ -19,5 +19,7 @@ func (ar *FacilityRouter) InitFacilityRouter(Router *gin.RouterGroup) {
 	facilityRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
 		facilityRouterPrivate.POST("/create-facility", controllers.Facility.CreateFacility)
+		facilityRouterPrivate.PUT("/update-facility", controllers.Facility.UpdateFacility)
+		facilityRouterPrivate.DELETE("/delete-facility/:id", controllers.Facility.DeleteFacility)
 	}
 }

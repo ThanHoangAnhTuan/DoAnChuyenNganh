@@ -33,6 +33,17 @@ func (q *Queries) CreateAccommodationFacilityDetail(ctx context.Context, arg Cre
 	return err
 }
 
+const deleteFacilityDetail = `-- name: DeleteFacilityDetail :exec
+DELETE FROM ` + "`" + `ecommerce_go_accommodation_detail_facility` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+func (q *Queries) DeleteFacilityDetail(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteFacilityDetail, id)
+	return err
+}
+
 const getAccommodationFacilityDetail = `-- name: GetAccommodationFacilityDetail :many
 SELECT
     ` + "`" + `id` + "`" + `,
@@ -89,4 +100,24 @@ func (q *Queries) GetAccommodationFacilityDetailById(ctx context.Context, id str
 	var i GetAccommodationFacilityDetailByIdRow
 	err := row.Scan(&i.ID, &i.Name)
 	return i, err
+}
+
+const updateFacilityDetail = `-- name: UpdateFacilityDetail :exec
+UPDATE ` + "`" + `ecommerce_go_accommodation_detail_facility` + "`" + `
+SET
+    ` + "`" + `name` + "`" + ` = ?,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateFacilityDetailParams struct {
+	Name      string
+	UpdatedAt uint64
+	ID        string
+}
+
+func (q *Queries) UpdateFacilityDetail(ctx context.Context, arg UpdateFacilityDetailParams) error {
+	_, err := q.db.ExecContext(ctx, updateFacilityDetail, arg.Name, arg.UpdatedAt, arg.ID)
+	return err
 }

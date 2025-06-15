@@ -51,9 +51,87 @@ func (c *CFacility) CreateFacility(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("CreateFacility success: %s\n", data)
+	fmt.Printf("CreateFacility success: %s\n", data.ID)
 	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.ID)))
 	response.SuccessResponse(ctx, codeStatus, data)
+}
+
+func (c *CFacility) UpdateFacility(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("UpdateFacility validation not found\n")
+		global.Logger.Error("UpdateFacility validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.UpdateFacilityInput
+	if err := ctx.ShouldBind(&params); err != nil {
+		fmt.Printf("UpdateFacility binding error: %s\n", err.Error())
+		global.Logger.Error("UpdateFacility binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("UpdateFacility validation error: %s\n", validationErrors)
+		global.Logger.Error("UpdateFacility validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeStatus, data, err := services.Facility().UpdateFacility(ctx, &params)
+	if err != nil {
+		fmt.Printf("UpdateFacility error: %s\n", err.Error())
+		global.Logger.Error("UpdateFacility error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("UpdateFacility success: %s\n", data.ID)
+	global.Logger.Info("UpdateFacility success: ", zap.String("info", fmt.Sprintf("update facility success: %s", data.ID)))
+	response.SuccessResponse(ctx, codeStatus, data)
+}
+
+func (c *CFacility) DeleteFacility(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("DeleteFacility validation not found\n")
+		global.Logger.Error("DeleteFacility validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.DeleteFacilityInput
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		fmt.Printf("DeleteFacility binding error: %s\n", err.Error())
+		global.Logger.Error("DeleteFacility binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("DeleteFacility validation error: %s\n", validationErrors)
+		global.Logger.Error("DeleteFacility validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeStatus, err := services.Facility().DeleteFacility(ctx, &params)
+	if err != nil {
+		fmt.Printf("DeleteFacility error: %s\n", err.Error())
+		global.Logger.Error("DeleteFacility error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("DeleteFacility success: %s\n", params.ID)
+	global.Logger.Info("DeleteFacility success: ", zap.String("info", fmt.Sprintf("delete facility success: %s", params.ID)))
+	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CFacility) GetFacilities(ctx *gin.Context) {
