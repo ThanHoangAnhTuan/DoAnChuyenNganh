@@ -19,3 +19,16 @@ SELECT
     `name`
 FROM
     `ecommerce_go_accommodation_detail_facility`;
+
+-- name: UpdateFacilityDetail :exec
+UPDATE `ecommerce_go_accommodation_detail_facility`
+SET
+    `name` = sqlc.arg ("name"),
+    `updated_at` = sqlc.arg ("updated_at")
+WHERE
+    `id` = sqlc.arg ("id");
+
+-- name: DeleteFacilityDetail :exec
+DELETE FROM `ecommerce_go_accommodation_detail_facility`
+WHERE
+    `id` = sqlc.arg ("id");

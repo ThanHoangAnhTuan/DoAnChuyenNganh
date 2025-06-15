@@ -17,6 +17,104 @@ type FacilityImpl struct {
 	sqlc *database.Queries
 }
 
+func (f *FacilityImpl) DeleteFacility(ctx *gin.Context, in *vo.DeleteFacilityInput) (codeStatus int, err error) {
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check user is admin
+	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetAdminFailed, fmt.Errorf("get admin failed")
+	}
+
+	if !isExists {
+		return response.ErrCodeUnauthorized, fmt.Errorf("user not admin")
+	}
+
+	// TODO: get facility
+	facility, err := f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeGetFacilityFailed, fmt.Errorf("get facility failed: %s", err)
+	}
+
+	// TODO: delete image
+	err = deleteImageToDisk([]string{facility.Image})
+	if err != nil {
+		return response.ErrCodeDeleteFacilityImageFailed, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
+	}
+
+	err = f.sqlc.DeleteFacility(ctx, facility.ID)
+	if err != nil {
+		return response.ErrCodeDeleteFacilityFailed, fmt.Errorf("delete facility failed: %s", err)
+	}
+	return response.ErrCodeDeleteFacilitySuccess, nil
+}
+
+func (f *FacilityImpl) UpdateFacility(ctx *gin.Context, in *vo.UpdateFacilityInput) (codeStatus int, out *vo.UpdateFacilityOutput, err error) {
+	out = &vo.UpdateFacilityOutput{}
+
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check user is admin
+	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+	}
+
+	if !isExists {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+	}
+
+	// TODO: get facility
+	facility, err := f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+	}
+
+	// TODO: delete image
+	err = deleteImageToDisk([]string{facility.Image})
+	if err != nil {
+		return response.ErrCodeDeleteFacilityImageFailed, nil, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
+	}
+
+	// TODO: save image to disk
+	codeStatus, imagesFileName, err := saveImageToDisk(ctx, []*multipart.FileHeader{in.Image})
+	if err != nil {
+		return codeStatus, nil, err
+	}
+
+	// TODO: save facility
+	now := utiltime.GetTimeNow()
+	err = f.sqlc.UpdateFacility(ctx, database.UpdateFacilityParams{
+		Name:      in.Name,
+		Image:     imagesFileName[0],
+		UpdatedAt: now,
+		ID:        in.ID,
+	})
+	if err != nil {
+		return response.ErrCodeUpdateFacilityFailed, nil, fmt.Errorf("update facility failed: %s", err)
+	}
+
+	// TODO: get facility
+	facility, err = f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+	}
+
+	out.ID = facility.ID
+	out.Image = facility.Image
+	out.Name = facility.Name
+
+	return response.ErrCodeUpdateFacilitySuccess, out, nil
+}
+
 func (f *FacilityImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInput) (codeStatus int, out *vo.CreateFacilityOutput, err error) {
 	out = &vo.CreateFacilityOutput{}
 

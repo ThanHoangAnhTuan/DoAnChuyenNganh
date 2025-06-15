@@ -110,10 +110,19 @@ const (
 	ErrCodeUserNotAdmin   = 120002
 
 	// facility
-	ErrCodeCreateFacilitySuccess = 130001
-	ErrCodeCreateFacilityFailed  = 130002
-	ErrCodeGetFacilityFailed     = 130003
-	ErrCodeGetFacilitySuccess    = 130004
+	ErrCodeCreateFacilitySuccess       = 130001
+	ErrCodeCreateFacilityFailed        = 130002
+	ErrCodeGetFacilityFailed           = 130003
+	ErrCodeGetFacilitySuccess          = 130004
+	ErrCodeUpdateFacilityFailed        = 130005
+	ErrCodeUpdateFacilitySuccess       = 130006
+	ErrCodeDeleteFacilityImageFailed   = 130007
+	ErrCodeDeleteFacilityFailed        = 130008
+	ErrCodeDeleteFacilitySuccess       = 130009
+	ErrCodeUpdateFacilityDetailFailed  = 130010
+	ErrCodeUpdateFacilityDetailSuccess = 130011
+	ErrCodeDeleteFacilityDetailFailed  = 130012
+	ErrCodeDeleteFacilityDetailSuccess = 130013
 
 	// user base
 	ErrCodeGetUserBaseFailed = 140001
@@ -263,10 +272,19 @@ var message = map[int]string{
 	ErrCodeGetAdminFailed: "Get admin failed",
 
 	// facility
-	ErrCodeCreateFacilitySuccess: "Create facility successfully",
-	ErrCodeCreateFacilityFailed:  "Create facility failed",
-	ErrCodeGetFacilityFailed:     "Get facility failed",
-	ErrCodeGetFacilitySuccess:    "Get facility successfully",
+	ErrCodeCreateFacilitySuccess:       "Create facility successfully",
+	ErrCodeCreateFacilityFailed:        "Create facility failed",
+	ErrCodeGetFacilityFailed:           "Get facility failed",
+	ErrCodeGetFacilitySuccess:          "Get facility successfully",
+	ErrCodeUpdateFacilityFailed:        "Update facility failed",
+	ErrCodeUpdateFacilitySuccess:       "Update facility successfully",
+	ErrCodeDeleteFacilityImageFailed:   "Detele facitliy image failed",
+	ErrCodeDeleteFacilityFailed:        "Detele facitliy failed",
+	ErrCodeDeleteFacilitySuccess:       "Detele facitliy successfully",
+	ErrCodeUpdateFacilityDetailFailed:  "Update facitliy detail failed",
+	ErrCodeUpdateFacilityDetailSuccess: "Update facitliy detail successfully",
+	ErrCodeDeleteFacilityDetailFailed:  "Detele facitliy detail failed",
+	ErrCodeDeleteFacilityDetailSuccess: "Detele facitliy detail successfully",
 
 	// user base
 	ErrCodeGetUserBaseFailed: "Get user base failed",

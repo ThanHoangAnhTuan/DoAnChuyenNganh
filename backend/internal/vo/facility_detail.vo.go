@@ -13,3 +13,16 @@ type GetFacilityDetailOutput struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
+
+type UpdateFacilityDetailInput struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+type UpdateFacilityDetailOutput struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type DeleteFacilityDetailInput struct {
+	ID string `uri:"id"`
+}
