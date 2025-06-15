@@ -43,12 +43,12 @@ export class FacilityService {
             formData
         );
     }
-    updateFacility(formData: FormData): Observable<UpdateFacilityResponse> {
-        return this.http.put<UpdateFacilityResponse>(
-            `${this.facilityUrl}/update-facility`,
-            formData
-        );
-    }
+    // updateFacility(formData: FormData): Observable<UpdateFacilityResponse> {
+    //     return this.http.put<UpdateFacilityResponse>(
+    //         `${this.facilityUrl}/update-facility`,
+    //         formData
+    //     );
+    // }
     // updateFacility(
     //     facility: UpdateFacility
     // ): Observable<UpdateFacilityResponse> {
@@ -63,19 +63,11 @@ export class FacilityService {
     //     );
     // }
 
-    deleteFacility(id: string): Observable<DeleteFacilityResponse> {
-        return this.http.delete<DeleteFacilityResponse>(this.facilityUrl, {
-            body: { id },
-        });
-    }
-    // deleteAccommodation(id: string): Observable<DeleteAccommodationResponse> {
-    //         return this.http.delete<DeleteAccommodationResponse>(
-    //             this.accommodationUrl,
-    //             {
-    //                 body: { id: id },
-    //             }
-    //         );
-    //     }
+    // deleteFacility(id: string): Observable<DeleteFacilityResponse> {
+    //     return this.http.delete<DeleteFacilityResponse>(this.facilityUrl, {
+    //         body: { id },
+    //     });
+    // }
 
     // getFacilityDetail(): Observable<GetFacilitiesDetailOutput> {
     //     return this.http.get<GetFacilitiesDetailOutput>(

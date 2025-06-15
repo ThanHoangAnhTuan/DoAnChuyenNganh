@@ -302,11 +302,11 @@ export class FacilityComponent implements OnInit {
         // });
     }
     protected deleteFacility(id: string) {
-        this.facilityService.deleteFacility(id).subscribe((_) => {
-            this.facilities = this.facilities.filter(
-                (facility) => facility.id !== id
-            );
-        });
+        // this.facilityService.deleteFacility(id).subscribe((_) => {
+        //     this.facilities = this.facilities.filter(
+        //         (facility) => facility.id !== id
+        //     );
+        // });
     }
     protected readonly control = new FormControl<TuiFileLike | null>(
         null,
