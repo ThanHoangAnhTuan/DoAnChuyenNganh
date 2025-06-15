@@ -36,9 +36,10 @@ func (c *CManagerLogin) Register(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Manager register validation error: %s\n", err.Error())
-		global.Logger.Error("Manager register validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("Manager register validation error: %s\n", validationErrors)
+		global.Logger.Error("Manager register validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -66,7 +67,7 @@ func (c *CManagerLogin) Login(ctx *gin.Context) {
 
 	var params vo.ManagerLoginInput
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("Manager login binding error\n: %s", err.Error())
+		fmt.Printf("Manager login binding error: %s\n", err.Error())
 		global.Logger.Error("Manager login binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
 		return
@@ -74,21 +75,22 @@ func (c *CManagerLogin) Login(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("Manager login validation error\n: %s", err.Error())
-		global.Logger.Error("Manager login validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("Manager login validation error: %s\n", validationErrors)
+		global.Logger.Error("Manager login validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
 	codeResult, data, err := services.ManagerLogin().Login(ctx, &params)
 	if err != nil {
-		fmt.Printf("Manager login error\n: %s", err.Error())
+		fmt.Printf("Manager login error: %s\n", err.Error())
 		global.Logger.Error("Manager login error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, codeResult, nil)
 		return
 	}
 
-	fmt.Printf("Manager login success\n: %s", data.Token)
+	fmt.Printf("Manager login success: %s\n", data.Token)
 	global.Logger.Info("Manager login success: ", zap.String("info", data.Token))
 	response.SuccessResponse(ctx, codeResult, data)
 }

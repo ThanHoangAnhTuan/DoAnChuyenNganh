@@ -10,7 +10,7 @@ type AccommodationDetailRouter struct {
 }
 
 func (ur *AccommodationDetailRouter) InitAccommodationDetailRouter(Router *gin.RouterGroup) {
-	userRouterPublic := Router.Group("/accommodation-detail") //localhost:8080/api/v1/accommodation-detail/get-accommodation-details
+	userRouterPublic := Router.Group("/accommodation-detail")
 	{
 		userRouterPublic.GET("/get-accommodation-details/:id", controllers.AccommodationDetail.GetAccommodationDetails)
 	}

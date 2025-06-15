@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"go.uber.org/zap"
 )
 
 type Email struct {
@@ -27,13 +28,13 @@ func BuildMessage(email Email) string {
 	return msg
 }
 
-func SendEmailOTP(to []string, templateName string, templateData map[string]interface{}) error {
+func SendEmail(to []string, templateName string, templateData map[string]interface{}, subject string) error {
 	htmlBody, err := getEmailTemplate(templateName, templateData)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get email template: %s", err)
 	}
 
-	return send(to, htmlBody)
+	return send(to, htmlBody, subject)
 }
 
 func getEmailTemplate(templateName string, templateData map[string]interface{}) (string, error) {
@@ -46,12 +47,12 @@ func getEmailTemplate(templateName string, templateData map[string]interface{}) 
 	return htmlTemplate.String(), nil
 }
 
-func send(to []string, htmlTemplate string) error {
+func send(to []string, htmlTemplate string, subject string) error {
 	globalEmail := global.Config.Email
 	contentEmail := Email{
 		From:    globalEmail.User,
 		To:      to,
-		Subject: "OTP Verification",
+		Subject: subject,
 		Body:    htmlTemplate,
 	}
 
@@ -61,8 +62,8 @@ func send(to []string, htmlTemplate string) error {
 
 	err := smtp.SendMail(globalEmail.Host+":"+globalEmail.Port, auth, globalEmail.User, to, []byte(messageEmail))
 	if err != nil {
-		return fmt.Errorf("send OTP to email failed: %s", err)
+		return fmt.Errorf("failed to send email: %s", err)
 	}
-	global.Logger.Info("Send OTP to email success")
+	global.Logger.Info("Sent email successfully to: %s", zap.String("info", strings.Join(to, ", ")))
 	return nil
 }

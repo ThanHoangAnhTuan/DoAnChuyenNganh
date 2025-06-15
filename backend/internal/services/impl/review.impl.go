@@ -92,7 +92,7 @@ func (r *ReviewImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (c
 	return response.ErrCodeCreateReviewSuccess, out, nil
 }
 
-func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeStatus int, out []*vo.GetReviewOutput, pagination *vo.Pagination, err error) {
+func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeStatus int, out []*vo.GetReviewOutput, pagination *vo.BasePaginationOutput, err error) {
 	out = []*vo.GetReviewOutput{}
 
 	page := in.GetPage()
@@ -118,8 +118,8 @@ func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeS
 	// TODO: get reviews
 	reviews, err := r.sqlc.GetReviewsWithPagination(ctx, database.GetReviewsWithPaginationParams{
 		AccommodationID: in.AccommodationID,
-		Limit:           int32(limit),
-		Offset:          int32(offset),
+		Limit:           limit,
+		Offset:          offset,
 	})
 	if err != nil {
 		return response.ErrCodeGetReviewByAccommodationFailed, nil, nil, fmt.Errorf("get reviews by accommodation failed: %s", err)
@@ -155,8 +155,8 @@ func (r *ReviewImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (codeS
 		})
 	}
 
-	totalPages := int((totalReviews + int64(limit) - 1) / int64(limit))
-	pagination = &vo.Pagination{
+	totalPages := (totalReviews + int64(limit) - 1) / int64(limit)
+	pagination = &vo.BasePaginationOutput{
 		Page:       page,
 		Limit:      limit,
 		Total:      totalReviews,

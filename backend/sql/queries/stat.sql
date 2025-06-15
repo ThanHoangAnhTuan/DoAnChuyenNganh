@@ -1,16 +1,39 @@
 -- name: MonthlyEarnings :many
 SELECT
-    DATE_FORMAT (FROM_UNIXTIME (o.created_at / 1000), '%Y-%m') AS revenue_month,
-    CAST(SUM(p.total_price) AS DECIMAL(15, 2)) AS total_revenue
+	MONTH(FROM_UNIXTIME(ego.created_at / 1000)) AS month,
+	COUNT(*) AS total_orders,
+	CAST(SUM(ego.final_total) AS DECIMAL(15,2)) AS total_revenue
 FROM
-    `ecommerce_go_payment` p
-    JOIN `ecommerce_go_order` o ON p.order_id = o.id
+	`ecommerce_go_order` ego
+JOIN `ecommerce_go_accommodation` ega ON
+	ego.accommodation_id = ega.id
 WHERE
-    p.payment_status = 'success'
-    AND o.user_id = ?
-    AND o.created_at >= ?
-    AND o.created_at < ?
+	ega.manager_id = sqlc.arg('manager_id')
+    
+    AND ego.created_at >= sqlc.arg('start_time')
+    AND ego.created_at <= sqlc.arg('end_time')
+	AND ego.order_status = 'payment_success'
 GROUP BY
-    revenue_month
+	month
 ORDER BY
-    revenue_month ASC;
+	month;
+
+-- name: DailyEarnings :many
+SELECT
+	DATE(FROM_UNIXTIME(ego.created_at / 1000)) AS day,
+	COUNT(*) AS total_orders,
+	CAST(SUM(ego.final_total) AS DECIMAL(15,2)) AS total_revenue
+FROM
+	`ecommerce_go_order` ego
+JOIN `ecommerce_go_accommodation` ega ON
+	ego.accommodation_id = ega.id
+WHERE
+	ega.manager_id = sqlc.arg('manager_id')
+    
+    AND ego.created_at >= sqlc.arg('start_time')
+    AND ego.created_at <= sqlc.arg('end_time')
+	AND ego.order_status = 'payment_success'
+GROUP BY
+	day
+ORDER BY
+	day;

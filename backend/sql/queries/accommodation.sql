@@ -117,7 +117,7 @@ SET
     `is_deleted` = 1,
     `updated_at` = ?
 WHERE
-    `id` = ?;
+    `id` = ? AND `is_deleted` = 0;
 
 -- name: CheckAccommodationExists :one
 SELECT
@@ -127,5 +127,111 @@ SELECT
         FROM
             `ecommerce_go_accommodation`
         WHERE
-            `id` = ?
+            `id` = ? AND `is_deleted` = 0
     );
+
+-- name: CountAccommodation :one
+SELECT
+    COUNT(*)
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `is_deleted` = 0;
+
+-- name: CountAccommodationByCity :one
+SELECT
+    COUNT(*)
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `city` = ?
+    AND `is_deleted` = 0;
+
+-- name: CountAccommodationByManager :one
+SELECT
+    COUNT(*)
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `manager_id` = ?
+    AND `is_deleted` = 0;
+
+-- name: GetAccommodationsWithPagination :many
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `description`,
+    `facilities`,
+    `address`,
+    `gg_map`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `is_deleted` = 0
+LIMIT
+    ?
+OFFSET
+    ?;
+
+-- name: GetAccommodationsByCityWithPagination :many
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `description`,
+    `facilities`,
+    `address`,
+    `gg_map`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `city` = ?
+    AND `is_deleted` = 0
+LIMIT
+    ?
+OFFSET
+    ?;
+
+-- name: GetAccommodationsByManagerWithPagination :many
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `description`,
+    `facilities`,
+    `gg_map`,
+    `address`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `is_deleted` = 0
+    AND `manager_id` = ?
+LIMIT
+    ?
+OFFSET
+    ?;
+
+-- name: GetAccommodationNameById :one
+SELECT
+    `name`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `id` = ?
+    AND `is_deleted` = 0;

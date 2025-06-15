@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
@@ -31,7 +32,7 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CreateAccommodationDetail binding error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodationDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, err)
 		return
 	}
 
@@ -48,7 +49,7 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("CreateAccommodationDetail error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodationDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus, nil)
+		response.ErrorResponse(ctx, codeStatus, err)
 		return
 	}
 
@@ -56,7 +57,7 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 	if !ok {
 		fmt.Printf("CreateAccommodationDetail cannot found userID")
 		global.Logger.Error("CreateAccommodationDetail cannot found userID")
-		userID = "unknown"
+		userID = consts.UNKNOWN
 	}
 
 	fmt.Printf("CreateAccommodationDetail success: manager: %s, accommodation detail: %s\n", userID, data.ID)
@@ -69,8 +70,8 @@ func (c *CAccommodationDetail) CreateAccommodationDetail(ctx *gin.Context) {
 func (c *CAccommodationDetail) GetAccommodationDetails(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("GetAccommodationDetails Validation not found\n")
-		global.Logger.Error("GetAccommodationDetails Validation not found")
+		fmt.Printf("GetAccommodationDetails validation not found\n")
+		global.Logger.Error("GetAccommodationDetails validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
 	}
@@ -144,8 +145,8 @@ func (c *CAccommodationDetail) UpdateAccommodationDetail(ctx *gin.Context) {
 
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		fmt.Printf("CreateAccommodationDetail cannot found userID")
-		global.Logger.Error("CreateAccommodationDetail cannot found userID")
+		fmt.Printf("UpdateAccommodationDetail cannot found userID")
+		global.Logger.Error("UpdateAccommodationDetail cannot found userID")
 		userID = "unknown"
 	}
 

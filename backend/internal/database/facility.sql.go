@@ -35,6 +35,17 @@ func (q *Queries) CreateAccommodationFacility(ctx context.Context, arg CreateAcc
 	return err
 }
 
+const deleteFacility = `-- name: DeleteFacility :exec
+DELETE FROM ` + "`" + `ecommerce_go_accommodation_facility` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+func (q *Queries) DeleteFacility(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteFacility, id)
+	return err
+}
+
 const getAccommodationFacilityById = `-- name: GetAccommodationFacilityById :one
 SELECT
     ` + "`" + `id` + "`" + `,
@@ -95,4 +106,31 @@ func (q *Queries) GetAccommodationFacilityNames(ctx context.Context) ([]GetAccom
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateFacility = `-- name: UpdateFacility :exec
+UPDATE ` + "`" + `ecommerce_go_accommodation_facility` + "`" + `
+SET
+    ` + "`" + `name` + "`" + ` = ?,
+    ` + "`" + `image` + "`" + ` = ?,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateFacilityParams struct {
+	Name      string
+	Image     string
+	UpdatedAt uint64
+	ID        string
+}
+
+func (q *Queries) UpdateFacility(ctx context.Context, arg UpdateFacilityParams) error {
+	_, err := q.db.ExecContext(ctx, updateFacility,
+		arg.Name,
+		arg.Image,
+		arg.UpdatedAt,
+		arg.ID,
+	)
+	return err
 }

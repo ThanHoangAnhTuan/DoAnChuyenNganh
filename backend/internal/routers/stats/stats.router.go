@@ -18,6 +18,16 @@ func (r StatsRouter) InitStatsRouter(Router *gin.RouterGroup) {
 	statsRouterPublic := Router.Group("/stats")
 	statsRouterPublic.Use(middlewares.AuthMiddleware())
 	{
-		statsRouterPublic.POST("/", controllers.Stats.GetMonthlyEarnings)
+		// GET /stats => thống kê các tháng trong năm hiện tại
+		statsRouterPublic.GET("", controllers.Stats.GetMonthlyEarnings)
+
+		// GET /stats/daily => thống kê các ngày trong tháng hiện tại
+		statsRouterPublic.GET("/daily", controllers.Stats.GetDailyEarnings)
+
+		// GET /stats/daily/:year/:month => thống kê các ngày trong tháng và năm cụ thể
+		statsRouterPublic.GET("/daily/:year/:month", controllers.Stats.GetDailyEarningsByMonth)
+
+		// GET /stats/monthly/:year => thống kê các tháng trong năm cụ thể
+		statsRouterPublic.GET("/monthly/:year", controllers.Stats.GetMonthlyEarningsByYear)
 	}
 }

@@ -16,6 +16,71 @@ type FacilityDetailImpl struct {
 	sqlc *database.Queries
 }
 
+func (f *FacilityDetailImpl) DeleteFacilityDetail(ctx *gin.Context, in *vo.DeleteFacilityDetailInput) (codeStatus int, err error) {
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check user is admin
+	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetAdminFailed, fmt.Errorf("get admin failed")
+	}
+
+	if !isExists {
+		return response.ErrCodeUnauthorized, fmt.Errorf("user not admin")
+	}
+
+	err = f.sqlc.DeleteFacilityDetail(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeDeleteFacilityDetailFailed, fmt.Errorf("delete facility detail failed: %s", err)
+	}
+	return response.ErrCodeDeleteFacilityDetailSuccess, nil
+}
+
+func (f *FacilityDetailImpl) UpdateFacilityDetail(ctx *gin.Context, in *vo.UpdateFacilityDetailInput) (codeStatus int, out *vo.UpdateFacilityDetailOutput, err error) {
+	out = &vo.UpdateFacilityDetailOutput{}
+
+	// TODO: get userID from gin context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check user is admin
+	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+	}
+
+	if !isExists {
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+	}
+
+	// TODO: update facility
+	now := utiltime.GetTimeNow()
+	err = f.sqlc.UpdateFacilityDetail(ctx, database.UpdateFacilityDetailParams{
+		Name:      in.Name,
+		UpdatedAt: now,
+		ID:        in.ID,
+	})
+	if err != nil {
+		return response.ErrCodeUpdateFacilityDetailFailed, nil, fmt.Errorf("update facility detail failed: %s", err)
+	}
+
+	// TODO: get facility
+	facility, err := f.sqlc.GetAccommodationFacilityDetailById(ctx, in.ID)
+	if err != nil {
+		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+	}
+
+	out.ID = facility.ID
+	out.Name = facility.Name
+	return response.ErrCodeUpdateFacilityDetailSuccess, out, nil
+}
+
 func (f *FacilityDetailImpl) CreateFacilityDetail(ctx *gin.Context, in *vo.CreateFacilityDetailInput) (codeStatus int, out *vo.CreateFacilityDetailOutput, err error) {
 	out = &vo.CreateFacilityDetailOutput{}
 

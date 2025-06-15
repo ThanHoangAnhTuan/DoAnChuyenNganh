@@ -21,8 +21,8 @@ type AccommodationImpl struct {
 	sqlc *database.Queries
 }
 
-func (t *AccommodationImpl) GetAccommodationById(ctx *gin.Context, in *vo.GetAccommodationByIdInput) (codeStatus int, out *vo.GetAccommodationByIdOutput, err error) {
-	out = &vo.GetAccommodationByIdOutput{}
+func (t *AccommodationImpl) GetAccommodation(ctx *gin.Context, in *vo.GetAccommodationInput) (codeStatus int, out *vo.GetAccommodationOutput, err error) {
+	out = &vo.GetAccommodationOutput{}
 
 	// TODO: get accommodation by id
 	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.ID)
@@ -70,7 +70,7 @@ func (t *AccommodationImpl) GetAccommodationById(ctx *gin.Context, in *vo.GetAcc
 		imagesName = append(imagesName, img.Image)
 	}
 
-	out = &vo.GetAccommodationByIdOutput{
+	out = &vo.GetAccommodationOutput{
 		ID:          accommodation.ID,
 		ManagerID:   accommodation.ManagerID,
 		Name:        accommodation.Name,
@@ -89,59 +89,61 @@ func (t *AccommodationImpl) GetAccommodationById(ctx *gin.Context, in *vo.GetAcc
 	return response.ErrCodeGetAccommodationSuccess, out, nil
 }
 
-func (t *AccommodationImpl) GetAccommodationByCity(ctx *gin.Context, in *vo.GetAccommodationByCityInput) (codeStatus int, out []*vo.GetAccommodationsByCityOutput, err error) {
-	out = []*vo.GetAccommodationsByCityOutput{}
-	accommodations, err := t.sqlc.GetAccommodationsByCity(ctx, in.City)
-	if err != nil {
-		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
+func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAccommodationsInput) (codeStatus int, out []*vo.GetAccommodationsOutput, pagination *vo.BasePaginationOutput, err error) {
+	out = []*vo.GetAccommodationsOutput{}
+
+	// TODO: get managerID from context
+	managerID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, nil, nil, fmt.Errorf("userID not found in context")
 	}
 
-	for _, accommodation := range accommodations {
-		// TODO: get image of accommodation
-		images, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
-		if err != nil {
-			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get accommodation image failed: %s", err)
-		}
+	page := in.GetPage()
+	limit := in.GetLimit()
 
-		var imagesName []string
-		for _, img := range images {
-			imagesName = append(imagesName, img.Image)
-		}
+	var totalAccommodation int64
+	var accommodationData []vo.AccommodationData
 
-		out = append(out, &vo.GetAccommodationsByCityOutput{
-			ID:        accommodation.ID,
-			Name:      accommodation.Name,
-			Country:   accommodation.Country,
-			City:      accommodation.City,
-			Address:   accommodation.Address,
-			District:  accommodation.District,
-			Rating:    accommodation.Rating,
-			GoogleMap: accommodation.GgMap,
-			Images:    imagesName,
+	// TODO: get accommodations
+	totalAccommodation, err = t.sqlc.CountAccommodationByManager(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+	}
+
+	offset := (page - 1) * limit
+
+	accommodations, err := t.sqlc.GetAccommodationsByManagerWithPagination(ctx, database.GetAccommodationsByManagerWithPaginationParams{
+		ManagerID: managerID,
+		Limit:     limit,
+		Offset:    offset,
+	})
+
+	if err != nil {
+		return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+	}
+
+	for _, acc := range accommodations {
+		accommodationData = append(accommodationData, vo.AccommodationData{
+			ID:          acc.ID,
+			ManagerID:   acc.ManagerID,
+			Name:        acc.Name,
+			Country:     acc.Country,
+			City:        acc.City,
+			District:    acc.District,
+			Address:     acc.Address,
+			Description: acc.Description,
+			Rating:      acc.Rating,
+			GgMap:       acc.GgMap,
+			Facilities:  acc.Facilities,
+			Rules:       acc.Rules,
 		})
 	}
-	return response.ErrCodeGetAccommodationSuccess, out, nil
-}
 
-func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
-	out = []*vo.GetAccommodations{}
-
-	// TODO: get userId from context
-	userID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("userID not found in context")
-	}
-
-	accommodations, err := t.sqlc.GetAccommodationsByManager(ctx, userID)
-	if err != nil {
-		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations by manager: %s", err)
-	}
-
-	for _, accommodation := range accommodations {
+	for _, accommodation := range accommodationData {
 		// TODO: get facility
 		var facilityIDs []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
 		facilities := []vo.FacilitiesOutput{}
@@ -164,13 +166,13 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context) (codeSt
 
 		rules := vo.Rule{}
 		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling rules: %s", err)
+			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
 		}
 
 		// TODO: get images of accommodation
 		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 		if err != nil {
-			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+			return response.ErrCodeGetAccommodationImagesFailed, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
 
 		var imagePaths []string
@@ -178,7 +180,7 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context) (codeSt
 			imagePaths = append(imagePaths, i.Image)
 		}
 
-		out = append(out, &vo.GetAccommodations{
+		out = append(out, &vo.GetAccommodationsOutput{
 			ID:          accommodation.ID,
 			ManagerID:   accommodation.ManagerID,
 			Name:        accommodation.Name,
@@ -194,7 +196,16 @@ func (t *AccommodationImpl) GetAccommodationsByManager(ctx *gin.Context) (codeSt
 			Images:      imagePaths,
 		})
 	}
-	return response.ErrCodeGetAccommodationSuccess, out, nil
+
+	totalPages := (totalAccommodation + int64(limit) - 1) / int64(limit)
+	pagination = &vo.BasePaginationOutput{
+		Page:       page,
+		Limit:      limit,
+		Total:      totalAccommodation,
+		TotalPages: totalPages,
+	}
+
+	return response.ErrCodeGetAccommodationSuccess, out, pagination, nil
 }
 
 func (t *AccommodationImpl) DeleteAccommodation(ctx *gin.Context, in *vo.DeleteAccommodationInput) (codeResult int, err error) {
@@ -335,19 +346,91 @@ func (t *AccommodationImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateA
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
 }
 
-func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context) (codeStatus int, out []*vo.GetAccommodations, err error) {
-	out = []*vo.GetAccommodations{}
+func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodationsInput) (codeStatus int, out []*vo.GetAccommodationsOutput, pagination *vo.BasePaginationOutput, err error) {
+	out = []*vo.GetAccommodationsOutput{}
 
-	accommodations, err := t.sqlc.GetAccommodations(ctx)
-	if err != nil {
-		return response.ErrCodeGetAccommodationsFailed, nil, fmt.Errorf("error for get accommodations: %s", err)
+	page := in.GetPage()
+	limit := in.GetLimit()
+
+	var totalAccommodation int64
+	var accommodationData []vo.AccommodationData
+
+	// TODO: get accommodations by city
+	if in.City != "" {
+		totalAccommodation, err = t.sqlc.CountAccommodationByCity(ctx, in.City)
+		if err != nil {
+			return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+		}
+
+		offset := (page - 1) * limit
+
+		accommodations, err := t.sqlc.GetAccommodationsByCityWithPagination(ctx, database.GetAccommodationsByCityWithPaginationParams{
+			City:   in.City,
+			Limit:  limit,
+			Offset: offset,
+		})
+
+		if err != nil {
+			return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+		}
+
+		for _, acc := range accommodations {
+			accommodationData = append(accommodationData, vo.AccommodationData{
+				ID:          acc.ID,
+				ManagerID:   acc.ManagerID,
+				Name:        acc.Name,
+				Country:     acc.Country,
+				City:        acc.City,
+				District:    acc.District,
+				Address:     acc.Address,
+				Description: acc.Description,
+				Rating:      acc.Rating,
+				GgMap:       acc.GgMap,
+				Facilities:  acc.Facilities,
+				Rules:       acc.Rules,
+			})
+		}
+	} else {
+		// TODO: get accommodations
+		totalAccommodation, err = t.sqlc.CountAccommodation(ctx)
+		if err != nil {
+			return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+		}
+
+		offset := (page - 1) * limit
+
+		accommodations, err := t.sqlc.GetAccommodationsWithPagination(ctx, database.GetAccommodationsWithPaginationParams{
+			Limit:  limit,
+			Offset: offset,
+		})
+
+		if err != nil {
+			return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+		}
+
+		for _, acc := range accommodations {
+			accommodationData = append(accommodationData, vo.AccommodationData{
+				ID:          acc.ID,
+				ManagerID:   acc.ManagerID,
+				Name:        acc.Name,
+				Country:     acc.Country,
+				City:        acc.City,
+				District:    acc.District,
+				Address:     acc.Address,
+				Description: acc.Description,
+				Rating:      acc.Rating,
+				GgMap:       acc.GgMap,
+				Facilities:  acc.Facilities,
+				Rules:       acc.Rules,
+			})
+		}
 	}
 
-	for _, accommodation := range accommodations {
+	for _, accommodation := range accommodationData {
 		// TODO: get facility
 		var facilityIDs []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
 		facilities := []vo.FacilitiesOutput{}
@@ -370,13 +453,13 @@ func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context) (codeStatus int,
 
 		rules := vo.Rule{}
 		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
 		}
 
 		// TODO: get images of accommodation
 		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 		if err != nil {
-			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+			return response.ErrCodeGetAccommodationImagesFailed, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
 
 		var imagePaths []string
@@ -384,7 +467,7 @@ func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context) (codeStatus int,
 			imagePaths = append(imagePaths, i.Image)
 		}
 
-		out = append(out, &vo.GetAccommodations{
+		out = append(out, &vo.GetAccommodationsOutput{
 			ID:          accommodation.ID,
 			ManagerID:   accommodation.ManagerID,
 			Name:        accommodation.Name,
@@ -400,7 +483,16 @@ func (t *AccommodationImpl) GetAccommodations(ctx *gin.Context) (codeStatus int,
 			Images:      imagePaths,
 		})
 	}
-	return response.ErrCodeGetAccommodationSuccess, out, nil
+
+	totalPages := (totalAccommodation + int64(limit) - 1) / int64(limit)
+	pagination = &vo.BasePaginationOutput{
+		Page:       page,
+		Limit:      limit,
+		Total:      totalAccommodation,
+		TotalPages: totalPages,
+	}
+
+	return response.ErrCodeGetAccommodationSuccess, out, pagination, nil
 }
 
 func (t *AccommodationImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommodationInput) (codeResult int, out *vo.CreateAccommodationOutput, err error) {

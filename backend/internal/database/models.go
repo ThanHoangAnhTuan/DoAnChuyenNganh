@@ -432,9 +432,9 @@ type EcommerceGoOrder struct {
 	// voucher ID
 	VoucherID sql.NullString
 	// Checkin date
-	CheckinDate uint64
+	CheckinDate string
 	// checkout date
-	CheckoutDate uint64
+	CheckoutDate string
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -566,7 +566,7 @@ type EcommerceGoUserInfo struct {
 	// gender: 0-male, 1-female
 	Gender uint8
 	// birthday
-	Birthday uint64
+	Birthday string
 	// email
 	Email sql.NullString
 	// authentication status: 0-not authenticated, 1-pending ,2-authenticated

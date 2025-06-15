@@ -17,8 +17,5 @@ var (
 	Redis  *redis.Client
 	Kafka  *kafka.Writer
 
-	Ctx     = context.Background()
-	User    = "user"
-	Manager = "manager"
-	Admin   = "admin"
+	Ctx = context.Background()
 )

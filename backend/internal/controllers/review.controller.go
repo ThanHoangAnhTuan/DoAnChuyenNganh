@@ -20,7 +20,7 @@ type CReview struct {
 func (c *CReview) CreateReview(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("CreateReview validation not found")
+		fmt.Printf("CreateReview validation not found\n")
 		global.Logger.Error("CreateReview validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -36,9 +36,10 @@ func (c *CReview) CreateReview(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("CreateReview validation error: %s\n", err.Error())
-		global.Logger.Error("CreateReview validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("CreateReview validation error: %s\n", validationErrors)
+		global.Logger.Error("CreateReview validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -50,15 +51,15 @@ func (c *CReview) CreateReview(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("CreateReview success")
-	global.Logger.Info("CreateReview success")
+	fmt.Printf("CreateReview success: %s\n", data.ID)
+	global.Logger.Info("CreateReview success", zap.String("info", data.ID))
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CReview) GetReviews(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		fmt.Printf("GetReviews validation not found")
+		fmt.Printf("GetReviews validation not found\n")
 		global.Logger.Error("GetReviews validation not found")
 		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
 		return
@@ -74,9 +75,10 @@ func (c *CReview) GetReviews(ctx *gin.Context) {
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		fmt.Printf("GetReviews validation error: %s\n", err.Error())
-		global.Logger.Error("GetReviews validation error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err.Error())
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("GetReviews validation error: %s\n", validationErrors)
+		global.Logger.Error("GetReviews validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
 		return
 	}
 
@@ -88,7 +90,7 @@ func (c *CReview) GetReviews(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf("GetReviews success")
-	global.Logger.Info("GetReviews success")
+	fmt.Printf("GetReviews success: %s\n", params.AccommodationID)
+	global.Logger.Info("GetReviews success: ", zap.String("info", params.AccommodationID))
 	response.SuccessResponseWithPagination(ctx, codeStatus, data, pagination)
 }

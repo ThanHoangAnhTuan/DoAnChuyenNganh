@@ -10,6 +10,26 @@ import (
 	"database/sql"
 )
 
+const checkUserInfoExists = `-- name: CheckUserInfoExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_info` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
+`
+
+func (q *Queries) CheckUserInfoExists(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkUserInfoExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createUserInfo = `-- name: CreateUserInfo :exec
 INSERT INTO
     ` + "`" + `ecommerce_go_user_info` + "`" + ` (
@@ -54,6 +74,30 @@ WHERE
 func (q *Queries) DeleteUserInfo(ctx context.Context, id string) error {
 	_, err := q.db.ExecContext(ctx, deleteUserInfo, id)
 	return err
+}
+
+const getEmailAndUsernameByID = `-- name: GetEmailAndUsernameByID :one
+SELECT
+    ` + "`" + `account` + "`" + `,
+    ` + "`" + `user_name` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_info` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+LIMIT
+    1
+`
+
+type GetEmailAndUsernameByIDRow struct {
+	Account  string
+	UserName string
+}
+
+func (q *Queries) GetEmailAndUsernameByID(ctx context.Context, id string) (GetEmailAndUsernameByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEmailAndUsernameByID, id)
+	var i GetEmailAndUsernameByIDRow
+	err := row.Scan(&i.Account, &i.UserName)
+	return i, err
 }
 
 const getNameAndImageUserInfo = `-- name: GetNameAndImageUserInfo :one
@@ -108,7 +152,7 @@ type GetUserInfoRow struct {
 	Status           uint8
 	Phone            sql.NullString
 	Gender           uint8
-	Birthday         uint64
+	Birthday         string
 	Email            sql.NullString
 	IsAuthentication uint8
 }
@@ -127,6 +171,51 @@ func (q *Queries) GetUserInfo(ctx context.Context, account string) (GetUserInfoR
 		&i.Birthday,
 		&i.Email,
 		&i.IsAuthentication,
+	)
+	return i, err
+}
+
+const getUserInfoByID = `-- name: GetUserInfoByID :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `account` + "`" + `,
+    ` + "`" + `user_name` + "`" + `,
+    ` + "`" + `image` + "`" + `,
+    ` + "`" + `phone` + "`" + `,
+    ` + "`" + `gender` + "`" + `,
+    ` + "`" + `birthday` + "`" + `,
+    ` + "`" + `email` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_info` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+LIMIT
+    1
+`
+
+type GetUserInfoByIDRow struct {
+	ID       string
+	Account  string
+	UserName string
+	Image    string
+	Phone    sql.NullString
+	Gender   uint8
+	Birthday string
+	Email    sql.NullString
+}
+
+func (q *Queries) GetUserInfoByID(ctx context.Context, id string) (GetUserInfoByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserInfoByID, id)
+	var i GetUserInfoByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Account,
+		&i.UserName,
+		&i.Image,
+		&i.Phone,
+		&i.Gender,
+		&i.Birthday,
+		&i.Email,
 	)
 	return i, err
 }
@@ -157,7 +246,7 @@ type GetUserInfosRow struct {
 	Status           uint8
 	Phone            sql.NullString
 	Gender           uint8
-	Birthday         uint64
+	Birthday         string
 	Email            sql.NullString
 	IsAuthentication uint8
 }
@@ -214,15 +303,33 @@ func (q *Queries) GetUsernameByID(ctx context.Context, id string) (string, error
 	return user_name, err
 }
 
+const updateUserAvatar = `-- name: UpdateUserAvatar :exec
+UPDATE ` + "`" + `ecommerce_go_user_info` + "`" + `
+SET
+    ` + "`" + `image` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_authentication` + "`" + ` = 1
+`
+
+type UpdateUserAvatarParams struct {
+	Image string
+	ID    string
+}
+
+func (q *Queries) UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserAvatar, arg.Image, arg.ID)
+	return err
+}
+
 const updateUserInfo = `-- name: UpdateUserInfo :exec
 UPDATE ` + "`" + `ecommerce_go_user_info` + "`" + `
 SET
     ` + "`" + `user_name` + "`" + ` = ?,
-    ` + "`" + `image` + "`" + ` = ?,
     ` + "`" + `phone` + "`" + ` = ?,
     ` + "`" + `gender` + "`" + ` = ?,
     ` + "`" + `birthday` + "`" + ` = ?,
-    ` + "`" + `email` + "`" + ` = ?,
+    -- ` + "`" + `email` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
@@ -231,11 +338,9 @@ WHERE
 
 type UpdateUserInfoParams struct {
 	UserName  string
-	Image     string
 	Phone     sql.NullString
 	Gender    uint8
-	Birthday  uint64
-	Email     sql.NullString
+	Birthday  string
 	UpdatedAt uint64
 	ID        string
 }
@@ -243,11 +348,9 @@ type UpdateUserInfoParams struct {
 func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) error {
 	_, err := q.db.ExecContext(ctx, updateUserInfo,
 		arg.UserName,
-		arg.Image,
 		arg.Phone,
 		arg.Gender,
 		arg.Birthday,
-		arg.Email,
 		arg.UpdatedAt,
 		arg.ID,
 	)

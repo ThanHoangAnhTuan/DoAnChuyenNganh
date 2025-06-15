@@ -1,5 +1,7 @@
 package vo
 
+import "encoding/json"
+
 type FacilitiesOutput struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
@@ -44,7 +46,12 @@ type CreateAccommodationOutput struct {
 	Rules       Rule               `json:"rules"`
 }
 
-type GetAccommodations struct {
+type GetAccommodationsInput struct {
+	City string `form:"city"`
+	BasePaginationInput
+}
+
+type GetAccommodationsOutput struct {
 	ID          string             `json:"id"`
 	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
@@ -96,9 +103,9 @@ type DeleteAccommodationInput struct {
 // get accommodation by city
 type GetAccommodationByCityInput struct {
 	City string `uri:"city"`
+	BasePaginationInput
 }
 
-// get accommodation by city
 type GetAccommodationsByCityOutput struct {
 	ID        string   `json:"id"`
 	Name      string   `json:"name"`
@@ -111,13 +118,12 @@ type GetAccommodationsByCityOutput struct {
 	GoogleMap string   `json:"google_map"`
 }
 
-// get accommodation by id
-
-type GetAccommodationByIdInput struct {
+type GetAccommodationInput struct {
 	ID string `uri:"id"`
+	BasePaginationInput
 }
 
-type GetAccommodationByIdOutput struct {
+type GetAccommodationOutput struct {
 	ID          string             `json:"id"`
 	ManagerID   string             `json:"manager_id"`
 	Name        string             `json:"name"`
@@ -131,4 +137,19 @@ type GetAccommodationByIdOutput struct {
 	Facilities  []FacilitiesOutput `json:"facilities"`
 	GoogleMap   string             `json:"google_map"`
 	Rules       Rule               `json:"rules"`
+}
+
+type AccommodationData struct {
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Description string
+	Facilities  json.RawMessage
+	Address     string
+	GgMap       string
+	Rules       json.RawMessage
+	Rating      uint8
 }

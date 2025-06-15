@@ -41,6 +41,23 @@ WHERE
 LIMIT
     1;
 
+-- name: GetUserInfoByID :one
+SELECT
+    `id`,
+    `account`,
+    `user_name`,
+    `image`,
+    `phone`,
+    `gender`,
+    `birthday`,
+    `email`
+FROM
+    `ecommerce_go_user_info`
+WHERE
+    `id` = ?
+LIMIT
+    1;
+
 -- name: GetUserInfos :many
 SELECT
     `id`,
@@ -62,12 +79,19 @@ WHERE
 UPDATE `ecommerce_go_user_info`
 SET
     `user_name` = ?,
-    `image` = ?,
     `phone` = ?,
     `gender` = ?,
     `birthday` = ?,
-    `email` = ?,
+    -- `email` = ?,
     `updated_at` = ?
+WHERE
+    `id` = ?
+    AND `is_authentication` = 1;
+
+-- name: UpdateUserAvatar :exec
+UPDATE `ecommerce_go_user_info`
+SET
+    `image` = ?
 WHERE
     `id` = ?
     AND `is_authentication` = 1;
@@ -86,3 +110,26 @@ WHERE
     `id` = ?
 LIMIT
     1;
+
+-- name: GetEmailAndUsernameByID :one
+SELECT
+    `account`,
+    `user_name`
+FROM
+    `ecommerce_go_user_info`
+WHERE
+    `id` = ?
+LIMIT
+    1;
+
+-- name: CheckUserInfoExists :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_info`
+        WHERE
+            `id` = ?
+            AND `is_deleted` = 0
+    );
