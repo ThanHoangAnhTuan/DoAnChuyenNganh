@@ -15,8 +15,8 @@ import { environment } from '../../../environments/environment';
     providedIn: 'root',
 })
 export class AccommodationService {
-    private readonly accommodationUrl = `${environment.apiUrl}/accommodations/`;
-    private readonly managerUrl = `${environment.apiUrl}/manager/accommodations/`;
+    private readonly accommodationUrl = `${environment.apiUrl}/accommodations`;
+    private readonly managerUrl = `${environment.apiUrl}/manager/accommodations`;
 
     constructor(private http: HttpClient) {}
 

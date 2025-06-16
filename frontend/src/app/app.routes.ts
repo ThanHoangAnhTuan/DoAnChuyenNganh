@@ -15,6 +15,7 @@ import { RegisterComponent } from './page/user/register/register.component';
 import { LoginComponent } from './page/user/login/login.component';
 import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
 import { PaymentComponent } from './page/payment/payment.component';
+import { StatsComponent } from './page/manager/stats/stats.component';
 
 export const routes: Routes = [
     {
@@ -46,6 +47,12 @@ export const routes: Routes = [
     {
         path: 'manager/accommodation/detail/:id/images',
         component: MediaLibraryComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'manager' },
+    },
+    {
+        path: 'manager/accommodation/stats',
+        component: StatsComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'manager' },
     },

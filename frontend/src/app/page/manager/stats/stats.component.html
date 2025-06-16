@@ -1,0 +1,41 @@
+<main>
+    <h2>Thống kê doanh thu</h2>
+    <label for="mode">Chọn loại thống kê:</label>
+    <select [(ngModel)]="selectedMode" (change)="updateUI()">
+        <option value="current-year">Doanh thu theo năm hiện tại</option>
+        <option value="custom-year">Doanh thu theo năm chọn</option>
+        <option value="current-month">Doanh thu theo tháng hiện tại</option>
+        <option value="custom-month">Doanh thu theo tháng và năm chọn</option>
+    </select>
+
+    <div
+        *ngIf="
+            selectedMode === 'custom-year' || selectedMode === 'custom-month'
+        "
+    >
+        <label>Năm:</label>
+        <input type="number" [(ngModel)]="selectedYear" />
+    </div>
+
+    <div *ngIf="selectedMode === 'custom-month'">
+        <label>Tháng:</label>
+        <select [(ngModel)]="selectedMonth">
+            <option *ngFor="let m of months" [value]="m.value">
+                {{ m.label }}
+            </option>
+        </select>
+    </div>
+
+    <div style="display: block">
+        <canvas
+            baseChart
+            width="400"
+            height="400"
+            [type]="'line'"
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend"
+        >
+        </canvas>
+    </div>
+</main>
