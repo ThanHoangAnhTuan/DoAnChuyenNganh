@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../../services/user/user.service';
-import { OTP, UpdatePassword } from '../../../models/user/user.model';
+import { OTP, UpdatePassword } from '../../../models/user/auth.model';
 import { interval, Subscription, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../services/user/user.service';
+import { AuthService } from '../../../services/user/auth.service';
 
 @Component({
     selector: 'app-verify-otp',
@@ -24,11 +25,19 @@ export class VerifyOtpComponent implements OnInit {
     isVerifying = false;
     isUpdating = false;
     resendCountdown = 0;
+    username: string = '';
+    phone: string = '';
+    gender: number = 0; // 0 = Male, 1 = Female
+    birthday: string = ''; // ISO format (yyyy-mm-dd)
+    goToStep(step: number) {
+        this.step = step;
+    }
     private countdownSub: Subscription | null = null;
 
     constructor(
         private route: ActivatedRoute,
         private userService: UserService,
+        private authService: AuthService,
         private router: Router
     ) {}
 
@@ -174,6 +183,16 @@ export class VerifyOtpComponent implements OnInit {
         );
     }
 
+    canUpdateUserInfo() {
+        return (
+            this.username &&
+            this.phone &&
+            this.gender !== null &&
+            this.birthday &&
+            this.birthday.trim() !== ''
+        );
+    }
+
     verifyOTP() {
         if (!this.otp || this.otp.trim() === '') {
             console.warn('Please enter otp.');
@@ -192,7 +211,7 @@ export class VerifyOtpComponent implements OnInit {
         };
 
         if (this.otp && this.email) {
-            this.userService.verifyOTP(otpData).subscribe({
+            this.authService.verifyOTP(otpData).subscribe({
                 next: (response) => {
                     console.log('OTP verified successfully:', response);
                     this.token = response.data.token; // Assuming the token is returned in the response
@@ -211,7 +230,6 @@ export class VerifyOtpComponent implements OnInit {
             console.warn('Please enter your new password.');
             return;
         }
-
         const passwordData: UpdatePassword = {
             token: this.token,
             password: this.password,
@@ -220,7 +238,7 @@ export class VerifyOtpComponent implements OnInit {
         console.log('Updating password with token:', this.token);
         console.log('New password:', this.password);
 
-        this.userService.updatePassword(passwordData).subscribe({
+        this.authService.updatePassword(passwordData).subscribe({
             next: (response) => {
                 console.log('Password updated successfully:', response);
                 // Navigate to success page or show success message

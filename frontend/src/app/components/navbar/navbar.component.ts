@@ -1,14 +1,12 @@
-import { NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
 import { TuiAvatar, TuiChevron } from '@taiga-ui/kit';
-import { UserService } from '../../services/user/user.service';
+import { GetUserRole } from '../../shared/token/token';
 
 @Component({
     selector: 'app-navbar',
     imports: [
-        NgForOf,
         RouterLink,
         RouterLinkActive,
         TuiChevron,
@@ -22,7 +20,9 @@ import { UserService } from '../../services/user/user.service';
     styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit {
-    isLoggedIn = false;
+    isUserLoggedIn = false;
+    isManagerLoggedIn = false;
+    isAdminLoggedIn = false;
     userName: string | null = null;
     userAvatar: string | null = null;
 
@@ -35,43 +35,33 @@ export class NavbarComponent implements OnInit {
                     routerLink: '/user-profile',
                     icon: '@tui.user',
                 },
-                {
-                    label: 'Saved',
-                    routerLink: '/',
-                    icon: '@tui.heart',
-                },
-                {
-                    label: 'Reviews',
-                    routerLink: '/',
-                    icon: '@tui.message-circle-code',
-                },
+                // {
+                //     label: 'Reviews',
+                //     routerLink: '/',
+                //     icon: '@tui.message-circle-code',
+                // },
                 {
                     label: 'Bookings & Trips',
                     routerLink: '/',
                     icon: '@tui.backpack',
                 },
-                // {
-                //     label: 'Sign out',
-                //     routerLink: '/',
-                //     icon: '@tui.log-out',
-                // },
             ],
         },
     ];
-    constructor(private userService: UserService, private router: Router) {}
+    constructor(private router: Router) {}
 
     ngOnInit(): void {
         this.checkLoginStatus();
     }
 
     checkLoginStatus(): void {
-        // You'll need to add an isLoggedIn method to your UserService
-        const token =
-            localStorage.getItem('token') || sessionStorage.getItem('token');
-        this.isLoggedIn = !!token;
-
-        if (this.isLoggedIn) {
-            // this.loadUserInfo();
+        const user = GetUserRole();
+        if (user === 'user') {
+            this.isUserLoggedIn = true;
+        } else if (user === 'manager') {
+            this.isManagerLoggedIn = true;
+        } else if (user === 'admin') {
+            this.isAdminLoggedIn = true;
         }
     }
 
@@ -93,16 +83,30 @@ export class NavbarComponent implements OnInit {
     // }
 
     logout(): void {
-        // Clear authentication data
+        // Lưu trạng thái trước khi reset
+        const wasUserLoggedIn = this.isUserLoggedIn;
+        const wasManagerLoggedIn = this.isManagerLoggedIn;
+        const wasAdminLoggedIn = this.isAdminLoggedIn;
+
+        // Xóa token/cookie nếu có
+        document.cookie =
+            'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
 
         // Update UI
-        this.isLoggedIn = false;
+        this.isUserLoggedIn = false;
+        this.isManagerLoggedIn = false;
+        this.isAdminLoggedIn = false;
         this.userName = null;
         this.userAvatar = null;
 
-        // Navigate to home page
-        this.router.navigate(['/']);
+        // Navigate dựa vào trạng thái đã lưu
+        if (wasManagerLoggedIn) {
+            this.router.navigate(['/manager/login']);
+        } else if (wasUserLoggedIn) {
+            this.router.navigate(['/']);
+        } else if (wasAdminLoggedIn) {
+            this.router.navigate(['/admin/login']);
+        }
     }
 }

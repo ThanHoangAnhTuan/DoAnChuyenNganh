@@ -14,6 +14,7 @@ import { FacilityComponent } from './page/admin/facility/facility.component';
 import { RegisterComponent } from './page/user/register/register.component';
 import { LoginComponent } from './page/user/login/login.component';
 import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
+import { FacilityDetailComponent } from './page/admin/facility-detail/facility-detail.component';
 import { StatsComponent } from './page/manager/stats/stats.component';
 
 export const routes: Routes = [
@@ -62,6 +63,12 @@ export const routes: Routes = [
     {
         path: 'admin/facility',
         component: FacilityComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
+        path: 'admin/facility-detail',
+        component: FacilityDetailComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'admin' },
     },

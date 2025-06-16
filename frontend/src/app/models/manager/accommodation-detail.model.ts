@@ -1,3 +1,5 @@
+import { FacilityDetail } from '../facility/facility.model';
+
 export interface Beds {
     single_bed: number;
     double_bed: number;
@@ -14,6 +16,7 @@ export interface Beds {
 export interface AccommodationDetails {
     id: string;
     accommodation_id: string;
+    accommodation_name: string;
     name: string;
     guests: number;
     beds: Beds;
@@ -22,6 +25,7 @@ export interface AccommodationDetails {
     price: number;
     discount_id: string;
     images: string[];
+    facilities: FacilityDetail[];
 }
 
 export interface GetAccommodationDetailsResponse {
@@ -45,10 +49,10 @@ export interface CreateAccommodationDetails {
     name: string;
     guests: number;
     beds: Beds;
-    // facilities: Facilities;
     available_rooms: number;
     price: string;
     discount_id: string;
+    facilities: string[];
 }
 
 export interface CreateAccommodationDetailResponse {
@@ -67,6 +71,7 @@ export interface UpdateAccommodationDetails {
     available_rooms: number;
     price: string;
     discount_id: string;
+    facilities: string[];
 }
 
 export interface UpdateAccommodationDetailResponse {

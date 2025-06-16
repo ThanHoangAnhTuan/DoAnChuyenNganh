@@ -1,190 +1,111 @@
 <app-navbar></app-navbar>
-
 <div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-info">
-            <h1 class="title">Personal details</h1>
-            <p class="subtitle">
-                Update your information and find out how it's used.
-            </p>
-        </div>
-        <div class="profile-avatar">
-            <div class="avatar-circle">
-                <span class="avatar-text">{{ getInitials() }}</span>
-            </div>
-        </div>
+    <h1 class="profile-title">Thông tin cá nhân</h1>
+    <p class="profile-subtitle">
+        Cập nhật thông tin của bạn và tìm hiểu các thông tin này được sử dụng ra
+        sao.
+    </p>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+        <tui-loader size="m"></tui-loader>
     </div>
 
-    <div class="details-card">
-        <!-- Name -->
-        <div
-            class="detail-row"
-            [class.editing]="currentEditingField === 'name'"
-        >
-            <div class="label">Name</div>
-            <div class="value">
-                <ng-container
-                    *ngIf="currentEditingField !== 'name'; else editName"
-                >
-                    <span class="field-value">{{ name.value }}</span>
-                </ng-container>
-                <ng-template #editName>
-                    <tui-input
-                        [formControl]="name"
-                        class="edit-input"
-                    ></tui-input>
-                </ng-template>
-            </div>
-            <div class="action">
-                <button
-                    *ngIf="currentEditingField !== 'name'"
-                    tuiButton
-                    size="s"
-                    appearance="flat"
-                    class="edit-button"
-                    (click)="startEditing('name')"
-                >
-                    <tui-icon icon="square-pen"></tui-icon>
-                    Edit
-                </button>
-                <div
-                    *ngIf="currentEditingField === 'name'"
-                    class="edit-actions"
-                >
-                    <button
-                        tuiButton
-                        size="s"
-                        appearance="primary"
-                        class="save-button"
-                        (click)="saveEdit()"
-                    >
-                        Save
-                    </button>
-                    <button
-                        tuiButton
-                        size="s"
-                        appearance="flat"
-                        class="cancel-button"
-                        (click)="cancelEdit()"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Display Name -->
-        <div
-            class="detail-row"
-            [class.editing]="currentEditingField === 'displayName'"
-        >
-            <div class="label">Display name</div>
-            <div class="value">
-                <ng-container
-                    *ngIf="
-                        currentEditingField !== 'displayName';
-                        else editDisplayName
-                    "
-                >
-                    <span class="field-value">{{
-                        displayName.value || "Choose a display name"
-                    }}</span>
-                </ng-container>
-                <ng-template #editDisplayName>
-                    <tui-input
-                        [formControl]="displayName"
-                        class="edit-input"
-                    ></tui-input>
-                </ng-template>
-            </div>
-            <div class="action">
-                <button
-                    *ngIf="currentEditingField !== 'displayName'"
-                    tuiButton
-                    size="s"
-                    appearance="flat"
-                    class="edit-button"
-                    (click)="startEditing('displayName')"
-                >
-                    <tui-icon icon="square-pen"></tui-icon>
-                    Edit
-                </button>
-                <div
-                    *ngIf="currentEditingField === 'displayName'"
-                    class="edit-actions"
-                >
-                    <button
-                        tuiButton
-                        size="s"
-                        appearance="primary"
-                        class="save-button"
-                        (click)="saveEdit()"
-                    >
-                        Save
-                    </button>
-                    <button
-                        tuiButton
-                        size="s"
-                        appearance="flat"
-                        class="cancel-button"
-                        (click)="cancelEdit()"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Email -->
-        <div class="detail-row">
-            <div class="label">Email address</div>
-            <div class="value">
-                <span class="field-value">{{ email.value }}</span>
-                <tui-badge status="success" class="verified-badge"
-                    >Verified</tui-badge
-                >
-                <div class="field-description">
-                    This is the email address you use to sign in. It's also
-                    where we send your booking confirmations.
-                </div>
-            </div>
-            <div class="action">
-                <button
-                    tuiButton
-                    size="s"
-                    appearance="flat"
-                    class="edit-button"
-                >
-                    <tui-icon icon="square-pen"></tui-icon>
-                    Edit
-                </button>
-            </div>
-        </div>
-
-        <!-- Continue with other fields... -->
-        <!-- Phone, DOB, Nationality, Gender, Address, Passport -->
-        <div class="detail-row">
-            <div class="label">Phone number</div>
-            <div class="value">
-                <span class="field-value">{{
-                    phone.value || "Not provided"
-                }}</span>
-                <div class="field-description">
-                    This is the phone number we use to contact you about your
-                    bookings.
-                </div>
-            </div>
-            <div class="action">
-                <button
-                    tuiButton
-                    size="s"
-                    appearance="flat"
-                    class="edit-button"
-                >
-                    <tui-icon icon="square-pen"></tui-icon>
-                    Edit
-                </button>
-            </div>
-        </div>
+    <div
+        *ngIf="notification"
+        class="notification"
+        [class]="notification.status"
+    >
+        {{ notification.message }}
     </div>
+
+    <form
+        *ngIf="!isLoading"
+        [formGroup]="profileForm"
+        (ngSubmit)="updateUserProfile()"
+    >
+        <div class="profile-card">
+            <!-- Name field -->
+            <div class="profile-row">
+                <div class="field-label">Tên</div>
+                <div class="field-value">
+                    <tui-input formControlName="username">
+                        Tên người dùng
+                    </tui-input>
+                    <div
+                        *ngIf="
+                            profileForm.get('username')?.invalid &&
+                            profileForm.get('username')?.touched
+                        "
+                        class="error-message"
+                    >
+                        Vui lòng nhập tên
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone field -->
+            <div class="profile-row">
+                <div class="field-label">Số điện thoại</div>
+                <div class="field-value">
+                    <tui-input formControlName="phone">
+                        Số điện thoại
+                        <input autocomplete="tel" tuiTextfieldLegacy />
+                    </tui-input>
+                    <div class="field-hint">
+                        Chỗ nghỉ hoặc địa điểm tham quan bạn đặt sẽ liên lạc với
+                        bạn qua số này nếu cần.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gender field -->
+            <div class="profile-row">
+                <div class="field-label">Giới tính</div>
+                <div>
+                    <label tuiLabel>
+                        <input
+                            tuiRadio
+                            type="radio"
+                            formControlName="gender"
+                            [value]="Gender.Male"
+                            name="gender"
+                        />
+                        Nam
+                    </label>
+
+                    <label tuiLabel>
+                        <input
+                            tuiRadio
+                            type="radio"
+                            formControlName="gender"
+                            [value]="Gender.Female"
+                            name="gender"
+                        />
+                        Nữ
+                    </label>
+                </div>
+            </div>
+
+            <!-- Birthday field -->
+            <div class="profile-row">
+                <label class="field-label">Ngày sinh</label>
+                <p-datepicker
+                    formControlName="birthday"
+                    dateFormat="dd.mm.yy"
+                />
+            </div>
+        </div>
+
+        <!-- Save button -->
+        <div class="action-buttons">
+            <button
+                tuiButton
+                type="submit"
+                appearance="primary"
+                [disabled]="profileForm.invalid || isSubmitting"
+            >
+                Lưu thay đổi
+            </button>
+        </div>
+    </form>
 </div>
