@@ -267,7 +267,7 @@ export class AccommodationDetailComponent implements OnInit {
             },
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
-            price: this.formAccommodationDetail.get('price')?.value || 0,
+            price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             accommodation_id:
                 this.formAccommodationDetail.get('accommodationId')?.value ||
                 '',
@@ -312,7 +312,7 @@ export class AccommodationDetailComponent implements OnInit {
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,
-            price: this.formAccommodationDetail.get('price')?.value || 0,
+            price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             facilities: this.getSelectedFacilityIds(),
         };
 
