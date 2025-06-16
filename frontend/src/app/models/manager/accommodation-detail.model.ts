@@ -47,7 +47,7 @@ export interface CreateAccommodationDetails {
     beds: Beds;
     // facilities: Facilities;
     available_rooms: number;
-    price: number;
+    price: string;
     discount_id: string;
 }
 
@@ -65,7 +65,7 @@ export interface UpdateAccommodationDetails {
     beds: Beds;
     // facilities: Facilities;
     available_rooms: number;
-    price: number;
+    price: string;
     discount_id: string;
 }
 
