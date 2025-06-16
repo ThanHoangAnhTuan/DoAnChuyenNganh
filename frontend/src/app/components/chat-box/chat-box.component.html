@@ -1,0 +1,24 @@
+<button class="chat-button" (click)="toggleChat()">
+    <img src="icons/chat-box-icon/chat-icon.svg" alt="Chat Icon" class="chat-icon">
+</button>
+
+<div class="chat-container" *ngIf="isChatBoxOpen">
+    <div class="header">
+        <p class="header-title">Chat Box</p>
+
+        <div class="close-button" (click)="closeChat()">
+            <img src="icons/chat-box-icon/close-icon.svg" alt="Close Icon" class="close-icon">
+        </div>
+    </div>
+
+    <div class="messages-container">
+
+    </div>
+
+    <div class="input-container">
+        <input placeholder="Aa" />
+        <div class="send-button">
+            <img src="icons/chat-box-icon/send-icon.svg" alt="Send Icon" class="send-icon">
+        </div>
+    </div>
+</div>

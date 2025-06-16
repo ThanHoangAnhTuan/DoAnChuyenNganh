@@ -1,21 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateNewReview, Review } from '../../models/user/review.model';
+import { CreateAccommodationResponse, CreateNewReview, GetReviewsByAccommodationIdResponse } from '../../models/user/review.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReviewService {
-  private baseUrl = 'http://localhost:3000/reviews';
+  private baseUrl = `${environment.apiUrl}/review`;
 
   constructor(private http: HttpClient) { }
 
-  getReviewsByAccommodationId(accommodationId: string): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.baseUrl}?accommodation_id=${accommodationId}`);
+  getReviewsByAccommodationId(accommodationId: string): Observable<GetReviewsByAccommodationIdResponse> {
+    return this.http.get<GetReviewsByAccommodationIdResponse>(this.baseUrl + '/?accommodation_id=' + accommodationId);
   }
 
-  addReview(review: Review): Observable<CreateNewReview> {
-    return this.http.post<CreateNewReview>(this.baseUrl, review);
+  addReview(review: CreateNewReview): Observable<CreateAccommodationResponse> {
+    return this.http.post<CreateAccommodationResponse>(this.baseUrl + '/', review);
   }
 }

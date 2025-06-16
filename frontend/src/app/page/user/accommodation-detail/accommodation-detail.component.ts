@@ -1,7 +1,7 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { TuiLike } from '@taiga-ui/kit';
 import { ImageListModalComponent } from '../../../components/modals/image-list-modal/image-list-modal.component';
 import { NavbarComponent } from "../../../components/navbar/navbar.component";
@@ -11,8 +11,12 @@ import { RoomInformationModalComponent } from "../../../components/modals/room-i
 import { ReviewService } from '../../../services/user/review.service';
 import { GetAccommodationByIdResponse } from '../../../models/manager/accommodation.model';
 import { GetAccommodationDetailsResponse } from '../../../models/manager/accommodation-detail.model';
-import { Review } from '../../../models/user/review.model';
+import { GetReviewsByAccommodationIdResponse, Review } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from "../../../components/modals/review-list-modal/review-list-modal.component";
+import { PaymentService } from '../../../services/user/payment.service';
+import { TuiAlertService } from '@taiga-ui/core';
+import { AddressService } from '../../../services/address/address.service';
+import { City } from '../../../models/address/address.model';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -28,12 +32,14 @@ import { ReviewListModalComponent } from "../../../components/modals/review-list
     CommonModule,
     ReviewListModalComponent
   ],
-  providers: [DatePipe],
   templateUrl: './accommodation-detail.component.html',
   styleUrl: './accommodation-detail.component.scss'
 })
 export class AccommodationDetailComponent implements OnInit {
+  @ViewChild('availablilityRoomTop') availablilityRoomTop!: ElementRef;
   accommodationId: string = '';
+  accommodationCity: string = '';
+  accommodationDistrict: string = '';
   accommodation: any;
   rooms: any[] = [];
   reviews: any[] = [];
@@ -72,7 +78,6 @@ export class AccommodationDetailComponent implements OnInit {
       containerClass: 'full-bed-icon-container'
     }
   ];
-  numberOfRooms: number = 0;
   selectedBedType: string = '';
   selectedRooms: {
     [roomId: number]: { quantity: number; total: number };
@@ -80,12 +85,25 @@ export class AccommodationDetailComponent implements OnInit {
   avarageRating: number = 0;
   scrollY: number = 0;
 
+  private readonly alerts = inject(TuiAlertService);
+
+  protected getAlert(label: string, content: string): void {
+    this.alerts
+      .open(content, {
+        label: label,
+        appearance: 'negative',
+        autoClose: 5000,
+      })
+      .subscribe();
+  }
+
   constructor(
     private accommodationDetailService: AccommodationDetailService,
     private route: ActivatedRoute,
     private roomService: RoomService,
     private reviewService: ReviewService,
-    private datePipe: DatePipe,
+    private paymentService: PaymentService,
+    private addressService: AddressService,
   ) {
     this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
     this.updateDescription();
@@ -112,26 +130,38 @@ export class AccommodationDetailComponent implements OnInit {
 
   getAccommodationById(id: string) {
     this.accommodationDetailService.getAccommodationDetailById(id).subscribe((data: GetAccommodationByIdResponse) => {
-      this.accommodation = data.data;
-      // console.log("accommodation: ", this.accommodation);
+      console.log(data);
+
+      if (data) {
+        this.accommodation = data.data;
+        console.log("accommodation: ", this.accommodation);
+
+        this.getCityById(this.accommodation.city);
+      } else {
+        console.log("Can't get accommodation");
+      }
     })
   }
 
   getRoomByAccommodationId(id: string) {
     this.roomService.getRoomDetailByAccommodationId(id).subscribe((data: GetAccommodationDetailsResponse) => {
-      this.rooms = data.data;
-      // console.log("room: ", this.rooms);
+      if (data) {
+        this.rooms = data.data;
+        // console.log("room: ", this.rooms);
+      } else {
+        console.log("Can't get accommodation room");
+      }
     })
   }
 
   getReviewByAccommodationId(id: string) {
-    this.reviewService.getReviewsByAccommodationId(id).subscribe((data: Review[]) => {
-      if (data && data.length > 0) {
-        const sortedReviews = data.sort((a, b) => {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
+    this.reviewService.getReviewsByAccommodationId(id).subscribe((data: GetReviewsByAccommodationIdResponse) => {
+      if (data) {
+        // const sortedReviews = data.data.sort((a, b) => {
+        //   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        // });
 
-        this.reviews = sortedReviews;
+        this.reviews = data.data;
 
         const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
         this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
@@ -143,6 +173,66 @@ export class AccommodationDetailComponent implements OnInit {
         console.log("No reviews found for this accommodation.");
       }
     });
+  }
+
+  createPayment() {
+    if (this.numberRoomSelected() === 0) {
+      this.getAlert('Notification', 'Please select at least one room before proceeding to payment.');
+      return;
+    }
+
+    const roomSelected = Object.entries(this.selectedRooms).map(([roomId, { quantity, total }]) => ({
+      id: String(roomId),
+      quantity,
+    }));
+
+    const payment = {
+      check_in: "09-06-2025",
+      check_out: "12-06-2025",
+      accommodation_id: this.accommodation.id,
+      room_selected: roomSelected,
+    };
+
+    const token = sessionStorage.getItem('token');
+
+    if (token == null) {
+      this.getAlert('Notification', 'Please log in before pay for accommodation');
+      return;
+    }
+
+    this.paymentService.createPayment(payment).subscribe({
+      next: (response) => {
+        console.log('Payment URL created successfully:', response.body);
+
+        if (!response.body.data.url) {
+          this.getAlert('Notification', 'Payment URL is missing in the response.');
+          return;
+        }
+
+        // Mở link thanh toán trong tab mới
+        window.open(response.body.data.url, '_blank');
+      },
+      error: (error) => {
+        console.error('Error creating payment URL:', error);
+        this.getAlert('Notification', 'An error occurred while creating the payment URL. Please try again later.');
+      }
+    });
+  }
+
+  getCityById(id: string) {
+    this.addressService.getCityByLevel1id(id).subscribe((data: City[]) => {
+      if (data) {
+        this.accommodationCity = data[0].name;
+
+        const district = data[0].level2s.find(d => d.level2_id === this.accommodation.district);
+        this.accommodationDistrict = district?.name ?? '';
+        
+        // console.log("City: ", this.accommodationCity);
+        // console.log("District", this.accommodationDistrict);
+      } else {
+        console.log("Can't get city by id");
+      }
+    })
   }
 
   goToLink(url: string) {
@@ -184,10 +274,18 @@ export class AccommodationDetailComponent implements OnInit {
     };
 
     console.log("Selected Rooms: ", this.selectedRooms);
+    console.log('values:', Object.values(this.selectedRooms));
+  }
+
+  numberRoomSelected(): number {
+    return Object.values(this.selectedRooms)
+      .filter(room => room && typeof room.quantity === 'number')
+      .reduce((sum, room) => sum + room.quantity, 0);
   }
 
   getTotalPrice(): number {
-    return Object.values(this.selectedRooms).reduce((acc, room) => acc + room.total, 0);
+    return Object.values(this.selectedRooms)
+      .reduce((acc, room) => acc + room.total, 0);
   }
 
   getTotalBeds(beds: any): number {
@@ -197,22 +295,24 @@ export class AccommodationDetailComponent implements OnInit {
   toggleOpenModal(room: any) {
     this.roomInformationSelected = room;
     this.isRoomInformationModalOpen = true;
-    document.body.style.overflow = 'hidden';
+    this.scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${this.scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
   }
 
   toggleCloseModal() {
     this.roomInformationSelected = null;
     this.isRoomInformationModalOpen = false;
-    document.body.style.overflow = 'auto';
-  }
-
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const hoursMinutes = this.datePipe.transform(date, 'HH:mm');
-    const day = date.getUTCDate();
-    const month = date.getUTCMonth() + 1;
-    const year = date.getUTCFullYear();
-    return `${hoursMinutes} ngày ${day} tháng ${month} năm ${year}`;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    // Trả lại vị trí scroll cũ
+    window.scrollTo(0, this.scrollY);
   }
 
   toggleOpenReviewModal(review: any) {
@@ -257,5 +357,10 @@ export class AccommodationDetailComponent implements OnInit {
     document.body.style.width = '';
     // Trả lại vị trí scroll cũ
     window.scrollTo(0, this.scrollY);
+  }
+
+  goToSelectRoom() {
+    // Cuộn đến phần tử
+    this.availablilityRoomTop.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 }

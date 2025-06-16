@@ -11,6 +11,9 @@ import {
 } from '@taiga-ui/legacy';
 import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AddressService } from '../../../services/address/address.service';
+import { Accommodation } from '../../../models/manager/accommodation.model';
+import { forkJoin, map, switchMap } from 'rxjs';
 
 @Component({
     selector: 'app-search-page',
@@ -61,12 +64,16 @@ export class SearchPageComponent implements OnInit {
     }
 
     city: string = ''; // Thành phố tìm kiếm
+    cityId: string = '';
     hotels: any[] = []; // Danh sách khách sạn
+    level1AddressNames: string = '';
+    level2AddressNames: string = '';
     error = false; // Có lỗi khi tải dữ liệu không
     filteredHotels: any[] = [];
 
     constructor(
         private hotelService: HotelService,
+        private addressService: AddressService,
         private route: ActivatedRoute
     ) {
         // Lấy tham số city từ URL
@@ -76,6 +83,14 @@ export class SearchPageComponent implements OnInit {
                 this.applyFilters(); // Cập nhật khi params thay đổi
             }
         });
+
+        // Lấy tham số city từ QueryParams
+        this.route.queryParams.subscribe((params) => {
+            this.cityId = params['level1_id'];
+            if (this.hotels.length > 0) {
+                this.applyFilters(); // Cập nhật khi params thay đổi
+            }
+        })
     }
 
     // Khởi tạo component
@@ -120,14 +135,64 @@ export class SearchPageComponent implements OnInit {
         },
     ];
 
-    /**
-     * Tải danh sách khách sạn từ service
-     */
+    // Tải danh sách khách sạn từ service
+
+    // loadHotels(): void {
+    //     this.hotelService.getAccommodationsByCity(this.city).subscribe({
+    //         next: (hotels) => {
+    //             this.hotels = hotels.data;
+    //             console.log('Hotels loaded:', this.hotels);
+
+    //             // Lọc khách sạn theo thành phố từ URL
+    //             if (this.city && this.city.trim() !== '') {
+    //                 this.filteredHotels = this.hotels.filter((hotel) =>
+    //                     hotel.city
+    //                         .toLowerCase()
+    //                         .includes(this.city.toLowerCase())
+    //                 );
+    //                 this.filteredHotels = [...this.hotels];
+    //                 this.applyFilters(); // Áp dụng bộ lọc ngay khi tải xong
+    //             }
+    //         },
+    //         error: (err: any) => {
+    //             console.error('Error loading hotels:', err);
+    //             this.error = true;
+    //         },
+    //     });
+    // }
+
     loadHotels(): void {
-        this.hotelService.getAccommodationsByCity(this.city).subscribe({
-            next: (hotels) => {
-                this.hotels = hotels.data;
-                console.log('Hotels loaded:', this.hotels);
+        this.hotelService.getAccommodationsByCity(this.cityId).pipe(
+            switchMap(hotels => {
+                const hotelList = hotels.data;
+                // console.log("all hotels: ", hotelList);
+
+                // Tạo một mảng các Observable để gọi API city name
+                const hotelWithCityName$ = hotelList.map(hotel =>
+                    this.addressService.getCityByLevel1id(hotel.city).pipe(
+                        map(cityData => {
+                            const cityName = cityData[0]?.name || 'Unknow';
+
+                            const district = cityData[0]?.level2s.find(d => d.level2_id === hotel.district);
+                            const districName = district?.name ?? 'Unknow';
+
+                            return {
+                                ...hotel,
+                                city: cityName, // gán city name vào
+                                district: districName, // gán distric vào
+                            };
+                        })
+                    )
+                );
+
+                // forkJoin đợi tất cả các Observable hoàn thành
+                return forkJoin(hotelWithCityName$);
+            })
+        ).subscribe({
+            next: (hotelsWithCity) => {
+                this.hotels = hotelsWithCity;
+                // console.log("Load hotels: ", this.hotels);
+
                 // Lọc khách sạn theo thành phố từ URL
                 if (this.city && this.city.trim() !== '') {
                     this.filteredHotels = this.hotels.filter((hotel) =>
@@ -136,13 +201,14 @@ export class SearchPageComponent implements OnInit {
                             .includes(this.city.toLowerCase())
                     );
                     this.filteredHotels = [...this.hotels];
+                    // console.log("filterd hotel: ", this.filteredHotels);
                     this.applyFilters(); // Áp dụng bộ lọc ngay khi tải xong
                 }
             },
-            error: (err: any) => {
+            error: (err) => {
                 console.error('Error loading hotels:', err);
                 this.error = true;
-            },
+            }
         });
     }
 
@@ -160,6 +226,7 @@ export class SearchPageComponent implements OnInit {
     applyFilters(): void {
         // Bước 1: Lọc theo city từ thanh search (URL params)
         let result = [...this.hotels];
+        // console.log("result: ", result);
 
         // Nếu có thành phố từ URL, lọc danh sách khách sạn
         if (this.city && this.city.trim() !== '') {
@@ -167,6 +234,8 @@ export class SearchPageComponent implements OnInit {
                 hotel.city.toLowerCase().includes(this.city.toLowerCase())
             );
         }
+
+        // console.log("result: ", result);
 
         // Bước 2: Tiếp tục lọc theo các filter checkbox
         const activeFilters = this.customCheckboxes.filter((cb) => cb.checked);

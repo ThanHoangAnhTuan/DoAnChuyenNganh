@@ -14,8 +14,10 @@ import { FacilityComponent } from './page/admin/facility/facility.component';
 import { RegisterComponent } from './page/user/register/register.component';
 import { LoginComponent } from './page/user/login/login.component';
 import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
+import { PaymentComponent } from './page/payment/payment.component';
 import { FacilityDetailComponent } from './page/admin/facility-detail/facility-detail.component';
 import { StatsComponent } from './page/manager/stats/stats.component';
+import { ManagerComponent } from './page/admin/manager/manager.component';
 
 export const routes: Routes = [
     {
@@ -67,6 +69,12 @@ export const routes: Routes = [
         data: { expectedRole: 'admin' },
     },
     {
+        path: 'admin/manager',
+        component: ManagerComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
         path: 'admin/facility-detail',
         component: FacilityDetailComponent,
         canActivate: [RoleGuard],
@@ -95,6 +103,10 @@ export const routes: Routes = [
     {
         path: 'verify-otp',
         component: VerifyOtpComponent,
+    },
+    {
+        path: 'payment/result',
+        component: PaymentComponent,
     },
     {
         path: '**',

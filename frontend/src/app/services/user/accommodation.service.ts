@@ -8,17 +8,11 @@ import { GetAccommodationByIdResponse } from '../../models/manager/accommodation
     providedIn: 'root',
 })
 export class AccommodationService {
-    private apiUrl = `${environment.apiUrl}/accommodation`;
+    private apiUrl = `${environment.apiUrl}/accommodations`;
+    
+    constructor(private http: HttpClient) { }
 
-    constructor(private http: HttpClient) {}
-
-    getAccommodationDetailById(
-        id: string
-    ): Observable<GetAccommodationByIdResponse> {
-        console.log("getAccommodationDetailById: ", id);
-        
-        return this.http.get<GetAccommodationByIdResponse>(
-            `${this.apiUrl}/get-accommodation-by-id/${id}`
-        );
+    getAccommodationDetailById(id: string): Observable<GetAccommodationByIdResponse> {
+        return this.http.get<GetAccommodationByIdResponse>(this.apiUrl + '/' + id);
     }
 }
