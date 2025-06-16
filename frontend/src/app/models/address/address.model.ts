@@ -12,6 +12,7 @@ export interface District {
 }
 
 export interface City {
+    "id": string
     "level1_id": string,
     "name": string,
     "type": string,

@@ -16,6 +16,7 @@ import { LoginComponent } from './page/user/login/login.component';
 import { VerifyOtpComponent } from './page/user/verify-otp/verify-otp.component';
 import { PaymentComponent } from './page/payment/payment.component';
 import { StatsComponent } from './page/manager/stats/stats.component';
+import { ManagerComponent } from './page/admin/manager/manager.component';
 
 export const routes: Routes = [
     {
@@ -63,6 +64,12 @@ export const routes: Routes = [
     {
         path: 'admin/facility',
         component: FacilityComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
+        path: 'admin/manager',
+        component: ManagerComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'admin' },
     },

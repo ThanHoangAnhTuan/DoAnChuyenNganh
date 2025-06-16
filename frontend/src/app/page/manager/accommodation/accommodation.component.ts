@@ -25,14 +25,16 @@ import {
     TuiGroup,
 } from '@taiga-ui/core';
 import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
-import { TuiInputModule } from '@taiga-ui/legacy';
+import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import {
     TuiConfirmService,
     TuiFiles,
-    TuiCheckbox,
     tuiCreateTimePeriods,
     TuiRating,
     TuiSelect,
+    TuiTooltip,
+    TuiDataListWrapperComponent,
+    TuiDataListWrapper,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -46,11 +48,15 @@ import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
+import { AddressService } from '../../../services/address/address.service';
+import { City, District } from '../../../models/address/address.model';
 
 @Component({
     standalone: true,
     selector: 'app-accommodation',
     imports: [
+        TuiIcon,
+        TuiTooltip,
         TuiTable,
         TuiButton,
         TuiInputModule,
@@ -65,6 +71,9 @@ import { FacilityService } from '../../../services/facility/facility.service';
         TuiInputTimeModule,
         TuiRating,
         TuiSelect,
+        TuiSelectModule,
+        TuiDataListWrapperComponent,
+        TuiDataListWrapper,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -104,14 +113,18 @@ export class AccommodationComponent implements OnInit {
     ];
     protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
     protected idAccommodationUpdating = '';
+    protected cities: City[] = [];
+    protected districts: District[] = [];
+    protected cityNames: string[] = [];
+    protected districtNames: string[] = [];
 
     private readonly dialogs = inject(TuiDialogService);
 
     protected formAccommodation = new FormGroup({
         name: new FormControl('', Validators.required),
+        country: new FormControl('Việt Nam'),
         city: new FormControl('', Validators.required),
-        country: new FormControl('', Validators.required),
-        district: new FormControl('', Validators.required),
+        district: new FormControl({ value: '', disabled: true }, Validators.required),
         address: new FormControl('', Validators.required),
         rating: new FormControl(0, [
             Validators.required,
@@ -128,10 +141,38 @@ export class AccommodationComponent implements OnInit {
     constructor(
         private accommodationService: AccommodationService,
         private facilityService: FacilityService,
+        private addressService: AddressService,
         private sanitizer: DomSanitizer
-    ) {}
+    ) { }
 
     ngOnInit() {
+        this.addressService.getCities().subscribe((data: City[]) => {
+            this.cities = data;
+
+            this.cityNames = this.cities.map(city => city.name);
+            console.log("data:", this.cityNames);
+        })
+
+        this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCityName: string | null) => {
+            const selectedCity = this.cities.find(city => city.name === selectedCityName);
+
+            if (selectedCity) {
+                // console.log("selected city: ", selectedCity);
+
+                this.districts = selectedCity.level2s;
+                // console.log("districts: ", this.districts);
+
+                this.districtNames = this.districts.map(d => d.name);
+                // console.log("districts: ", this.districtNames);
+
+                this.formAccommodation.get('district')?.enable();
+            } else {
+                this.districts = [];
+                this.districtNames = [];
+                this.formAccommodation.get('district')?.disable();
+            }
+        })
+
         this.accommodationService.getAccommodations().subscribe((response) => {
             this.accommodations = response.data;
         });
@@ -173,6 +214,9 @@ export class AccommodationComponent implements OnInit {
 
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formAccommodation.reset();
+        this.formAccommodation.patchValue({ country: 'Việt Nam' });
+        this.formAccommodation.get('district')?.disable();
+
         this.dialogs
             .open(content, {
                 label: 'Create Accommodation',
@@ -194,13 +238,19 @@ export class AccommodationComponent implements OnInit {
         this.formAccommodation.patchValue({
             name: accommodation.name,
             city: accommodation.city,
-            country: accommodation.country,
+            country: 'Việt Nam',
             district: accommodation.district,
             description: accommodation.description,
             googleMap: accommodation.google_map,
             address: accommodation.address,
             rating: accommodation.rating,
         });
+
+        const selectedCity = this.cities.find(city => city.name === accommodation.city);
+        if (selectedCity) {
+            this.districts = selectedCity.level2s;
+            this.districtNames = this.districts.map(d => d.name);
+        }
 
         console.log('accommodation: ', accommodation);
 

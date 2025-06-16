@@ -130,9 +130,11 @@ export class AccommodationDetailComponent implements OnInit {
 
   getAccommodationById(id: string) {
     this.accommodationDetailService.getAccommodationDetailById(id).subscribe((data: GetAccommodationByIdResponse) => {
+      console.log(data);
+
       if (data) {
         this.accommodation = data.data;
-        // console.log("accommodation: ", this.accommodation);
+        console.log("accommodation: ", this.accommodation);
 
         this.getCityById(this.accommodation.city);
       } else {
@@ -153,8 +155,6 @@ export class AccommodationDetailComponent implements OnInit {
   }
 
   getReviewByAccommodationId(id: string) {
-    console.log(id);
-
     this.reviewService.getReviewsByAccommodationId(id).subscribe((data: GetReviewsByAccommodationIdResponse) => {
       if (data) {
         // const sortedReviews = data.data.sort((a, b) => {
@@ -166,7 +166,7 @@ export class AccommodationDetailComponent implements OnInit {
         const totalRating = this.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
         this.avarageRating = Math.floor((totalRating / this.reviews.length) * 10) / 10;
 
-        console.log("reviews: ", this.reviews);
+        // console.log("reviews: ", this.reviews);
       } else {
         this.reviews = [];
         this.avarageRating = 0;
