@@ -50,6 +50,7 @@ import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     standalone: true,
@@ -74,6 +75,7 @@ import { City, District } from '../../../models/address/address.model';
         TuiSelectModule,
         TuiDataListWrapperComponent,
         TuiDataListWrapper,
+        NavbarComponent,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',

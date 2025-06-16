@@ -44,6 +44,7 @@ export class AccommodationDetailService {
             discount_id: accommodationDetail.discount_id,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
+            facilities: accommodationDetail.facilities,
         };
 
         console.log(newAccommodationDetail);
@@ -72,6 +73,7 @@ export class AccommodationDetailService {
             discount_id: accommodationDetail.discount_id,
             guests: accommodationDetail.guests,
             price: accommodationDetail.price,
+            facilities: accommodationDetail.facilities,
         };
 
         return this.http.put<UpdateAccommodationDetailResponse>(

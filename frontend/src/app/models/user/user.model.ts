@@ -1,50 +1,27 @@
-export interface RegisterModel {
-    verify_key: string;
-    verify_type: number;
-    verify_purpose: string;
+export interface User {
+    // id: string;
+    // email: string;
+    phone: string;
+    username: string;
+    gender: Gender;
+    birthday: string;
 }
 
-export interface OTP {
-    verify_key: string;
-    verify_code: string;
+export interface UpdateUser {
+    // id: string;
+    // email: string;
+    phone: string;
+    username: string;
+    gender: number;
+    birthday: string;
 }
 
-export interface CreateAccount {
-    verify_key: string;
-}
-
-export interface UpdatePassword {
-    token: string;
-    password: string;
-}
-
-export interface RegisterResponse {
-    data: null;
+export interface UserResponse {
     code: number;
     message: string;
+    data: User;
 }
-
-export interface OTPResponse {
-    data: { token: string };
-    code: number;
-    message: string;
-}
-
-export interface UpdateResponse {
-    data: null;
-    code: number;
-    message: string;
-}
-
-export interface LoginModel {
-    account: string;
-    password: string;
-}
-
-export interface LoginResponse {
-    data: {
-        token: string;
-    };
-    code: number;
-    message: string;
+export enum Gender {
+    Male = 'male',
+    Female = 'female',
 }

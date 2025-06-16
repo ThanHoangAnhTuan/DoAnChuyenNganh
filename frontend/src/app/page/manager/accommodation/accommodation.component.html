@@ -1,3 +1,4 @@
+<app-navbar></app-navbar>
 <main>
     <button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
         New
@@ -172,7 +173,19 @@
                 @for (facility of facilities; track facility.id) {
                 <div class="facility-item">
                     <label tuiLabel class="facility-label">
-                        <input [formControlName]="facility.id" tuiCheckbox type="checkbox" class="facility-checkbox" />
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <img
+                            class="facility-image"
+                            [src]="
+                                'http://localhost:8080/uploads/' +
+                                facility.image
+                            "
+                        />
                         <span class="facility-name">{{ facility.name }}</span>
                     </label>
                 </div>

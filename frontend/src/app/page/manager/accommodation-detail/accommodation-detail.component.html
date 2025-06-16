@@ -1,3 +1,4 @@
+<app-navbar></app-navbar>
 <button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
     New
 </button>
@@ -41,11 +42,14 @@
                 {{ accommodationDetail.price }}
             </td>
             <td *tuiCell="'Accommodation'" tuiTd>
-                {{ accommodationDetail.accommodation_id }}
+                {{ accommodationDetail.accommodation_name }}
+            </td>
+            <!-- <td *tuiCell="'Facilities'" tuiTd>
+                {{ accommodationDetail.facilities }}
             </td>
             <td *tuiCell="'Discount'" tuiTd>
                 {{ accommodationDetail.discount_id }}
-            </td>
+            </td> -->
             <td *tuiCell="'Image'" tuiTd>
                 <a
                     class="button"
@@ -83,7 +87,9 @@
                         type="button"
                         [style.border-radius.%]="100"
                         [style.color]="'red'"
-                        (click)="deleteAccommodationDetail(accommodationDetail.id)"
+                        (click)="
+                            deleteAccommodationDetail(accommodationDetail.id)
+                        "
                     >
                         Delete
                     </button>
@@ -119,7 +125,9 @@
             formAccommodationDetail.get('guests')?.touched) {
             <div>
                 @if(formAccommodationDetail.get('guests')?.errors?.['min']) {
-                    <small class="text-red-500">Guests must be at least 1 person</small>
+                <small class="text-red-500"
+                    >Guests must be at least 1 person</small
+                >
                 }
             </div>
             }
@@ -183,12 +191,12 @@
             formAccommodationDetail.get('price')?.touched) {
             <div>
                 @if(formAccommodationDetail.get('price')?.errors?.['min']) {
-                    <small class="text-red-500">Price must be at least 1 VND</small>
+                <small class="text-red-500">Price must be at least 1 VND</small>
                 }
             </div>
             }
         </tui-textfield>
-        <tui-textfield tuiChevron [content]="contentAccommodation">
+        <!-- <tui-textfield tuiChevron [content]="contentAccommodation">
             <input
                 tuiSelect
                 formControlName="accommodationId"
@@ -207,7 +215,7 @@
                 <small class="text-red-500">Accommodation is required</small>
             </div>
             }
-        </tui-textfield>
+        </tui-textfield> -->
         <tui-textfield tuiChevron [content]="contentDiscount">
             <input
                 tuiSelect
@@ -234,6 +242,26 @@
             </div>
             }
         </tui-textfield>
+        <form [formGroup]="formFacilityDetail" class="facilities-form">
+            <div class="facility-heading">
+                <label>Facility: </label>
+            </div>
+            <div class="facilities-grid">
+                @for (facility of facilities; track facility.id) {
+                <div class="facility-item">
+                    <label tuiLabel class="facility-label">
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <span class="facility-name">{{ facility.name }}</span>
+                    </label>
+                </div>
+                }
+            </div>
+        </form>
 
         <footer>
             <button tuiButton type="submit">Submit</button>

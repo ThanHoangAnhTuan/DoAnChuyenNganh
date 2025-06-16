@@ -1,3 +1,4 @@
+import { FacilityDetailService } from './../../../services/facility-detail/facility-detail.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { Accommodation } from '../../../models/manager/accommodation.model';
 import {
@@ -37,11 +38,15 @@ import {
     TuiSelect,
 } from '@taiga-ui/kit';
 import { TuiContext } from '@taiga-ui/cdk';
+import { FacilityDetail } from '../../../models/facility/facility.model';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     selector: 'app-accommodation-detail',
     imports: [
         TuiTable,
+        FormsModule,
+        ReactiveFormsModule,
         TuiIcon,
         TuiButton,
         TuiInputModule,
@@ -57,12 +62,14 @@ import { TuiContext } from '@taiga-ui/cdk';
         TuiDataList,
         TuiSelect,
         TuiChevron,
+        NavbarComponent,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
 })
 export class AccommodationDetailComponent implements OnInit {
     protected accommodationDetails!: AccommodationDetails[];
+    protected facilities!: FacilityDetail[];
     protected readonly columns: string[] = [
         'ID',
         'Name',
@@ -75,8 +82,9 @@ export class AccommodationDetailComponent implements OnInit {
         'Price',
         'Image',
         'Accommodation',
-        'Discount',
         'Action',
+        // 'Discount',
+        // 'FacilityDetails',
     ];
     protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
     protected idAccommodationDetailUpdating = '';
@@ -94,7 +102,9 @@ export class AccommodationDetailComponent implements OnInit {
         availableRooms: new FormControl<number | 0>(0),
         accommodationId: new FormControl<string | ''>('', Validators.required),
         discountId: new FormControl<string | ''>(''),
+        facilityDetails: new FormControl<string | ''>(''),
     });
+    protected formFacilityDetail = new FormGroup({});
 
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
@@ -107,6 +117,7 @@ export class AccommodationDetailComponent implements OnInit {
         name: '',
         price: 0,
         singleBed: 0,
+        facilityDetails: '',
     };
 
     protected accommodations!: Accommodation[];
@@ -116,7 +127,8 @@ export class AccommodationDetailComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
-        private accommodationService: AccommodationService
+        private accommodationService: AccommodationService,
+        private facilityDetailService: FacilityDetailService
     ) {}
 
     ngOnInit() {
@@ -134,6 +146,38 @@ export class AccommodationDetailComponent implements OnInit {
                 name: item.name,
             }));
         });
+        this.facilityDetailService.getFacilityDetail().subscribe((response) => {
+            this.facilities = response.data;
+            this.createFacilityControls();
+        });
+    }
+    private createFacilityControls() {
+        const facilityControls: { [key: string]: FormControl<boolean> } = {};
+
+        if (!this.facilities || this.facilities.length === 0) {
+            this.formFacilityDetail = new FormGroup(facilityControls);
+            return;
+        }
+
+        this.facilities.forEach((facility) => {
+            facilityControls[facility.id] = new FormControl<boolean>(false, {
+                nonNullable: true,
+            });
+        });
+
+        // Tạo FormGroup mới với các controls
+        this.formFacilityDetail = new FormGroup(facilityControls);
+    }
+    getSelectedFacilityIds(): string[] {
+        if (!this.facilities || this.facilities.length === 0) {
+            return [];
+        }
+        return this.facilities
+            .filter(
+                (facility) =>
+                    this.formFacilityDetail.get(facility.id)?.value === true
+            )
+            .map((facility) => facility.id);
     }
 
     protected openDialogCreate(content: PolymorpheusContent): void {
@@ -175,6 +219,7 @@ export class AccommodationDetailComponent implements OnInit {
 
         this.idAccommodationDetailUpdating = accommodationDetail.id;
 
+        this.setFacilityDetailValues(accommodationDetail.facilities);
         this.dialogs
             .open(content, {
                 label: 'Update Accommodation',
@@ -186,6 +231,22 @@ export class AccommodationDetailComponent implements OnInit {
                     );
                 },
             });
+    }
+    private setFacilityDetailValues(
+        accommodationFacilityDetail: FacilityDetail[]
+    ) {
+        const facilityValues: { [key: string]: boolean } = {};
+        Object.keys(this.formFacilityDetail.controls).forEach((facilityId) => {
+            facilityValues[facilityId] = false;
+        });
+
+        accommodationFacilityDetail.forEach((facilityId) => {
+            if (facilityValues.hasOwnProperty(facilityId.id)) {
+                facilityValues[facilityId.id] = true;
+            }
+        });
+
+        this.formFacilityDetail.patchValue(facilityValues);
     }
 
     protected createAccommodationDetail() {
@@ -212,6 +273,7 @@ export class AccommodationDetailComponent implements OnInit {
                 '',
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
+            facilities: this.getSelectedFacilityIds(),
         };
 
         if (this.formAccommodationDetail.invalid) {
@@ -251,6 +313,7 @@ export class AccommodationDetailComponent implements OnInit {
                 this.formAccommodationDetail.get('discountId')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
+            facilities: this.getSelectedFacilityIds(),
         };
 
         this.accommodationDetailService

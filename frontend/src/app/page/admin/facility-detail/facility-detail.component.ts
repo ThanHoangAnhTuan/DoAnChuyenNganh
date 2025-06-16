@@ -1,4 +1,4 @@
-import { Component, inject, Injector, OnInit } from '@angular/core';
+import { Component, Inject, inject, Injector, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -31,7 +31,10 @@ import {
 } from '@taiga-ui/editor';
 import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
-import { Facility } from '../../../models/facility/facility.model';
+import {
+    Facility,
+    FacilityDetail,
+} from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -39,9 +42,11 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import type { TuiFileLike } from '@taiga-ui/kit';
 import { finalize, of, Subject, switchMap } from 'rxjs';
 import type { Observable } from 'rxjs';
-
+import { FacilityDetailService } from '../../../services/facility-detail/facility-detail.service';
+import { TUI_DIALOGS_CLOSE } from '@taiga-ui/core';
+// import { TUI_DIALOGS_CLOSE } from '@taiga-ui/cdk';
 @Component({
-    selector: 'app-facility',
+    selector: 'app-facility-detail',
     imports: [
         TuiTable,
         TuiButton,
@@ -62,41 +67,26 @@ import type { Observable } from 'rxjs';
         TuiFiles,
         NgIf,
     ],
-    templateUrl: './facility.component.html',
-    styleUrl: './facility.component.scss',
-    providers: [
-        TuiConfirmService,
-        {
-            provide: TuiDialogService,
-            useExisting: TuiResponsiveDialogService,
-        },
-        {
-            provide: TUI_EDITOR_EXTENSIONS,
-            deps: [Injector],
-            useFactory: (injector: Injector) => [
-                ...TUI_EDITOR_DEFAULT_EXTENSIONS,
-                import('@taiga-ui/editor').then(({ setup }) =>
-                    setup({ injector })
-                ),
-            ],
-        },
-    ],
+    templateUrl: './facility-detail.component.html',
+    styleUrl: './facility-detail.component.scss',
 })
-export class FacilityComponent implements OnInit {
-    protected facilities!: Facility[];
-    protected columns: string[] = ['Id', 'Name', 'Image', 'Action'];
+export class FacilityDetailComponent implements OnInit {
+    protected facilities!: FacilityDetail[];
+    protected columns: string[] = ['Id', 'Name', 'Action'];
     protected idFacilityUpdating = '';
 
     private readonly dialogs = inject(TuiDialogService);
 
     protected formFacility = new FormGroup({
         name: new FormControl('', Validators.required),
-        image: new FormControl<TuiFileLike | null>(null, Validators.required),
     });
 
     protected timePeriods = tuiCreateTimePeriods();
 
-    constructor(private facilityService: FacilityService) {}
+    constructor(
+        @Inject(TUI_DIALOGS_CLOSE) private readonly close$: Observable<void>,
+        private facilityService: FacilityDetailService
+    ) {}
 
     ngOnInit() {
         this.facilityService.getFacilities().subscribe({
@@ -126,13 +116,12 @@ export class FacilityComponent implements OnInit {
 
     protected openDialogUpdate(
         content: PolymorpheusContent,
-        facility: Facility
+        facility: FacilityDetail
     ) {
         this.formFacility.reset();
 
         this.formFacility.patchValue({
             name: facility.name,
-            image: null, // or set to a File object if available
         });
 
         // console.log('facility: ', facility);
@@ -152,10 +141,6 @@ export class FacilityComponent implements OnInit {
 
     protected CreateFacilityInput(): void {
         const nameValue = this.formFacility.get('name')?.value;
-        // const imageControl = this.control;
-        const imageControlValue = this.formFacility.value.image;
-
-        // const imageValue = imageControl?.value;
 
         if (!nameValue) {
             alert('Vui lòng nhập tên facility');
@@ -163,18 +148,11 @@ export class FacilityComponent implements OnInit {
             return;
         }
 
-        if (!imageControlValue || !(imageControlValue instanceof File)) {
-            alert('Vui lòng chọn hình ảnh cho facility');
-            this.formFacility.markAllAsTouched();
-            return;
-        }
+        const data = {
+            name: nameValue,
+        };
 
-        const formData = new FormData();
-
-        formData.append('name', nameValue);
-        formData.append('image', imageControlValue);
-
-        this.facilityService.createFacility(formData).subscribe({
+        this.facilityService.createFacility(data).subscribe({
             next: (response) => {
                 if (Array.isArray(response.data)) {
                     this.facilities.push(...response.data);
@@ -183,12 +161,7 @@ export class FacilityComponent implements OnInit {
                 }
 
                 this.formFacility.reset();
-                if (
-                    this.control &&
-                    this.control !== this.formFacility.get('image')
-                ) {
-                    this.control.reset();
-                }
+                this.close$.subscribe();
             },
             error: (error) => {
                 console.error('Lỗi từ server:', error);
@@ -205,19 +178,12 @@ export class FacilityComponent implements OnInit {
             this.formFacility.markAllAsTouched();
             return;
         }
+        const data = {
+            id: this.idFacilityUpdating,
+            name: this.formFacility.get('name')?.value || '',
+        };
 
-        const formData = new FormData();
-        formData.append('id', this.idFacilityUpdating);
-        formData.append('name', this.formFacility.get('name')?.value || '');
-        console.log(this.idFacilityUpdating);
-        console.log(this.formFacility.get('name')?.value);
-
-        const imageFile = this.formFacility.get('image')?.value;
-        if (imageFile instanceof File) {
-            formData.append('image', imageFile, imageFile.name);
-        }
-
-        this.facilityService.updateFacility(formData).subscribe({
+        this.facilityService.updateFacility(data).subscribe({
             next: (response) => {
                 console.log(response);
                 const updatedFacility = response.data as Facility;
@@ -249,41 +215,5 @@ export class FacilityComponent implements OnInit {
                 (facility) => facility.id !== id
             );
         });
-    }
-    protected get control(): FormControl<TuiFileLike | null> {
-        return this.formFacility.get(
-            'image'
-        ) as FormControl<TuiFileLike | null>;
-    }
-
-    protected readonly failedFiles$ = new Subject<TuiFileLike | null>();
-    protected readonly loadingFiles$ = new Subject<TuiFileLike | null>();
-    protected readonly loadedFiles$ = this.control.valueChanges.pipe(
-        switchMap((file) => this.processFile(file))
-    );
-
-    protected removeFile(): void {
-        this.control.setValue(null);
-    }
-
-    protected processFile(
-        file: TuiFileLike | null
-    ): Observable<TuiFileLike | null> {
-        this.failedFiles$.next(null);
-
-        if (this.control.invalid || !file) {
-            return of(null);
-        }
-
-        this.loadingFiles$.next(file);
-
-        return of(file).pipe(finalize(() => this.loadingFiles$.next(null)));
-    }
-
-    onChange(files: File[] | null): void {
-        if (!files || files.length === 0) {
-            return;
-        }
-        this.control.setValue(files[0]);
     }
 }

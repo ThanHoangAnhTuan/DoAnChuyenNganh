@@ -1,3 +1,28 @@
+import { jwtDecode } from 'jwt-decode';
+
+function GetToken(): string | null {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith('auth_token=')) {
+            return cookie.substring('auth_token='.length, cookie.length);
+        }
+    }
+
+    return null;
+}
+function GetUserRole(): string | null {
+    const token = GetToken();
+    if (!token) return null;
+    try {
+        const decoded: any = jwtDecode(token);
+        return decoded.role || null;
+    } catch (e) {
+        return null;
+    }
+}
 function SaveTokenToCookie(token: string) {
     // Tham số của document.cookie: name=value; expires=date; path=path; domain=domain; secure
 
@@ -11,7 +36,7 @@ function SaveTokenToCookie(token: string) {
     // Nếu sử dụng HTTPS, bạn có thể thêm thuộc tính 'secure'
     // document.cookie = `auth_token=${token}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Strict; secure`;
 }
-
-export {
-    SaveTokenToCookie
+function IsLoggedIn(): boolean {
+    return !!GetToken();
 }
+export { GetToken, GetUserRole, SaveTokenToCookie, IsLoggedIn };

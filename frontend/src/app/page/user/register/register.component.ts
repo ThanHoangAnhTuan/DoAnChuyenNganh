@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TuiIcon } from '@taiga-ui/core';
-import { UserService } from '../../../services/user/user.service';
+import { AuthService } from '../../../services/user/auth.service';
 import {
     OTP,
     RegisterModel,
     RegisterResponse,
-} from '../../../models/user/user.model';
+} from '../../../models/user/auth.model';
+import { IsLoggedIn } from '../../../shared/token/token';
 
 @Component({
     selector: 'app-register',
@@ -18,9 +19,9 @@ import {
 export class RegisterComponent {
     email: string = '';
 
-    constructor(private router: Router, private userService: UserService) {
+    constructor(private router: Router, private authService: AuthService) {
         // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến trang chính
-        if (this.userService.isLoggedIn()) {
+        if (IsLoggedIn()) {
             this.router.navigate(['/']);
         }
     }
@@ -34,7 +35,7 @@ export class RegisterComponent {
                 verify_code: '', // or remove this field if your OTP interface doesn't require it for sending
             };
 
-            this.userService.verifyOTP(otpData).subscribe({
+            this.authService.verifyOTP(otpData).subscribe({
                 next: (response) => {
                     console.log('OTP sent successfully: ', response);
                     // Navigate to OTP verification page with email in query params
@@ -64,7 +65,7 @@ export class RegisterComponent {
 
         console.log('Email gửi đi:', this.email);
 
-        this.userService.registerUser(newUser).subscribe({
+        this.authService.registerUser(newUser).subscribe({
             next: (response) => {
                 console.log('Thông báo:', response.message);
 
