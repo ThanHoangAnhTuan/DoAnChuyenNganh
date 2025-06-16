@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
 import { TuiAvatar, TuiChevron } from '@taiga-ui/kit';
-import { UserService } from '../../services/user/user.service';
-import { GetToken, GetUserRole } from '../../shared/token/token';
+import { GetUserRole } from '../../shared/token/token';
 
 @Component({
     selector: 'app-navbar',
@@ -37,25 +36,15 @@ export class NavbarComponent implements OnInit {
                     icon: '@tui.user',
                 },
                 // {
-                //     label: 'Saved',
+                //     label: 'Reviews',
                 //     routerLink: '/',
-                //     icon: '@tui.heart',
+                //     icon: '@tui.message-circle-code',
                 // },
-                {
-                    label: 'Reviews',
-                    routerLink: '/',
-                    icon: '@tui.message-circle-code',
-                },
                 {
                     label: 'Bookings & Trips',
                     routerLink: '/',
                     icon: '@tui.backpack',
                 },
-                // {
-                //     label: 'Sign out',
-                //     routerLink: '/',
-                //     icon: '@tui.log-out',
-                // },
             ],
         },
     ];

@@ -31,10 +31,7 @@ import {
 } from '@taiga-ui/editor';
 import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
-import {
-    CreateFacilityInput,
-    Facility,
-} from '../../../models/facility/facility.model';
+import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -154,18 +151,11 @@ export class FacilityComponent implements OnInit {
     }
 
     protected CreateFacilityInput(): void {
-        // console.log('name', this.formFacility.get('name')?.value);
-        // console.log(this.control.value);
-        // console.log('Thực hiện create facility...');
-        const nameControl = this.formFacility.get('name');
-        const imageControl = this.formFacility.get('image');
-        // const nameValid = nameControl?.valid;
-        const nameValue = nameControl?.value;
-        const imageValue = imageControl?.value;
+        const nameValue = this.formFacility.get('name')?.value;
+        // const imageControl = this.control;
+        const imageControlValue = this.formFacility.value.image;
 
-        // console.log('Name:', nameValue, 'valid?', nameValid);
-
-        // Thay vì kiểm tra this.formFacility.invalid, ta sẽ chỉ đảm bảo có tên facility
+        // const imageValue = imageControl?.value;
 
         if (!nameValue) {
             alert('Vui lòng nhập tên facility');
@@ -173,13 +163,8 @@ export class FacilityComponent implements OnInit {
             return;
         }
 
-        if (!imageValue) {
+        if (!imageControlValue || !(imageControlValue instanceof File)) {
             alert('Vui lòng chọn hình ảnh cho facility');
-            this.formFacility.markAllAsTouched();
-            return;
-        }
-        if (!nameValue) {
-            alert('Vui lòng nhập tên facility');
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -187,54 +172,16 @@ export class FacilityComponent implements OnInit {
         const formData = new FormData();
 
         formData.append('name', nameValue);
+        formData.append('image', imageControlValue);
 
-        let image: File | null = null;
-
-        if (this.control?.value instanceof File) {
-            image = this.control.value;
-        } else if (this.formFacility.get('image')?.value instanceof File) {
-            image = this.formFacility.get('image')?.value as File;
-        } else if (this.control?.value) {
-            const tuiFile = this.control.value as any;
-
-            if (tuiFile.file instanceof File) {
-                image = tuiFile.file;
-            }
-        }
-
-        // console.log(
-        //     'File được tìm thấy:',
-        //     image ? image.name : 'KHÔNG CÓ FILE'
-        // );
-
-        if (image) {
-            formData.append('image', image, image.name);
-            // console.log('Đã thêm file vào request:', image.name);
-        } else {
-            const fileName = this.control?.value?.name || '';
-            formData.append('image', fileName);
-            // console.log('Không có file, sử dụng filename:', fileName);
-        }
-        // formData.forEach((value, key) => {
-        //     console.log(
-        //         `FormData: ${key} = ${
-        //             value instanceof File ? value.name : value
-        //         }`
-        //     );
-        // });
-        // console.log('Gửi request đến server...');
         this.facilityService.createFacility(formData).subscribe({
             next: (response) => {
-                // console.log('Server trả về thành công:', response);
-
-                // Cập nhật danh sách facility
                 if (Array.isArray(response.data)) {
                     this.facilities.push(...response.data);
                 } else if (response.data) {
                     this.facilities.push(response.data);
                 }
 
-                // Reset form và đóng dialog
                 this.formFacility.reset();
                 if (
                     this.control &&
@@ -254,64 +201,60 @@ export class FacilityComponent implements OnInit {
 
     protected updateFacility(): void {
         console.log('name', this.formFacility.get('name')?.value);
-        // if (this.formFacility.invalid) {
-        //     this.formFacility.markAllAsTouched();
-        //     return;
-        // }
+        if (this.formFacility.invalid) {
+            this.formFacility.markAllAsTouched();
+            return;
+        }
 
-        // // Show loading indicator
+        const formData = new FormData();
+        formData.append('id', this.idFacilityUpdating);
+        formData.append('name', this.formFacility.get('name')?.value || '');
+        console.log(this.idFacilityUpdating);
+        console.log(this.formFacility.get('name')?.value);
 
-        // // Create FormData for multipart data submission
-        // const formData = new FormData();
-        // formData.append('id', this.idFacilityUpdating);
-        // formData.append('name', this.formFacility.get('name')?.value || '');
+        const imageFile = this.formFacility.get('image')?.value;
+        if (imageFile instanceof File) {
+            formData.append('image', imageFile, imageFile.name);
+        }
 
-        // // Handle image file if present
-        // const imageFile = this.formFacility.get('image')?.value;
-        // if (imageFile instanceof File) {
-        //     formData.append('image', imageFile, imageFile.name);
-        // }
+        this.facilityService.updateFacility(formData).subscribe({
+            next: (response) => {
+                console.log(response);
+                const updatedFacility = response.data as Facility;
+                this.facilities = this.facilities.map((facility) => {
+                    return facility.id === updatedFacility.id
+                        ? updatedFacility
+                        : facility;
+                });
 
-        // this.facilityService.updateFacility(formData).subscribe({
-        //     next: (response) => {
-        //         // Update facility in the list
-        //         const updatedFacility = response.data[0] as Facility;
-        //         this.facilities = this.facilities.map((facility) => {
-        //             return facility.id === updatedFacility.id
-        //                 ? updatedFacility
-        //                 : facility;
-        //         });
-
-        //         // Show success message
-        //         this.showMessage('Cập nhật cơ sở thành công');
-
-        //         // Reset the form or close the dialog if needed
-        //         this.resetFormOrCloseDialog();
-        //     },
-        //     error: (error) => {
-        //         console.error('Error updating facility:', error);
-        //         this.showMessage(
-        //             'Cập nhật cơ sở thất bại: ' +
-        //                 (error.message || 'Đã xảy ra lỗi')
-        //         );
-        //     },
-        //     complete: () => {
-        //         // Hide loading indicator
-        //         console.log('Update facility request completed');
-        //     },
-        // });
+                // Show success message
+                console.log('Cập nhật cơ sở thành công');
+            },
+            error: (error) => {
+                console.error('Error updating facility:', error);
+                console.warn(
+                    'Cập nhật cơ sở thất bại: ' +
+                        (error.message || 'Đã xảy ra lỗi')
+                );
+            },
+            complete: () => {
+                // Hide loading indicator
+                console.log('Update facility request completed');
+            },
+        });
     }
     protected deleteFacility(id: string) {
-        // this.facilityService.deleteFacility(id).subscribe((_) => {
-        //     this.facilities = this.facilities.filter(
-        //         (facility) => facility.id !== id
-        //     );
-        // });
+        this.facilityService.deleteFacility(id).subscribe((_) => {
+            this.facilities = this.facilities.filter(
+                (facility) => facility.id !== id
+            );
+        });
     }
-    protected readonly control = new FormControl<TuiFileLike | null>(
-        null,
-        Validators.required
-    );
+    protected get control(): FormControl<TuiFileLike | null> {
+        return this.formFacility.get(
+            'image'
+        ) as FormControl<TuiFileLike | null>;
+    }
 
     protected readonly failedFiles$ = new Subject<TuiFileLike | null>();
     protected readonly loadingFiles$ = new Subject<TuiFileLike | null>();

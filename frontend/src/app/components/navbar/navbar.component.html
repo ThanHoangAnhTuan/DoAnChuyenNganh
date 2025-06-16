@@ -140,6 +140,15 @@
                 Your Facilities
             </div>
         </a>
+        <a role="menuitem" tuiOption [routerLink]="['/admin/facility-detail']">
+            <div class="menu-item-content">
+                <tui-icon
+                    icon="@tui.layout-dashboard"
+                    class="menu-item-icon"
+                ></tui-icon>
+                Your Facility Details
+            </div>
+        </a>
         <a role="menuitem" tuiOption (click)="logout()">
             <div class="menu-item-content">
                 <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>

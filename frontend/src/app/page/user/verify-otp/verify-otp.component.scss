@@ -330,3 +330,103 @@
 .otp-section, .password-section {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* User Information Form Section */
+.password-section {
+  background-color: var(--tui-base-02, #f6f6f6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--tui-text-01, #333);
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="date"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--tui-base-04, #dcdcdc);
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="tel"]:focus,
+.form-group input[type="date"]:focus {
+  outline: none;
+  border-color: var(--tui-primary, #3682db);
+  box-shadow: 0 0 0 2px rgba(54, 130, 219, 0.15);
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="tel"]::placeholder {
+  color: var(--tui-base-05, #b0b0b0);
+}
+
+/* Gender Options Styling */
+.gender-options {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.gender-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.gender-options input[type="radio"] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+  accent-color: var(--tui-primary, #3682db);
+}
+
+/* Date input styling */
+input[type="date"] {
+  color: var(--tui-text-01, #333);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .password-section {
+    padding: 1.25rem;
+  }
+  
+  .gender-options {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* Transition effects */
+.password-section {
+  transition: all 0.3s ease-in-out;
+}
+
+.password-section:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

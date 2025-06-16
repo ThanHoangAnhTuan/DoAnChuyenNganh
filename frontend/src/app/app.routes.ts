@@ -60,7 +60,7 @@ export const routes: Routes = [
         data: { expectedRole: 'admin' },
     },
     {
-        path: 'admin/facility-detail/:id',
+        path: 'admin/facility-detail',
         component: FacilityDetailComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'admin' },
