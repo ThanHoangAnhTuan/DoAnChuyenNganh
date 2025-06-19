@@ -21,4 +21,9 @@ export class AddressService {
   getCityByLevel1id(id: string): Observable<City[]> {
     return this.http.get<City[]>(this.localUrl + '?level1_id=' + id);
   }
+
+  // http://localhost:3000/data?slug=
+  getCityBySlug(slug: string): Observable<City[]> {
+    return this.http.get<City[]>(this.localUrl + '?slug=' + slug);
+  }
 }

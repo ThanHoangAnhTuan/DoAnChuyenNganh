@@ -18,10 +18,10 @@
                     {{ accommodation.country }}
                 </td>
                 <td *tuiCell="'City'" tuiTd>
-                    {{ accommodation.city }}
+                    {{ changeCitySlugToName(accommodation.city) }}
                 </td>
                 <td *tuiCell="'District'" tuiTd>
-                    {{ accommodation.district }}
+                    {{ changeDistrictSlugToName( accommodation.city ,accommodation.district) }}
                 </td>
                 <td *tuiCell="'Address'" tuiTd>
                     {{ accommodation.address }}
@@ -173,19 +173,11 @@
                 @for (facility of facilities; track facility.id) {
                 <div class="facility-item">
                     <label tuiLabel class="facility-label">
-                        <input
-                            [formControlName]="facility.id"
-                            tuiCheckbox
-                            type="checkbox"
-                            class="facility-checkbox"
-                        />
-                        <img
-                            class="facility-image"
-                            [src]="
+                        <input [formControlName]="facility.id" tuiCheckbox type="checkbox" class="facility-checkbox" />
+                        <img class="facility-image" [src]="
                                 'http://localhost:8080/uploads/' +
                                 facility.image
-                            "
-                        />
+                            " />
                         <span class="facility-name">{{ facility.name }}</span>
                     </label>
                 </div>
@@ -213,17 +205,6 @@
             </tui-textfield>
 
             <tui-textfield>
-                <label tuiLabel>City</label>
-                <input formControlName="city" placeholder="City" tuiTextfield />
-                @if(formAccommodation.get('city')?.invalid &&
-                formAccommodation.get('city')?.touched) {
-                <div>
-                    <small class="text-red-500">City is required</small>
-                </div>
-                }
-            </tui-textfield>
-
-            <tui-textfield>
                 <label tuiLabel>Country</label>
                 <input formControlName="country" placeholder="Country" tuiTextfield [readOnly]="true" />
                 <tui-icon tuiTooltip="You can't change here" />
@@ -236,10 +217,30 @@
             </tui-textfield>
 
             <tui-textfield>
+                <label tuiLabel>City</label>
+                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
+                <input formControlName="city" tuiSelect />
+                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="cityNames" />
+                @if(formAccommodation.get('city')?.invalid &&
+                formAccommodation.get('city')?.touched) {
+                <div>
+                    <small class="text-red-500">City is required</small>
+                </div>
+                }
+            </tui-textfield>
+
+            <tui-textfield>
                 <label tuiLabel>District</label>
-                <input formControlName="district" placeholder="District" tuiTextfield />
-                @if(formAccommodation.get('district')?.invalid &&
-                formAccommodation.get('district')?.touched) {
+                <input formControlName="district" tuiSelect />
+                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="districtNames" />
+
+                @if (formAccommodation.get('city')?.disabled || formAccommodation.get('city')?.invalid) {
+                <div>
+                    <small class="text-red-500">Please choose city first</small>
+                </div>
+                }
+
+                @if (formAccommodation.get('district')?.invalid && formAccommodation.get('district')?.touched) {
                 <div>
                     <small class="text-red-500">District is required</small>
                 </div>
@@ -290,6 +291,10 @@
                 <div class="facility-item">
                     <label tuiLabel class="facility-label">
                         <input [formControlName]="facility.id" tuiCheckbox type="checkbox" class="facility-checkbox" />
+                        <img class="facility-image" [src]="
+                                'http://localhost:8080/uploads/' +
+                                facility.image
+                            " />
                         <span class="facility-name">{{ facility.name }}</span>
                     </label>
                 </div>

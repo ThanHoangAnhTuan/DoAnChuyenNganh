@@ -119,6 +119,10 @@ export class AccommodationComponent implements OnInit {
     protected districts: District[] = [];
     protected cityNames: string[] = [];
     protected districtNames: string[] = [];
+    protected cityName: string = '';
+    protected citySlug: string = '';
+    protected districtName: string = '';
+    protected districtSlug: string = '';
 
     private readonly dialogs = inject(TuiDialogService);
 
@@ -148,32 +152,68 @@ export class AccommodationComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // this.addressService.getCities().subscribe((data: City[]) => {
+        //     this.cities = data;
+
+        //     this.cityNames = this.cities.map(city => city.name);
+        //     console.log("data:", this.cityNames);
+        // })
+
+        // this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCityName: string | null) => {
+        //     const selectedCity = this.cities.find(city => city.name === selectedCityName);
+
+        //     if (selectedCity) {
+        //         // console.log("selected city: ", selectedCity);
+
+        //         this.citySlug = selectedCity.slug;
+        //         this.districts = selectedCity.level2s;
+        //         // console.log("districts: ", this.districts);
+
+        //         this.districtNames = this.districts.map(d => d.name);
+        //         // console.log("districts: ", this.districtNames);
+
+        //         this.formAccommodation.get('district')?.enable();
+        //     } else {
+        //         this.citySlug = '';
+        //         this.districts = [];
+        //         this.districtNames = [];
+        //         this.formAccommodation.get('district')?.disable();
+        //     }
+        // })
+
+        // this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrictName: string | null) => {
+        //     const selectedDistrict = this.districts.find(district => district.name === selectedDistrictName);
+
+        //     if (selectedDistrict) {
+        //         // console.log("selected district: ", selectedDistrict);
+
+        //         this.districtSlug = selectedDistrict.slug;
+        //     } else {
+        //         this.districtSlug = '';
+        //     }
+        // })
+
+        this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
+            // console.log("selected city: ", selectedCity);
+
+            this.onCitySelected(selectedCity);
+
+            this.formAccommodation.get('district')?.reset();
+            // this.onCityChange(selectedCity);
+        });
+
+        this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrict: string | null) => {
+            // console.log("selected district: ", selectedDistrict);
+
+            this.onDistrictSelected(selectedDistrict);
+            // this.onCityChange(selectedCity);
+        });
+
         this.addressService.getCities().subscribe((data: City[]) => {
             this.cities = data;
-
-            this.cityNames = this.cities.map(city => city.name);
-            console.log("data:", this.cityNames);
-        })
-
-        this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCityName: string | null) => {
-            const selectedCity = this.cities.find(city => city.name === selectedCityName);
-
-            if (selectedCity) {
-                // console.log("selected city: ", selectedCity);
-
-                this.districts = selectedCity.level2s;
-                // console.log("districts: ", this.districts);
-
-                this.districtNames = this.districts.map(d => d.name);
-                // console.log("districts: ", this.districtNames);
-
-                this.formAccommodation.get('district')?.enable();
-            } else {
-                this.districts = [];
-                this.districtNames = [];
-                this.formAccommodation.get('district')?.disable();
-            }
-        })
+            this.cityNames = data.map(city => city.name);
+            // this.initFormValueChanges();
+        });
 
         this.accommodationService.getAccommodations().subscribe((response) => {
             this.accommodations = response.data;
@@ -182,6 +222,56 @@ export class AccommodationComponent implements OnInit {
             this.facilities = response.data;
             this.createFacilityControls();
         });
+    }
+
+
+    // private initFormValueChanges(): void {
+    //     this.formAccommodation.get('city')?.valueChanges
+    //         .subscribe(
+    //             this.onCitySelected.bind(this)
+    //         );
+
+    //     this.formAccommodation.get('district')?.valueChanges
+    //         .subscribe(this.onDistrictSelected.bind(this));
+    // }
+
+    private onCitySelected(selectedCityName: string | null): void {
+        const selectedCity = this.cities.find(city => city.name === selectedCityName);
+
+        if (selectedCity) {
+            this.citySlug = selectedCity.slug;
+            this.districts = selectedCity.level2s;
+            this.districtNames = this.districts.map(d => d.name);
+            this.formAccommodation.get('district')?.enable();
+        } else {
+            this.citySlug = '';
+            this.districts = [];
+            this.districtNames = [];
+            this.formAccommodation.get('district')?.disable();
+        }
+    }
+
+    private onDistrictSelected(selectedDistrictName: string | null): void {
+        const selectedDistrict = this.districts.find(d => d.name === selectedDistrictName);
+        this.districtSlug = selectedDistrict?.slug ?? '';
+    }
+
+    changeCitySlugToName(slug: string): string {
+        const city = this.cities.find(city => city.slug === slug);
+
+        return city?.name ?? '';
+    }
+
+    changeDistrictSlugToName(citySlug: string, districtSlug: string): string {
+        // console.log("cities: ", this.cities)
+        const city = this.cities.find(city => city.slug === citySlug);
+        let districts = city?.level2s ?? [];
+
+        // console.log("districts", districts);
+        let district = districts.find(district => district.slug === districtSlug);
+        // console.log(district);
+
+        return district?.name ?? '';
     }
 
     private createFacilityControls() {
@@ -216,6 +306,7 @@ export class AccommodationComponent implements OnInit {
 
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formAccommodation.reset();
+        this.formFacilities.reset();
         this.formAccommodation.patchValue({ country: 'Việt Nam' });
         this.formAccommodation.get('district')?.disable();
 
@@ -239,9 +330,9 @@ export class AccommodationComponent implements OnInit {
 
         this.formAccommodation.patchValue({
             name: accommodation.name,
-            city: accommodation.city,
+            city: this.changeCitySlugToName(accommodation.city),
             country: 'Việt Nam',
-            district: accommodation.district,
+            district: this.changeDistrictSlugToName(accommodation.city, accommodation.district),
             description: accommodation.description,
             googleMap: accommodation.google_map,
             address: accommodation.address,
@@ -293,9 +384,9 @@ export class AccommodationComponent implements OnInit {
     protected createAccommodation() {
         const accommodation: CreateAccommodation = {
             name: this.formAccommodation.get('name')?.value || '',
-            city: this.formAccommodation.get('city')?.value || '',
-            country: this.formAccommodation.get('country')?.value || '',
-            district: this.formAccommodation.get('district')?.value || '',
+            city: this.citySlug,
+            country: 'Việt Nam',
+            district: this.districtSlug,
             address: this.formAccommodation.get('address')?.value || '',
             description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
@@ -312,6 +403,8 @@ export class AccommodationComponent implements OnInit {
             .createAccommodation(accommodation)
             .subscribe((response) => {
                 this.accommodations.push(response.data);
+                this.formAccommodation.reset();
+                this.formFacilities.reset();
             });
     }
 
@@ -319,9 +412,9 @@ export class AccommodationComponent implements OnInit {
         const accommodation: UpdateAccommodation = {
             id: this.idAccommodationUpdating,
             name: this.formAccommodation.get('name')?.value || '',
-            city: this.formAccommodation.get('city')?.value || '',
-            country: this.formAccommodation.get('country')?.value || '',
-            district: this.formAccommodation.get('district')?.value || '',
+            city: this.citySlug,
+            country: 'Việt Nam',
+            district: this.districtSlug,
             address: this.formAccommodation.get('address')?.value || '',
             description: this.formAccommodation.get('description')?.value || '',
             google_map: this.formAccommodation.get('googleMap')?.value || '',
