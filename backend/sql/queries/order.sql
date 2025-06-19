@@ -166,4 +166,3 @@ SET
     `updated_at` = ?
 WHERE
     `id` = ?;
-

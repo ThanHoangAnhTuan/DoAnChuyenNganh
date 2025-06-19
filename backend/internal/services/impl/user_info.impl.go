@@ -30,9 +30,11 @@ func (u *UserInfoImpl) UploadUserAvatar(ctx *gin.Context, in *vo.UploadUserAvata
 		return response.ErrCodeGetUserInfoFailed, "", fmt.Errorf("get user info failed: %s", err)
 	}
 
-	err = deleteImageToDisk([]string{user.Image})
-	if err != nil {
-		return response.ErrCodeDeleteAccommodationDetailImagesFailed, "", fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
+	if user.Image != "" {
+		err = deleteImageToDisk([]string{user.Image})
+		if err != nil {
+			return response.ErrCodeDeleteAccommodationDetailImagesFailed, "", fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
+		}
 	}
 
 	// TODO: Save image to disk
