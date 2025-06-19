@@ -2,7 +2,7 @@ package vo
 
 type RoomSelected struct {
 	ID       string `json:"id"`
-	Quantity int64  `json:"quantity"`
+	Quantity uint8  `json:"quantity"`
 }
 
 type CreatePaymentURLInput struct {

@@ -84,12 +84,13 @@ const (
 	ErrCodeDeleteAccommodationDetailFailed   = 90010
 	ErrCodeDeleteAccommodationDetailSuccess  = 90011
 	ErrCodeGetCountAccommodationDetailFailed = 90012
+	ErrCodeNumberOfAvailableRoomsNotEnough   = 90013
 
 	// accommodation detail image
-	ErrCodeGetAccommodationDetailImagesFailed    = 90013
-	ErrCodeGetAccommodationDetailImagesSuccess   = 90014
-	ErrCodeDeleteAccommodationDetailImagesFailed = 90015
-	ErrCodeSaveAccommodationDetailImagesFailed   = 90016
+	ErrCodeGetAccommodationDetailImagesFailed    = 90014
+	ErrCodeGetAccommodationDetailImagesSuccess   = 90015
+	ErrCodeDeleteAccommodationDetailImagesFailed = 90016
+	ErrCodeSaveAccommodationDetailImagesFailed   = 90017
 
 	// file
 	ErrCodeOpenFileFailed     = 100001
@@ -247,6 +248,7 @@ var message = map[int]string{
 	ErrCodeDeleteAccommodationDetailFailed:   "Delete accommodation detail failed",
 	ErrCodeDeleteAccommodationDetailSuccess:  "Delete accommodation detail successfully",
 	ErrCodeGetCountAccommodationDetailFailed: "Get count accommodation detail failed",
+	ErrCodeNumberOfAvailableRoomsNotEnough:   "Number of available rooms not enough",
 
 	// accommodation detail image
 	ErrCodeGetAccommodationDetailImagesFailed:    "Get images of accommodation detail failed",

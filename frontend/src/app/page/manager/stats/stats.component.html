@@ -14,12 +14,12 @@
         "
     >
         <label>Năm:</label>
-        <input type="number" [(ngModel)]="selectedYear" />
+        <input type="number" [(ngModel)]="selectedYear" (change)="updateUI()" />
     </div>
 
     <div *ngIf="selectedMode === 'custom-month'">
         <label>Tháng:</label>
-        <select [(ngModel)]="selectedMonth">
+        <select [(ngModel)]="selectedMonth" (change)="updateUI()">
             <option *ngFor="let m of months" [value]="m.value">
                 {{ m.label }}
             </option>
@@ -29,8 +29,8 @@
     <div style="display: block">
         <canvas
             baseChart
-            width="400"
-            height="400"
+            width="1000"
+            height="600"
             [type]="'line'"
             [data]="lineChartData"
             [options]="lineChartOptions"

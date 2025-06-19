@@ -321,7 +321,26 @@ func (p *PaymentImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	})
 
 	if err != nil {
-		return 0, err
+		return response.ErrCodeCreatePaymentFailed, err
+	}
+
+	// TODO: get info accommodation detail by order id
+	accommodationDetails, err := p.sqlc.GetInfoAvailableRoomOfAccommodationDetailByOrderID(ctx, orderAndUserID.ID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationDetailFailed, fmt.Errorf("get availabel room of accommodation detail failed: %s", err)
+	}
+
+	for _, room := range accommodationDetails {
+		availableRoom := room.AvailableRooms - room.Quantity
+		// TODO: update available room
+		err := p.sqlc.UpdateAvailableRoom(ctx, database.UpdateAvailableRoomParams{
+			AvailableRoom: availableRoom,
+			ID:            room.ID,
+		})
+
+		if err != nil {
+			return response.ErrCodeUpdateAccommodationDetailFailed, fmt.Errorf("update available rooms failed: %s", err)
+		}
 	}
 
 	p.redirectToReactWithResult(ctx, vo.PaymentResultData{
@@ -396,10 +415,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	}
 
 	duration := checkOutDate.Sub(checkInDate)
-	fmt.Printf("duration: %s", duration)
 
 	numDays := int64(duration.Hours() / 24)
-	fmt.Printf("numDays: %v", numDays)
 
 	if numDays <= 0 {
 		return response.ErrCodeParamsInvalid, nil, fmt.Errorf("check_out must come after check_in")
@@ -418,19 +435,18 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 			return response.ErrCodeGetAccommodationDetailFailed, nil, err
 		}
 
-		quantity := decimal.NewFromInt(roomSelected.Quantity)
-		fmt.Printf("quantity: %s", quantity)
+		if accommodationDetail.AvailableRooms < roomSelected.Quantity {
+			return response.ErrCodeNumberOfAvailableRoomsNotEnough, nil, fmt.Errorf("number of available rooms not enough")
+		}
+
+		quantity := decimal.NewFromInt(int64(roomSelected.Quantity))
 		roomSubtotal := accommodationDetail.Price.Mul(quantity)
-		fmt.Printf("roomSubtotal: %s", roomSubtotal)
 		totalPrice = totalPrice.Add(roomSubtotal)
-		fmt.Printf("totalPrice: %s", totalPrice)
 	}
 
 	numDaysDecimal := decimal.NewFromInt(numDays)
-	fmt.Printf("numDaysDecimal: %s", numDaysDecimal)
 
 	totalPrice = totalPrice.Mul(numDaysDecimal)
-	fmt.Printf("totalPrice: %s", totalPrice)
 
 	vnpParams := map[string]string{
 		"vnp_Version":    "2.1.0",
@@ -461,11 +477,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	// TODO: save order to database
 	orderID := uuid.NewString()
 
-	// createdAt := utiltime.GetTimeNow()
-	createdAt := uint64(time.Date(2025, time.June, 13, 0, 0, 0, 0, time.UTC).UnixMilli())
-
-	fmt.Printf("in.CheckIn: %v", in.CheckIn)
-	fmt.Printf("in.CheckOut: %v", in.CheckOut)
+	createdAt := utiltime.GetTimeNow()
+	// createdAt := uint64(time.Date(2025, time.June, 3, 0, 0, 0, 0, time.UTC).UnixMilli())
 
 	// TODO: create order
 	err = p.sqlc.CreateOrder(ctx, database.CreateOrderParams{
@@ -504,7 +517,8 @@ func (p *PaymentImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		err = p.sqlc.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
 			ID:                    orderDetailID,
 			OrderID:               orderID,
-			Price:                 accommodationDetail.Price.Mul(decimal.NewFromInt(roomSelected.Quantity)),
+			Quantity:              roomSelected.Quantity,
+			Price:                 accommodationDetail.Price.Mul(decimal.NewFromInt(int64(roomSelected.Quantity))),
 			AccommodationDetailID: accommodationDetail.ID,
 			CreatedAt:             createdAt,
 			UpdatedAt:             createdAt,
