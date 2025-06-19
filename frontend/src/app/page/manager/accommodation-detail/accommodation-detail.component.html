@@ -196,26 +196,13 @@
             </div>
             }
         </tui-textfield>
-        <!-- <tui-textfield tuiChevron [content]="contentAccommodation">
+        <tui-textfield>
             <input
-                tuiSelect
                 formControlName="accommodationId"
-                placeholder="Accommodation"
+                placeholder="Accommodation: "
             />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of accommodationItems; track item) {
-                <button new tuiOption type="button" [value]="item.id">
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('accommodationId')?.invalid &&
-            formAccommodationDetail.get('accommodationId')?.touched) {
-            <div>
-                <small class="text-red-500">Accommodation is required</small>
-            </div>
-            }
-        </tui-textfield> -->
+            {{ accommodationId }}
+        </tui-textfield>
         <tui-textfield tuiChevron [content]="contentDiscount">
             <input
                 tuiSelect
@@ -367,25 +354,13 @@
             }
         </tui-textfield>
 
-        <tui-textfield tuiChevron [content]="contentAccommodation">
+        <tui-textfield>
             <input
                 tuiSelect
                 formControlName="accommodationId"
                 placeholder="Accommodation"
             />
-            <tui-data-list *tuiTextfieldDropdown>
-                @for(item of accommodationItems; track item) {
-                <button new tuiOption type="button" [value]="item.id">
-                    {{ item.name }}
-                </button>
-                }
-            </tui-data-list>
-            @if(formAccommodationDetail.get('accommodationId')?.invalid &&
-            formAccommodationDetail.get('accommodationId')?.touched) {
-            <div>
-                <small class="text-red-500">Accommodation is required</small>
-            </div>
-            }
+            {{ accommodationId }}
         </tui-textfield>
 
         <tui-textfield tuiChevron [content]="contentDiscount">

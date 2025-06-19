@@ -100,7 +100,7 @@ export class AccommodationDetailComponent implements OnInit {
         extraLargeDoubleBed: new FormControl<number | 0>(0),
         price: new FormControl<number | 0>(0, Validators.min(1)),
         availableRooms: new FormControl<number | 0>(0),
-        accommodationId: new FormControl<string | ''>('', Validators.required),
+        accommodationId: new FormControl<string | ''>(''),
         discountId: new FormControl<string | ''>(''),
         facilityDetails: new FormControl<string | ''>(''),
     });
@@ -123,7 +123,7 @@ export class AccommodationDetailComponent implements OnInit {
     protected accommodations!: Accommodation[];
 
     protected accommodationItems: readonly AccommodationSelect[] = [];
-
+    protected accommodationId: string = '';
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
@@ -133,6 +133,7 @@ export class AccommodationDetailComponent implements OnInit {
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
+            this.accommodationId = params['id'];
             this.accommodationDetailService
                 .getAccommodationDetails(params['id'])
                 .subscribe((response) => {
@@ -268,22 +269,23 @@ export class AccommodationDetailComponent implements OnInit {
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
             price: this.formAccommodationDetail.get('price')?.value || 0,
-            accommodation_id:
-                this.formAccommodationDetail.get('accommodationId')?.value ||
-                '',
+            accommodation_id: this.accommodationId,
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
             facilities: this.getSelectedFacilityIds(),
         };
+        console.log(accommodationDetail);
+        console.log(this.formAccommodationDetail.value);
 
         if (this.formAccommodationDetail.invalid) {
+            console.log('Form is invalid');
             this.formAccommodationDetail.markAllAsTouched();
             return;
         }
-
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
+                console.log(response);
                 this.accommodationDetails.push(response.data);
             });
     }
@@ -340,11 +342,6 @@ export class AccommodationDetailComponent implements OnInit {
                 );
             });
     }
-
-    protected readonly contentAccommodation: PolymorpheusContent<
-        TuiContext<string | null>
-    > = ({ $implicit: id }) =>
-        this.accommodationItems.find((item) => item.id === id)?.name ?? '';
 
     protected readonly discountItems: readonly DiscountSelect[] = [];
 
