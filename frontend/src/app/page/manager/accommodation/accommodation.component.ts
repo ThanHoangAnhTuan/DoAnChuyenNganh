@@ -194,7 +194,7 @@ export class AccommodationComponent implements OnInit {
         // })
 
         this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
-            console.log("selected city: ", selectedCity);
+            // console.log("selected city: ", selectedCity);
 
             this.onCitySelected(selectedCity);
 
@@ -203,7 +203,7 @@ export class AccommodationComponent implements OnInit {
         });
 
         this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrict: string | null) => {
-            console.log("selected district: ", selectedDistrict);
+            // console.log("selected district: ", selectedDistrict);
 
             this.onDistrictSelected(selectedDistrict);
             // this.onCityChange(selectedCity);
