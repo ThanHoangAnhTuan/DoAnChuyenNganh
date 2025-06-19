@@ -6,6 +6,7 @@ import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { CreateManager, Manager } from '../../../models/admin/manager.model';
 import { ManagerService } from '../../../services/admin/manager.service';
+import { NavbarComponent } from "../../../components/navbar/navbar.component";
 
 @Component({
   selector: 'app-manager',
@@ -17,7 +18,8 @@ import { ManagerService } from '../../../services/admin/manager.service';
     FormsModule,
     ReactiveFormsModule,
     TuiTextfield,
-  ],
+    NavbarComponent
+],
   templateUrl: './manager.component.html',
   styleUrl: './manager.component.scss'
 })
@@ -80,6 +82,8 @@ export class ManagerComponent implements OnInit {
   }
 
   protected createManager() {
+    this.errorMessage = '';
+
     const manager: CreateManager = {
       account: this.formCreateManger.get('account')?.value || '',
       password: this.formCreateManger.get('password')?.value || '',

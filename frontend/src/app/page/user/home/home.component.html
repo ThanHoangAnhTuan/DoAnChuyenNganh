@@ -10,8 +10,8 @@
             Các lựa chọn phổ biến nhất cho du khách từ Việt Nam
         </p>
         <div class="trending-content">
-            <div class="trending-place" *ngFor="let place of trendingPlaces" [routerLink]="['/search', place.name_with_type]"
-                [queryParams]="{ level1_id: place.level1_id, level2_id: place.level2_id }">
+            <div class="trending-place" *ngFor="let place of trendingPlaces" [routerLink]="['/search', place.name]"
+                [queryParams]="{ slug: place.slug }">
                 <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}

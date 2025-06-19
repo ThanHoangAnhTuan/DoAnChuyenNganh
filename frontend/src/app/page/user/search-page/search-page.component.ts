@@ -64,10 +64,10 @@ export class SearchPageComponent implements OnInit {
     }
 
     city: string = ''; // Thành phố tìm kiếm
-    cityId: string = '';
+    citySlug: string = '';
     hotels: any[] = []; // Danh sách khách sạn
-    level1AddressNames: string = '';
-    level2AddressNames: string = '';
+    // level1AddressNames: string = '';
+    // level2AddressNames: string = '';
     error = false; // Có lỗi khi tải dữ liệu không
     filteredHotels: any[] = [];
 
@@ -86,7 +86,7 @@ export class SearchPageComponent implements OnInit {
 
         // Lấy tham số city từ QueryParams
         this.route.queryParams.subscribe((params) => {
-            this.cityId = params['level1_id'];
+            this.citySlug = params['slug'];
             if (this.hotels.length > 0) {
                 this.applyFilters(); // Cập nhật khi params thay đổi
             }
@@ -162,18 +162,18 @@ export class SearchPageComponent implements OnInit {
     // }
 
     loadHotels(): void {
-        this.hotelService.getAccommodationsByCity(this.cityId).pipe(
+        this.hotelService.getAccommodationsByCity(this.citySlug).pipe(
             switchMap(hotels => {
                 const hotelList = hotels.data;
                 // console.log("all hotels: ", hotelList);
 
                 // Tạo một mảng các Observable để gọi API city name
                 const hotelWithCityName$ = hotelList.map(hotel =>
-                    this.addressService.getCityByLevel1id(hotel.city).pipe(
+                    this.addressService.getCityBySlug(hotel.city).pipe(
                         map(cityData => {
                             const cityName = cityData[0]?.name || 'Unknow';
 
-                            const district = cityData[0]?.level2s.find(d => d.level2_id === hotel.district);
+                            const district = cityData[0]?.level2s.find(d => d.slug === hotel.district);
                             const districName = district?.name ?? 'Unknow';
 
                             return {

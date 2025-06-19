@@ -103,36 +103,36 @@ export class HomeComponent {
       {
         level1_id: '79',
         level2_id: '0',
-        name: 'Hồ Chí Minh',
-        name_with_type: 'Thành phố Hồ Chí Minh',
+        name: 'Thành phố Hồ Chí Minh',
+        slug: 'thanh-pho-ho-chi-minh',
         image: 'ho-chi-minh-city.jpg'
       },
       {
         level1_id: '01',
         level2_id: '0',
-        name: 'Hà Nội',
-        name_with_type: 'Thành phố Hà Nội',
+        name: 'Thành phố Hà Nội',
+        slug: 'thanh-pho-ha-noi',
         image: 'ha-noi.jpg'
       },
       {
         level1_id: '48',
         level2_id: '0',
-        name: 'Đà Nẵng',
-        name_with_type: 'Thành phố Đà Nẵng',
+        name: 'Thành phố Đà Nẵng',
+        slug: 'thanh-pho-da-nang',
         image: 'da-nang.jpg'
       },
       {
         level1_id: '68',
         level2_id: '672',
-        name: 'Đà Lạt',
-        name_with_type: 'Thành phố Đà Lạt',
+        name: 'Thành phố Đà Lạt',
+        slug: 'thanh-pho-da-lat',
         image: 'da-lat.jpg'
       },
       {
         level1_id: '77',
         level2_id: '747',
-        name: 'Vũng Tàu',
-        name_with_type: 'Thành phố Vũng Tàu',
+        name: 'Thành phố Vũng Tàu',
+        slug: 'thanh-pho-vung-tau',
         image: 'vung-tau.jpg'
       },
     ];
