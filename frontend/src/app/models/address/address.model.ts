@@ -2,13 +2,15 @@ export interface Ward {
     "level3_id": string,
     "name": string,
     "type": string,
+    "slug": string
 }
 
 export interface District {
     "level2_id": string,
     "name": string,
     "type": string,
-    "level3s": Ward[],
+    "slug": string,
+    "level3s": Ward[]
 }
 
 export interface City {
@@ -16,7 +18,8 @@ export interface City {
     "level1_id": string,
     "name": string,
     "type": string,
-    "level2s": District[],
+    "slug": string,
+    "level2s": District[]
 }
 
 export interface CityResponse {

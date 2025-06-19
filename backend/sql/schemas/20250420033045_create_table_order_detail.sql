@@ -5,6 +5,7 @@ CREATE TABLE
         `id` VARCHAR(36) NOT NULL COMMENT 'ID',
         `order_id` VARCHAR(36) NOT NULL COMMENT 'order ID',
         `price` DECIMAL(15, 0) NOT NULL COMMENT 'price',
+        `quantity` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'quantity',
         `accommodation_detail_id` VARCHAR(36) NOT NULL COMMENT 'accommodation detail ID',
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',

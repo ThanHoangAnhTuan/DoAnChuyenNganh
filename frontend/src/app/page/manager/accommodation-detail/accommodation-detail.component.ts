@@ -47,7 +47,7 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
         TuiTable,
         FormsModule,
         ReactiveFormsModule,
-        TuiIcon,
+        // TuiIcon,
         TuiButton,
         TuiInputModule,
         FormsModule,
@@ -55,7 +55,7 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
         TuiTextfield,
         TuiAppearance,
         TuiCardLarge,
-        TuiGroup,
+        // TuiGroup,
         TuiCheckbox,
         RouterLink,
         TuiInputNumber,
@@ -105,6 +105,7 @@ export class AccommodationDetailComponent implements OnInit {
         facilityDetails: new FormControl<string | ''>(''),
     });
     protected formFacilityDetail = new FormGroup({});
+    private accommodationId: string = '';
 
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
@@ -129,7 +130,7 @@ export class AccommodationDetailComponent implements OnInit {
         private accommodationDetailService: AccommodationDetailService,
         private accommodationService: AccommodationService,
         private facilityDetailService: FacilityDetailService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
@@ -251,6 +252,10 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     protected createAccommodationDetail() {
+        // this.formAccommodationDetail.patchValue({
+        //     accommodationId: this.accommodationId,
+        // });
+
         const accommodationDetail: CreateAccommodationDetails = {
             name: this.formAccommodationDetail.get('name')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,
@@ -275,14 +280,17 @@ export class AccommodationDetailComponent implements OnInit {
             facilities: this.getSelectedFacilityIds(),
         };
 
+        console.log(accommodationDetail);
+
         if (this.formAccommodationDetail.invalid) {
             this.formAccommodationDetail.markAllAsTouched();
+            console.log("here");
             return;
         }
+
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
-                // console.log(response);
                 this.accommodationDetails.push(response.data);
                 this.formAccommodationDetail.reset();
                 this.formFacilityDetail.reset();
@@ -341,10 +349,15 @@ export class AccommodationDetailComponent implements OnInit {
             });
     }
 
+    protected readonly contentAccommodation: PolymorpheusContent<
+        TuiContext<string | null>
+    > = ({ $implicit: id }) =>
+            this.accommodationItems.find((item) => item.id === id)?.name ?? '';
+
     protected readonly discountItems: readonly DiscountSelect[] = [];
 
     protected readonly contentDiscount: PolymorpheusContent<
         TuiContext<string | null>
     > = ({ $implicit: id }) =>
-        this.discountItems.find((item) => item.id === id)?.name ?? '';
+            this.discountItems.find((item) => item.id === id)?.name ?? '';
 }

@@ -352,6 +352,47 @@ func (q *Queries) GetAccommodationDetailsWithPagination(ctx context.Context, arg
 	return items, nil
 }
 
+const getInfoAvailableRoomOfAccommodationDetailByOrderID = `-- name: GetInfoAvailableRoomOfAccommodationDetailByOrderID :many
+SELECT
+    egad.id,
+    egad.available_rooms,
+    egod.quantity
+FROM
+    ` + "`" + `ecommerce_go_order_detail` + "`" + ` egod
+    JOIN ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` egad ON egod.accommodation_detail_id = egad.id
+WHERE
+    egod.order_id = ?
+`
+
+type GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow struct {
+	ID             string
+	AvailableRooms uint8
+	Quantity       uint8
+}
+
+func (q *Queries) GetInfoAvailableRoomOfAccommodationDetailByOrderID(ctx context.Context, orderid string) ([]GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, getInfoAvailableRoomOfAccommodationDetailByOrderID, orderid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow
+	for rows.Next() {
+		var i GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow
+		if err := rows.Scan(&i.ID, &i.AvailableRooms, &i.Quantity); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateAccommodationDetail = `-- name: UpdateAccommodationDetail :exec
 UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 SET
@@ -392,5 +433,23 @@ func (q *Queries) UpdateAccommodationDetail(ctx context.Context, arg UpdateAccom
 		arg.ID,
 		arg.AccommodationID,
 	)
+	return err
+}
+
+const updateAvailableRoom = `-- name: UpdateAvailableRoom :exec
+UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
+SET
+    ` + "`" + `available_rooms` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateAvailableRoomParams struct {
+	AvailableRoom uint8
+	ID            string
+}
+
+func (q *Queries) UpdateAvailableRoom(ctx context.Context, arg UpdateAvailableRoomParams) error {
+	_, err := q.db.ExecContext(ctx, updateAvailableRoom, arg.AvailableRoom, arg.ID)
 	return err
 }

@@ -449,6 +449,8 @@ type EcommerceGoOrderDetail struct {
 	OrderID string
 	// price
 	Price decimal.Decimal
+	// quantity
+	Quantity uint8
 	// accommodation detail ID
 	AccommodationDetailID string
 	// created at

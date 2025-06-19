@@ -4,18 +4,20 @@ INSERT INTO
         `id`,
         `order_id`,
         `price`,
+        `quantity`,
         `accommodation_detail_id`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetOrderDetails :many
 SELECT
     `id`,
     `order_id`,
     `price`,
+    `quantity`,
     `accommodation_detail_id`,
     `created_at`,
     `updated_at`

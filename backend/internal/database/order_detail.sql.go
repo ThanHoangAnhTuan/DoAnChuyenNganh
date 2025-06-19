@@ -17,18 +17,20 @@ INSERT INTO
         ` + "`" + `id` + "`" + `,
         ` + "`" + `order_id` + "`" + `,
         ` + "`" + `price` + "`" + `,
+        ` + "`" + `quantity` + "`" + `,
         ` + "`" + `accommodation_detail_id` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateOrderDetailParams struct {
 	ID                    string
 	OrderID               string
 	Price                 decimal.Decimal
+	Quantity              uint8
 	AccommodationDetailID string
 	CreatedAt             uint64
 	UpdatedAt             uint64
@@ -39,6 +41,7 @@ func (q *Queries) CreateOrderDetail(ctx context.Context, arg CreateOrderDetailPa
 		arg.ID,
 		arg.OrderID,
 		arg.Price,
+		arg.Quantity,
 		arg.AccommodationDetailID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -51,6 +54,7 @@ SELECT
     ` + "`" + `id` + "`" + `,
     ` + "`" + `order_id` + "`" + `,
     ` + "`" + `price` + "`" + `,
+    ` + "`" + `quantity` + "`" + `,
     ` + "`" + `accommodation_detail_id` + "`" + `,
     ` + "`" + `created_at` + "`" + `,
     ` + "`" + `updated_at` + "`" + `
@@ -73,6 +77,7 @@ func (q *Queries) GetOrderDetails(ctx context.Context, orderID string) ([]Ecomme
 			&i.ID,
 			&i.OrderID,
 			&i.Price,
+			&i.Quantity,
 			&i.AccommodationDetailID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
