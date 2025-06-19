@@ -274,28 +274,25 @@ export class AccommodationDetailComponent implements OnInit {
                 this.formAccommodationDetail.get('discountId')?.value || '',
             facilities: this.getSelectedFacilityIds(),
         };
-        console.log(accommodationDetail);
-        console.log(this.formAccommodationDetail.value);
 
         if (this.formAccommodationDetail.invalid) {
-            console.log('Form is invalid');
             this.formAccommodationDetail.markAllAsTouched();
             return;
         }
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
-                console.log(response);
+                // console.log(response);
                 this.accommodationDetails.push(response.data);
+                this.formAccommodationDetail.reset();
+                this.formFacilityDetail.reset();
             });
     }
 
     protected updateAccommodationDetail() {
         const accommodationDetail: UpdateAccommodationDetails = {
             id: this.idAccommodationDetailUpdating,
-            accommodation_id:
-                this.formAccommodationDetail.get('accommodationId')?.value ||
-                '',
+            accommodation_id: this.accommodationId,
             name: this.formAccommodationDetail.get('name')?.value || '',
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
@@ -321,6 +318,7 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodationDetailService
             .updateAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
+                // console.log(response);
                 this.accommodationDetails = this.accommodationDetails.map(
                     (accommodationDetail) => {
                         if (accommodationDetail.id === response.data.id) {
