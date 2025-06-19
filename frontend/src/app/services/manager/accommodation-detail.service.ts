@@ -46,9 +46,6 @@ export class AccommodationDetailService {
             price: accommodationDetail.price,
             facilities: accommodationDetail.facilities,
         };
-
-        console.log(newAccommodationDetail);
-
         return this.http.post<CreateAccommodationDetailResponse>(
             `${this.apiUrl}/create-accommodation-detail`,
             newAccommodationDetail

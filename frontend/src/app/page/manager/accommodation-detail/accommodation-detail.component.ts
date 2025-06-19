@@ -124,7 +124,7 @@ export class AccommodationDetailComponent implements OnInit {
     protected accommodations!: Accommodation[];
 
     protected accommodationItems: readonly AccommodationSelect[] = [];
-
+    protected accommodationId: string = '';
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
@@ -274,8 +274,7 @@ export class AccommodationDetailComponent implements OnInit {
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
-            accommodation_id:
-                this.accommodationId,
+            accommodation_id: this.accommodationId,
             discount_id:
                 this.formAccommodationDetail.get('discountId')?.value || '',
             facilities: this.getSelectedFacilityIds(),
@@ -289,21 +288,19 @@ export class AccommodationDetailComponent implements OnInit {
             return;
         }
 
-        console.log("here");
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
-                console.log(response);
                 this.accommodationDetails.push(response.data);
+                this.formAccommodationDetail.reset();
+                this.formFacilityDetail.reset();
             });
     }
 
     protected updateAccommodationDetail() {
         const accommodationDetail: UpdateAccommodationDetails = {
             id: this.idAccommodationDetailUpdating,
-            accommodation_id:
-                this.formAccommodationDetail.get('accommodationId')?.value ||
-                '',
+            accommodation_id: this.accommodationId,
             name: this.formAccommodationDetail.get('name')?.value || '',
             available_rooms:
                 this.formAccommodationDetail.get('availableRooms')?.value || 0,
@@ -329,6 +326,7 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodationDetailService
             .updateAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
+                // console.log(response);
                 this.accommodationDetails = this.accommodationDetails.map(
                     (accommodationDetail) => {
                         if (accommodationDetail.id === response.data.id) {
