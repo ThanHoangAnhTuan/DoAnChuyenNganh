@@ -20,8 +20,12 @@ export class RoomInformationModalComponent implements OnInit {
     // Responsive của Galleria
     responsiveOptions = [
         {
+            breakpoint: '1444px',
+            numVisible: 4
+        },
+        {
             breakpoint: '1024px',
-            numVisible: 5
+            numVisible: 4
         },
         {
             breakpoint: '950px',

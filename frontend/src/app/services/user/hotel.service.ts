@@ -9,7 +9,7 @@ import { GetAccommodationResponse } from '../../models/manager/accommodation.mod
     providedIn: 'root',
 })
 export class HotelService {
-    private apiUrl = 'http://localhost:8080/api/v1/accommodation';
+    private apiUrl = 'http://localhost:8080/api/v1/accommodations';
     constructor(private http: HttpClient) {}
 
     // getHotels(): Observable<any> {
@@ -20,7 +20,7 @@ export class HotelService {
         city: string
     ): Observable<GetAccommodationResponse> {
         return this.http.get<GetAccommodationResponse>(
-            this.apiUrl + '/get-accommodations-by-city/' + city
+            this.apiUrl + '?city=' + city
         );
     }
 

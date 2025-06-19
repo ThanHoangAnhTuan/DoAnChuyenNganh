@@ -1,5 +1,5 @@
 import { TuiComboBoxModule, TuiInputDateRangeModule } from '@taiga-ui/legacy';
-import { TuiButton, TuiTextfieldOptionsDirective } from '@taiga-ui/core';
+import { TuiButton, tuiItemsHandlersProvider, TuiTextfield, TuiTextfieldOptionsDirective } from '@taiga-ui/core';
 import {
     FormControl,
     FormsModule,
@@ -7,13 +7,16 @@ import {
     Validators,
 } from '@angular/forms';
 import {
+    TuiChevron,
     TuiDataListWrapper,
     TuiDataListWrapperComponent,
     TuiFilterByInputPipe,
 } from '@taiga-ui/kit';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
+import { AddressService } from '../../services/address/address.service';
+import { City } from '../../models/address/address.model';
 
 @Component({
     selector: 'app-search-box',
@@ -27,6 +30,8 @@ import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
         TuiInputDateRangeModule,
         ReactiveFormsModule,
         TuiButton,
+        TuiTextfield,
+
     ],
     standalone: true,
     templateUrl: './search-box.component.html',
@@ -35,29 +40,18 @@ import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 export default class SearchBoxComponent implements OnInit {
     protected city: string = '';
     //danh sách các thành phố có sẵn để người dùng chọn
-    protected readonly cities = [
-        'Hồ Chí Minh',
-        'Hà Nội',
-        'Đà Nẵng',
-        'Nha Trang',
-        'Huế',
-        'Đồng Nai',
-        'Vũng Tàu',
-        'Đà Lạt',
-        'Cần Thơ',
-        'Ninh Bình',
-        'Bắc Ninh',
-        'Bình Định',
-        'Bình Thuận',
-        'Cao Bằng',
-    ];
+    protected cities: City[] = [];
+    protected cityNames: string[] = [];
+    protected selectedCityId: string = '';
+    protected level2Adress: any;
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
     protected readonly today = TuiDay.currentLocal(); // Lấy ngày hiện tại
 
     constructor(
         private activatedRoute: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private addressService: AddressService,
     ) {
         //Lấy tham số từ URL khi component khởi tạo
         this.activatedRoute.params.subscribe((params) => {
@@ -93,6 +87,12 @@ export default class SearchBoxComponent implements OnInit {
         ]);
     }
     ngOnInit(): void {
+        this.addressService.getCities().subscribe((data: City[]) => {
+            this.cities = data;
+            this.cityNames = this.cities.map(city => city.name);
+            // console.log("data:", this.cities);
+        })
+
         // Lấy thành phố từ URL parameter
         this.activatedRoute.params.subscribe((params) => {
             const cityParam = params['city'];
@@ -101,6 +101,15 @@ export default class SearchBoxComponent implements OnInit {
                 this.searchCityControl.setValue(cityParam);
             }
         });
+
+        this.searchCityControl.valueChanges.subscribe((selectedCityName: string | null) => {
+            const selectedCity = this.cities.find(city => city.name === selectedCityName);
+            if (selectedCity) {
+                this.selectedCityId = selectedCity.level1_id;
+                console.log('City id đã chọn:', this.selectedCityId);
+            }
+        });
+
         // Lấy ngày từ query parameters
         this.activatedRoute.queryParams.subscribe((queryParams) => {
             if (queryParams['checkIn'] && queryParams['checkOut']) {
@@ -155,14 +164,17 @@ export default class SearchBoxComponent implements OnInit {
             return;
         }
         this.searchChanged.emit(this.searchCityControl.value ?? undefined);
+        const city_name = this.searchCityControl.value;
+        const level1_id = this.selectedCityId;
 
         if (this.DayControl.value) {
             // Định dạng ngày check-in và check-out
             const checkIn = `${this.DayControl.value?.from.formattedDayPart}-${this.DayControl.value?.from.formattedMonthPart}-${this.DayControl.value?.from.formattedYear}`;
             const checkOut = `${this.DayControl.value?.to.formattedDayPart}-${this.DayControl.value?.to.formattedMonthPart}-${this.DayControl.value?.to.formattedYear}`;
             //Chuyển hướng với thành phố và ngày người dùng đã nhập
-            this.router.navigate(['/search', this.searchCityControl.value], {
+            this.router.navigate(['/search', city_name], {
                 queryParams: {
+                    level1_id,
                     checkIn,
                     checkOut,
                 },
@@ -170,7 +182,11 @@ export default class SearchBoxComponent implements OnInit {
             return;
         }
         //chuyển hướng chỉ với thành phố
-        this.router.navigate(['/search', this.searchCityControl.value]);
+        this.router.navigate(['/search', city_name], {
+            queryParams: {
+                level1_id,
+            }
+        });
         return;
     }
     @Output() searchChanged = new EventEmitter<string>();

@@ -7,7 +7,7 @@
             City
             <tui-data-list-wrapper
                 *tuiDataList
-                [items]="cities | tuiFilterByInput"
+                [items]="cityNames | tuiFilterByInput"
             />
             @if (isSearchCityInvalid) {
             <div>
@@ -15,10 +15,10 @@
             </div>
             }
         </tui-combo-box>
+
     </div>
     <div class="date-picker">
-        <tui-input-date-range [min]="today" [formControl]="DayControl"
-            >Choose dates
+        <tui-input-date-range [min]="today" [formControl]="DayControl">Choose dates
         </tui-input-date-range>
     </div>
     <div class="search-button">

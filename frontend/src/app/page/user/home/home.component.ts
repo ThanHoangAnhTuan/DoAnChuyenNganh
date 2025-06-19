@@ -15,10 +15,11 @@ import { RouterModule } from '@angular/router';
 export class HomeComponent {
   trendingPlaces: any[] = [];
   explorePaces: any[] = [];
-  windowWidth: number = 0;
+  
   showPlaceTypeList: number = 0;
   showExplorePlacesList: number = 0;
 
+  protected windowWidth: number = 0;
   protected placeTypeIndex = 0;
   protected explorePlaceIndex = 0;
 
@@ -26,32 +27,114 @@ export class HomeComponent {
   @ViewChild('explorePlacesCarousel') explorePlacesCarousel!: TuiCarouselComponent;
 
   protected readonly places = [
-    { name: 'Khách sạn', image: 'khach-san.jpg' },
-    { name: 'Căn hộ', image: 'can-ho.jpg' },
-    { name: 'Các resort', image: 'resort.jpg' },
-    { name: 'Các biệt thự', image: 'biet-thu.jpg' },
-    { name: 'Cabin nghỉ dưỡng', image: 'cabin-nghi-duong.jpg' },
-    { name: 'Các nhà nghỉ dưỡng', image: 'nha-nghi-duong.jpg' },
-    { name: 'Các nhà khách', image: 'nha-khach.jpg' },
-    { name: 'Các hostel', image: 'hostel.jpg' },
-    { name: 'Các motel', image: 'motel.jpg' },
-    { name: 'Nhà nghỉ B&B', image: 'nha-nghi-b&b.jpg' },
-    { name: 'Các riad', image: 'riad.jpg' },
-    { name: 'Các công viên nghỉ dưỡng', image: 'cong-vien-nghi-duong.jpg' },
-    { name: 'Homestay', image: 'homestay.jpg' },
-    { name: 'Các khu cắm trại', image: 'khu-cam-trai.jpg' },
-    { name: 'Biệt thự đồng quê', image: 'biet-thu-dong-que.jpg' },
-    { name: 'Các nhà nghỉ trang trại', image: 'nha-nghi-trang-trai.jpg' },
-    { name: 'Lều trại sang trọng', image: 'leu-trai-sang-trong.jpg' }
+    {
+      name: 'Khách sạn',
+      image: 'khach-san.jpg'
+    },
+    {
+      name: 'Căn hộ',
+      image: 'can-ho.jpg'
+    },
+    {
+      name: 'Các resort',
+      image: 'resort.jpg'
+    },
+    {
+      name: 'Các biệt thự',
+      image: 'biet-thu.jpg'
+    },
+    {
+      name: 'Cabin nghỉ dưỡng',
+      image: 'cabin-nghi-duong.jpg'
+    },
+    {
+      name: 'Các nhà nghỉ dưỡng',
+      image: 'nha-nghi-duong.jpg'
+    },
+    {
+      name: 'Các nhà khách',
+      image: 'nha-khach.jpg'
+
+    },
+    {
+      name: 'Các hostel',
+      image: 'hostel.jpg'
+    },
+    {
+      name: 'Các motel',
+      image: 'motel.jpg'
+    },
+    {
+      name: 'Nhà nghỉ B&B',
+      image: 'nha-nghi-b&b.jpg'
+    },
+    {
+      name: 'Các riad',
+      image: 'riad.jpg'
+    },
+    {
+      name: 'Các công viên nghỉ dưỡng',
+      image: 'cong-vien-nghi-duong.jpg'
+    },
+    {
+      name: 'Homestay',
+      image: 'homestay.jpg'
+    },
+    {
+      name: 'Các khu cắm trại',
+      image: 'khu-cam-trai.jpg'
+    },
+    {
+      name: 'Biệt thự đồng quê',
+      image: 'biet-thu-dong-que.jpg'
+    },
+    {
+      name: 'Các nhà nghỉ trang trại',
+      image: 'nha-nghi-trang-trai.jpg'
+    },
+    {
+      name: 'Lều trại sang trọng',
+      image: 'leu-trai-sang-trong.jpg'
+    }
   ];
 
   constructor() {
     this.trendingPlaces = [
-      { id: 1 ,name: 'Hồ Chí Minh', image: 'ho-chi-minh-city.jpg' },
-      { id: 2, name: 'Hà Nội', image: 'ha-noi.jpg' },
-      { id: 3, name: 'Đà Nẵng', image: 'da-nang.jpg' },
-      { id: 4, name: 'Đà Lạt', image: 'da-lat.jpg' },
-      { id: 5, name: 'Vũng Tàu', image: 'vung-tau.jpg' },
+      {
+        level1_id: '79',
+        level2_id: '0',
+        name: 'Hồ Chí Minh',
+        name_with_type: 'Thành phố Hồ Chí Minh',
+        image: 'ho-chi-minh-city.jpg'
+      },
+      {
+        level1_id: '01',
+        level2_id: '0',
+        name: 'Hà Nội',
+        name_with_type: 'Thành phố Hà Nội',
+        image: 'ha-noi.jpg'
+      },
+      {
+        level1_id: '48',
+        level2_id: '0',
+        name: 'Đà Nẵng',
+        name_with_type: 'Thành phố Đà Nẵng',
+        image: 'da-nang.jpg'
+      },
+      {
+        level1_id: '68',
+        level2_id: '672',
+        name: 'Đà Lạt',
+        name_with_type: 'Thành phố Đà Lạt',
+        image: 'da-lat.jpg'
+      },
+      {
+        level1_id: '77',
+        level2_id: '747',
+        name: 'Vũng Tàu',
+        name_with_type: 'Thành phố Vũng Tàu',
+        image: 'vung-tau.jpg'
+      },
     ];
 
     this.explorePaces = [

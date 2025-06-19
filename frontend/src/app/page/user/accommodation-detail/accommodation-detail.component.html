@@ -8,7 +8,7 @@
             <!-- Icon like của TaigaUI -->
             <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
             <img src="icons/accommodation-detail-icon/share-icon.svg" alt="Share Icon " class="share-icon">
-            <button class="order-btn">Đặt ngay</button>
+            <button class="order-btn" (click)="goToSelectRoom()">Đặt ngay</button>
         </div>
     </div>
 
@@ -16,8 +16,8 @@
         <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon" class="location-icon">
         <p class="accommodation-address">
             {{ accommodation?.address }},
-            {{ accommodation?.district }},
-            {{ accommodation?.city }},
+            {{ accommodationDistrict }},
+            {{ accommodationCity }},
             {{ accommodation?.country }}
         </p>
     </div>
@@ -99,6 +99,7 @@
         </div>
     </div>
 
+    <div #availablilityRoomTop></div>
     <div class="availability-room-container">
         <p class="availability-room-title">Phòng còn trống</p>
 
@@ -154,28 +155,29 @@
                 </td>
 
                 <td class="price-container">
-                    <p class="original-price">US${{ room.price }}</p>
+                    <p class="original-price">{{ room.price | number:'1.0-0' }} VND</p>
                 </td>
 
                 <td class="select-rooms-container">
                     <select (change)="onRoomSelect(room, $any($event.target).value)">
-                        <option value="">0</option>
+                        <option [value]="(0 + ',' + i)">0</option>
                         <option *ngFor="let index of [].constructor(room.available_rooms); let i = index"
                             [value]="(room.price * (i + 1)) + ',' + (i + 1)">
-                            {{ i + 1 }} (US$ {{ room.price * (i + 1) }})
+                            {{ i + 1 }} ({{ room.price * (i + 1) | number:'1.0-0' }} VND)
                         </option>
                     </select>
                 </td>
 
                 <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="rooms.length">
                     <ng-container *ngIf="getTotalPrice() > 0">
-                        <p *ngIf="numberOfRooms == 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá
+                        <p class="room-for">
+                            <strong>{{ numberRoomSelected() }}</strong>
+                            phòng giá
                         </p>
-                        <p *ngIf="numberOfRooms > 1" class="room-for"><strong>{{ numberOfRooms }}</strong> phòng giá</p>
-                        <p class="total-price">US${{ getTotalPrice() }}</p>
+                        <p class="total-price">{{ getTotalPrice() | number:'1.0-0' }} VND</p>
                     </ng-container>
 
-                    <button class="reserve-button">
+                    <button class="reserve-button" (click)="createPayment()">
                         Tôi sẽ đặt
                         <ng-container *ngIf="getTotalPrice() == 0">
                             <span class="hover-text">Hãy chọn chỗ nghỉ trước</span>
@@ -211,14 +213,16 @@
 
         <div class="total-score-container">
             <p class="total-score">{{ avarageRating }}</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
-            <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
-            <p style="font-size: 16px;">|</p>
-            <p class="total-review">{{ reviews.length }} đánh giá</p>
+            <div class="text-container">
+                <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+                <p class="between-score-and-review">|</p>
+                <p class="total-review">{{ reviews.length }} đánh giá</p>
+            </div>
             <p class="read-all-reviews" (click)="toggleOpenReviewListModal()">Đọc tất cả đánh giá</p>
         </div>
 
@@ -227,12 +231,16 @@
         <div class="review-content-container">
             <div class="review-item" *ngFor="let review of reviews.slice(0,3)">
                 <div class="review-user-info">
-                    <img [src]="review.avatar" alt="user avatar" class="user-avatar">
-                    <p class="user-name">{{ review.author }}</p>
+                    <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                        *ngIf="review.image == ''">
+                    <img [src]="review.image" alt="user avatar" class="user-avatar" *ngIf="review.image != ''">
+
+                    <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
+                    <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
                 </div>
 
                 <div class="review-content">
-                    <p class="review-text">"{{ review.content }}"</p>
+                    <p class="review-text">"{{ review.comment }}"</p>
                     <p class="more" (click)="toggleOpenReviewModal(review)">Tìm hiểu thêm</p>
 
                     <ng-container *ngIf="isReviewModalOpen">
@@ -247,19 +255,26 @@
 
                                 <div class="review-modal-content">
                                     <div class="review-user-info">
-                                        <img [src]="review.avatar" alt="user avatar" class="user-avatar">
-                                        <p class="user-name">{{ review.author }}</p>
+                                        <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                                            *ngIf="reviewSelected.image == ''">
+                                        <img [src]="reviewSelected.image" alt="user avatar" class="user-avatar"
+                                            *ngIf="reviewSelected.image != ''">
+
+                                        <p class="user-name" *ngIf="reviewSelected.name == ''">Anonymous</p>
+                                        <p class="user-name" *ngIf="reviewSelected.name != ''">{{ reviewSelected.name }}
+                                        </p>
                                     </div>
 
                                     <div class="review-content">
-                                        <p class="review-date">Ngày đánh giá: {{ review.created_at | date: 'yyyy-MM-dd'
+                                        <p class="review-date">Ngày đánh giá: {{ reviewSelected.created_at | date:
+                                            'yyyy-MM-dd'
                                             }}</p>
-                                        <p class="review-title">{{ review.title }}</p>
-                                        <p class="review-text">"{{ review.content }}"</p>
+                                        <p class="review-title">{{ reviewSelected.title }}</p>
+                                        <p class="review-text">"{{ reviewSelected.comment }}"</p>
                                     </div>
 
                                     <div class="review-score">
-                                        {{ review.rating }}
+                                        {{ reviewSelected.rating }}
                                     </div>
                                 </div>
                             </div>

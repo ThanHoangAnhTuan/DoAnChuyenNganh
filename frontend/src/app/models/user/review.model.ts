@@ -1,12 +1,18 @@
 export interface Review {
-    id: string;
-    accommodation_id: string;
-    title: string;
-    content: string;
-    rating: number;
-    author: string;
-    avatar: string;
-    created_at: string;
+    id: string,
+    name: string,
+    image: string,
+    title: string,
+    comment: string,
+    manager_response: string,
+    rating: number,
+}
+
+export interface Pagination {
+    page: number,
+    limit: number,
+    total: number,
+    total_pages: number,
 }
 
 export interface GetReviewByIdResponse {
@@ -16,33 +22,34 @@ export interface GetReviewByIdResponse {
 }
 
 export interface GetReviewsByAccommodationIdResponse {
-    data: Review[];
-    code: number;
+    code: number,
     message: string;
+    data: Review[];
+    pagination: Pagination,
 }
 
 // create accommodation
-export interface CreateReview {
-    title: string;
-    content: string;
-    rating: number;
+export interface NewReview {
+    id: string,
+    name: string,
+    image: string,
+    title: string,
+    comment: string,
+    rating: number,
 }
 
 export interface CreateNewReview {
-    id: string;
     accommodation_id: string;
     title: string;
-    content: string;
+    comment: string;
     rating: number;
-    author: string;
-    avatar: string;
-    created_at: string;
+    order_id: string;
 }
 
 export interface CreateAccommodationResponse {
-    data: Review;
     code: number;
     message: string;
+    data: NewReview;
 }
 
 // update accommodation

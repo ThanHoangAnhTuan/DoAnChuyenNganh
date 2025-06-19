@@ -1,4 +1,8 @@
 <main>
+    <div class="room-information-container">
+        {{ roomName}}
+    </div>
+
     <div class="room-image-container">
         <p-galleria [value]="roomImages" [(activeIndex)]="activeIndex" [showItemNavigators]="true"
             [showThumbnails]="true" [numVisible]="5" [circular]="true" [responsiveOptions]="responsiveOptions"
@@ -17,9 +21,5 @@
                     class="thumbnail-image" />
             </ng-template>
         </p-galleria>
-    </div>
-
-    <div class="room-information-container">
-        {{ roomName}}
     </div>
 </main>

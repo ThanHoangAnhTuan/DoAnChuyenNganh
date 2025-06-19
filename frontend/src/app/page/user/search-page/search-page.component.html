@@ -20,12 +20,7 @@
 
         <div class="filter-section">
             <h4>Your budget (per night)</h4>
-            <tui-input-range
-                [formControl]="control"
-                [max]="max"
-                [min]="min"
-                [tuiTextfieldLabelOutside]="false"
-            />
+            <tui-input-range [formControl]="control" [max]="max" [min]="min" [tuiTextfieldLabelOutside]="false" />
         </div>
     </div>
 
@@ -38,7 +33,13 @@
         <div class="hotel-card">
             <div class="hotel-image">
                 @for (image of hotel.images; track image){
-                <img [src]="'http://localhost:8080/uploads/' + image" [alt]="hotel.name" />
+                <img [src]="'http://localhost:8080/uploads/' + image" [alt]="hotel.name" [routerLink]="[
+                            '/search/accommodation/detail',
+                            hotel.id
+                        ]" [queryParams]="{
+                            name: hotel.name,
+                            city: hotel.city
+                        }" />
                 }
                 <div class="featured-badge">
                     <tui-icon icon="@tui.heart"></tui-icon>
@@ -47,23 +48,19 @@
 
             <div class="hotel-content">
                 <div class="hotel-header">
-                    <h2
-                        class="hotel-name"
-                        [routerLink]="[
+                    <h2 class="hotel-name" [routerLink]="[
                             '/search/accommodation/detail',
                             hotel.id
-                        ]"
-                        [queryParams]="{
+                        ]" [queryParams]="{
                             name: hotel.name,
                             city: hotel.city
-                        }"
-                    >
+                        }">
                         {{ hotel.name }}
                         <span class="stars">{{ getStars(hotel.rating) }}</span>
                     </h2>
                     <div class="location">
                         <!--                        <tui-icon icon="@tui.mappin"></tui-icon>-->
-                        {{ hotel.city }}, {{ hotel.district }},
+                        {{ hotel.city }}, {{ hotel.district }}, {{ hotel.country }}
                     </div>
                 </div>
 
@@ -83,17 +80,13 @@
                         <!--                        <div class="price-info">1 night, 2 adults</div>-->
                         <!--                        <div class="price">{{ formatPrice(hotel.price) }}</div>-->
                         <!--                        <div class="tax-info">Includes taxes and charges</div>-->
-                        <button
-                            class="view-availability"
-                            [routerLink]="[
+                        <button class="view-availability" [routerLink]="[
                                 '/search/accommodation/detail',
                                 hotel.id
-                            ]"
-                            [queryParams]="{
+                            ]" [queryParams]="{
                                 name: hotel.name,
                                 city: hotel.city
-                            }"
-                        >
+                            }">
                             See availability
                         </button>
                     </div>

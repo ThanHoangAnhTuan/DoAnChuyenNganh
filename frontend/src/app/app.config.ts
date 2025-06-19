@@ -13,9 +13,11 @@ import {
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
     providers: [
+        provideCharts(withDefaultRegisterables()),
         provideAnimations(),
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),

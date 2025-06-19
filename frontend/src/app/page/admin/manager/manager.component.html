@@ -1,0 +1,68 @@
+<main>
+    <button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
+        New
+    </button>
+
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <ng-template #createForm>
+        <form tuiCardLarge [formGroup]="formCreateManger" [style.max-width.rem]="32" [style.padding.px]="5"
+            (ngSubmit)="createManager()">
+            <tui-textfield>
+                <label tuiLabel>Account</label>
+                <input formControlName="account" placeholder="Account" tuiTextfield />
+                @if(formCreateManger.get('account')?.invalid &&
+                formCreateManger.get('account')?.touched) {
+                <div>
+                    <small class="text-red-500">Account is required</small>
+                </div>
+                }
+                @if(errorMessage) {
+                <div>
+                    <small class="text-red-500">{{ errorMessage }}</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Password</label>
+                <input formControlName="password" placeholder="Password" tuiTextfield />
+                @if(formCreateManger.get('password')?.invalid &&
+                formCreateManger.get('password')?.touched) {
+                <div>
+                    <small class="text-red-500">Password is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Confirm Password</label>
+                <input formControlName="confirm" placeholder="Confirm" tuiTextfield />
+                @if(formCreateManger.get('country')?.invalid &&
+                formCreateManger.get('country')?.touched) {
+                <div>
+                    <small class="text-red-500">Country is required</small>
+                </div>
+                }
+                @if(formCreateManger.errors?.['passwordMismatch'] && 
+                formCreateManger.touched) {
+                <div>
+                    <small class="text-red-500">Passwords do not match</small>
+                </div>
+                }
+            </tui-textfield>
+
+            <button tuiButton type="submit">Submit</button>
+        </form>
+
+        <!-- <button tuiButton type="button" (click)="createAccommodation(context)">
+            Submit
+        </button> -->
+    </ng-template>
+</main>
