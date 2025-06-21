@@ -1,29 +1,35 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { City } from '../../models/address/address.model';
+import { map, Observable } from 'rxjs';
+import { City, CityResponse } from '../../models/address/address.model';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class AddressService {
-  // private readonly localUrl = `tinh_tp.json`;
-  private readonly localUrl = `${environment.localUrl}/data`;
+    // private readonly localUrl = `tinh_tp.json`;
+    private readonly localUrl = `data/tinh_tp.json`;
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
-  getCities(): Observable<City[]> {
-    return this.http.get<City[]>(this.localUrl);
-  }
+    getCities(): Observable<CityResponse> {
+        return this.http.get<CityResponse>(this.localUrl);
+    }
 
-  // http://localhost:3000/data?level1_id=79
-  getCityByLevel1id(id: string): Observable<City[]> {
-    return this.http.get<City[]>(this.localUrl + '?level1_id=' + id);
-  }
+    getCityByLevel1id(level1_id: string): Observable<City[]> {
+        return this.getCities().pipe(
+            map((cities) =>
+                cities.data.filter((city) => city.level1_id === level1_id)
+            )
+        );
+    }
 
-  // http://localhost:3000/data?slug=
-  getCityBySlug(slug: string): Observable<City[]> {
-    return this.http.get<City[]>(this.localUrl + '?slug=' + slug);
-  }
+    getCityBySlug(slug: string): Observable<City[]> {
+        return this.getCities().pipe(
+            map((cities) =>
+                cities.data.filter((city) => city.slug === slug)
+            )
+        );
+    }
 }

@@ -134,3 +134,23 @@ func (q *Queries) UpdateFacility(ctx context.Context, arg UpdateFacilityParams) 
 	)
 	return err
 }
+
+const updateNameFacility = `-- name: UpdateNameFacility :exec
+UPDATE ` + "`" + `ecommerce_go_accommodation_facility` + "`" + `
+SET
+    ` + "`" + `name` + "`" + ` = ?,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateNameFacilityParams struct {
+	Name      string
+	UpdatedAt uint64
+	ID        string
+}
+
+func (q *Queries) UpdateNameFacility(ctx context.Context, arg UpdateNameFacilityParams) error {
+	_, err := q.db.ExecContext(ctx, updateNameFacility, arg.Name, arg.UpdatedAt, arg.ID)
+	return err
+}

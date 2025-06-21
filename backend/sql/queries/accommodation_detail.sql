@@ -7,13 +7,12 @@ INSERT INTO
         `guests`,
         `beds`,
         `facilities`,
-        `available_rooms`,
         `price`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetAccommodationDetail :one
 SELECT
@@ -23,7 +22,6 @@ SELECT
     `guests`,
     `beds`,
     `facilities`,
-    `available_rooms`,
     `price`
 FROM
     `ecommerce_go_accommodation_detail`
@@ -41,7 +39,6 @@ SELECT
     `beds`,
     `discount_id`,
     `facilities`,
-    `available_rooms`,
     `price`
 FROM
     `ecommerce_go_accommodation_detail`
@@ -56,7 +53,6 @@ SET
     `guests` = ?,
     `beds` = ?,
     `facilities` = ?,
-    `available_rooms` = ?,
     `price` = ?,
     `updated_at` = ?
 WHERE
@@ -106,7 +102,6 @@ SELECT
     `beds`,
     `discount_id`,
     `facilities`,
-    `available_rooms`,
     `price`
 FROM
     `ecommerce_go_accommodation_detail`
@@ -114,21 +109,3 @@ LIMIT
     ?
 OFFSET
     ?;
-
--- name: UpdateAvailableRoom :exec
-UPDATE `ecommerce_go_accommodation_detail`
-SET
-    `available_rooms` = sqlc.arg ("available_room")
-WHERE
-    `id` = sqlc.arg ("id");
-
--- name: GetInfoAvailableRoomOfAccommodationDetailByOrderID :many
-SELECT
-    egad.id,
-    egad.available_rooms,
-    egod.quantity
-FROM
-    `ecommerce_go_order_detail` egod
-    JOIN `ecommerce_go_accommodation_detail` egad ON egod.accommodation_detail_id = egad.id
-WHERE
-    egod.order_id = sqlc.arg ("orderID");

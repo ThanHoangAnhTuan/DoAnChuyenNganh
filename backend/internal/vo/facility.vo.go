@@ -23,7 +23,7 @@ type GetFacilitiesOutput struct {
 type UpdateFacilityInput struct {
 	ID    string                `form:"id" validate:"required"`
 	Name  string                `form:"name" validate:"required"`
-	Image *multipart.FileHeader `form:"image" validate:"required"`
+	Image *multipart.FileHeader `form:"image"`
 }
 type UpdateFacilityOutput struct {
 	ID    string `json:"id"`

@@ -1,5 +1,10 @@
 import { TuiComboBoxModule, TuiInputDateRangeModule } from '@taiga-ui/legacy';
-import { TuiButton, tuiItemsHandlersProvider, TuiTextfield, TuiTextfieldOptionsDirective } from '@taiga-ui/core';
+import {
+    TuiButton,
+    tuiItemsHandlersProvider,
+    TuiTextfield,
+    TuiTextfieldOptionsDirective,
+} from '@taiga-ui/core';
 import {
     FormControl,
     FormsModule,
@@ -31,7 +36,6 @@ import { City } from '../../models/address/address.model';
         ReactiveFormsModule,
         TuiButton,
         TuiTextfield,
-
     ],
     standalone: true,
     templateUrl: './search-box.component.html',
@@ -51,7 +55,7 @@ export default class SearchBoxComponent implements OnInit {
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private addressService: AddressService,
+        private addressService: AddressService
     ) {
         //Lấy tham số từ URL khi component khởi tạo
         this.activatedRoute.params.subscribe((params) => {
@@ -87,11 +91,14 @@ export default class SearchBoxComponent implements OnInit {
         ]);
     }
     ngOnInit(): void {
-        this.addressService.getCities().subscribe((data: City[]) => {
-            this.cities = data;
-            this.cityNames = this.cities.map(city => city.name);
+        this.addressService.getCities().subscribe((data) => {
+            console.log(data);
+            this.cities = data.data;
+            console.log(this.cities);
+            
+            this.cityNames = this.cities.map((city) => city.name);
             // console.log("data:", this.cities);
-        })
+        });
 
         // Lấy thành phố từ URL parameter
         this.activatedRoute.params.subscribe((params) => {
@@ -102,13 +109,17 @@ export default class SearchBoxComponent implements OnInit {
             }
         });
 
-        this.searchCityControl.valueChanges.subscribe((selectedCityName: string | null) => {
-            const selectedCity = this.cities.find(city => city.name === selectedCityName);
-            if (selectedCity) {
-                this.selectedCityId = selectedCity.level1_id;
-                console.log('City id đã chọn:', this.selectedCityId);
+        this.searchCityControl.valueChanges.subscribe(
+            (selectedCityName: string | null) => {
+                const selectedCity = this.cities.find(
+                    (city) => city.name === selectedCityName
+                );
+                if (selectedCity) {
+                    this.selectedCityId = selectedCity.level1_id;
+                    console.log('City id đã chọn:', this.selectedCityId);
+                }
             }
-        });
+        );
 
         // Lấy ngày từ query parameters
         this.activatedRoute.queryParams.subscribe((queryParams) => {
@@ -185,7 +196,7 @@ export default class SearchBoxComponent implements OnInit {
         this.router.navigate(['/search', city_name], {
             queryParams: {
                 level1_id,
-            }
+            },
         });
         return;
     }

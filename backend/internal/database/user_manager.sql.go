@@ -10,15 +10,16 @@ import (
 )
 
 const checkUserManagerExistsByEmail = `-- name: CheckUserManagerExistsByEmail :one
-SELECT EXISTS (
-    SELECT
-        1
-    FROM
-        ` + "`" + `ecommerce_go_user_manager` + "`" + `
-    WHERE
-        ` + "`" + `account` + "`" + ` = ?
-        AND ` + "`" + `is_deleted` + "`" + ` = 0
-)
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_user_manager` + "`" + `
+        WHERE
+            ` + "`" + `account` + "`" + ` = ?
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
+    )
 `
 
 func (q *Queries) CheckUserManagerExistsByEmail(ctx context.Context, account string) (bool, error) {
@@ -46,6 +47,20 @@ func (q *Queries) CheckUserManagerExistsByID(ctx context.Context, id string) (bo
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const countNumberOfManagers = `-- name: CountNumberOfManagers :one
+SELECT
+    COUNT(egum.id)
+FROM
+    ` + "`" + `ecommerce_go_user_manager` + "`" + ` egum
+`
+
+func (q *Queries) CountNumberOfManagers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNumberOfManagers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const createUserManage = `-- name: CreateUserManage :exec
@@ -91,6 +106,74 @@ WHERE
 func (q *Queries) DeleteUserManager(ctx context.Context, account string) error {
 	_, err := q.db.ExecContext(ctx, deleteUserManager, account)
 	return err
+}
+
+const getManagers = `-- name: GetManagers :many
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `account` + "`" + `,
+    ` + "`" + `user_name` + "`" + `,
+    ` + "`" + `is_deleted` + "`" + `,
+    ` + "`" + `login_time` + "`" + `,
+    ` + "`" + `logout_time` + "`" + `,
+    ` + "`" + `created_at` + "`" + `,
+    ` + "`" + `updated_at` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_user_manager` + "`" + `
+WHERE
+    ` + "`" + `is_deleted` + "`" + ` = 0
+LIMIT
+    ?
+OFFSET
+    ?
+`
+
+type GetManagersParams struct {
+	Limit  int32
+	Offset int32
+}
+
+type GetManagersRow struct {
+	ID         string
+	Account    string
+	UserName   string
+	IsDeleted  uint8
+	LoginTime  uint64
+	LogoutTime uint64
+	CreatedAt  uint64
+	UpdatedAt  uint64
+}
+
+func (q *Queries) GetManagers(ctx context.Context, arg GetManagersParams) ([]GetManagersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getManagers, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetManagersRow
+	for rows.Next() {
+		var i GetManagersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Account,
+			&i.UserName,
+			&i.IsDeleted,
+			&i.LoginTime,
+			&i.LogoutTime,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUserManager = `-- name: GetUserManager :one

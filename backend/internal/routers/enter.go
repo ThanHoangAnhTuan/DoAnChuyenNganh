@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/accommodation"
 	accommodationDetail "github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/accommodation_detail"
+	accommodationRoom "github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/accommodation_room"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/admin"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/facility"
 	facilityDetail "github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/routers/facility_detail"
@@ -28,6 +29,7 @@ type RouterGroup struct {
 	Payment             payment.PaymentRouterGroup
 	Review              review.ReviewRouterGroup
 	Stats               stats.StatsRouterGroup
+	Room                accommodationRoom.AccommodationRoomRouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)
