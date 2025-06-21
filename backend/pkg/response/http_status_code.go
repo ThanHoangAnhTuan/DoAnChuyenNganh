@@ -103,8 +103,10 @@ const (
 	ErrCodeUploadFileFailed   = 100010
 
 	// manager
-	ErrCodeUpdateManagerFailed = 110001
-	ErrCodeGetManagerFailed    = 110002
+	ErrCodeUpdateManagerFailed        = 110001
+	ErrCodeGetManagerFailed           = 110002
+	ErrCodeGetManagerSuccess          = 110003
+	ErrCodeCountNumberOfManagerFailed = 110004
 
 	// admin
 	ErrCodeGetAdminFailed = 120001
@@ -128,6 +130,10 @@ const (
 	// user base
 	ErrCodeGetUserBaseFailed = 140001
 	ErrCodeUserBaseNotFound  = 140002
+
+	// user admin
+	ErrCodeGetUserAdminFailed = 140003
+	ErrCodeUserAdminNotFound  = 140004
 
 	// transaction
 	ErrCodeBeginTransactionFailed  = 150001
@@ -162,6 +168,21 @@ const (
 	// Decimal
 	ErrCodeInvalidPriceFormat  = 200001
 	ErrCodePriceMustBePositive = 200002
+
+	// accommodation room
+	ErrCodeCheckAccommodationTypeBelongsToManagerFailed = 210001
+	ErrCodeCheckAccommodationTypeNotBelongsToManager    = 210002
+	ErrCodeCreateAccommodationRoomFailed                = 210003
+	ErrCodeCreateAccommodationRoomSuccess               = 210004
+	ErrCodeGetAccommodationRoomFailed                   = 210005
+	ErrCodeGetAccommodationRoomSuccess                  = 210006
+	ErrCodeCheckAccommodationRoomBelongsToManagerFailed = 210007
+	ErrCodeCheckAccommodationRoomNotBelongsToManager    = 210008
+	ErrCodeUpdateAccommodationRoomFailed                = 210009
+	ErrCodeUpdateAccommodationRoomSuccess               = 210010
+	ErrCodeDeleteAccommodationRoomFailed                = 210011
+	ErrCodeDeleteAccommodationRoomSuccess               = 210012
+	ErrCodeAccommodationRoomNotFound                    = 210013
 )
 
 var message = map[int]string{
@@ -267,8 +288,10 @@ var message = map[int]string{
 	ErrCodeUploadFileFailed:   "Upload files failed",
 
 	// manager
-	ErrCodeUpdateManagerFailed: "Update manager failed",
-	ErrCodeGetManagerFailed:    "Get manager failed",
+	ErrCodeUpdateManagerFailed:        "Update manager failed",
+	ErrCodeGetManagerFailed:           "Get manager failed",
+	ErrCodeGetManagerSuccess:          "Get manager successfully",
+	ErrCodeCountNumberOfManagerFailed: "Count number of managers failed",
 
 	// admin
 	ErrCodeGetAdminFailed: "Get admin failed",
@@ -291,6 +314,10 @@ var message = map[int]string{
 	// user base
 	ErrCodeGetUserBaseFailed: "Get user base failed",
 	ErrCodeUserBaseNotFound:  "User base not found",
+
+	// user admin
+	ErrCodeGetUserAdminFailed: "Get user admin failed",
+	ErrCodeUserAdminNotFound:  "User admin not found",
 
 	// transaction
 	ErrCodeBeginTransactionFailed:  "Start transaction failed",
@@ -324,4 +351,19 @@ var message = map[int]string{
 
 	// Decimal
 	ErrCodeInvalidPriceFormat: "Invalid price format",
+
+	// accommodation type
+	ErrCodeCheckAccommodationTypeBelongsToManagerFailed: "Check accommodation type belongs to manager failed",
+	ErrCodeCheckAccommodationTypeNotBelongsToManager:    "Accommodation type not belongs to manager",
+	ErrCodeCreateAccommodationRoomFailed:                "Create accommodation room failed",
+	ErrCodeCreateAccommodationRoomSuccess:               "Create accommodation room successfully",
+	ErrCodeGetAccommodationRoomFailed:                   "Get accommodation room failed",
+	ErrCodeGetAccommodationRoomSuccess:                  "Get accommodation room successfully",
+	ErrCodeCheckAccommodationRoomBelongsToManagerFailed: "Check accommodation room belongs to manager failed",
+	ErrCodeCheckAccommodationRoomNotBelongsToManager:    "Accommodation room not belongs to manager",
+	ErrCodeUpdateAccommodationRoomFailed:                "Update accommodation room failed",
+	ErrCodeUpdateAccommodationRoomSuccess:               "Update accommodation room successfully",
+	ErrCodeDeleteAccommodationRoomFailed:                "Delete accommodation room failed",
+	ErrCodeDeleteAccommodationRoomSuccess:               "Delete accommodation room successfully",
+	ErrCodeAccommodationRoomNotFound:                    "Accommodation room not found",
 }

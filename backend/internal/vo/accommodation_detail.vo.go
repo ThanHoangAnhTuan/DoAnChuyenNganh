@@ -7,7 +7,9 @@ type Beds struct {
 	ExtraLargeDoubleBed uint `json:"extra_large_double_bed" validate:"gte=0,lte=10"`
 }
 type GetAccommodationDetailsInput struct {
-	AccommodationID string `form:"accommodation_id"`
+	AccommodationID string `uri:"id"`
+	CheckIn         string `form:"check_in"`
+	CheckOut        string `form:"check_out"`
 }
 
 type CreateAccommodationDetailInput struct {
@@ -16,7 +18,6 @@ type CreateAccommodationDetailInput struct {
 	Guests          uint8    `json:"guests" validate:"gte=1,lte=50"`
 	Beds            Beds     `json:"beds" validate:"required"`
 	Facilities      []string `json:"facilities"`
-	AvailableRooms  uint8    `json:"available_rooms" validate:"gte=0,lte=999"`
 	Price           string   `json:"price" validate:"required"`
 	DiscountID      string   `json:"discount_id"`
 }
@@ -33,7 +34,6 @@ type CreateAccommodationDetailOutput struct {
 	Guests          uint8                  `json:"guests"`
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
-	AvailableRooms  uint8                  `json:"available_rooms"`
 	Price           string                 `json:"price"`
 	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`
@@ -60,7 +60,6 @@ type UpdateAccommodationDetailInput struct {
 	Guests          uint8    `json:"guests"`
 	Beds            Beds     `json:"beds"`
 	Facilities      []string `json:"facilities"`
-	AvailableRooms  uint8    `json:"available_rooms"`
 	Price           string   `json:"price"`
 	DiscountID      string   `json:"discount_id"`
 }
@@ -72,7 +71,6 @@ type UpdateAccommodationDetailOutput struct {
 	Guests          uint8                  `json:"guests"`
 	Beds            Beds                   `json:"beds"`
 	Facilities      []FacilityDetailOutput `json:"facilities"`
-	AvailableRooms  uint8                  `json:"available_rooms"`
 	Price           string                 `json:"price"`
 	DiscountID      string                 `json:"discount_id"`
 	Images          []string               `json:"images"`

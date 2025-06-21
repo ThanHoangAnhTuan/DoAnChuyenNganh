@@ -13,6 +13,49 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+type EcommerceGoAccommodationRoomStatus string
+
+const (
+	EcommerceGoAccommodationRoomStatusAvailable   EcommerceGoAccommodationRoomStatus = "available"
+	EcommerceGoAccommodationRoomStatusUnavailable EcommerceGoAccommodationRoomStatus = "unavailable"
+	EcommerceGoAccommodationRoomStatusOccupied    EcommerceGoAccommodationRoomStatus = "occupied"
+)
+
+func (e *EcommerceGoAccommodationRoomStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EcommerceGoAccommodationRoomStatus(s)
+	case string:
+		*e = EcommerceGoAccommodationRoomStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EcommerceGoAccommodationRoomStatus: %T", src)
+	}
+	return nil
+}
+
+type NullEcommerceGoAccommodationRoomStatus struct {
+	EcommerceGoAccommodationRoomStatus EcommerceGoAccommodationRoomStatus
+	Valid                              bool // Valid is true if EcommerceGoAccommodationRoomStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEcommerceGoAccommodationRoomStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.EcommerceGoAccommodationRoomStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EcommerceGoAccommodationRoomStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEcommerceGoAccommodationRoomStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EcommerceGoAccommodationRoomStatus), nil
+}
+
 type EcommerceGoDiscountDiscountType string
 
 const (
@@ -321,8 +364,6 @@ type EcommerceGoAccommodationDetail struct {
 	Beds json.RawMessage
 	// facilities
 	Facilities json.RawMessage
-	// available rooms
-	AvailableRooms uint8
 	// price
 	Price decimal.Decimal
 	// discount ID
@@ -391,6 +432,24 @@ type EcommerceGoAccommodationImage struct {
 	UpdatedAt uint64
 }
 
+// accommodation room table
+type EcommerceGoAccommodationRoom struct {
+	// ID
+	ID string
+	// accommodation type
+	AccommodationType string
+	// accommodation type
+	Name string
+	// status
+	Status EcommerceGoAccommodationRoomStatus
+	// is deleted: 0 - not deleted; 1 - deleted
+	IsDeleted uint8
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+}
+
 // discount table
 type EcommerceGoDiscount struct {
 	// ID
@@ -431,10 +490,10 @@ type EcommerceGoOrder struct {
 	AccommodationID string
 	// voucher ID
 	VoucherID sql.NullString
-	// Checkin date
-	CheckinDate string
-	// checkout date
-	CheckoutDate string
+	// created at
+	CheckinDate uint64
+	// updated at
+	CheckoutDate uint64
 	// created at
 	CreatedAt uint64
 	// updated at
@@ -453,6 +512,8 @@ type EcommerceGoOrderDetail struct {
 	Quantity uint8
 	// accommodation detail ID
 	AccommodationDetailID string
+	// accommodation room ID
+	AccommodationRoomID string
 	// created at
 	CreatedAt uint64
 	// updated at

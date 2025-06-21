@@ -209,9 +209,9 @@ export class AccommodationComponent implements OnInit {
             // this.onCityChange(selectedCity);
         });
 
-        this.addressService.getCities().subscribe((data: City[]) => {
-            this.cities = data;
-            this.cityNames = data.map(city => city.name);
+        this.addressService.getCities().subscribe((res) => {
+            this.cities = res.data;
+            this.cityNames = res.data.map(city => city.name);
             // this.initFormValueChanges();
         });
 

@@ -37,6 +37,7 @@ func InitRouter() *gin.Engine {
 	paymentRouter := routers.RouterGroupApp.Payment
 	reviewRouter := routers.RouterGroupApp.Review
 	statsRouter := routers.RouterGroupApp.Stats
+	roomRouter := routers.RouterGroupApp.Room
 
 	MainGroup := r.Group("api/v1")
 	{
@@ -74,6 +75,9 @@ func InitRouter() *gin.Engine {
 	}
 	{
 		statsRouter.InitStatsRouter(MainGroup)
+	}
+	{
+		roomRouter.InitAccommodationRoomRouter(MainGroup)
 	}
 	return r
 }

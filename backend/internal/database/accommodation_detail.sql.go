@@ -56,13 +56,12 @@ INSERT INTO
         ` + "`" + `guests` + "`" + `,
         ` + "`" + `beds` + "`" + `,
         ` + "`" + `facilities` + "`" + `,
-        ` + "`" + `available_rooms` + "`" + `,
         ` + "`" + `price` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateAccommodationDetailParams struct {
@@ -72,7 +71,6 @@ type CreateAccommodationDetailParams struct {
 	Guests          uint8
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
-	AvailableRooms  uint8
 	Price           decimal.Decimal
 	CreatedAt       uint64
 	UpdatedAt       uint64
@@ -86,7 +84,6 @@ func (q *Queries) CreateAccommodationDetail(ctx context.Context, arg CreateAccom
 		arg.Guests,
 		arg.Beds,
 		arg.Facilities,
-		arg.AvailableRooms,
 		arg.Price,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -115,7 +112,6 @@ SELECT
     ` + "`" + `guests` + "`" + `,
     ` + "`" + `beds` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
-    ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
@@ -137,7 +133,6 @@ type GetAccommodationDetailRow struct {
 	Guests          uint8
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
-	AvailableRooms  uint8
 	Price           decimal.Decimal
 }
 
@@ -151,7 +146,6 @@ func (q *Queries) GetAccommodationDetail(ctx context.Context, arg GetAccommodati
 		&i.Guests,
 		&i.Beds,
 		&i.Facilities,
-		&i.AvailableRooms,
 		&i.Price,
 	)
 	return i, err
@@ -166,7 +160,6 @@ SELECT
     ` + "`" + `beds` + "`" + `,
     ` + "`" + `discount_id` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
-    ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
@@ -183,7 +176,6 @@ type GetAccommodationDetailsRow struct {
 	Beds            json.RawMessage
 	DiscountID      sql.NullString
 	Facilities      json.RawMessage
-	AvailableRooms  uint8
 	Price           decimal.Decimal
 }
 
@@ -204,7 +196,6 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 			&i.Beds,
 			&i.DiscountID,
 			&i.Facilities,
-			&i.AvailableRooms,
 			&i.Price,
 		); err != nil {
 			return nil, err
@@ -222,7 +213,7 @@ func (q *Queries) GetAccommodationDetails(ctx context.Context, accommodationID s
 
 const getAccommodationDetailsByIDs = `-- name: GetAccommodationDetailsByIDs :many
 SELECT
-    id, accommodation_id, name, guests, beds, facilities, available_rooms, price, discount_id, is_verified, is_deleted, created_at, updated_at
+    id, accommodation_id, name, guests, beds, facilities, price, discount_id, is_verified, is_deleted, created_at, updated_at
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
 WHERE
@@ -262,7 +253,6 @@ func (q *Queries) GetAccommodationDetailsByIDs(ctx context.Context, arg GetAccom
 			&i.Guests,
 			&i.Beds,
 			&i.Facilities,
-			&i.AvailableRooms,
 			&i.Price,
 			&i.DiscountID,
 			&i.IsVerified,
@@ -292,7 +282,6 @@ SELECT
     ` + "`" + `beds` + "`" + `,
     ` + "`" + `discount_id` + "`" + `,
     ` + "`" + `facilities` + "`" + `,
-    ` + "`" + `available_rooms` + "`" + `,
     ` + "`" + `price` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
@@ -315,7 +304,6 @@ type GetAccommodationDetailsWithPaginationRow struct {
 	Beds            json.RawMessage
 	DiscountID      sql.NullString
 	Facilities      json.RawMessage
-	AvailableRooms  uint8
 	Price           decimal.Decimal
 }
 
@@ -336,50 +324,8 @@ func (q *Queries) GetAccommodationDetailsWithPagination(ctx context.Context, arg
 			&i.Beds,
 			&i.DiscountID,
 			&i.Facilities,
-			&i.AvailableRooms,
 			&i.Price,
 		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getInfoAvailableRoomOfAccommodationDetailByOrderID = `-- name: GetInfoAvailableRoomOfAccommodationDetailByOrderID :many
-SELECT
-    egad.id,
-    egad.available_rooms,
-    egod.quantity
-FROM
-    ` + "`" + `ecommerce_go_order_detail` + "`" + ` egod
-    JOIN ` + "`" + `ecommerce_go_accommodation_detail` + "`" + ` egad ON egod.accommodation_detail_id = egad.id
-WHERE
-    egod.order_id = ?
-`
-
-type GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow struct {
-	ID             string
-	AvailableRooms uint8
-	Quantity       uint8
-}
-
-func (q *Queries) GetInfoAvailableRoomOfAccommodationDetailByOrderID(ctx context.Context, orderid string) ([]GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow, error) {
-	rows, err := q.db.QueryContext(ctx, getInfoAvailableRoomOfAccommodationDetailByOrderID, orderid)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow
-	for rows.Next() {
-		var i GetInfoAvailableRoomOfAccommodationDetailByOrderIDRow
-		if err := rows.Scan(&i.ID, &i.AvailableRooms, &i.Quantity); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -400,7 +346,6 @@ SET
     ` + "`" + `guests` + "`" + ` = ?,
     ` + "`" + `beds` + "`" + ` = ?,
     ` + "`" + `facilities` + "`" + ` = ?,
-    ` + "`" + `available_rooms` + "`" + ` = ?,
     ` + "`" + `price` + "`" + ` = ?,
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
@@ -414,7 +359,6 @@ type UpdateAccommodationDetailParams struct {
 	Guests          uint8
 	Beds            json.RawMessage
 	Facilities      json.RawMessage
-	AvailableRooms  uint8
 	Price           decimal.Decimal
 	UpdatedAt       uint64
 	ID              string
@@ -427,29 +371,10 @@ func (q *Queries) UpdateAccommodationDetail(ctx context.Context, arg UpdateAccom
 		arg.Guests,
 		arg.Beds,
 		arg.Facilities,
-		arg.AvailableRooms,
 		arg.Price,
 		arg.UpdatedAt,
 		arg.ID,
 		arg.AccommodationID,
 	)
-	return err
-}
-
-const updateAvailableRoom = `-- name: UpdateAvailableRoom :exec
-UPDATE ` + "`" + `ecommerce_go_accommodation_detail` + "`" + `
-SET
-    ` + "`" + `available_rooms` + "`" + ` = ?
-WHERE
-    ` + "`" + `id` + "`" + ` = ?
-`
-
-type UpdateAvailableRoomParams struct {
-	AvailableRoom uint8
-	ID            string
-}
-
-func (q *Queries) UpdateAvailableRoom(ctx context.Context, arg UpdateAvailableRoomParams) error {
-	_, err := q.db.ExecContext(ctx, updateAvailableRoom, arg.AvailableRoom, arg.ID)
 	return err
 }

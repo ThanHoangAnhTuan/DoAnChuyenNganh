@@ -105,8 +105,6 @@ export class AccommodationDetailComponent implements OnInit {
         facilityDetails: new FormControl<string | ''>(''),
     });
     protected formFacilityDetail = new FormGroup({});
-    private accommodationId: string = '';
-
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
         availableRooms: 0,
