@@ -38,7 +38,9 @@
                             hotel.id
                         ]" [queryParams]="{
                             name: hotel.name,
-                            city: hotel.city
+                            city: hotel.city,
+                            checkIn: checkIn,
+                            checkOut: checkOut,
                         }" />
                 }
                 <div class="featured-badge">
@@ -53,7 +55,9 @@
                             hotel.id
                         ]" [queryParams]="{
                             name: hotel.name,
-                            city: hotel.city
+                            city: hotel.city,
+                            checkIn: checkIn,
+                            checkOut: checkOut,
                         }">
                         {{ hotel.name }}
                         <span class="stars">{{ getStars(hotel.rating) }}</span>
@@ -85,7 +89,9 @@
                                 hotel.id
                             ]" [queryParams]="{
                                 name: hotel.name,
-                                city: hotel.city
+                                city: hotel.city,
+                                checkIn: checkIn,
+                                checkOut: checkOut,
                             }">
                             See availability
                         </button>
