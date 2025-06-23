@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
     CreateManager,
     CreateManagerOutput,
+    GetAccommodationsOfManagerByAdminOutput,
     GetManagerOutput,
 } from '../../models/admin/manager.model';
 
@@ -26,5 +27,9 @@ export class ManagerService {
 
     getManagers(): Observable<GetManagerOutput> {
         return this.http.get<GetManagerOutput>(`${this.adminUrl}/managers`);
+    }
+
+    getAccommodationsOfManagerByAdmin(id: string): Observable<GetAccommodationsOfManagerByAdminOutput> {
+        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(`${this.adminUrl}/manager/${id}/accommodations`);
     }
 }

@@ -1,3 +1,6 @@
+import { Facility } from "../facility/facility.model";
+import { Accommodation } from "../manager/accommodation.model";
+
 export interface Manager {
     id: string;
     account: string;
@@ -22,4 +25,25 @@ export interface GetManagerOutput {
     code: number;
     message: string;
     data: Manager[];
+}
+
+
+export interface GetAccommodationsOfManagerByAdmin {
+    id: string;
+    name: string;
+    city: string;
+    country: string;
+    district: string;
+    address: string;
+    description: string;
+    rating: number;
+    facilities: Facility[];
+    images: string[];
+    google_map: string;
+}
+
+export interface GetAccommodationsOfManagerByAdminOutput {
+    code: number;
+    message: string;
+    data: GetAccommodationsOfManagerByAdmin[];
 }

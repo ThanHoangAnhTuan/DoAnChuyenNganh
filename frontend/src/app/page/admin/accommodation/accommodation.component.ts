@@ -44,13 +44,15 @@ import {
     TUI_EDITOR_EXTENSIONS,
     TuiEditor,
 } from '@taiga-ui/editor';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { ManagerService } from '../../../services/admin/manager.service';
+import { GetAccommodationsOfManagerByAdmin } from '../../../models/admin/manager.model';
 
 @Component({
     standalone: true,
@@ -100,7 +102,6 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
 
-    protected accommodations!: Accommodation[];
     protected facilities!: Facility[];
     protected columns: string[] = [
         'Name',
@@ -116,6 +117,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         'Is Deleted',
     ];
     protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
+    protected managerId: string = '';
+    protected accommodations: GetAccommodationsOfManagerByAdmin[] = [];
     protected cities: City[] = [];
     protected districts: District[] = [];
     protected cityNames: string[] = [];
@@ -148,12 +151,22 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected timePeriods = tuiCreateTimePeriods();
 
     constructor(
-        private accommodationService: AccommodationService,
+        private accommodationService: ManagerService,
         private addressService: AddressService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private route: ActivatedRoute,
     ) { }
 
     ngOnInit() {
+        this.route.params.subscribe((params) => {
+            this.managerId = params['id'];
+            this.accommodationService.getAccommodationsOfManagerByAdmin(this.managerId).subscribe((response) => {
+                this.accommodations = response.data;
+
+                console.log(this.accommodations);
+            })
+        });
+
         // this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
         //     // console.log("selected city: ", selectedCity);
 
@@ -174,10 +187,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.cities = res.data;
             this.cityNames = res.data.map(city => city.name);
             // this.initFormValueChanges();
-        });
-
-        this.accommodationService.getAccommodations().subscribe((response) => {
-            this.accommodations = response.data;
         });
     }
 
