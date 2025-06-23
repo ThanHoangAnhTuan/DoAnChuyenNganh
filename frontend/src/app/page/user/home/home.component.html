@@ -10,17 +10,9 @@
             Các lựa chọn phổ biến nhất cho du khách từ Việt Nam
         </p>
         <div class="trending-content">
-            <div
-                class="trending-place"
-                *ngFor="let place of trendingPlaces"
-                [routerLink]="['/search', place.name]"
-                [queryParams]="{ slug: place.slug }"
-            >
-                <img
-                    src="images/trending-places/{{ place.image }}"
-                    alt="{{ place.name }}"
-                    class="trending-image"
-                />
+            <div class="trending-place" *ngFor="let place of trendingPlaces" [routerLink]="['/search', place.name]"
+                [queryParams]="{ slug: place.slug, checkIn: checkIn, checkOut: checkOut }">
+                <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}
                     <img
@@ -87,18 +79,10 @@
                 class="explore-content"
             >
                 <ng-container *ngFor="let place of explorePaces; let i = index">
-                    <div
-                        *tuiItem
-                        draggable="false"
-                        class="explore-item"
-                        [class.item_active]="i === explorePlaceIndex + 1"
-                        [routerLink]="['/search', place.name]"
-                    >
-                        <img
-                            alt="place.name"
-                            src="images/explore-places/{{ place.image }}"
-                            class="explore-image"
-                        />
+                    <div *tuiItem draggable="false" class="explore-item"
+                        [class.item_active]="i === explorePlaceIndex + 1" [routerLink]="['/search', place.name]"
+                        [queryParams]="{ slug: place.slug, checkIn: checkIn, checkOut: checkOut }">
+                        <img alt="place.name" src="images/explore-places/{{ place.image }}" class="explore-image" />
                         <div class="explore-place-name">{{ place.name }}</div>
                     </div>
                 </ng-container>

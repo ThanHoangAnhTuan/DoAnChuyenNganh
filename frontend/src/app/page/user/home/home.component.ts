@@ -1,7 +1,7 @@
 import SearchBoxComponent from '../../../components/search-box/search-box.component';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { NgFor } from '@angular/common';
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { TuiCarousel, TuiCarouselComponent } from '@taiga-ui/kit';
 import { TuiButton } from '@taiga-ui/core';
 import { RouterModule } from '@angular/router';
@@ -12,12 +12,15 @@ import { RouterModule } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
-  trendingPlaces: any[] = [];
-  explorePaces: any[] = [];
-  
-  showPlaceTypeList: number = 0;
-  showExplorePlacesList: number = 0;
+export class HomeComponent implements OnInit {
+  protected checkIn: string = '';
+  protected checkOut: string = '';
+
+  protected trendingPlaces: any[] = [];
+  protected explorePaces: any[] = [];
+
+  protected showPlaceTypeList: number = 0;
+  protected showExplorePlacesList: number = 0;
 
   protected windowWidth: number = 0;
   protected placeTypeIndex = 0;
@@ -159,6 +162,11 @@ export class HomeComponent {
     this.updateCarouselVisibility();
   }
 
+  ngOnInit(): void {
+      this.checkIn = this.getToday();
+      this.checkOut = this.getDateAfterDays(7);
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.windowWidth = window.innerWidth;
@@ -194,5 +202,24 @@ export class HomeComponent {
       this.showPlaceTypeList = 1;
       this.showExplorePlacesList = 2;
     }
+  }
+
+  private getToday(): string {
+    const today = new Date();
+    const day = today.getDate().toString().padStart(2, '0');
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const year = today.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  private getDateAfterDays(daysToAdd: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + daysToAdd);
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   }
 }

@@ -1,9 +1,8 @@
 export interface Manager {
+    id: string;
     account: string;
-    user_name: string;
-    login_time: string;
-    logout_time: string;
-    is_deleted: string;
+    username: string;
+    is_deleted: boolean;
     created_at: string;
     updated_at: string;
 }
@@ -17,4 +16,10 @@ export interface CreateManagerOutput {
     code: number;
     message: string;
     data: null;
+}
+
+export interface GetManagerOutput {
+    code: number;
+    message: string;
+    data: Manager[];
 }

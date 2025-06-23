@@ -1,4 +1,4 @@
-import { Component, inject, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Injector, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -97,7 +97,9 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
         },
     ],
 })
-export class AccommodationComponent implements OnInit {
+export class AccommodationComponent implements OnInit, AfterViewInit {
+    @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
+
     protected accommodations!: Accommodation[];
     protected facilities!: Facility[];
     protected columns: string[] = [
@@ -123,6 +125,9 @@ export class AccommodationComponent implements OnInit {
     protected citySlug: string = '';
     protected districtName: string = '';
     protected districtSlug: string = '';
+    protected showFullMap: { [id: string]: boolean } = {};;
+    protected elList: { [id: string]: any } = {};
+    protected showButtonStates: { [id: string]: boolean } = {};
 
     private readonly dialogs = inject(TuiDialogService);
 
@@ -218,10 +223,13 @@ export class AccommodationComponent implements OnInit {
         this.accommodationService.getAccommodations().subscribe((response) => {
             this.accommodations = response.data;
         });
+
         this.facilityService.getFacilities().subscribe((response) => {
             this.facilities = response.data;
             this.createFacilityControls();
         });
+
+
     }
 
 
@@ -405,6 +413,9 @@ export class AccommodationComponent implements OnInit {
                 this.accommodations.push(response.data);
                 this.formAccommodation.reset();
                 this.formFacilities.reset();
+
+                this.accommodations = [...this.accommodations]; // force trigger DOM update
+                this.checkDescriptionOverflow();
             });
     }
 
@@ -434,6 +445,8 @@ export class AccommodationComponent implements OnInit {
                         }
                     }
                 );
+
+                window.location.reload()
             });
     }
 
@@ -442,6 +455,35 @@ export class AccommodationComponent implements OnInit {
             this.accommodations = this.accommodations.filter(
                 (accommodation) => accommodation.id !== id
             );
+        });
+    }
+
+    protected toggleDescription(id: string): void {
+        this.showFullMap[id] = !this.showFullMap[id];
+    }
+
+    protected isDescriptionShown(id: string): boolean {
+        return !!this.showFullMap[id];
+    }
+
+    private checkDescriptionOverflow() {
+        setTimeout(() => {
+            this.descEls.forEach((elRef) => {
+                const el = elRef.nativeElement;
+                const id = el.getAttribute('data-id');
+
+                if (id) {
+                    this.showButtonStates[id] = el.scrollHeight > 60;
+                }
+
+                console.log(this.showButtonStates);
+            });
+        });
+    }
+
+    ngAfterViewInit(): void {
+        this.descEls.changes.subscribe(() => {
+            setTimeout(() => this.checkDescriptionOverflow(), 0);
         });
     }
 }

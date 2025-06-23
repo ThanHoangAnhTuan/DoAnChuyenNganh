@@ -26,6 +26,7 @@ type GetManagerInput struct {
 }
 
 type GetManagerOutput struct {
+	ID        string `json:"id"`
 	Account   string `json:"account"`
 	Username  string `json:"username"`
 	IsDeleted bool   `json:"is_deleted"`

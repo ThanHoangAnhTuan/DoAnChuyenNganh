@@ -65,6 +65,8 @@ export class SearchPageComponent implements OnInit {
 
     city: string = ''; // Thành phố tìm kiếm
     citySlug: string = '';
+    checkIn: string = '';
+    checkOut: string = '';
     hotels: any[] = []; // Danh sách khách sạn
     // level1AddressNames: string = '';
     // level2AddressNames: string = '';
@@ -87,6 +89,9 @@ export class SearchPageComponent implements OnInit {
         // Lấy tham số city từ QueryParams
         this.route.queryParams.subscribe((params) => {
             this.citySlug = params['slug'];
+            this.checkIn = params['checkIn'];
+            this.checkOut = params['checkOut'];
+
             if (this.hotels.length > 0) {
                 this.applyFilters(); // Cập nhật khi params thay đổi
             }
