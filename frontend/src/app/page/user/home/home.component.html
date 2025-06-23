@@ -15,14 +15,18 @@
                 <img src="images/trending-places/{{ place.image }}" alt="{{ place.name }}" class="trending-image" />
                 <p class="text-in-image">
                     {{ place.name }}
-                    <img src="images/flags/vn.png" alt="vietnamese flag" class="trending-flag" />
+                    <img
+                        src="images/flags/vn.png"
+                        alt="vietnamese flag"
+                        class="trending-flag"
+                    />
                 </p>
             </div>
         </div>
     </div>
 
     <!-- Place Type List -->
-    <div class="place-type-container">
+    <!-- <div class="place-type-container">
         <p class="place-type-title">Tìm theo loại chỗ nghỉ</p>
 
         <div tuiCarouselButtons class="place-type-carousel-container">
@@ -30,8 +34,6 @@
                 class="carousel-prev-button">
                 Previous
             </button>
-
-            <!-- Dùng Carousel của TaigaUI hiển thị chỗ ở -->
             <tui-carousel [draggable]="false" [itemsCount]="showPlaceTypeList" [(index)]="placeTypeIndex"
                 #placeTypeCarousel class="carousel">
                 <ng-container *ngFor="let place of places; let i = index">
@@ -48,7 +50,7 @@
                 Next
             </button>
         </div>
-    </div>
+    </div> -->
 
     <!-- Explore Places -->
     <div class="explore-places-container">
@@ -58,14 +60,24 @@
         </p>
 
         <div tuiCarouselButtons class="explore-carousel-container">
-            <button iconStart="@tui.chevron-left" tuiIconButton type="button" (click)="explorePlacesCarousel.prev()"
-                class="carousel-prev-button">
+            <button
+                iconStart="@tui.chevron-left"
+                tuiIconButton
+                type="button"
+                (click)="explorePlacesCarousel.prev()"
+                class="carousel-prev-button"
+            >
                 Previous
             </button>
 
             <!-- Dùng Carousel của TaigaUI hiển thị chỗ ở -->
-            <tui-carousel [draggable]="false" [itemsCount]="showExplorePlacesList" [(index)]="explorePlaceIndex"
-                #explorePlacesCarousel class="explore-content">
+            <tui-carousel
+                [draggable]="false"
+                [itemsCount]="showExplorePlacesList"
+                [(index)]="explorePlaceIndex"
+                #explorePlacesCarousel
+                class="explore-content"
+            >
                 <ng-container *ngFor="let place of explorePaces; let i = index">
                     <div *tuiItem draggable="false" class="explore-item"
                         [class.item_active]="i === explorePlaceIndex + 1" [routerLink]="['/search', place.name]"
@@ -76,8 +88,13 @@
                 </ng-container>
             </tui-carousel>
 
-            <button iconStart="@tui.chevron-right" tuiIconButton type="button" (click)="explorePlacesCarousel.next()"
-                class="carousel-next-button">
+            <button
+                iconStart="@tui.chevron-right"
+                tuiIconButton
+                type="button"
+                (click)="explorePlacesCarousel.next()"
+                class="carousel-next-button"
+            >
                 Next
             </button>
         </div>

@@ -108,21 +108,21 @@ export class SearchPageComponent implements OnInit {
     // Danh sách các checkbox filter
     // Thêm type cho filter
     customCheckboxes = [
-        {
-            id: '1',
-            label: 'Guest houses',
-            checked: false,
-        },
-        {
-            id: '2',
-            label: 'Very good: 8+',
-            checked: false,
-        },
-        {
-            id: '3',
-            label: 'Bed and breakfasts',
-            checked: false,
-        },
+        // {
+        //     id: '1',
+        //     label: 'Guest houses',
+        //     checked: false,
+        // },
+        // {
+        //     id: '2',
+        //     label: 'Very good: 8+',
+        //     checked: false,
+        // },
+        // {
+        //     id: '3',
+        //     label: 'Bed and breakfasts',
+        //     checked: false,
+        // },
         {
             id: '4',
             label: '5 stars',

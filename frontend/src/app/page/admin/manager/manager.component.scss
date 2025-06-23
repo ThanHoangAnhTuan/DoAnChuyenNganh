@@ -1,3 +1,13 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid #ddd;
+
+}
+
 .flex {
     display: flex;
 }
@@ -46,4 +56,11 @@
 
 .facility-item {
     margin-bottom: 8px;
+}
+
+
+@media (max-width: 768px) {
+    .table {
+        width: 50px;
+    }
 }

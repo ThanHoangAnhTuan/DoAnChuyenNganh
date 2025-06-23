@@ -28,10 +28,38 @@ export class AuthService {
         );
     }
 
-    verifyOTP(otpData: OTP): Observable<OTPResponse> {
-        return this.http.post<OTPResponse>(
-            this.apiUrl + '/verify-otp',
-            otpData
+    // verifyOTP(
+    //     email: string,
+    //     otpCode: string,
+    //     otpData: OTP
+    // ): Observable<OTPResponse> {
+    //     return this.http.post<OTPResponse>(
+    //         this.apiUrl + '/verify-otp',
+    //         otpData
+    //     );
+    // }
+    verifyOTP(
+        emailOrData: string | OTP,
+        otpCode?: string,
+        otpData?: OTP
+    ): Observable<OTPResponse> {
+        // If first argument is an OTP object (old style)
+        if (typeof emailOrData !== 'string') {
+            const data = emailOrData;
+            return this.http.post<OTPResponse>(
+                `${this.apiUrl}/verify-otp`,
+                data
+            );
+        }
+
+        // Otherwise use new style with 3 parameters
+        const email = emailOrData;
+        return this.http.post<any>(
+            `${this.apiUrl}/verify-otp`,
+            otpData || {
+                verify_key: email,
+                verify_code: otpCode,
+            }
         );
     }
 

@@ -171,16 +171,17 @@
                 <label tuiLabel>Image</label>
 
                 <!-- Hiển thị hình ảnh hiện tại nếu đang update và chưa chọn file mới -->
-                <!-- @if(!control.value && idFacilityUpdating) {
+                @if(!control.value && idFacilityUpdating) {
                 <div class="current-image">
+                    <span class="image-caption">Current image: </span>
                     <img
                         [src]="getCurrentFacilityImageUrl()"
                         alt="Current facility image"
                         class="preview-image"
+                        style="width: 50px; height: 50px"
                     />
-                    <span class="image-caption">Current image</span>
                 </div>
-                } -->
+                }
 
                 <!-- Input cho upload file mới -->
                 <label

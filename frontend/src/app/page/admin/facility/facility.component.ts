@@ -91,7 +91,7 @@ export class FacilityComponent implements OnInit {
 
     protected formFacility = new FormGroup({
         name: new FormControl('', Validators.required),
-        image: new FormControl<TuiFileLike | null>(null, Validators.required),
+        image: new FormControl<TuiFileLike | null>(null),
     });
 
     protected timePeriods = tuiCreateTimePeriods();
@@ -199,20 +199,72 @@ export class FacilityComponent implements OnInit {
         });
     }
 
+    // protected updateFacility(): void {
+    //     console.log('name', this.formFacility.get('name')?.value);
+    //     if (this.formFacility.invalid) {
+    //         this.formFacility.markAllAsTouched();
+    //         return;
+    //     }
+
+    //     const formData = new FormData();
+    //     formData.append('id', this.idFacilityUpdating);
+    //     formData.append('name', this.formFacility.get('name')?.value || '');
+    //     console.log(this.idFacilityUpdating);
+    //     console.log(this.formFacility.get('name')?.value);
+
+    //     const imageFile = this.formFacility.get('image')?.value;
+    //     if (imageFile instanceof File) {
+    //         formData.append('image', imageFile, imageFile.name);
+    //     }
+
+    //     this.facilityService.updateFacility(formData).subscribe({
+    //         next: (response) => {
+    //             console.log(response);
+    //             const updatedFacility = response.data as Facility;
+    //             this.facilities = this.facilities.map((facility) => {
+    //                 return facility.id === updatedFacility.id
+    //                     ? updatedFacility
+    //                     : facility;
+    //             });
+
+    //             // Show success message
+    //             console.log('Cập nhật cơ sở thành công');
+    //         },
+    //         error: (error) => {
+    //             console.error('Error updating facility:', error);
+    //             console.warn(
+    //                 'Cập nhật cơ sở thất bại: ' +
+    //                     (error.message || 'Đã xảy ra lỗi')
+    //             );
+    //         },
+    //         complete: () => {
+    //             // Hide loading indicator
+    //             console.log('Update facility request completed');
+    //         },
+    //     });
+    // }
     protected updateFacility(): void {
-        console.log('name', this.formFacility.get('name')?.value);
-        if (this.formFacility.invalid) {
-            this.formFacility.markAllAsTouched();
+        // Create form data for the update
+        const formData = new FormData();
+        formData.append('id', this.idFacilityUpdating);
+
+        // Get the name value
+        const nameValue = this.formFacility.get('name')?.value || '';
+
+        // Validate name field only
+        if (!nameValue.trim()) {
+            alert('Vui lòng nhập tên facility');
+            this.formFacility.get('name')?.markAsTouched();
             return;
         }
 
-        const formData = new FormData();
-        formData.append('id', this.idFacilityUpdating);
-        formData.append('name', this.formFacility.get('name')?.value || '');
-        console.log(this.idFacilityUpdating);
-        console.log(this.formFacility.get('name')?.value);
+        // Add name to form data
+        formData.append('name', nameValue);
 
+        // Only add image if a new one was selected
         const imageFile = this.formFacility.get('image')?.value;
+
+        // SOLUTION 1: If no new image, fetch the current image file and send it
         if (imageFile instanceof File) {
             formData.append('image', imageFile, imageFile.name);
         }
@@ -228,20 +280,29 @@ export class FacilityComponent implements OnInit {
                 });
 
                 // Show success message
-                console.log('Cập nhật cơ sở thành công');
+                alert('Cập nhật cơ sở thành công');
             },
             error: (error) => {
                 console.error('Error updating facility:', error);
-                console.warn(
+                alert(
                     'Cập nhật cơ sở thất bại: ' +
                         (error.message || 'Đã xảy ra lỗi')
                 );
             },
-            complete: () => {
-                // Hide loading indicator
-                console.log('Update facility request completed');
-            },
         });
+    }
+
+    protected getCurrentFacilityImageUrl(): string {
+        // Find the current facility being updated in the facilities array
+        const currentFacility = this.facilities.find(
+            (facility) => facility.id === this.idFacilityUpdating
+        );
+
+        // If facility is found and has an image, return the complete URL
+        if (currentFacility && currentFacility.image) {
+            return `http://localhost:8080/uploads/${currentFacility.image}`;
+        }
+        return 'assets/images/placeholder.png';
     }
     protected deleteFacility(id: string) {
         this.facilityService.deleteFacility(id).subscribe((_) => {
