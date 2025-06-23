@@ -69,6 +69,7 @@ func (s *serviceImpl) GetManagers(ctx *gin.Context, in *vo.GetManagerInput) (cod
 		}
 
 		out = append(out, &vo.GetManagerOutput{
+			ID:        manager.ID,
 			Account:   manager.Account,
 			Username:  manager.UserName,
 			IsDeleted: manager.IsDeleted == 1,
