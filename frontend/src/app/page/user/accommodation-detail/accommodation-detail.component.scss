@@ -151,17 +151,82 @@
                 overflow: hidden;
 
                 .rating-score {
-                    height: 20%;
+                    height: 30%;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: end;
+                    gap: 10px;
+                    padding: 15px;
+                    cursor: pointer;
+
+                    .total-score {
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: white;
+                        background-color: #003b95;
+                        padding: 10px;
+                        border-radius: 5px 5px 5px 0;
+                    }
+
+                    .text-container {
+                        .title-by-score {
+                            font-size: 16px;
+                            font-weight: bold;
+                        }
+
+                        .total-review {
+                            font-size: 12px;
+                            color: gray;
+                        }
+                    }
                 }
 
                 .comment {
-                    height: 60%;
+                    height: 70%;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                }
 
-                .service-staff-score {
-                    height: 20%;
+                    .user-like-title {
+                        font-size: 14px;
+                        margin: 10px;
+                    }
+
+                    .review-content-container {
+                        .review-item {
+                            display: flex;
+                            flex-direction: column-reverse;
+                            padding: 10px;
+                            height: auto;
+                            gap: 20px;
+
+                            .review-user-info {
+                                display: flex;
+                                flex-direction: row;
+                                align-items: center;
+                                gap: 10px;
+
+                                .user-avatar {
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 50%;
+                                    object-fit: cover;
+                                }
+
+                                .user-name {
+                                    font-size: 14px;
+                                }
+                            }
+
+                            .review-content {
+                                .review-text {
+                                    font-size: 14px;
+                                    margin: 10px 0;
+                                    color: rgba(0, 0, 0, 0.7);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

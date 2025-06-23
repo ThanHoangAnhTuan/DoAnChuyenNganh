@@ -17,6 +17,7 @@ import { PaymentService } from '../../../services/user/payment.service';
 import { TuiAlertService } from '@taiga-ui/core';
 import { AddressService } from '../../../services/address/address.service';
 import { City } from '../../../models/address/address.model';
+import { GetToken } from '../../../shared/token/token';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -40,6 +41,8 @@ export class AccommodationDetailComponent implements OnInit {
   accommodationId: string = '';
   accommodationCity: string = '';
   accommodationDistrict: string = '';
+  checkIn: string = '';
+  checkOut: string = '';
   accommodation: any;
   rooms: any[] = [];
   reviews: any[] = [];
@@ -118,6 +121,10 @@ export class AccommodationDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.accommodationId = this.route.snapshot.paramMap.get('id') ?? ''; // Lấy giá trị name trong url
+    this.route.queryParams.subscribe((params) => {
+      this.checkIn = params['checkIn'];
+      this.checkOut = params['checkOut'];
+    })
 
     if (this.accommodationId) {
       this.getAccommodationById(this.accommodationId);
@@ -136,7 +143,7 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodation = data.data;
         console.log("accommodation: ", this.accommodation);
 
-        this.getCityById(this.accommodation.city);
+        this.getCityBySlug(this.accommodation.city);
       } else {
         console.log("Can't get accommodation");
       }
@@ -187,13 +194,15 @@ export class AccommodationDetailComponent implements OnInit {
     }));
 
     const payment = {
-      check_in: "09-06-2025",
-      check_out: "12-06-2025",
+      check_in: this.checkIn,
+      check_out: this.checkOut,
       accommodation_id: this.accommodation.id,
       room_selected: roomSelected,
     };
 
-    const token = sessionStorage.getItem('token');
+    console.log(payment);
+
+    const token = GetToken();
 
     if (token == null) {
       this.getAlert('Notification', 'Please log in before pay for accommodation');
@@ -209,7 +218,7 @@ export class AccommodationDetailComponent implements OnInit {
           return;
         }
 
-        // Mở link thanh toán trong tab mới
+        // Open payment page in new tab
         window.open(response.body.data.url, '_blank');
       },
       error: (error) => {
@@ -219,14 +228,14 @@ export class AccommodationDetailComponent implements OnInit {
     });
   }
 
-  getCityById(id: string) {
-    this.addressService.getCityByLevel1id(id).subscribe((data: City[]) => {
+  getCityBySlug(slug: string) {
+    this.addressService.getCityBySlug(slug).subscribe((data: City[]) => {
       if (data) {
         this.accommodationCity = data[0].name;
 
-        const district = data[0].level2s.find(d => d.level2_id === this.accommodation.district);
+        const district = data[0].level2s.find(d => d.slug === this.accommodation.district);
         this.accommodationDistrict = district?.name ?? '';
-        
+
         // console.log("City: ", this.accommodationCity);
         // console.log("District", this.accommodationDistrict);
       } else {
@@ -362,5 +371,10 @@ export class AccommodationDetailComponent implements OnInit {
   goToSelectRoom() {
     // Cuộn đến phần tử
     this.availablilityRoomTop.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  changeDateDDMMYYYYToYYYYMMDD(date: string): string {
+    const [day, month, year] = date.split('-');
+    return `${year}-${month}-${day}`; // yyyy-MM-dd
   }
 }

@@ -46,7 +46,7 @@ export default class SearchBoxComponent implements OnInit {
     //danh sách các thành phố có sẵn để người dùng chọn
     protected cities: City[] = [];
     protected cityNames: string[] = [];
-    protected selectedCityId: string = '';
+    protected selectedCitySlug: string = '';
     protected level2Adress: any;
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
@@ -109,6 +109,7 @@ export default class SearchBoxComponent implements OnInit {
             }
         });
 
+
         this.searchCityControl.valueChanges.subscribe(
             (selectedCityName: string | null) => {
                 const selectedCity = this.cities.find(
@@ -163,6 +164,29 @@ export default class SearchBoxComponent implements OnInit {
         return this.searchCityControl.invalid && this.searchCityControl.touched;
     }
 
+    private getToday(): string {
+        const today = new Date();
+        const day = today.getDate().toString().padStart(2, '0');
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const year = today.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
+    private getDateAfterDays(daysToAdd: number): string {
+        const date = new Date();
+        date.setDate(date.getDate() + daysToAdd);
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
+    getDateFromQueryParam() {
+
+    }
+
     /**
      * Xử lý sự kiện tìm kiếm
      * - Kiểm tra validation
@@ -176,7 +200,9 @@ export default class SearchBoxComponent implements OnInit {
         }
         this.searchChanged.emit(this.searchCityControl.value ?? undefined);
         const city_name = this.searchCityControl.value;
-        const level1_id = this.selectedCityId;
+        const slug = this.selectedCitySlug;
+        const checkIn = this.getToday();
+        const checkOut = this.getDateAfterDays(7);
 
         if (this.DayControl.value) {
             // Định dạng ngày check-in và check-out
@@ -185,7 +211,7 @@ export default class SearchBoxComponent implements OnInit {
             //Chuyển hướng với thành phố và ngày người dùng đã nhập
             this.router.navigate(['/search', city_name], {
                 queryParams: {
-                    level1_id,
+                    slug,
                     checkIn,
                     checkOut,
                 },
@@ -195,8 +221,10 @@ export default class SearchBoxComponent implements OnInit {
         //chuyển hướng chỉ với thành phố
         this.router.navigate(['/search', city_name], {
             queryParams: {
-                level1_id,
-            },
+                slug,
+                checkIn,
+                checkOut,
+            }
         });
         return;
     }

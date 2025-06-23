@@ -2,6 +2,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { format } from 'date-fns';
+import { AccommodationDetailService } from '../../services/user/accommodation-detail.service';
 
 @Component({
   selector: 'app-payment',
@@ -21,7 +22,10 @@ export class PaymentComponent implements OnInit {
   response_code: string = '';
   transaction_no: string = '';
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    // private accommodationDetailService = AccommodationDetailService,
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -51,4 +55,6 @@ export class PaymentComponent implements OnInit {
       // console.log("transaction no: ", this.transaction_no);
     });
   }
+
+
 }
