@@ -1,0 +1,74 @@
+main {
+    margin-top: 20px;
+}
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.mr-8 {
+    margin-right: 8px;
+}
+
+.image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.text-red-500 {
+    color: red;
+}
+
+.text-nowrap {
+    text-wrap: nowrap;
+}
+
+.facilities-form {
+    margin: 24px 0;
+}
+
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.facility-heading {
+    margin-bottom: 8px;
+}
+
+.facility-item {
+    margin-bottom: 8px;
+}
+
+.facility-image {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.collapsed {
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.see-more-button {
+    color: #007bff;
+    cursor: pointer;
+    margin-top: 8px;
+    font-weight: bold;
+    text-align: right;
+}

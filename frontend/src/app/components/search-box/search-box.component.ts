@@ -47,6 +47,7 @@ export default class SearchBoxComponent implements OnInit {
     protected cities: City[] = [];
     protected cityNames: string[] = [];
     protected selectedCitySlug: string = '';
+    protected selectedCityId: string = '';
     protected level2Adress: any;
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
@@ -97,7 +98,7 @@ export default class SearchBoxComponent implements OnInit {
             console.log(this.cities);
             
             this.cityNames = this.cities.map((city) => city.name);
-            // console.log("data:", this.cities);
+            console.log("data:", this.cities);
         });
 
         // Lấy thành phố từ URL parameter
@@ -108,7 +109,6 @@ export default class SearchBoxComponent implements OnInit {
                 this.searchCityControl.setValue(cityParam);
             }
         });
-
 
         this.searchCityControl.valueChanges.subscribe(
             (selectedCityName: string | null) => {
