@@ -1,7 +1,9 @@
 package login
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -32,7 +34,10 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.ManagerLoginInput) (codeSta
 	// TODO: get manager info
 	userManager, err := m.sqlc.GetUserManager(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		}
+		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("get user manager failed: %s", err)
 	}
 
 	// TODO: check password match
@@ -118,6 +123,7 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.ManagerRegisterInput) (c
 	err = m.sqlc.CreateUserManage(ctx, database.CreateUserManageParams{
 		ID:        id,
 		Account:   in.UserAccount,
+		UserName:  in.Username,
 		Password:  hashPassword,
 		CreatedAt: now,
 		UpdatedAt: now,

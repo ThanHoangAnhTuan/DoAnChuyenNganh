@@ -31,6 +31,9 @@ func (t *serviceImpl) GetAccommodation(ctx *gin.Context, in *vo.GetAccommodation
 	// TODO: get accommodation by id
 	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.ID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
+		}
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id: %s", err)
 	}
 
@@ -102,6 +105,15 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 		return response.ErrCodeUnauthorized, nil, nil, fmt.Errorf("userID not found in context")
 	}
 
+	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, managerID)
+	if err != nil {
+		return response.ErrCodeCreateAccommodationFailed, nil, nil, fmt.Errorf("error for get manager: %s", err)
+	}
+
+	if !manager {
+		return response.ErrCodeManagerNotFound, nil, nil, fmt.Errorf("manager not found")
+	}
+
 	page := in.GetPage()
 	limit := in.GetLimit()
 
@@ -111,7 +123,7 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 	// TODO: get accommodations
 	totalAccommodation, err = t.sqlc.CountAccommodationByManager(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+		return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count accommodations failed: %s", err)
 	}
 
 	offset := (page - 1) * limit
@@ -555,7 +567,7 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	}
 
 	// TODO: get accommodation
-	accommodation, err := t.sqlc.GetAccommodationById(ctx, id)
+	accommodation, err := t.sqlc.GetAccommodationByIdAfterCreate(ctx, id)
 	if err != nil {
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
 	}

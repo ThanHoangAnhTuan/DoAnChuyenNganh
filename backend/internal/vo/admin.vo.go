@@ -33,3 +33,30 @@ type GetManagerOutput struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
+
+type GetAccommodationsOfManagerInput struct {
+	ManagerID string `uri:"id" validate:"required"`
+	BasePaginationInput
+}
+type GetAccommodationsOfManagerOutput struct {
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	City        string             `json:"city"`
+	Country     string             `json:"country"`
+	District    string             `json:"district"`
+	Address     string             `json:"address"`
+	Images      []string           `json:"images"`
+	Description string             `json:"description"`
+	Rating      uint8              `json:"rating"`
+	Facilities  []FacilitiesOutput `json:"facilities"`
+	GoogleMap   string             `json:"google_map"`
+	Rules       Rule               `json:"rules"`
+}
+
+type VerifyAccommodationInput struct {
+	AccommodationID string `json:"accommodation_id"`
+	Status          uint8  `json:"status"` // 1: verify, 0: unverify
+}
+
+type VerifyAccommodationOutput struct {
+}

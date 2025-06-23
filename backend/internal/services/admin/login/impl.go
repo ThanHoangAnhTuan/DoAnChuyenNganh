@@ -1,7 +1,9 @@
 package login
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -32,7 +34,10 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatu
 	// TODO: get admin info
 	userAdmin, err := m.sqlc.GetUserAdmin(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeUserAdminNotFound, nil, fmt.Errorf("user admin not found")
+		}
+		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get user admin failed: %s", err)
 	}
 
 	// TODO: check password match

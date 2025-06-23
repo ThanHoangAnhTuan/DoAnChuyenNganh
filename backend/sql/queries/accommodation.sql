@@ -36,7 +36,7 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0;
+    `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: GetAccommodationsByManager :many
 SELECT
@@ -56,7 +56,27 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = ?;
+    AND `manager_id` = ? AND `is_verified` = 1;
+
+-- name: GetAccommodationByIdAfterCreate :one
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `address`,
+    `description`,
+    `facilities`,
+    `gg_map`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `id` = ?
+    AND `is_deleted` = 0;
 
 -- name: GetAccommodationById :one
 SELECT
@@ -76,7 +96,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: GetAccommodationsByCity :many
 SELECT
@@ -92,7 +112,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `city` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: UpdateAccommodation :exec
 UPDATE `ecommerce_go_accommodation`
@@ -109,7 +129,7 @@ SET
     `updated_at` = ?
 WHERE
     `id` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: DeleteAccommodation :exec
 UPDATE `ecommerce_go_accommodation`
@@ -117,7 +137,8 @@ SET
     `is_deleted` = 1,
     `updated_at` = ?
 WHERE
-    `id` = ? AND `is_deleted` = 0;
+    `id` = ?
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: CheckAccommodationExists :one
 SELECT
@@ -127,7 +148,8 @@ SELECT
         FROM
             `ecommerce_go_accommodation`
         WHERE
-            `id` = ? AND `is_deleted` = 0
+            `id` = ?
+            AND `is_deleted` = 0 AND `is_verified` = 1
     );
 
 -- name: CountAccommodation :one
@@ -136,7 +158,16 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0;
+    `is_deleted` = 0 AND `is_verified` = 1;
+
+-- name: CountAccommodationOfManager :one
+SELECT
+    COUNT(*)
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `is_deleted` = 0
+    AND `manager_id` = sqlc.arg ("manager_id") AND `is_verified` = 1;
 
 -- name: CountAccommodationByCity :one
 SELECT
@@ -145,7 +176,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `city` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: CountAccommodationByManager :one
 SELECT
@@ -154,7 +185,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `manager_id` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
 
 -- name: GetAccommodationsWithPagination :many
 SELECT
@@ -173,7 +204,31 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
+    `is_deleted` = 0 AND `is_verified` = 1
+LIMIT
+    ?
+OFFSET
+    ?;
+
+-- name: GetAccommodationsOfManagerWithPagination :many
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `description`,
+    `facilities`,
+    `address`,
+    `gg_map`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
     `is_deleted` = 0
+    AND `manager_id` = ? AND `is_verified` = 1
 LIMIT
     ?
 OFFSET
@@ -197,7 +252,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `city` = ?
-    AND `is_deleted` = 0
+    AND `is_deleted` = 0 AND `is_verified` = 1
 LIMIT
     ?
 OFFSET
@@ -221,7 +276,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = ?
+    AND `manager_id` = ? AND `is_verified` = 1
 LIMIT
     ?
 OFFSET
@@ -234,4 +289,11 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0 AND `is_verified` = 1;
+
+-- name: UpdateStatusAccommodation :exec
+UPDATE `ecommerce_go_accommodation`
+SET
+    `is_verified` = sqlc.arg ("is_verified")
+WHERE
+    `id` = sqlc.arg ("id") AND `is_verified` = 1;
