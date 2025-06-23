@@ -36,16 +36,40 @@
 
         <div class="accommodation-review-map-container">
             <div class="accommodation-review-container">
-                <div class="rating-score">
-                    <div></div>
+                <div class="rating-score" (click)="toggleOpenReviewListModal()">
+                    <div class="text-container">
+                        <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+                        <p class="total-review">{{ reviews.length }} đánh giá</p>
+                    </div>
+
+                    <p class="total-score">{{ avarageRating }}</p>
                 </div>
 
                 <div class="comment">
+                    <p class="user-like-title">Khách lưu trú ở đây thích điều gì?</p>
 
-                </div>
+                    <div class="review-content-container">
+                        <div class="review-item" *ngFor="let review of reviews.slice(0,1)">
+                            <div class="review-user-info">
+                                <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
+                                    *ngIf="review.image == ''">
+                                <img [src]="review.image" alt="user avatar" class="user-avatar"
+                                    *ngIf="review.image != ''">
 
-                <div class="service-staff-score">
+                                <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
+                                <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
+                            </div>
 
+                            <div class="review-content">
+                                <p class="review-text">"{{ review.comment }}"</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -73,7 +97,7 @@
                 <p class="description-title">Về chỗ ở</p>
                 <div class="description-content-container" [class.collapsed]="!showFull">
                     <div class="description-content">
-                        <p>{{ accommodation?.description }}</p>
+                        <div [innerHTML]="accommodation?.description"></div>
                     </div>
                 </div>
                 <p (click)="toggleDescription()" *ngIf="isMobile" class="see-more-button">

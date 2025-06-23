@@ -33,7 +33,17 @@
                             'images'
                         ]">Quản lý hình ảnh</a>
                 </td>
-                <td *tuiCell="'Description'" tuiTd [innerHTML]="getDescription(accommodation.description)"></td>
+                <td *tuiCell="'Description'" tuiTd>
+                    <div #descEl [innerHTML]="getDescription(accommodation.description)"
+                        [attr.data-id]="accommodation.id" [class.collapsed]="!showFullMap[accommodation.id]">
+                    </div>
+
+                    @if(showButtonStates[accommodation.id]) {
+                    <p (click)="toggleDescription(accommodation.id)" class="see-more-button">
+                        {{ isDescriptionShown(accommodation.id) ? 'Thu gọn' : 'Xem thêm' }}
+                    </p>
+                    }
+                </td>
 
                 <td *tuiCell="'Rating'" tuiTd>
                     {{ accommodation.rating }}
