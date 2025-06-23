@@ -132,6 +132,8 @@ func (s *serviceImpl) GetAccommodationsOfManager(ctx *gin.Context, in *vo.GetAcc
 			GgMap:       acc.GgMap,
 			Facilities:  acc.Facilities,
 			Rules:       acc.Rules,
+			IsVerified:  acc.IsVerified == 1,
+			IsDeleted:   acc.IsDeleted == 1,
 		})
 	}
 
@@ -189,6 +191,8 @@ func (s *serviceImpl) GetAccommodationsOfManager(ctx *gin.Context, in *vo.GetAcc
 			Facilities:  facilities,
 			Rules:       rules,
 			Images:      imagePaths,
+			IsVerified:  accommodation.IsVerified,
+			IsDeleted:   accommodation.IsDeleted,
 		})
 	}
 
