@@ -242,7 +242,7 @@ func (t *serviceImpl) DeleteAccommodation(ctx *gin.Context, in *vo.DeleteAccommo
 	}
 
 	// TODO: check accommodation exists in database
-	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.ID)
+	accommodation, err := t.sqlc.GetAccommodationByIdNoVerify(ctx, in.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, fmt.Errorf("accommodation not found")
@@ -287,7 +287,7 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 	}
 
 	// TODO: get accommodation in database
-	accommodation, err := t.sqlc.GetAccommodationById(ctx, in.ID)
+	accommodation, err := t.sqlc.GetAccommodationByIdNoVerify(ctx, in.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")

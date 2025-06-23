@@ -19,7 +19,7 @@ SELECT
             ` + "`" + `ecommerce_go_accommodation` + "`" + `
         WHERE
             ` + "`" + `id` + "`" + ` = ?
-            AND ` + "`" + `is_deleted` + "`" + ` = 0 AND ` + "`" + `is_verified` + "`" + ` = 1
+            AND ` + "`" + `is_deleted` + "`" + ` = 0
     )
 `
 
@@ -70,7 +70,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
     ` + "`" + `manager_id` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0 AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 func (q *Queries) CountAccommodationByManager(ctx context.Context, managerID string) (int64, error) {
@@ -87,7 +87,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
     ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ? AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `manager_id` + "`" + ` = ?
 `
 
 func (q *Queries) CountAccommodationOfManager(ctx context.Context, managerID string) (int64, error) {
@@ -163,7 +163,7 @@ SET
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0 AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type DeleteAccommodationParams struct {
@@ -271,6 +271,62 @@ type GetAccommodationByIdAfterCreateRow struct {
 func (q *Queries) GetAccommodationByIdAfterCreate(ctx context.Context, id string) (GetAccommodationByIdAfterCreateRow, error) {
 	row := q.db.QueryRowContext(ctx, getAccommodationByIdAfterCreate, id)
 	var i GetAccommodationByIdAfterCreateRow
+	err := row.Scan(
+		&i.ID,
+		&i.ManagerID,
+		&i.Country,
+		&i.Name,
+		&i.City,
+		&i.District,
+		&i.Address,
+		&i.Description,
+		&i.Facilities,
+		&i.GgMap,
+		&i.Rules,
+		&i.Rating,
+	)
+	return i, err
+}
+
+const getAccommodationByIdNoVerify = `-- name: GetAccommodationByIdNoVerify :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `manager_id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `address` + "`" + `,
+    ` + "`" + `description` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `rules` + "`" + `,
+    ` + "`" + `rating` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+type GetAccommodationByIdNoVerifyRow struct {
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Address     string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Rules       json.RawMessage
+	Rating      uint8
+}
+
+func (q *Queries) GetAccommodationByIdNoVerify(ctx context.Context, id string) (GetAccommodationByIdNoVerifyRow, error) {
+	row := q.db.QueryRowContext(ctx, getAccommodationByIdNoVerify, id)
+	var i GetAccommodationByIdNoVerifyRow
 	err := row.Scan(
 		&i.ID,
 		&i.ManagerID,
@@ -536,7 +592,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
     ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ? AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `manager_id` + "`" + ` = ?
 `
 
 type GetAccommodationsByManagerRow struct {
@@ -608,7 +664,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
     ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ? AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `manager_id` + "`" + ` = ?
 LIMIT
     ?
 OFFSET
@@ -690,7 +746,7 @@ FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
     ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ? AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `manager_id` + "`" + ` = ?
 LIMIT
     ?
 OFFSET
@@ -849,7 +905,7 @@ SET
     ` + "`" + `updated_at` + "`" + ` = ?
 WHERE
     ` + "`" + `id` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0 AND ` + "`" + `is_verified` + "`" + ` = 1
+    AND ` + "`" + `is_deleted` + "`" + ` = 0
 `
 
 type UpdateAccommodationParams struct {
@@ -888,7 +944,7 @@ UPDATE ` + "`" + `ecommerce_go_accommodation` + "`" + `
 SET
     ` + "`" + `is_verified` + "`" + ` = ?
 WHERE
-    ` + "`" + `id` + "`" + ` = ? AND ` + "`" + `is_verified` + "`" + ` = 1
+    ` + "`" + `id` + "`" + ` = ?
 `
 
 type UpdateStatusAccommodationParams struct {

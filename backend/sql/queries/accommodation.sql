@@ -56,7 +56,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = ? AND `is_verified` = 1;
+    AND `manager_id` = ?;
 
 -- name: GetAccommodationByIdAfterCreate :one
 SELECT
@@ -98,6 +98,28 @@ WHERE
     `id` = ?
     AND `is_deleted` = 0 AND `is_verified` = 1;
 
+
+-- name: GetAccommodationByIdNoVerify :one
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `address`,
+    `description`,
+    `facilities`,
+    `gg_map`,
+    `rules`,
+    `rating`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `id` = ?
+    AND `is_deleted` = 0;
+
+
 -- name: GetAccommodationsByCity :many
 SELECT
     `id`,
@@ -129,7 +151,7 @@ SET
     `updated_at` = ?
 WHERE
     `id` = ?
-    AND `is_deleted` = 0 AND `is_verified` = 1;
+    AND `is_deleted` = 0;
 
 -- name: DeleteAccommodation :exec
 UPDATE `ecommerce_go_accommodation`
@@ -138,7 +160,7 @@ SET
     `updated_at` = ?
 WHERE
     `id` = ?
-    AND `is_deleted` = 0 AND `is_verified` = 1;
+    AND `is_deleted` = 0;
 
 -- name: CheckAccommodationExists :one
 SELECT
@@ -149,7 +171,7 @@ SELECT
             `ecommerce_go_accommodation`
         WHERE
             `id` = ?
-            AND `is_deleted` = 0 AND `is_verified` = 1
+            AND `is_deleted` = 0
     );
 
 -- name: CountAccommodation :one
@@ -167,7 +189,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = sqlc.arg ("manager_id") AND `is_verified` = 1;
+    AND `manager_id` = sqlc.arg ("manager_id");
 
 -- name: CountAccommodationByCity :one
 SELECT
@@ -185,7 +207,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `manager_id` = ?
-    AND `is_deleted` = 0 AND `is_verified` = 1;
+    AND `is_deleted` = 0;
 
 -- name: GetAccommodationsWithPagination :many
 SELECT
@@ -228,7 +250,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = ? AND `is_verified` = 1
+    AND `manager_id` = ?
 LIMIT
     ?
 OFFSET
@@ -276,7 +298,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `is_deleted` = 0
-    AND `manager_id` = ? AND `is_verified` = 1
+    AND `manager_id` = ?
 LIMIT
     ?
 OFFSET
@@ -296,4 +318,4 @@ UPDATE `ecommerce_go_accommodation`
 SET
     `is_verified` = sqlc.arg ("is_verified")
 WHERE
-    `id` = sqlc.arg ("id") AND `is_verified` = 1;
+    `id` = sqlc.arg ("id");
