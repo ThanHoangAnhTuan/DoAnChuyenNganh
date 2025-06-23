@@ -13,10 +13,11 @@ import { TuiCardLarge } from '@taiga-ui/layout';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../../services/manager/image.service';
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     selector: 'app-media-library',
-    imports: [ReactiveFormsModule, TuiCardLarge, TuiFiles, TuiButton],
+    imports: [ReactiveFormsModule, TuiCardLarge, TuiFiles, TuiButton, NavbarComponent],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',
 })

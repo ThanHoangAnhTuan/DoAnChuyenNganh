@@ -42,43 +42,6 @@
 
 <ng-template #content>
     <tui-data-list role="menu">
-        <!-- @for (group of groups; track group.label) {
-        <tui-opt-group [label]="group.label">
-            @for (item of group.items; track item.label) {
-            <a
-                #rla="routerLinkActive"
-                role="menuitemradio"
-                routerLinkActive
-                tuiOption
-                [attr.aria-checked]="rla.isActive"
-                [routerLink]="item.routerLink"
-            >
-                <div class="menu-item-content">
-                    <tui-icon
-                        [icon]="item.icon || 'tuiIconHelp'"
-                        [style.color]="item.icon || 'inherit'"
-                        class="menu-item-icon"
-                    ></tui-icon>
-                    {{ item.label }}
-                </div>
-            </a>
-            }
-        </tui-opt-group>
-        } @if (isUserLoggedIn) {
-        <a role="menuitem" tuiOption (click)="logout()">
-            <div class="menu-item-content">
-                <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>
-                Logout
-            </div>
-        </a>
-        } @else if (isManagerLoggedIn) {
-        <a role="menuitem" tuiOption (click)="logout()">
-            <div class="menu-item-content">
-                <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>
-                Logout
-            </div>
-        </a>
-        } -->
         @if (isUserLoggedIn) {
         <!-- Menu cho User thông thường -->
         @for (group of groups; track group.label) {
@@ -113,7 +76,19 @@
             </div>
         </a>
         } @if (isManagerLoggedIn) {
-        <!-- Chỉ hiển thị logout cho Manager -->
+        <a
+            role="menuitem"
+            tuiOption
+            [routerLink]="['/manager/accommodation/stats']"
+        >
+            <div class="menu-item-content">
+                <tui-icon
+                    icon="@tui.chart-line"
+                    class="menu-item-icon"
+                ></tui-icon>
+                Your Stats
+            </div>
+        </a>
         <a role="menuitem" tuiOption [routerLink]="['/manager/accommodation']">
             <div class="menu-item-content">
                 <tui-icon
@@ -147,6 +122,15 @@
                     class="menu-item-icon"
                 ></tui-icon>
                 Your Facility Details
+            </div>
+        </a>
+        <a role="menuitem" tuiOption [routerLink]="['/admin/manager']">
+            <div class="menu-item-content">
+                <tui-icon
+                    icon="@tui.layout-dashboard"
+                    class="menu-item-icon"
+                ></tui-icon>
+                Manager Accounts
             </div>
         </a>
         <a role="menuitem" tuiOption (click)="logout()">

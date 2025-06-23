@@ -5,10 +5,11 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { StatsService } from '../../../services/manager/stat.service';
 import { Observable } from 'rxjs';
+import { NavbarComponent } from "../../../components/navbar/navbar.component";
 
 @Component({
     selector: 'app-stats',
-    imports: [FormsModule, NgIf, NgFor, BaseChartDirective],
+    imports: [FormsModule, NgIf, NgFor, BaseChartDirective, NavbarComponent],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss',
 })

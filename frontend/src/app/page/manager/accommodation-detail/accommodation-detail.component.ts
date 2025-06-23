@@ -105,6 +105,8 @@ export class AccommodationDetailComponent implements OnInit {
         facilityDetails: new FormControl<string | ''>(''),
     });
     protected formFacilityDetail = new FormGroup({});
+    protected accommodationId: string = '';
+
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
         availableRooms: 0,
@@ -122,13 +124,12 @@ export class AccommodationDetailComponent implements OnInit {
     protected accommodations!: Accommodation[];
 
     protected accommodationItems: readonly AccommodationSelect[] = [];
-    protected accommodationId: string = '';
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
         private accommodationService: AccommodationService,
         private facilityDetailService: FacilityDetailService
-    ) { }
+    ) {}
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
@@ -282,7 +283,7 @@ export class AccommodationDetailComponent implements OnInit {
 
         if (this.formAccommodationDetail.invalid) {
             this.formAccommodationDetail.markAllAsTouched();
-            console.log("here");
+            console.log('here');
             return;
         }
 
@@ -350,12 +351,12 @@ export class AccommodationDetailComponent implements OnInit {
     protected readonly contentAccommodation: PolymorpheusContent<
         TuiContext<string | null>
     > = ({ $implicit: id }) =>
-            this.accommodationItems.find((item) => item.id === id)?.name ?? '';
+        this.accommodationItems.find((item) => item.id === id)?.name ?? '';
 
     protected readonly discountItems: readonly DiscountSelect[] = [];
 
     protected readonly contentDiscount: PolymorpheusContent<
         TuiContext<string | null>
     > = ({ $implicit: id }) =>
-            this.discountItems.find((item) => item.id === id)?.name ?? '';
+        this.discountItems.find((item) => item.id === id)?.name ?? '';
 }
