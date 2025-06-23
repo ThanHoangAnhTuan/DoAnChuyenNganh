@@ -20,3 +20,15 @@ type AdminInfor struct {
 	Account  string `json:"account" validate:"required"`
 	UserName string `json:"user_name" validate:"required"`
 }
+
+type GetManagerInput struct {
+	BasePaginationInput
+}
+
+type GetManagerOutput struct {
+	Account   string `json:"account"`
+	Username  string `json:"username"`
+	IsDeleted bool   `json:"is_deleted"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}

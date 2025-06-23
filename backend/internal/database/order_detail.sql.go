@@ -19,11 +19,12 @@ INSERT INTO
         ` + "`" + `price` + "`" + `,
         ` + "`" + `quantity` + "`" + `,
         ` + "`" + `accommodation_detail_id` + "`" + `,
+        ` + "`" + `accommodation_room_id` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateOrderDetailParams struct {
@@ -32,6 +33,7 @@ type CreateOrderDetailParams struct {
 	Price                 decimal.Decimal
 	Quantity              uint8
 	AccommodationDetailID string
+	AccommodationRoomID   string
 	CreatedAt             uint64
 	UpdatedAt             uint64
 }
@@ -43,6 +45,7 @@ func (q *Queries) CreateOrderDetail(ctx context.Context, arg CreateOrderDetailPa
 		arg.Price,
 		arg.Quantity,
 		arg.AccommodationDetailID,
+		arg.AccommodationRoomID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
@@ -64,15 +67,25 @@ WHERE
     ` + "`" + `order_id` + "`" + ` = ?
 `
 
-func (q *Queries) GetOrderDetails(ctx context.Context, orderID string) ([]EcommerceGoOrderDetail, error) {
+type GetOrderDetailsRow struct {
+	ID                    string
+	OrderID               string
+	Price                 decimal.Decimal
+	Quantity              uint8
+	AccommodationDetailID string
+	CreatedAt             uint64
+	UpdatedAt             uint64
+}
+
+func (q *Queries) GetOrderDetails(ctx context.Context, orderID string) ([]GetOrderDetailsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getOrderDetails, orderID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []EcommerceGoOrderDetail
+	var items []GetOrderDetailsRow
 	for rows.Next() {
-		var i EcommerceGoOrderDetail
+		var i GetOrderDetailsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.OrderID,

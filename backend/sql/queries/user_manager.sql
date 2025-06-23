@@ -17,7 +17,6 @@ SET
 WHERE
     `account` = ?;
 
-
 -- name: GetUserManager :one
 SELECT
     `id`,
@@ -31,16 +30,16 @@ WHERE
     AND `is_deleted` = 0;
 
 -- name: CheckUserManagerExistsByEmail :one
-SELECT EXISTS (
-    SELECT
-        1
-    FROM
-        `ecommerce_go_user_manager`
-    WHERE
-        `account` = ?
-        AND `is_deleted` = 0
-);
-
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_user_manager`
+        WHERE
+            `account` = ?
+            AND `is_deleted` = 0
+    );
 
 -- name: CheckUserManagerExistsByID :one
 SELECT
@@ -74,3 +73,28 @@ SELECT
             m.id = ?
             AND ad.id = ?
     );
+
+-- name: CountNumberOfManagers :one
+SELECT
+    COUNT(egum.id)
+FROM
+    `ecommerce_go_user_manager` egum;
+
+-- name: GetManagers :many
+SELECT
+    `id`,
+    `account`,
+    `user_name`,
+    `is_deleted`,
+    `login_time`,
+    `logout_time`,
+    `created_at`,
+    `updated_at`
+FROM
+    `ecommerce_go_user_manager`
+WHERE
+    `is_deleted` = 0
+LIMIT
+    ?
+OFFSET
+    ?;

@@ -8,7 +8,7 @@ CREATE TABLE
         `guests` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'number of guests',
         `beds` JSON NOT NULL COMMENT 'number of beds',
         `facilities` JSON NOT NULL COMMENT 'facilities',
-        `available_rooms` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'available rooms',
+        -- `available_rooms` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'available rooms',
         `price` DECIMAL(15, 0) NOT NULL COMMENT 'price',
         `discount_id` VARCHAR(36) COMMENT 'discount ID',
         `is_verified` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'is verified: 0 - unverified, 1 - verified',

@@ -83,8 +83,8 @@ type CreateOrderParams struct {
 	OrderStatus     EcommerceGoOrderOrderStatus
 	AccommodationID string
 	VoucherID       sql.NullString
-	CheckinDate     string
-	CheckoutDate    string
+	CheckinDate     uint64
+	CheckoutDate    uint64
 	CreatedAt       uint64
 	UpdatedAt       uint64
 }
@@ -245,8 +245,8 @@ type GetOrderInfoByOrderIDExternalRow struct {
 	OrderIDExternal string
 	FinalTotal      decimal.Decimal
 	OrderStatus     EcommerceGoOrderOrderStatus
-	CheckinDate     string
-	CheckoutDate    string
+	CheckinDate     uint64
+	CheckoutDate    uint64
 	CreatedAt       uint64
 }
 
@@ -303,8 +303,8 @@ type GetOrdersByManagerRow struct {
 	OrderID           string
 	FinalTotal        decimal.Decimal
 	OrderStatus       EcommerceGoOrderOrderStatus
-	CheckinDate       string
-	CheckoutDate      string
+	CheckinDate       uint64
+	CheckoutDate      uint64
 	Email             string
 	Username          string
 	Phone             sql.NullString
@@ -378,8 +378,8 @@ type GetOrdersByUserRow struct {
 	OrderID           string
 	FinalTotal        decimal.Decimal
 	OrderStatus       EcommerceGoOrderOrderStatus
-	CheckinDate       string
-	CheckoutDate      string
+	CheckinDate       uint64
+	CheckoutDate      uint64
 	AccommodationName string
 	AccommodationID   string
 }
