@@ -58,26 +58,6 @@ WHERE
     `is_deleted` = 0
     AND `manager_id` = ?;
 
--- name: GetAccommodationByIdAfterCreate :one
-SELECT
-    `id`,
-    `manager_id`,
-    `country`,
-    `name`,
-    `city`,
-    `district`,
-    `address`,
-    `description`,
-    `facilities`,
-    `gg_map`,
-    `rules`,
-    `rating`
-FROM
-    `ecommerce_go_accommodation`
-WHERE
-    `id` = ?
-    AND `is_deleted` = 0;
-
 -- name: GetAccommodationById :one
 SELECT
     `id`,
@@ -234,18 +214,7 @@ OFFSET
 
 -- name: GetAccommodationsOfManagerWithPagination :many
 SELECT
-    `id`,
-    `manager_id`,
-    `country`,
-    `name`,
-    `city`,
-    `district`,
-    `description`,
-    `facilities`,
-    `address`,
-    `gg_map`,
-    `rules`,
-    `rating`
+    *
 FROM
     `ecommerce_go_accommodation`
 WHERE

@@ -47,7 +47,7 @@ func (a *serviceImpl) CreateAccommodationDetail(ctx *gin.Context, in *vo.CreateA
 	}
 
 	// TODO: check accommodation exists
-	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
+	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
@@ -177,7 +177,7 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 	out = []*vo.GetAccommodationDetailsOutput{}
 
 	// TODO: check accommodation exists
-	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
+	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
@@ -294,7 +294,7 @@ func (a *serviceImpl) UpdateAccommodationDetail(ctx *gin.Context, in *vo.UpdateA
 	}
 
 	// TODO: check accommodation exists
-	accommodation, err := a.sqlc.GetAccommodationById(ctx, in.AccommodationID)
+	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")

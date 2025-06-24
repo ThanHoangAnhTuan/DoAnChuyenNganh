@@ -232,62 +232,6 @@ func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccom
 	return i, err
 }
 
-const getAccommodationByIdAfterCreate = `-- name: GetAccommodationByIdAfterCreate :one
-SELECT
-    ` + "`" + `id` + "`" + `,
-    ` + "`" + `manager_id` + "`" + `,
-    ` + "`" + `country` + "`" + `,
-    ` + "`" + `name` + "`" + `,
-    ` + "`" + `city` + "`" + `,
-    ` + "`" + `district` + "`" + `,
-    ` + "`" + `address` + "`" + `,
-    ` + "`" + `description` + "`" + `,
-    ` + "`" + `facilities` + "`" + `,
-    ` + "`" + `gg_map` + "`" + `,
-    ` + "`" + `rules` + "`" + `,
-    ` + "`" + `rating` + "`" + `
-FROM
-    ` + "`" + `ecommerce_go_accommodation` + "`" + `
-WHERE
-    ` + "`" + `id` + "`" + ` = ?
-    AND ` + "`" + `is_deleted` + "`" + ` = 0
-`
-
-type GetAccommodationByIdAfterCreateRow struct {
-	ID          string
-	ManagerID   string
-	Country     string
-	Name        string
-	City        string
-	District    string
-	Address     string
-	Description string
-	Facilities  json.RawMessage
-	GgMap       string
-	Rules       json.RawMessage
-	Rating      uint8
-}
-
-func (q *Queries) GetAccommodationByIdAfterCreate(ctx context.Context, id string) (GetAccommodationByIdAfterCreateRow, error) {
-	row := q.db.QueryRowContext(ctx, getAccommodationByIdAfterCreate, id)
-	var i GetAccommodationByIdAfterCreateRow
-	err := row.Scan(
-		&i.ID,
-		&i.ManagerID,
-		&i.Country,
-		&i.Name,
-		&i.City,
-		&i.District,
-		&i.Address,
-		&i.Description,
-		&i.Facilities,
-		&i.GgMap,
-		&i.Rules,
-		&i.Rating,
-	)
-	return i, err
-}
-
 const getAccommodationByIdNoVerify = `-- name: GetAccommodationByIdNoVerify :one
 SELECT
     ` + "`" + `id` + "`" + `,
@@ -730,18 +674,7 @@ func (q *Queries) GetAccommodationsByManagerWithPagination(ctx context.Context, 
 
 const getAccommodationsOfManagerWithPagination = `-- name: GetAccommodationsOfManagerWithPagination :many
 SELECT
-    ` + "`" + `id` + "`" + `,
-    ` + "`" + `manager_id` + "`" + `,
-    ` + "`" + `country` + "`" + `,
-    ` + "`" + `name` + "`" + `,
-    ` + "`" + `city` + "`" + `,
-    ` + "`" + `district` + "`" + `,
-    ` + "`" + `description` + "`" + `,
-    ` + "`" + `facilities` + "`" + `,
-    ` + "`" + `address` + "`" + `,
-    ` + "`" + `gg_map` + "`" + `,
-    ` + "`" + `rules` + "`" + `,
-    ` + "`" + `rating` + "`" + `
+    id, manager_id, name, country, city, district, address, description, facilities, rating, gg_map, rules, is_verified, is_deleted, created_at, updated_at
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
@@ -759,43 +692,32 @@ type GetAccommodationsOfManagerWithPaginationParams struct {
 	Offset    int32
 }
 
-type GetAccommodationsOfManagerWithPaginationRow struct {
-	ID          string
-	ManagerID   string
-	Country     string
-	Name        string
-	City        string
-	District    string
-	Description string
-	Facilities  json.RawMessage
-	Address     string
-	GgMap       string
-	Rules       json.RawMessage
-	Rating      uint8
-}
-
-func (q *Queries) GetAccommodationsOfManagerWithPagination(ctx context.Context, arg GetAccommodationsOfManagerWithPaginationParams) ([]GetAccommodationsOfManagerWithPaginationRow, error) {
+func (q *Queries) GetAccommodationsOfManagerWithPagination(ctx context.Context, arg GetAccommodationsOfManagerWithPaginationParams) ([]EcommerceGoAccommodation, error) {
 	rows, err := q.db.QueryContext(ctx, getAccommodationsOfManagerWithPagination, arg.ManagerID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAccommodationsOfManagerWithPaginationRow
+	var items []EcommerceGoAccommodation
 	for rows.Next() {
-		var i GetAccommodationsOfManagerWithPaginationRow
+		var i EcommerceGoAccommodation
 		if err := rows.Scan(
 			&i.ID,
 			&i.ManagerID,
-			&i.Country,
 			&i.Name,
+			&i.Country,
 			&i.City,
 			&i.District,
+			&i.Address,
 			&i.Description,
 			&i.Facilities,
-			&i.Address,
+			&i.Rating,
 			&i.GgMap,
 			&i.Rules,
-			&i.Rating,
+			&i.IsVerified,
+			&i.IsDeleted,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

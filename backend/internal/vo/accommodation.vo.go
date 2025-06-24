@@ -152,4 +152,6 @@ type AccommodationData struct {
 	GgMap       string
 	Rules       json.RawMessage
 	Rating      uint8
+	IsVerified  bool
+	IsDeleted   bool
 }

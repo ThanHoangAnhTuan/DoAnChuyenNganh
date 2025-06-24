@@ -567,7 +567,7 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	}
 
 	// TODO: get accommodation
-	accommodation, err := t.sqlc.GetAccommodationByIdAfterCreate(ctx, id)
+	accommodation, err := t.sqlc.GetAccommodationByIdNoVerify(ctx, id)
 	if err != nil {
 		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
 	}
