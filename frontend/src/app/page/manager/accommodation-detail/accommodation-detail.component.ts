@@ -40,6 +40,10 @@ import {
 import { TuiContext } from '@taiga-ui/cdk';
 import { FacilityDetail } from '../../../models/facility/facility.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -63,9 +67,13 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
         TuiSelect,
         TuiChevron,
         NavbarComponent,
+        Toast,
+        ButtonModule,
+        Ripple,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
+    providers: [MessageService],
 })
 export class AccommodationDetailComponent implements OnInit {
     protected accommodationDetails!: AccommodationDetails[];
@@ -128,8 +136,16 @@ export class AccommodationDetailComponent implements OnInit {
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
         private accommodationService: AccommodationService,
-        private facilityDetailService: FacilityDetailService
+        private facilityDetailService: FacilityDetailService,
+        private messageService: MessageService
     ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
@@ -282,6 +298,11 @@ export class AccommodationDetailComponent implements OnInit {
         console.log(accommodationDetail);
 
         if (this.formAccommodationDetail.invalid) {
+            this.showToast(
+                'error',
+                'Tạo chi tiết chỗ ở thất bại',
+                'Vui lòng điền đầy đủ thông tin'
+            );
             this.formAccommodationDetail.markAllAsTouched();
             console.log('here');
             return;
@@ -293,6 +314,11 @@ export class AccommodationDetailComponent implements OnInit {
                 this.accommodationDetails.push(response.data);
                 this.formAccommodationDetail.reset();
                 this.formFacilityDetail.reset();
+                this.showToast(
+                    'success',
+                    'Tạo chi tiết chỗ ở thành công',
+                    'Chi tiết chỗ ở đã được tạo thành công'
+                );
             });
     }
 
@@ -335,6 +361,11 @@ export class AccommodationDetailComponent implements OnInit {
                         }
                     }
                 );
+                this.showToast(
+                    'success',
+                    'Cập nhật chi tiết chỗ ở thành công',
+                    'Chi tiết chỗ ở đã được cập nhật thành công'
+                );
             });
     }
 
@@ -344,6 +375,11 @@ export class AccommodationDetailComponent implements OnInit {
             .subscribe((response) => {
                 this.accommodationDetails = this.accommodationDetails.filter(
                     (accommodationDetail) => accommodationDetail.id !== id
+                );
+                this.showToast(
+                    'success',
+                    'Xóa chi tiết chỗ ở thành công',
+                    'Chi tiết chỗ ở đã được xóa thành công'
                 );
             });
     }

@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <app-navbar></app-navbar>
 <main>
     <form
@@ -34,7 +35,7 @@
     </form>
 </main>
 
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: row">
     @if (imagesPreview.length > 0) {
     <div style="display: flex; gap: 10px; flex-direction: row; padding: 10px">
         @for(image of imagesPreview; track $index; let i = $index) {
