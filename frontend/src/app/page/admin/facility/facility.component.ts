@@ -39,6 +39,10 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import type { TuiFileLike } from '@taiga-ui/kit';
 import { finalize, of, Subject, switchMap } from 'rxjs';
 import type { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-facility',
@@ -61,10 +65,14 @@ import type { Observable } from 'rxjs';
         FormsModule,
         TuiFiles,
         NgIf,
+        Toast,
+        ButtonModule,
+        Ripple,
     ],
     templateUrl: './facility.component.html',
     styleUrl: './facility.component.scss',
     providers: [
+        MessageService,
         TuiConfirmService,
         {
             provide: TuiDialogService,
@@ -96,17 +104,24 @@ export class FacilityComponent implements OnInit {
 
     protected timePeriods = tuiCreateTimePeriods();
 
-    constructor(private facilityService: FacilityService) {}
-
+    constructor(
+        private facilityService: FacilityService,
+        private messageService: MessageService
+    ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
     ngOnInit() {
         this.facilityService.getFacilities().subscribe({
             next: (response) => {
                 this.facilities = response.data;
-                // this.createFacilityControls();
-                // console.log('Facilities:', this.facilities);
             },
             error: (error) => {
-                console.error('Error fetching facilities:', error);
+                this.showToast('error', 'Error fetching facilities:', error);
             },
         });
     }
@@ -158,13 +173,21 @@ export class FacilityComponent implements OnInit {
         // const imageValue = imageControl?.value;
 
         if (!nameValue) {
-            alert('Vui lòng nhập tên facility');
+            this.showToast(
+                'warn',
+                'Facility Issue',
+                'Vui lòng nhập tên facility'
+            );
             this.formFacility.markAllAsTouched();
             return;
         }
 
         if (!imageControlValue || !(imageControlValue instanceof File)) {
-            alert('Vui lòng chọn hình ảnh cho facility');
+            this.showToast(
+                'warn',
+                'Facility Issue',
+                'Vui lòng chọn hình ảnh cho facility'
+            );
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -189,11 +212,17 @@ export class FacilityComponent implements OnInit {
                 ) {
                     this.control.reset();
                 }
+                this.showToast(
+                    'success',
+                    'Facility Created',
+                    'Cơ sở đã được tạo thành công'
+                );
             },
             error: (error) => {
-                console.error('Lỗi từ server:', error);
-                alert(
-                    `Lỗi khi tạo facility: ${error.message || 'Unknown error'}`
+                this.showToast(
+                    'error',
+                    'Facility Creation Error',
+                    `Lỗi khi tạo cơ sở: ${error.message || 'Unknown error'}`
                 );
             },
         });
@@ -253,7 +282,7 @@ export class FacilityComponent implements OnInit {
 
         // Validate name field only
         if (!nameValue.trim()) {
-            alert('Vui lòng nhập tên facility');
+            // Show error message if name is empty
             this.formFacility.get('name')?.markAsTouched();
             return;
         }
@@ -280,13 +309,20 @@ export class FacilityComponent implements OnInit {
                 });
 
                 // Show success message
-                alert('Cập nhật cơ sở thành công');
+                this.showToast(
+                    'success',
+                    'Facility Updated',
+                    'Cơ sở đã được cập nhật thành công'
+                );
             },
             error: (error) => {
-                console.error('Error updating facility:', error);
-                alert(
-                    'Cập nhật cơ sở thất bại: ' +
-                        (error.message || 'Đã xảy ra lỗi')
+                // Handle error
+                this.showToast(
+                    'error',
+                    'Facility Update Error',
+                    `Lỗi khi cập nhật cơ sở: ${
+                        error.message || 'Unknown error'
+                    }`
                 );
             },
         });
@@ -310,6 +346,11 @@ export class FacilityComponent implements OnInit {
                 (facility) => facility.id !== id
             );
         });
+        this.showToast(
+            'success',
+            'Facility Deleted',
+            'Cơ sở đã được xóa thành công'
+        );
     }
     protected get control(): FormControl<TuiFileLike | null> {
         return this.formFacility.get(

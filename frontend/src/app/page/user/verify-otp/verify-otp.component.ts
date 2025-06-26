@@ -5,12 +5,17 @@ import { OTP, UpdatePassword } from '../../../models/user/auth.model';
 import { interval, Subscription, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/user/auth.service';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-verify-otp',
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule, CommonModule, Toast, ButtonModule, Ripple],
     templateUrl: './verify-otp.component.html',
     styleUrl: './verify-otp.component.scss',
+    providers: [MessageService],
 })
 export class VerifyOtpComponent implements OnInit {
     otp: string = '';
@@ -45,8 +50,16 @@ export class VerifyOtpComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private messageService: MessageService
     ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
 
     ngOnInit(): void {
         // Lấy email từ query params
@@ -55,6 +68,11 @@ export class VerifyOtpComponent implements OnInit {
                 params['email'] || localStorage.getItem('resetEmail') || '';
             console.log('Email from query param:', this.email);
             if (!this.email) {
+                this.showToast(
+                    'error',
+                    'Lỗi xác thực',
+                    'Không tìm thấy email để xác thực. Vui lòng thử lại.'
+                );
                 // Redirect to forgot password if no email found
                 this.router.navigate(['/']);
                 return;
@@ -260,12 +278,17 @@ export class VerifyOtpComponent implements OnInit {
 
         // Validate OTP length
         if (otpCode.length !== 6) {
-            this.errorMessage = 'Vui lòng nhập đầy đủ mã OTP 6 số';
+            this.showToast(
+                'warn',
+                'Thông tin không hợp lệ',
+                'Vui lòng nhập đầy đủ mã OTP 6 số.'
+            );
+            // this.errorMessage = 'Vui lòng nhập đầy đủ mã OTP 6 số';
             return;
         }
 
         this.isVerifying = true;
-        this.errorMessage = '';
+        // this.errorMessage = '';
 
         // Create otpData object
         const otpData: OTP = {
@@ -284,13 +307,21 @@ export class VerifyOtpComponent implements OnInit {
 
                 // Success - move to step 2
                 this.step = 2;
+                this.showToast(
+                    'success',
+                    'Xác thực thành công',
+                    'Mã OTP đã được xác thực thành công. Vui lòng cập nhật mật khẩu mới.'
+                );
                 this.isVerifying = false;
             },
             error: (error) => {
-                console.error('OTP verification error:', error);
-                this.errorMessage =
+                this.showToast(
+                    'error',
+                    'Lỗi xác thực OTP',
                     error.error?.message ||
-                    'Mã OTP không đúng. Vui lòng thử lại.';
+                        'Mã OTP không đúng. Vui lòng thử lại.'
+                );
+                // console.error('OTP verification error:', error);
                 this.isVerifying = false;
             },
         });
@@ -298,13 +329,21 @@ export class VerifyOtpComponent implements OnInit {
 
     updatePassword() {
         if (!this.password || this.password.trim() === '') {
-            this.errorMessage = 'Vui lòng nhập mật khẩu mới.';
+            this.showToast(
+                'warn',
+                'Thông tin không hợp lệ',
+                'Vui lòng nhập mật khẩu mới.'
+            );
             return;
         }
 
         // Password validation
         if (this.password !== this.confirmPassword) {
-            this.errorMessage = 'Mật khẩu xác nhận không khớp.';
+            this.showToast(
+                'warn',
+                'Thông tin không hợp lệ',
+                'Mật khẩu xác nhận không khớp. Vui lòng kiểm tra lại.'
+            );
             return;
         }
 
@@ -313,8 +352,11 @@ export class VerifyOtpComponent implements OnInit {
             this.verificationToken || localStorage.getItem('resetToken') || '';
 
         if (!token) {
-            this.errorMessage =
-                'Token xác thực không hợp lệ. Vui lòng thử lại.';
+            this.showToast(
+                'error',
+                'Lỗi xác thực',
+                'Không tìm thấy token xác thực. Vui lòng thử lại.'
+            );
             return;
         }
 
@@ -329,6 +371,11 @@ export class VerifyOtpComponent implements OnInit {
 
         this.authService.updatePassword(passwordData).subscribe({
             next: (response) => {
+                this.showToast(
+                    'success',
+                    'Cập nhật mật khẩu thành công',
+                    'Mật khẩu của bạn đã được cập nhật thành công.'
+                );
                 console.log('Password updated successfully:', response);
                 // Clear localStorage items that are no longer needed
                 localStorage.removeItem('resetToken');
@@ -339,10 +386,13 @@ export class VerifyOtpComponent implements OnInit {
                 });
             },
             error: (error) => {
-                console.error('Error updating password:', error);
-                this.errorMessage =
+                this.showToast(
+                    'error',
+                    'Lỗi cập nhật mật khẩu',
                     error.error?.message ||
-                    'Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.';
+                        'Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.'
+                );
+                console.error('Error updating password:', error);
                 this.isUpdating = false;
             },
             complete: () => {

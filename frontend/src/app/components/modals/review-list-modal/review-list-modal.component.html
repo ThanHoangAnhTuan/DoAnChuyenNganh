@@ -1,15 +1,43 @@
+<p-toast></p-toast>
 <main class="review-list-modal">
     <div class="review-list-header">
         <div class="avarage-rating-and-total-review">
             <p class="avarage-rating">{{ avarageRating }}</p>
 
             <div class="total-review-and-title-by-score">
-                <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 5.0">
+                    Xuất sắc
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 4.0 && avarageRating < 5.0"
+                >
+                    Tuyệt vời
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 3.0 && avarageRating < 4.0"
+                >
+                    Tàm tạm
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 2.0 && avarageRating < 3.0"
+                >
+                    Khá tệ
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 1.0 && avarageRating < 2.0"
+                >
+                    Cực tệ
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 0 && avarageRating < 1.0"
+                >
+                    Nên đóng cửa
+                </p>
 
                 <p class="total-review">{{ reviews.length }} đánh giá</p>
             </div>
@@ -28,15 +56,34 @@
     <div class="review-list-container">
         <p class="review-list-title">Đánh giá của khách</p>
 
-        <div class="review-list" *ngFor="let review of reviews.slice((currentPage - 1) * 10, currentPage * 10)">
+        <div
+            class="review-list"
+            *ngFor="
+                let review of reviews.slice(
+                    (currentPage - 1) * 10,
+                    currentPage * 10
+                )
+            "
+        >
             <div class="review-item">
                 <div class="user-info">
-                    <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
-                        *ngIf="review.image == ''">
-                    <img [src]="review.image" alt="user avatar" class="user-avatar" *ngIf="review.image != ''">
+                    <img
+                        src="images/avatar/default.png"
+                        alt="Default Avatar"
+                        class="user-avatar"
+                        *ngIf="review.image == ''"
+                    />
+                    <img
+                        [src]="review.image"
+                        alt="user avatar"
+                        class="user-avatar"
+                        *ngIf="review.image != ''"
+                    />
 
                     <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
-                    <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
+                    <p class="user-name" *ngIf="review.name != ''">
+                        {{ review.name }}
+                    </p>
                 </div>
 
                 <div class="review-item-content">
@@ -54,35 +101,58 @@
 
     <div class="page-container">
         <div class="page-navigation">
-            <button class="prev-button" (click)="onPreviousPage()" [ngClass]="currentPage === 1 ? 'disabled' : ''">
+            <button
+                class="prev-button"
+                (click)="onPreviousPage()"
+                [ngClass]="currentPage === 1 ? 'disabled' : ''"
+            >
                 <tui-icon icon="@tui.chevron-left" [style.font-size.rem]="1" />
             </button>
 
-            <div class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-                <p class="page-number" (click)="onChangePage(i + 1)"
-                    [ngClass]="currentPage === (i + 1) ? 'active' : ''">{{ i + 1 }}</p>
+            <div
+                class="page-item"
+                *ngFor="let page of [].constructor(totalPages); let i = index"
+            >
+                <p
+                    class="page-number"
+                    (click)="onChangePage(i + 1)"
+                    [ngClass]="currentPage === i + 1 ? 'active' : ''"
+                >
+                    {{ i + 1 }}
+                </p>
             </div>
 
-            <button class="next-button" (click)="onNextPage()" [ngClass]="currentPage === totalPages ? 'disabled' : ''">
+            <button
+                class="next-button"
+                (click)="onNextPage()"
+                [ngClass]="currentPage === totalPages ? 'disabled' : ''"
+            >
                 <tui-icon icon="@tui.chevron-right" [style.font-size.rem]="1" />
             </button>
         </div>
 
         <div class="page-info">
-            Đang hiển thị {{ currentPage * 10 - 9}} - {{ currentPage * 10 }}
+            Đang hiển thị {{ currentPage * 10 - 9 }} - {{ currentPage * 10 }}
         </div>
     </div>
 </main>
 
 <ng-container *ngIf="isInputOrderIdModalOpen">
-    <div class="outside-input-order-id-modal" (click)="onCloseInputOrderIdModal()">
+    <div
+        class="outside-input-order-id-modal"
+        (click)="onCloseInputOrderIdModal()"
+    >
         <div class="input-order-id-modal" (click)="$event.stopPropagation()">
             <div class="input-order-id-modal-header">
                 <div></div>
                 <p class="input-order-id-title">Enter the order id</p>
                 <div class="close-button">
-                    <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close button" class="close-icon"
-                        (click)="onCloseInputOrderIdModal()" />
+                    <img
+                        src="icons/accommodation-detail-icon/close-icon.svg"
+                        alt="close button"
+                        class="close-icon"
+                        (click)="onCloseInputOrderIdModal()"
+                    />
                 </div>
             </div>
 
@@ -96,7 +166,7 @@
                     </form>
                 </div>
 
-                <button class="submit-button" (click)="submitOrderId()" >
+                <button class="submit-button" (click)="submitOrderId()">
                     Submit
                 </button>
             </div>
@@ -111,19 +181,40 @@
                 <div></div>
                 <p class="add-review-title">New review</p>
                 <div class="close-button">
-                    <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close button" class="close-icon"
-                        (click)="onCloseAddReviewModal()" />
+                    <img
+                        src="icons/accommodation-detail-icon/close-icon.svg"
+                        alt="close button"
+                        class="close-icon"
+                        (click)="onCloseAddReviewModal()"
+                    />
                 </div>
             </div>
 
             <div class="new-review-container">
-                <input type="text" class="new-review-title" placeholder="Enter review title" [(ngModel)]="newTitle" />
-                <textarea class="new-review-content" placeholder="Enter your review here"
-                    [(ngModel)]="newComment"></textarea>
+                <input
+                    type="text"
+                    class="new-review-title"
+                    placeholder="Enter review title"
+                    [(ngModel)]="newTitle"
+                />
+                <textarea
+                    class="new-review-content"
+                    placeholder="Enter your review here"
+                    [(ngModel)]="newComment"
+                ></textarea>
                 <div class="new-review-rating-container">
-                    <tui-rating class="new-review-rating" [(ngModel)]="newRating" />
+                    <tui-rating
+                        class="new-review-rating"
+                        [(ngModel)]="newRating"
+                    />
                 </div>
-                <button type="submit" (click)="addReview()" class="submit-button">Submit Review</button>
+                <button
+                    type="submit"
+                    (click)="addReview()"
+                    class="submit-button"
+                >
+                    Submit Review
+                </button>
             </div>
         </div>
     </div>

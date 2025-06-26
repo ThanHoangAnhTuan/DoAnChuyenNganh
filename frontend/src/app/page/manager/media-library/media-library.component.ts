@@ -14,12 +14,26 @@ import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../../services/manager/image.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-media-library',
-    imports: [ReactiveFormsModule, TuiCardLarge, TuiFiles, TuiButton, NavbarComponent],
+    imports: [
+        ReactiveFormsModule,
+        TuiCardLarge,
+        TuiFiles,
+        TuiButton,
+        NavbarComponent,
+        Toast,
+        ButtonModule,
+        Ripple,
+    ],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',
+    providers: [MessageService],
 })
 export class MediaLibraryComponent {
     protected imagesPreview: string[] = [];
@@ -36,8 +50,16 @@ export class MediaLibraryComponent {
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private messageService: MessageService
     ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
 
     ngOnInit() {
         this.activatedRoute.params.subscribe((params) => {
@@ -77,6 +99,11 @@ export class MediaLibraryComponent {
             this.oldImages = this.oldImages.filter(
                 (item) => item !== imageName
             );
+            this.showToast(
+                'info',
+                'Xóa ảnh thành công',
+                `Ảnh ${imageName} đã được xóa khỏi danh sách cũ.`
+            );
         }
     }
 
@@ -87,6 +114,11 @@ export class MediaLibraryComponent {
             index < this.imagesPreview.length
         ) {
             this.imagesPreview.splice(index, 1);
+            this.showToast(
+                'info',
+                'Xóa ảnh thành công',
+                `Ảnh tại vị trí ${index + 1} đã được xóa.`
+            );
         }
 
         const currentFiles = this.formImages.get('images')?.value as File[];
@@ -101,6 +133,11 @@ export class MediaLibraryComponent {
             if (updatedFiles.length === 0) {
                 this.formImages.get('images')?.markAsPristine();
                 this.formImages.get('images')?.markAsUntouched();
+                this.showToast(
+                    'warn',
+                    'Không có ảnh nào được chọn',
+                    'Vui lòng chọn ảnh để tải lên.'
+                );
             }
         }
     }
@@ -135,6 +172,11 @@ export class MediaLibraryComponent {
                     this.oldImages.push(...response.data);
                 }
                 this.imagesPreview = [];
+                this.showToast(
+                    'success',
+                    'Tải ảnh thành công',
+                    'Ảnh đã được tải lên thành công.'
+                );
             });
     }
 }

@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <app-navbar />
 <app-search-box />
 
@@ -6,17 +7,31 @@
         <p class="accommodation-detail-title">{{ accommodation?.name }}</p>
         <div class="btn-group">
             <!-- Icon like của TaigaUI -->
-            <input tuiLike="var(--tui-status)" type="checkbox" appearance="flat" title="Lưu" />
-            <img src="icons/accommodation-detail-icon/share-icon.svg" alt="Share Icon " class="share-icon">
-            <button class="order-btn" (click)="goToSelectRoom()">Đặt ngay</button>
+            <input
+                tuiLike="var(--tui-status)"
+                type="checkbox"
+                appearance="flat"
+                title="Lưu"
+            />
+            <img
+                src="icons/accommodation-detail-icon/share-icon.svg"
+                alt="Share Icon "
+                class="share-icon"
+            />
+            <button class="order-btn" (click)="goToSelectRoom()">
+                Đặt ngay
+            </button>
         </div>
     </div>
 
     <div class="accommodation-address-container">
-        <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon" class="location-icon">
+        <img
+            src="icons/accommodation-detail-icon/location-icon.svg"
+            alt="location icon"
+            class="location-icon"
+        />
         <p class="accommodation-address">
-            {{ accommodation?.address }},
-            {{ accommodationDistrict }},
+            {{ accommodation?.address }}, {{ accommodationDistrict }},
             {{ accommodationCity }},
             {{ accommodation?.country }}
         </p>
@@ -24,61 +39,130 @@
 
     <div class="image-review-map-container">
         <div class="accommodation-image-container" *ngIf="accommodation">
-            <div class="accommodation-image" *ngFor="let image of accommodation.images?.slice(0, 8); let i = index">
-                <img [src]="'http://localhost:8080/uploads/' + image" alt="accommodation image {{ i + 1 }}"
-                    class="accommodation-image-item" (click)="openModal()" />
+            <div
+                class="accommodation-image"
+                *ngFor="
+                    let image of accommodation.images?.slice(0, 8);
+                    let i = index
+                "
+            >
+                <img
+                    [src]="'http://localhost:8080/uploads/' + image"
+                    alt="accommodation image {{ i + 1 }}"
+                    class="accommodation-image-item"
+                    (click)="openModal()"
+                />
             </div>
 
             <!-- Modal image list -->
-            <app-image-list-modal [accommodationName]="accommodation.name" [accommodationImages]="accommodation.images"
-                [show]="isModalOpen" (close)="closeModal()" *ngIf="isModalOpen" />
+            <app-image-list-modal
+                [accommodationName]="accommodation.name"
+                [accommodationImages]="accommodation.images"
+                [show]="isModalOpen"
+                (close)="closeModal()"
+                *ngIf="isModalOpen"
+            />
         </div>
 
         <div class="accommodation-review-map-container">
             <div class="accommodation-review-container">
                 <div class="rating-score" (click)="toggleOpenReviewListModal()">
                     <div class="text-container">
-                        <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
-                        <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
-                        <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
-                        <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
-                        <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
-                        <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
-                        <p class="total-review">{{ reviews.length }} đánh giá</p>
+                        <p class="title-by-score" *ngIf="avarageRating >= 5.0">
+                            Xuất sắc
+                        </p>
+                        <p
+                            class="title-by-score"
+                            *ngIf="avarageRating >= 4.0 && avarageRating < 5.0"
+                        >
+                            Tuyệt vời
+                        </p>
+                        <p
+                            class="title-by-score"
+                            *ngIf="avarageRating >= 3.0 && avarageRating < 4.0"
+                        >
+                            Tàm tạm
+                        </p>
+                        <p
+                            class="title-by-score"
+                            *ngIf="avarageRating >= 2.0 && avarageRating < 3.0"
+                        >
+                            Khá tệ
+                        </p>
+                        <p
+                            class="title-by-score"
+                            *ngIf="avarageRating >= 1.0 && avarageRating < 2.0"
+                        >
+                            Cực tệ
+                        </p>
+                        <p
+                            class="title-by-score"
+                            *ngIf="avarageRating >= 0 && avarageRating < 1.0"
+                        >
+                            Nên đóng cửa
+                        </p>
+                        <p class="total-review">
+                            {{ reviews.length }} đánh giá
+                        </p>
                     </div>
 
                     <p class="total-score">{{ avarageRating }}</p>
                 </div>
 
                 <div class="comment">
-                    <p class="user-like-title">Khách lưu trú ở đây thích điều gì?</p>
+                    <p class="user-like-title">
+                        Khách lưu trú ở đây thích điều gì?
+                    </p>
 
                     <div class="review-content-container">
-                        <div class="review-item" *ngFor="let review of reviews.slice(0,1)">
+                        <div
+                            class="review-item"
+                            *ngFor="let review of reviews.slice(0, 1)"
+                        >
                             <div class="review-user-info">
-                                <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
-                                    *ngIf="review.image == ''">
-                                <img [src]="review.image" alt="user avatar" class="user-avatar"
-                                    *ngIf="review.image != ''">
+                                <img
+                                    src="images/avatar/default.png"
+                                    alt="Default Avatar"
+                                    class="user-avatar"
+                                    *ngIf="review.image == ''"
+                                />
+                                <img
+                                    [src]="review.image"
+                                    alt="user avatar"
+                                    class="user-avatar"
+                                    *ngIf="review.image != ''"
+                                />
 
-                                <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
-                                <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
+                                <p class="user-name" *ngIf="review.name == ''">
+                                    Anonymous
+                                </p>
+                                <p class="user-name" *ngIf="review.name != ''">
+                                    {{ review.name }}
+                                </p>
                             </div>
 
                             <div class="review-content">
-                                <p class="review-text">"{{ review.comment }}"</p>
+                                <p class="review-text">
+                                    "{{ review.comment }}"
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="accommodation-google-map-container"
-                (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')">
+            <div
+                class="accommodation-google-map-container"
+                (click)="goToLink('https://maps.app.goo.gl/xCmkyrnuom1VJdV87')"
+            >
                 <!-- iframe hiển thị google map -->
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5665253383495!2d106.68903127769052!3d10.767852461998428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f49e6cd244f%3A0xa4d430b935c6d453!2zQ1VCSUNJVFkgMjMyIMSQ4buAIFRIw4FN!5e0!3m2!1sen!2s!4v1747484393285!5m2!1sen!2s"
-                    class="google-map" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    class="google-map"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                >
                 </iframe>
                 <!-- Nội dung đè lên google map -->
                 <div class="google-map-overlay">
@@ -88,33 +172,50 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="description-facilities-container">
         <div class="accommodation-description-facilities-container">
             <div class="description-container">
                 <p class="description-title">Về chỗ ở</p>
-                <div class="description-content-container" [class.collapsed]="!showFull">
+                <div
+                    class="description-content-container"
+                    [class.collapsed]="!showFull"
+                >
                     <div class="description-content">
                         <div [innerHTML]="accommodation?.description"></div>
                     </div>
                 </div>
-                <p (click)="toggleDescription()" *ngIf="isMobile" class="see-more-button">
-                    {{ showFull ? 'Thu gọn' : 'Xem thêm' }}
+                <p
+                    (click)="toggleDescription()"
+                    *ngIf="isMobile"
+                    class="see-more-button"
+                >
+                    {{ showFull ? "Thu gọn" : "Xem thêm" }}
                 </p>
             </div>
 
-            <p class="open-street-map">Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng © OpenStreetMap</p>
+            <p class="open-street-map">
+                Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng ©
+                OpenStreetMap
+            </p>
 
             <div class="facilities-container">
-                <p class="facilities-title">Các tiện nghi được ưa chuộng nhất</p>
+                <p class="facilities-title">
+                    Các tiện nghi được ưa chuộng nhất
+                </p>
 
                 <div class="facilities-content" *ngIf="accommodation">
                     <div *ngFor="let facility of accommodation?.facilities">
                         <div class="facility-item">
-                            <img [src]="'http://localhost:8080/uploads/' + facility.image" alt="facility.name icon"
-                                class="facility-icon">
+                            <img
+                                [src]="
+                                    'http://localhost:8080/uploads/' +
+                                    facility.image
+                                "
+                                alt="facility.name icon"
+                                class="facility-icon"
+                            />
                             <p class="facility-name">{{ facility.name }}</p>
                         </div>
                     </div>
@@ -148,25 +249,51 @@
                                 <ng-container *ngIf="room?.beds?.[bed.key] > 0">
                                     {{ room.beds[bed.key] }} {{ bed.label }}
 
-                                    <div [ngClass]="bed.containerClass"
-                                        *ngFor="let index of [].constructor(room?.beds?.[bed.key])">
-                                        <img [src]="bed.icon" [alt]="bed.label" class="bed-icon" />
+                                    <div
+                                        [ngClass]="bed.containerClass"
+                                        *ngFor="let index of [].constructor(room?.beds?.[bed.key])"
+                                    >
+                                        <img
+                                            [src]="bed.icon"
+                                            [alt]="bed.label"
+                                            class="bed-icon"
+                                        />
                                     </div>
                                 </ng-container>
                             </div>
                         </ng-container>
                     </div>
 
-                    <div class="some-room-facilities-container" *ngIf="accommodation">
+                    <div
+                        class="some-room-facilities-container"
+                        *ngIf="accommodation"
+                    >
                         <div class="room-size-container">
-                            <img src="icons/accommodation-detail-icon/size-icon.svg" alt="room size icon"
-                                class="room-size-icon">
+                            <img
+                                src="icons/accommodation-detail-icon/size-icon.svg"
+                                alt="room size icon"
+                                class="room-size-icon"
+                            />
                             <p class="room-size">18 m<sup>2</sup></p>
                         </div>
 
-                        <div class="facilities-with-icon" *ngFor="let facility of accommodation.facilities.slice(0,3)">
-                            <img [src]="'http://localhost:8080/uploads/' + facility.image" alt="facility.name icon"
-                                class="facility-icon">
+                        <div
+                            class="facilities-with-icon"
+                            *ngFor="
+                                let facility of accommodation.facilities.slice(
+                                    0,
+                                    3
+                                )
+                            "
+                        >
+                            <img
+                                [src]="
+                                    'http://localhost:8080/uploads/' +
+                                    facility.image
+                                "
+                                alt="facility.name icon"
+                                class="facility-icon"
+                            />
                             <p class="facility-name">{{ facility.name }}</p>
                         </div>
                     </div>
@@ -174,37 +301,63 @@
 
                 <td class="number-of-guests-container">
                     <ng-container *ngFor="let g of [].constructor(room.guests)">
-                        <img src="icons/accommodation-detail-icon/guest-icon.svg" alt="guest icon" class="guest-icon">
+                        <img
+                            src="icons/accommodation-detail-icon/guest-icon.svg"
+                            alt="guest icon"
+                            class="guest-icon"
+                        />
                     </ng-container>
                 </td>
 
                 <td class="price-container">
-                    <p class="original-price">{{ room.price | number:'1.0-0' }} VND</p>
+                    <p class="original-price">
+                        {{ room.price | number : "1.0-0" }} VND
+                    </p>
                 </td>
 
                 <td class="select-rooms-container">
-                    <select (change)="onRoomSelect(room, $any($event.target).value)">
-                        <option [value]="(0 + ',' + i)">0</option>
-                        <option *ngFor="let index of [].constructor(room.available_rooms); let i = index"
-                            [value]="(room.price * (i + 1)) + ',' + (i + 1)">
-                            {{ i + 1 }} ({{ room.price * (i + 1) | number:'1.0-0' }} VND)
+                    <select
+                        (change)="onRoomSelect(room, $any($event.target).value)"
+                    >
+                        <option [value]="0 + ',' + i">0</option>
+                        <option
+                            *ngFor="
+                                let index of [].constructor(
+                                    room.available_rooms
+                                );
+                                let i = index
+                            "
+                            [value]="room.price * (i + 1) + ',' + (i + 1)"
+                        >
+                            {{ i + 1 }} ({{
+                                room.price * (i + 1) | number : "1.0-0"
+                            }}
+                            VND)
                         </option>
                     </select>
                 </td>
 
-                <td class="reverse-room-container" *ngIf="i === 0" [attr.rowspan]="rooms.length">
+                <td
+                    class="reverse-room-container"
+                    *ngIf="i === 0"
+                    [attr.rowspan]="rooms.length"
+                >
                     <ng-container *ngIf="getTotalPrice() > 0">
                         <p class="room-for">
                             <strong>{{ numberRoomSelected() }}</strong>
                             phòng giá
                         </p>
-                        <p class="total-price">{{ getTotalPrice() | number:'1.0-0' }} VND</p>
+                        <p class="total-price">
+                            {{ getTotalPrice() | number : "1.0-0" }} VND
+                        </p>
                     </ng-container>
 
                     <button class="reserve-button" (click)="createPayment()">
                         Tôi sẽ đặt
                         <ng-container *ngIf="getTotalPrice() == 0">
-                            <span class="hover-text">Hãy chọn chỗ nghỉ trước</span>
+                            <span class="hover-text"
+                                >Hãy chọn chỗ nghỉ trước</span
+                            >
                         </ng-container>
                     </button>
 
@@ -218,14 +371,29 @@
                 </td>
             </tr>
 
-            <ng-container *ngIf="isRoomInformationModalOpen && roomInformationSelected">
-                <div class="room-information-modal-container" (click)="toggleCloseModal()">
-                    <div class="modal-container" (click)="$event.stopPropagation()">
-                        <img src="icons\accommodation-detail-icon\close-icon.svg" alt="close icon" class="close-icon"
-                            (click)="toggleCloseModal()">
+            <ng-container
+                *ngIf="isRoomInformationModalOpen && roomInformationSelected"
+            >
+                <div
+                    class="room-information-modal-container"
+                    (click)="toggleCloseModal()"
+                >
+                    <div
+                        class="modal-container"
+                        (click)="$event.stopPropagation()"
+                    >
+                        <img
+                            src="icons\accommodation-detail-icon\close-icon.svg"
+                            alt="close icon"
+                            class="close-icon"
+                            (click)="toggleCloseModal()"
+                        />
 
-                        <app-room-information-modal [roomName]="roomInformationSelected.name"
-                            [roomImages]="roomInformationSelected.images" style="width: 100%" />
+                        <app-room-information-modal
+                            [roomName]="roomInformationSelected.name"
+                            [roomImages]="roomInformationSelected.images"
+                            style="width: 100%"
+                        />
                     </div>
                 </div>
             </ng-container>
@@ -238,63 +406,142 @@
         <div class="total-score-container">
             <p class="total-score">{{ avarageRating }}</p>
             <div class="text-container">
-                <p class="title-by-score" *ngIf="avarageRating >= 5.0">Xuất sắc</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 4.0 && avarageRating < 5.0">Tuyệt vời</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 3.0 && avarageRating < 4.0">Tàm tạm</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 2.0 && avarageRating < 3.0">Khá tệ</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 1.0 && avarageRating < 2.0">Cực tệ</p>
-                <p class="title-by-score" *ngIf="avarageRating >= 0 && avarageRating < 1.0">Nên đóng cửa</p>
+                <p class="title-by-score" *ngIf="avarageRating >= 5.0">
+                    Xuất sắc
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 4.0 && avarageRating < 5.0"
+                >
+                    Tuyệt vời
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 3.0 && avarageRating < 4.0"
+                >
+                    Tàm tạm
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 2.0 && avarageRating < 3.0"
+                >
+                    Khá tệ
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 1.0 && avarageRating < 2.0"
+                >
+                    Cực tệ
+                </p>
+                <p
+                    class="title-by-score"
+                    *ngIf="avarageRating >= 0 && avarageRating < 1.0"
+                >
+                    Nên đóng cửa
+                </p>
                 <p class="between-score-and-review">|</p>
                 <p class="total-review">{{ reviews.length }} đánh giá</p>
             </div>
-            <p class="read-all-reviews" (click)="toggleOpenReviewListModal()">Đọc tất cả đánh giá</p>
+            <p class="read-all-reviews" (click)="toggleOpenReviewListModal()">
+                Đọc tất cả đánh giá
+            </p>
         </div>
 
         <p class="user-like-title">Khách lưu trú ở đây thích điều gì?</p>
 
         <div class="review-content-container">
-            <div class="review-item" *ngFor="let review of reviews.slice(0,3)">
+            <div class="review-item" *ngFor="let review of reviews.slice(0, 3)">
                 <div class="review-user-info">
-                    <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
-                        *ngIf="review.image == ''">
-                    <img [src]="review.image" alt="user avatar" class="user-avatar" *ngIf="review.image != ''">
+                    <img
+                        src="images/avatar/default.png"
+                        alt="Default Avatar"
+                        class="user-avatar"
+                        *ngIf="review.image == ''"
+                    />
+                    <img
+                        [src]="review.image"
+                        alt="user avatar"
+                        class="user-avatar"
+                        *ngIf="review.image != ''"
+                    />
 
                     <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
-                    <p class="user-name" *ngIf="review.name != ''">{{ review.name }}</p>
+                    <p class="user-name" *ngIf="review.name != ''">
+                        {{ review.name }}
+                    </p>
                 </div>
 
                 <div class="review-content">
                     <p class="review-text">"{{ review.comment }}"</p>
-                    <p class="more" (click)="toggleOpenReviewModal(review)">Tìm hiểu thêm</p>
+                    <p class="more" (click)="toggleOpenReviewModal(review)">
+                        Tìm hiểu thêm
+                    </p>
 
                     <ng-container *ngIf="isReviewModalOpen">
-                        <div class="outside-review-modal" (click)="toggleCloseReviewModal()">
-                            <div class="review-modal" (click)="$event.stopPropagation()">
+                        <div
+                            class="outside-review-modal"
+                            (click)="toggleCloseReviewModal()"
+                        >
+                            <div
+                                class="review-modal"
+                                (click)="$event.stopPropagation()"
+                            >
                                 <div class="review-modal-header">
-                                    <div class="close-button" (click)="toggleCloseReviewModal()">
-                                        <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close icon"
-                                            class="close-icon">
+                                    <div
+                                        class="close-button"
+                                        (click)="toggleCloseReviewModal()"
+                                    >
+                                        <img
+                                            src="icons/accommodation-detail-icon/close-icon.svg"
+                                            alt="close icon"
+                                            class="close-icon"
+                                        />
                                     </div>
                                 </div>
 
                                 <div class="review-modal-content">
                                     <div class="review-user-info">
-                                        <img src="images/avatar/default.png" alt="Default Avatar" class="user-avatar"
-                                            *ngIf="reviewSelected.image == ''">
-                                        <img [src]="reviewSelected.image" alt="user avatar" class="user-avatar"
-                                            *ngIf="reviewSelected.image != ''">
+                                        <img
+                                            src="images/avatar/default.png"
+                                            alt="Default Avatar"
+                                            class="user-avatar"
+                                            *ngIf="reviewSelected.image == ''"
+                                        />
+                                        <img
+                                            [src]="reviewSelected.image"
+                                            alt="user avatar"
+                                            class="user-avatar"
+                                            *ngIf="reviewSelected.image != ''"
+                                        />
 
-                                        <p class="user-name" *ngIf="reviewSelected.name == ''">Anonymous</p>
-                                        <p class="user-name" *ngIf="reviewSelected.name != ''">{{ reviewSelected.name }}
+                                        <p
+                                            class="user-name"
+                                            *ngIf="reviewSelected.name == ''"
+                                        >
+                                            Anonymous
+                                        </p>
+                                        <p
+                                            class="user-name"
+                                            *ngIf="reviewSelected.name != ''"
+                                        >
+                                            {{ reviewSelected.name }}
                                         </p>
                                     </div>
 
                                     <div class="review-content">
-                                        <p class="review-date">Ngày đánh giá: {{ reviewSelected.created_at | date:
-                                            'yyyy-MM-dd'
-                                            }}</p>
-                                        <p class="review-title">{{ reviewSelected.title }}</p>
-                                        <p class="review-text">"{{ reviewSelected.comment }}"</p>
+                                        <p class="review-date">
+                                            Ngày đánh giá:
+                                            {{
+                                                reviewSelected.created_at
+                                                    | date : "yyyy-MM-dd"
+                                            }}
+                                        </p>
+                                        <p class="review-title">
+                                            {{ reviewSelected.title }}
+                                        </p>
+                                        <p class="review-text">
+                                            "{{ reviewSelected.comment }}"
+                                        </p>
                                     </div>
 
                                     <div class="review-score">
@@ -309,21 +556,38 @@
         </div>
 
         <ng-container *ngIf="isReviewListModalOpen">
-            <div class="review-list-modal-outside" (click)="toggleCloseReviewListModal()">
-                <div class="review-list-modal-container" (click)="$event.stopPropagation()"
-                    [class.show]="isReviewListModalOpen">
+            <div
+                class="review-list-modal-outside"
+                (click)="toggleCloseReviewListModal()"
+            >
+                <div
+                    class="review-list-modal-container"
+                    (click)="$event.stopPropagation()"
+                    [class.show]="isReviewListModalOpen"
+                >
                     <div class="review-list-modal-header">
-                        <p class="review-list-title">Đánh giá của khách về {{ accommodation.name }}</p>
+                        <p class="review-list-title">
+                            Đánh giá của khách về {{ accommodation.name }}
+                        </p>
 
-                        <div class="close-button" (click)="toggleCloseReviewListModal()">
-                            <img src="icons/accommodation-detail-icon/close-icon.svg" alt="close icon"
-                                class="close-icon">
-
+                        <div
+                            class="close-button"
+                            (click)="toggleCloseReviewListModal()"
+                        >
+                            <img
+                                src="icons/accommodation-detail-icon/close-icon.svg"
+                                alt="close icon"
+                                class="close-icon"
+                            />
                         </div>
                     </div>
 
-                    <app-review-list-modal [avarageRating]="avarageRating" [reviews]="reviews"
-                        [accommodationId]="accommodation.id" style="width: 100%; overflow-y: auto;" />
+                    <app-review-list-modal
+                        [avarageRating]="avarageRating"
+                        [reviews]="reviews"
+                        [accommodationId]="accommodation.id"
+                        style="width: 100%; overflow-y: auto"
+                    />
                 </div>
             </div>
         </ng-container>
