@@ -44,6 +44,10 @@ import { finalize, of, Subject, switchMap } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { FacilityDetailService } from '../../../services/facility-detail/facility-detail.service';
 import { TUI_DIALOGS_CLOSE } from '@taiga-ui/core';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 // import { TUI_DIALOGS_CLOSE } from '@taiga-ui/cdk';
 @Component({
     selector: 'app-facility-detail',
@@ -66,9 +70,13 @@ import { TUI_DIALOGS_CLOSE } from '@taiga-ui/core';
         FormsModule,
         TuiFiles,
         NgIf,
+        Toast,
+        ButtonModule,
+        Ripple,
     ],
     templateUrl: './facility-detail.component.html',
     styleUrl: './facility-detail.component.scss',
+    providers: [MessageService],
 })
 export class FacilityDetailComponent implements OnInit {
     protected facilities!: FacilityDetail[];
@@ -85,7 +93,8 @@ export class FacilityDetailComponent implements OnInit {
 
     constructor(
         @Inject(TUI_DIALOGS_CLOSE) private readonly close$: Observable<void>,
-        private facilityService: FacilityDetailService
+        private facilityService: FacilityDetailService,
+        private messageService: MessageService
     ) {}
 
     ngOnInit() {
@@ -100,7 +109,13 @@ export class FacilityDetailComponent implements OnInit {
             },
         });
     }
-
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formFacility.reset();
         this.dialogs
@@ -143,7 +158,11 @@ export class FacilityDetailComponent implements OnInit {
         const nameValue = this.formFacility.get('name')?.value;
 
         if (!nameValue) {
-            alert('Vui lòng nhập tên facility');
+            this.showToast(
+                'warn',
+                'Facility Issue',
+                'Vui lòng nhập tên facility'
+            );
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -162,19 +181,30 @@ export class FacilityDetailComponent implements OnInit {
 
                 this.formFacility.reset();
                 this.close$.subscribe();
+                this.showToast(
+                    'success',
+                    'Facility Created',
+                    'Cơ sở đã được tạo thành công'
+                );
             },
             error: (error) => {
-                console.error('Lỗi từ server:', error);
-                alert(
-                    `Lỗi khi tạo facility: ${error.message || 'Unknown error'}`
+                this.showToast(
+                    'error',
+                    'Facility Creation Error',
+                    `Lỗi khi tạo cơ sở: ${error.message || 'Unknown error'}`
                 );
             },
         });
     }
 
     protected updateFacility(): void {
-        console.log('name', this.formFacility.get('name')?.value);
+        // console.log('name', this.formFacility.get('name')?.value);
         if (this.formFacility.invalid) {
+            this.showToast(
+                'warn',
+                'Facility Update Issue',
+                'Vui lòng nhập tên cơ sở'
+            );
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -185,7 +215,7 @@ export class FacilityDetailComponent implements OnInit {
 
         this.facilityService.updateFacility(data).subscribe({
             next: (response) => {
-                console.log(response);
+                // console.log(response);
                 const updatedFacility = response.data as Facility;
                 this.facilities = this.facilities.map((facility) => {
                     return facility.id === updatedFacility.id
@@ -194,16 +224,33 @@ export class FacilityDetailComponent implements OnInit {
                 });
 
                 // Show success message
-                console.log('Cập nhật cơ sở thành công');
+                this.showToast(
+                    'success',
+                    'Facility Updated',
+                    'Cơ sở đã được cập nhật thành công'
+                );
+                // console.log('Cập nhật cơ sở thành công');
             },
             error: (error) => {
-                console.error('Error updating facility:', error);
-                console.warn(
-                    'Cập nhật cơ sở thất bại: ' +
-                        (error.message || 'Đã xảy ra lỗi')
+                this.showToast(
+                    'error',
+                    'Facility Update Error',
+                    `Lỗi khi cập nhật cơ sở: ${
+                        error.message || 'Unknown error'
+                    }`
                 );
+                // console.error('Error updating facility:', error);
+                // console.warn(
+                //     'Cập nhật cơ sở thất bại: ' +
+                //         (error.message || 'Đã xảy ra lỗi')
+                // );
             },
             complete: () => {
+                this.showToast(
+                    'info',
+                    'Update Facility Request Completed',
+                    'Yêu cầu cập nhật cơ sở đã hoàn thành'
+                );
                 // Hide loading indicator
                 console.log('Update facility request completed');
             },
@@ -213,6 +260,11 @@ export class FacilityDetailComponent implements OnInit {
         this.facilityService.deleteFacility(id).subscribe((_) => {
             this.facilities = this.facilities.filter(
                 (facility) => facility.id !== id
+            );
+            this.showToast(
+                'success',
+                'Facility Deleted',
+                'Cơ sở đã được xóa thành công'
             );
         });
     }

@@ -28,6 +28,10 @@ import { TuiRadio } from '@taiga-ui/kit';
 import { TuiDay } from '@taiga-ui/cdk';
 import { TuiTextfield } from '@taiga-ui/core';
 import { DatePicker } from 'primeng/datepicker';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-user-profile',
@@ -46,10 +50,14 @@ import { DatePicker } from 'primeng/datepicker';
         TuiInputDateModule,
         TuiTextfield,
         DatePicker,
+        Toast,
+        ButtonModule,
+        Ripple,
     ],
     templateUrl: './user-profile.component.html',
     standalone: true,
     styleUrl: './user-profile.component.scss',
+    providers: [MessageService],
 })
 export class UserProfileComponent implements OnInit {
     profileForm!: FormGroup;
@@ -71,9 +79,16 @@ export class UserProfileComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private authService: AuthService
+        private authService: AuthService,
+        private messageService: MessageService
     ) {}
-
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
     ngOnInit(): void {
         this.profileForm = this.fb.group({
             username: ['', Validators.required],
@@ -117,17 +132,24 @@ export class UserProfileComponent implements OnInit {
                     });
                 },
                 error: (error) => {
-                    console.error('Error loading user data:', error);
-                    this.showNotification(
-                        'Không thể tải thông tin người dùng',
-                        'error'
+                    this.showToast(
+                        'error',
+                        'Lỗi tải thông tin người dùng',
+                        error.message ||
+                            'Đã xảy ra lỗi khi tải thông tin người dùng. Vui lòng thử lại sau.'
                     );
+                    // console.error('Error loading user data:', error);
                 },
             });
     }
 
     updateUserProfile(): void {
         if (this.profileForm.invalid) {
+            this.showToast(
+                'error',
+                'Thông tin không hợp lệ',
+                'Vui lòng kiểm tra lại thông tin.'
+            );
             this.profileForm.markAllAsTouched();
             return;
         }
@@ -159,26 +181,21 @@ export class UserProfileComponent implements OnInit {
             .subscribe({
                 next: (response) => {
                     this.currentUser = response.data;
-                    this.showNotification(
-                        'Cập nhật thông tin thành công',
-                        'success'
+                    this.showToast(
+                        'success',
+                        'Cập nhật thành công',
+                        'Thông tin cá nhân đã được cập nhật thành công.'
                     );
                 },
                 error: (error) => {
-                    console.error('Update failed:', error);
-                    this.showNotification(
-                        'Cập nhật thông tin thất bại',
-                        'error'
+                    this.showToast(
+                        'error',
+                        'Cập nhật thất bại',
+                        error.error?.message ||
+                            'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.'
                     );
+                    // console.error('Update failed:', error);
                 },
             });
-    }
-
-    showNotification(message: string, status: 'success' | 'error'): void {
-        this.notification = { message, status };
-
-        setTimeout(() => {
-            this.notification = null;
-        }, 3000);
     }
 }
