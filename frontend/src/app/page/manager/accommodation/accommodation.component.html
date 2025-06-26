@@ -49,7 +49,15 @@
                     {{ accommodation.rating }}
                 </td>
                 <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
-                    {{ accommodation.google_map }}
+                    <iframe
+                        [src]="getSafeUrl(accommodation.google_map)"
+                        width="300"
+                        height="200"
+                        style="border: 0"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </td>
 
                 <td *tuiCell="'Action'" tuiTd>

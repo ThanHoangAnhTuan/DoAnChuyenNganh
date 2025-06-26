@@ -6,7 +6,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 
 import { AccommodationService } from '../../../services/manager/accommodation.service';
 import {
@@ -125,7 +125,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected citySlug: string = '';
     protected districtName: string = '';
     protected districtSlug: string = '';
-    protected showFullMap: { [id: string]: boolean } = {};;
+    protected showFullMap: { [id: string]: boolean } = {};
     protected elList: { [id: string]: any } = {};
     protected showButtonStates: { [id: string]: boolean } = {};
 
@@ -154,7 +154,12 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private facilityService: FacilityService,
         private addressService: AddressService,
         private sanitizer: DomSanitizer
-    ) { }
+    ) {}
+
+    // Method để sanitize URL
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
 
     ngOnInit() {
         // this.addressService.getCities().subscribe((data: City[]) => {
@@ -199,20 +204,20 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         // })
 
         this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
-            // console.log("selected city: ", selectedCity);
+                // console.log("selected city: ", selectedCity);
 
-            this.onCitySelected(selectedCity);
+                this.onCitySelected(selectedCity);
 
-            this.formAccommodation.get('district')?.reset();
-            // this.onCityChange(selectedCity);
-        });
+                this.formAccommodation.get('district')?.reset();
+                // this.onCityChange(selectedCity);
+            });
 
         this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrict: string | null) => {
-            // console.log("selected district: ", selectedDistrict);
+                // console.log("selected district: ", selectedDistrict);
 
-            this.onDistrictSelected(selectedDistrict);
-            // this.onCityChange(selectedCity);
-        });
+                this.onDistrictSelected(selectedDistrict);
+                // this.onCityChange(selectedCity);
+            });
 
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
