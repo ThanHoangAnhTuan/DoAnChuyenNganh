@@ -7,6 +7,8 @@ import {
     CreateManagerOutput,
     GetAccommodationsOfManagerByAdminOutput,
     GetManagerOutput,
+    VerifyAccommodationInput,
+    VerifyAccommodationOutput,
 } from '../../models/admin/manager.model';
 
 @Injectable({
@@ -31,5 +33,9 @@ export class ManagerService {
 
     getAccommodationsOfManagerByAdmin(id: string): Observable<GetAccommodationsOfManagerByAdminOutput> {
         return this.http.get<GetAccommodationsOfManagerByAdminOutput>(`${this.adminUrl}/manager/${id}/accommodations`);
+    }
+
+    updateVerified(newVerify: VerifyAccommodationInput): Observable<VerifyAccommodationOutput> {
+        return this.http.put<VerifyAccommodationOutput>(this.adminUrl + '/verify-accommodation', newVerify);
     }
 }

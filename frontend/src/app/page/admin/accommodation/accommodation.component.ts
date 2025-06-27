@@ -1,20 +1,9 @@
 import { AfterViewInit, Component, ElementRef, inject, Injector, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
-    FormControl,
-    FormGroup,
     FormsModule,
     ReactiveFormsModule,
-    Validators,
 } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-
-import { AccommodationService } from '../../../services/manager/accommodation.service';
-import {
-    Accommodation,
-    CreateAccommodation,
-    UpdateAccommodation,
-} from '../../../models/manager/accommodation.model';
-
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiIcon,
@@ -22,9 +11,8 @@ import {
     TuiDialogService,
     TuiTextfield,
     TuiAppearance,
-    TuiGroup,
+    TuiAlertService,
 } from '@taiga-ui/core';
-import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import {
     TuiConfirmService,
@@ -46,13 +34,12 @@ import {
 } from '@taiga-ui/editor';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
-import { Facility } from '../../../models/facility/facility.model';
-import { FacilityService } from '../../../services/facility/facility.service';
 import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { ManagerService } from '../../../services/admin/manager.service';
-import { GetAccommodationsOfManagerByAdmin } from '../../../models/admin/manager.model';
+import { GetAccommodationsOfManagerByAdmin, VerifyAccommodationInput } from '../../../models/admin/manager.model';
+import { Accommodation } from '../../../models/manager/accommodation.model';
 
 @Component({
     standalone: true,
@@ -72,7 +59,6 @@ import { GetAccommodationsOfManagerByAdmin } from '../../../models/admin/manager
         TuiEditor,
         RouterLink,
         TuiInputTimeModule,
-        TuiRating,
         TuiSelect,
         TuiSelectModule,
         TuiDataListWrapperComponent,
@@ -102,7 +88,6 @@ import { GetAccommodationsOfManagerByAdmin } from '../../../models/admin/manager
 export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
 
-    protected facilities!: Facility[];
     protected columns: string[] = [
         'Name',
         'Country',
@@ -130,25 +115,26 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected showFullMap: { [id: string]: boolean } = {};;
     protected elList: { [id: string]: any } = {};
     protected showButtonStates: { [id: string]: boolean } = {};
+    protected isUpdateVerified: boolean = false;
+    protected isUpdateDeleted: boolean = false;
+    protected updateId: string = '';
+    protected isModalConfirmVerifyOpen: boolean = false;
+    protected isModalConfirmDeleteOpen: boolean = false;
 
-    private readonly dialogs = inject(TuiDialogService);
-
-    // protected formAccommodation = new FormGroup({
-    //     name: new FormControl('', Validators.required),
-    //     country: new FormControl('Việt Nam'),
-    //     city: new FormControl('', Validators.required),
-    //     district: new FormControl({ value: '', disabled: true }, Validators.required),
-    //     address: new FormControl('', Validators.required),
-    //     rating: new FormControl(0, [
-    //         Validators.required,
-    //         Validators.min(1),
-    //         Validators.max(5),
-    //     ]),
-    //     description: new FormControl('', Validators.required),
-    //     googleMap: new FormControl('', Validators.required),
-    // });
+    // private readonly dialogs = inject(TuiDialogService);
 
     protected timePeriods = tuiCreateTimePeriods();
+    private readonly alerts = inject(TuiAlertService);
+
+    protected getAlert(label: string, content: string): void {
+        this.alerts
+            .open(content, {
+                label: label,
+                appearance: 'success',
+                autoClose: 5000,
+            })
+            .subscribe();
+    }
 
     constructor(
         private accommodationService: ManagerService,
@@ -167,49 +153,24 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             })
         });
 
-        // this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
-        //     // console.log("selected city: ", selectedCity);
-
-        //     this.onCitySelected(selectedCity);
-
-        //     this.formAccommodation.get('district')?.reset();
-        //     // this.onCityChange(selectedCity);
-        // });
-
-        // this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrict: string | null) => {
-        //     // console.log("selected district: ", selectedDistrict);
-
-        //     this.onDistrictSelected(selectedDistrict);
-        //     // this.onCityChange(selectedCity);
-        // });
-
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
             this.cityNames = res.data.map(city => city.name);
-            // this.initFormValueChanges();
         });
     }
 
-    // private onCitySelected(selectedCityName: string | null): void {
-    //     const selectedCity = this.cities.find(city => city.name === selectedCityName);
+    private updateVerify(id: string, status: number) {
+        let newVerify: VerifyAccommodationInput = {
+            accommodation_id: id,
+            status: Number(status)
+        }
 
-    //     if (selectedCity) {
-    //         this.citySlug = selectedCity.slug;
-    //         this.districts = selectedCity.level2s;
-    //         this.districtNames = this.districts.map(d => d.name);
-    //         this.formAccommodation.get('district')?.enable();
-    //     } else {
-    //         this.citySlug = '';
-    //         this.districts = [];
-    //         this.districtNames = [];
-    //         this.formAccommodation.get('district')?.disable();
-    //     }
-    // }
+        this.accommodationService.updateVerified(newVerify).subscribe((response) => {
+            const message = response.message;
 
-    // private onDistrictSelected(selectedDistrictName: string | null): void {
-    //     const selectedDistrict = this.districts.find(d => d.name === selectedDistrictName);
-    //     this.districtSlug = selectedDistrict?.slug ?? '';
-    // }
+            this.getAlert('Notification', message);
+        })
+    }
 
     changeCitySlugToName(slug: string): string {
         const city = this.cities.find(city => city.slug === slug);
@@ -254,6 +215,63 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 console.log(this.showButtonStates);
             });
         });
+    }
+
+    protected changeVerifiedApply(id: string) {
+        this.updateId = id;
+        this.isUpdateVerified = true;
+        this.isUpdateDeleted = false;
+    }
+
+    protected changeVerifiedFinish() {
+        const id: string = this.updateId;
+        const accommodation: any = this.accommodations.find(a => a.id === id);
+        if (accommodation) {
+            const status: number = accommodation.is_verified;
+
+            this.updateVerify(id, status);
+        }
+
+        this.updateId = '';
+        this.isUpdateVerified = false;
+    }
+
+    protected openVerifyConfirmModal() {
+        this.isModalConfirmVerifyOpen = true;
+    }
+
+    protected closeVerifyConfirmModal() {
+        this.isModalConfirmVerifyOpen = false;
+        this.isUpdateVerified = false;
+    }
+
+    protected changeDeletedApply(id: string) {
+        this.updateId = id;
+        this.isUpdateVerified = false;
+        this.isUpdateDeleted = true;
+    }
+
+    protected changeDeleteFinish() {
+        const id: string = this.updateId;
+        const accommodation: any = this.accommodations.find(a => a.id === id);
+        if (accommodation) {
+            const status: number = accommodation.is_deleted;
+
+            // this.updateVerify(id, status);
+            this.getAlert("Notification", "Update successfully");
+        }
+
+        this.updateId = '';
+        this.isUpdateDeleted = false;
+    }
+
+    protected openDeleteConfirmModal() {
+        this.isModalConfirmDeleteOpen = true;
+    }
+
+    protected closeDeleteConfirmModal() {
+        this.isModalConfirmDeleteOpen = false;
+        this.isUpdateDeleted = false;
     }
 
     ngAfterViewInit(): void {

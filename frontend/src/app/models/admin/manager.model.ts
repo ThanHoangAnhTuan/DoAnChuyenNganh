@@ -1,5 +1,4 @@
 import { Facility } from "../facility/facility.model";
-import { Accommodation } from "../manager/accommodation.model";
 
 export interface Manager {
     id: string;
@@ -13,6 +12,7 @@ export interface Manager {
 export interface CreateManager {
     account: string;
     password: string;
+    username: string;
 }
 
 export interface CreateManagerOutput {
@@ -27,23 +27,45 @@ export interface GetManagerOutput {
     data: Manager[];
 }
 
+export interface Rules {
+    check_in: string,
+    check_out: string,
+    cancellation: string,
+    refundable_damage_deposit: number,
+    age_restriction: boolean,
+    pet: boolean
+}
 
 export interface GetAccommodationsOfManagerByAdmin {
-    id: string;
-    name: string;
-    city: string;
-    country: string;
-    district: string;
-    address: string;
-    description: string;
-    rating: number;
-    facilities: Facility[];
-    images: string[];
-    google_map: string;
+    id: string,
+    name: string,
+    city: string,
+    country: string,
+    district: string,
+    address: string,
+    description: string,
+    rating: number,
+    facilities: Facility[],
+    images: string[],
+    google_map: string,
+    rules: Rules,
+    is_verified: boolean,
+    is_deleted: boolean
 }
 
 export interface GetAccommodationsOfManagerByAdminOutput {
-    code: number;
-    message: string;
-    data: GetAccommodationsOfManagerByAdmin[];
+    code: number,
+    message: string,
+    data: GetAccommodationsOfManagerByAdmin[]
+}
+
+export interface VerifyAccommodationInput {
+    accommodation_id: string;
+    status: number;
+}
+
+export interface VerifyAccommodationOutput {
+    code: number,
+    message: string,
+    data: null
 }

@@ -411,11 +411,14 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             .createAccommodation(accommodation)
             .subscribe((response) => {
                 this.accommodations.push(response.data);
-                this.formAccommodation.reset();
-                this.formFacilities.reset();
+                // this.formAccommodation.reset();
+                // this.formAccommodation.setValue
+                // this.formFacilities.reset();
 
-                this.accommodations = [...this.accommodations]; // force trigger DOM update
-                this.checkDescriptionOverflow();
+                // this.accommodations = [...this.accommodations]; // force trigger DOM update
+                // this.checkDescriptionOverflow();
+
+                window.location.reload()
             });
     }
 

@@ -27,7 +27,7 @@
                 <td *tuiCell="'Updated At'" tuiTd>
                     {{ manager.updated_at }}
                 </td>
-                <td *tuiCell="'Action'" tuiTd>
+                <!-- <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
                         <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
                             [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'" 
@@ -39,7 +39,7 @@
                             Delete
                         </button>
                     </span>
-                </td>
+                </td> -->
                 <td *tuiCell="'Show Accommodation'" tuiTd>
                     <a class="button" target="_blank" [routerLink]="['/admin/manager/',manager.id,'accommodations']">Show</a>
                 </td>
@@ -67,9 +67,9 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>User Name</label>
-                <input formControlName="user_name" placeholder="User Name" tuiTextfield />
-                @if(formCreateManger.get('user_name')?.invalid &&
-                formCreateManger.get('user_name')?.touched) {
+                <input formControlName="username" placeholder="User Name" tuiTextfield />
+                @if(formCreateManger.get('username')?.invalid &&
+                formCreateManger.get('username')?.touched) {
                 <div>
                     <small class="text-red-500">User name is required</small>
                 </div>
