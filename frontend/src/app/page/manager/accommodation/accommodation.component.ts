@@ -476,8 +476,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             next: (response) => {
                 this.accommodations.push(response.data);
                 this.formAccommodation.reset();
+                // this.formAccommodation.setValue
                 this.formFacilities.reset();
-
                 this.accommodations = [...this.accommodations]; // force trigger DOM update
                 this.checkDescriptionOverflow();
                 this.showToast(

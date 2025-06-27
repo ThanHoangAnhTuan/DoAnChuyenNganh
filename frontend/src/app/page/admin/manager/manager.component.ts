@@ -20,10 +20,12 @@ import { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { CreateManager, Manager } from '../../../models/admin/manager.model';
 import { ManagerService } from '../../../services/admin/manager.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
+
 
 @Component({
     selector: 'app-manager',
@@ -36,9 +38,11 @@ import { Ripple } from 'primeng/ripple';
         ReactiveFormsModule,
         TuiTextfield,
         NavbarComponent,
+        RouterModule,
         Toast,
         ButtonModule,
         Ripple,
+
     ],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',
@@ -53,13 +57,14 @@ export class ManagerComponent implements OnInit {
         'Is Deleted',
         'Created At',
         'Updated At',
-        'Action',
+        // 'Action',
         'Show Accommodation',
     ];
 
     protected formCreateManger = new FormGroup(
         {
             account: new FormControl('', Validators.required),
+            username: new FormControl('', Validators.required),
             password: new FormControl('', Validators.required),
             confirm: new FormControl('', Validators.required),
         },
@@ -68,7 +73,7 @@ export class ManagerComponent implements OnInit {
 
     // protected formManager = new FormGroup({
     //   account: new FormControl('', Validators.required),
-    //   user_name: new FormControl('', Validators.required),
+    //   username: new FormControl('', Validators.required),
     //   login_time: new FormControl('', Validators.required),
     //   logout_time: new FormControl('', Validators.required),
     //   is_deleted: new FormControl('', Validators.required),
@@ -132,6 +137,7 @@ export class ManagerComponent implements OnInit {
         const manager: CreateManager = {
             account: this.formCreateManger.get('account')?.value || '',
             password: this.formCreateManger.get('password')?.value || '',
+            username: this.formCreateManger.get('username')?.value || '',
         };
 
         if (this.formCreateManger.invalid) {
@@ -139,9 +145,12 @@ export class ManagerComponent implements OnInit {
             return;
         }
 
+        console.log(manager);
+
         this.managerService.createNewManager(manager).subscribe({
             next: (response) => {
                 // this.managers.push(response.data);
+                console.log("add manager successfully")
 
                 // console.log("Message: ", response.message);
                 // console.log("Status code: ", response.code);
