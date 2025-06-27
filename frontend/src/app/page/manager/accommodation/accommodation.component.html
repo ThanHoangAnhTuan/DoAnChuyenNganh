@@ -1,6 +1,12 @@
+<p-toast></p-toast>
 <app-navbar></app-navbar>
 <main>
-    <button size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
+    <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="openDialogCreate(createForm)"
+    >
         New
     </button>
 
@@ -21,26 +27,46 @@
                     {{ changeCitySlugToName(accommodation.city) }}
                 </td>
                 <td *tuiCell="'District'" tuiTd>
-                    {{ changeDistrictSlugToName( accommodation.city ,accommodation.district) }}
+                    {{
+                        changeDistrictSlugToName(
+                            accommodation.city,
+                            accommodation.district
+                        )
+                    }}
                 </td>
                 <td *tuiCell="'Address'" tuiTd>
                     {{ accommodation.address }}
                 </td>
                 <td *tuiCell="'Image'" tuiTd>
-                    <a class="button" target="_blank" [routerLink]="[
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
                             '/manager/accommodation/',
                             accommodation.id,
                             'images'
-                        ]">Quản lý hình ảnh</a>
+                        ]"
+                        >Quản lý hình ảnh</a
+                    >
                 </td>
                 <td *tuiCell="'Description'" tuiTd>
-                    <div #descEl [innerHTML]="getDescription(accommodation.description)"
-                        [attr.data-id]="accommodation.id" [class.collapsed]="!showFullMap[accommodation.id]">
-                    </div>
+                    <div
+                        #descEl
+                        [innerHTML]="getDescription(accommodation.description)"
+                        [attr.data-id]="accommodation.id"
+                        [class.collapsed]="!showFullMap[accommodation.id]"
+                    ></div>
 
                     @if(showButtonStates[accommodation.id]) {
-                    <p (click)="toggleDescription(accommodation.id)" class="see-more-button">
-                        {{ isDescriptionShown(accommodation.id) ? 'Thu gọn' : 'Xem thêm' }}
+                    <p
+                        (click)="toggleDescription(accommodation.id)"
+                        class="see-more-button"
+                    >
+                        {{
+                            isDescriptionShown(accommodation.id)
+                                ? "Thu gọn"
+                                : "Xem thêm"
+                        }}
                     </p>
                     }
                 </td>
@@ -49,30 +75,59 @@
                     {{ accommodation.rating }}
                 </td>
                 <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
-                    {{ accommodation.google_map }}
+                    <iframe
+                        [src]="getSafeUrl(accommodation.google_map)"
+                        width="300"
+                        height="200"
+                        style="border: 0"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </td>
 
                 <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
-                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
-                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'" (click)="
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            (click)="
                                 openDialogUpdate(updateForm, accommodation)
-                            ">
+                            "
+                        >
                             Edit
                         </button>
-                        <button appearance="action" iconStart="@tui.trash" size="xs" tuiIconButton type="button"
-                            [style.border-radius.%]="100" [style.color]="'red'"
-                            (click)="deleteAccommodation(accommodation.id)">
+                        <button
+                            appearance="action"
+                            iconStart="@tui.trash"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.color]="'red'"
+                            (click)="deleteAccommodation(accommodation.id)"
+                        >
                             Delete
                         </button>
                     </span>
                 </td>
                 <td *tuiCell="'Show Accommodation Detail'" tuiTd>
-                    <a class="button" target="_blank" [routerLink]="[
+                    <a
+                        class="button"
+                        target="_blank"
+                        [routerLink]="[
                             '/manager/accommodation/',
                             accommodation.id,
                             'details'
-                        ]">Show</a>
+                        ]"
+                        >Show</a
+                    >
                 </td>
             </tr>
             }
@@ -80,8 +135,13 @@
     </table>
 
     <ng-template #createForm>
-        <form tuiCardLarge [formGroup]="formAccommodation" [style.max-width.rem]="32" [style.padding.px]="5"
-            (ngSubmit)="createAccommodation()">
+        <form
+            tuiCardLarge
+            [formGroup]="formAccommodation"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="createAccommodation()"
+        >
             <tui-textfield>
                 <label tuiLabel>Name</label>
                 <input formControlName="name" placeholder="Name" tuiTextfield />
@@ -94,7 +154,12 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Country</label>
-                <input formControlName="country" placeholder="Country" [readOnly]="true" tuiTextfield />
+                <input
+                    formControlName="country"
+                    placeholder="Country"
+                    [readOnly]="true"
+                    tuiTextfield
+                />
                 <tui-icon tuiTooltip="You can't change here" />
                 <!-- @if(formAccommodation.get('country')?.invalid &&
                 formAccommodation.get('country')?.touched) {
@@ -107,7 +172,11 @@
                 <label tuiLabel>City</label>
                 <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
-                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="cityNames" />
+                <tui-data-list-wrapper
+                    *tuiTextfieldDropdown
+                    new
+                    [items]="cityNames"
+                />
                 @if(formAccommodation.get('city')?.invalid &&
                 formAccommodation.get('city')?.touched) {
                 <div>
@@ -118,15 +187,19 @@
             <tui-textfield>
                 <label tuiLabel>District</label>
                 <input formControlName="district" tuiSelect />
-                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="districtNames" />
+                <tui-data-list-wrapper
+                    *tuiTextfieldDropdown
+                    new
+                    [items]="districtNames"
+                />
 
-                @if (formAccommodation.get('city')?.disabled || formAccommodation.get('city')?.invalid) {
+                @if (formAccommodation.get('city')?.disabled ||
+                formAccommodation.get('city')?.invalid) {
                 <div>
                     <small class="text-red-500">Please choose city first</small>
                 </div>
-                }
-
-                @if (formAccommodation.get('district')?.invalid && formAccommodation.get('district')?.touched) {
+                } @if (formAccommodation.get('district')?.invalid &&
+                formAccommodation.get('district')?.touched) {
                 <div>
                     <small class="text-red-500">District is required</small>
                 </div>
@@ -134,7 +207,11 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Address</label>
-                <input formControlName="address" placeholder="Address" tuiTextfield />
+                <input
+                    formControlName="address"
+                    placeholder="Address"
+                    tuiTextfield
+                />
                 @if(formAccommodation.get('address')?.invalid &&
                 formAccommodation.get('address')?.touched) {
                 <div>
@@ -144,7 +221,11 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Google map</label>
-                <input formControlName="googleMap" placeholder="Google Map" tuiTextfield />
+                <input
+                    formControlName="googleMap"
+                    placeholder="Google Map"
+                    tuiTextfield
+                />
                 @if(formAccommodation.get('googleMap')?.invalid &&
                 formAccommodation.get('googleMap')?.touched) {
                 <div>
@@ -183,11 +264,19 @@
                 @for (facility of facilities; track facility.id) {
                 <div class="facility-item">
                     <label tuiLabel class="facility-label">
-                        <input [formControlName]="facility.id" tuiCheckbox type="checkbox" class="facility-checkbox" />
-                        <img class="facility-image" [src]="
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <img
+                            class="facility-image"
+                            [src]="
                                 'http://localhost:8080/uploads/' +
                                 facility.image
-                            " />
+                            "
+                        />
                         <span class="facility-name">{{ facility.name }}</span>
                     </label>
                 </div>
@@ -201,8 +290,13 @@
     </ng-template>
 
     <ng-template #updateForm>
-        <form tuiCardLarge [formGroup]="formAccommodation" [style.max-width.rem]="32" [style.padding.px]="5"
-            (ngSubmit)="updateAccommodation()">
+        <form
+            tuiCardLarge
+            [formGroup]="formAccommodation"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="updateAccommodation()"
+        >
             <tui-textfield>
                 <label tuiLabel>Name</label>
                 <input formControlName="name" placeholder="Name" tuiTextfield />
@@ -216,7 +310,12 @@
 
             <tui-textfield>
                 <label tuiLabel>Country</label>
-                <input formControlName="country" placeholder="Country" tuiTextfield [readOnly]="true" />
+                <input
+                    formControlName="country"
+                    placeholder="Country"
+                    tuiTextfield
+                    [readOnly]="true"
+                />
                 <tui-icon tuiTooltip="You can't change here" />
                 <!-- @if(formAccommodation.get('country')?.invalid &&
                 formAccommodation.get('country')?.touched) {
@@ -230,7 +329,11 @@
                 <label tuiLabel>City</label>
                 <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
-                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="cityNames" />
+                <tui-data-list-wrapper
+                    *tuiTextfieldDropdown
+                    new
+                    [items]="cityNames"
+                />
                 @if(formAccommodation.get('city')?.invalid &&
                 formAccommodation.get('city')?.touched) {
                 <div>
@@ -242,15 +345,19 @@
             <tui-textfield>
                 <label tuiLabel>District</label>
                 <input formControlName="district" tuiSelect />
-                <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="districtNames" />
+                <tui-data-list-wrapper
+                    *tuiTextfieldDropdown
+                    new
+                    [items]="districtNames"
+                />
 
-                @if (formAccommodation.get('city')?.disabled || formAccommodation.get('city')?.invalid) {
+                @if (formAccommodation.get('city')?.disabled ||
+                formAccommodation.get('city')?.invalid) {
                 <div>
                     <small class="text-red-500">Please choose city first</small>
                 </div>
-                }
-
-                @if (formAccommodation.get('district')?.invalid && formAccommodation.get('district')?.touched) {
+                } @if (formAccommodation.get('district')?.invalid &&
+                formAccommodation.get('district')?.touched) {
                 <div>
                     <small class="text-red-500">District is required</small>
                 </div>
@@ -259,7 +366,11 @@
 
             <tui-textfield>
                 <label tuiLabel>Address</label>
-                <input formControlName="address" placeholder="Address" tuiTextfield />
+                <input
+                    formControlName="address"
+                    placeholder="Address"
+                    tuiTextfield
+                />
                 @if(formAccommodation.get('address')?.invalid &&
                 formAccommodation.get('address')?.touched) {
                 <div>
@@ -270,7 +381,11 @@
 
             <tui-textfield>
                 <label tuiLabel>Google map</label>
-                <input formControlName="googleMap" placeholder="Google Map" tuiTextfield />
+                <input
+                    formControlName="googleMap"
+                    placeholder="Google Map"
+                    tuiTextfield
+                />
                 @if(formAccommodation.get('googleMap')?.invalid &&
                 formAccommodation.get('googleMap')?.touched) {
                 <div>
@@ -300,11 +415,19 @@
                 @for (facility of facilities; track facility.id) {
                 <div class="facility-item">
                     <label tuiLabel class="facility-label">
-                        <input [formControlName]="facility.id" tuiCheckbox type="checkbox" class="facility-checkbox" />
-                        <img class="facility-image" [src]="
+                        <input
+                            [formControlName]="facility.id"
+                            tuiCheckbox
+                            type="checkbox"
+                            class="facility-checkbox"
+                        />
+                        <img
+                            class="facility-image"
+                            [src]="
                                 'http://localhost:8080/uploads/' +
                                 facility.image
-                            " />
+                            "
+                        />
                         <span class="facility-name">{{ facility.name }}</span>
                     </label>
                 </div>

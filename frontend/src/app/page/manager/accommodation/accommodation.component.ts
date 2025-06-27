@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, inject, Injector, OnInit, QueryList, ViewChildren } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    inject,
+    Injector,
+    OnInit,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -6,7 +15,11 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {
+    DomSanitizer,
+    SafeHtml,
+    SafeResourceUrl,
+} from '@angular/platform-browser';
 
 import { AccommodationService } from '../../../services/manager/accommodation.service';
 import {
@@ -51,6 +64,10 @@ import { FacilityService } from '../../../services/facility/facility.service';
 import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     standalone: true,
@@ -76,10 +93,14 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
         TuiDataListWrapperComponent,
         TuiDataListWrapper,
         NavbarComponent,
+        Toast,
+        ButtonModule,
+        Ripple,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
     providers: [
+        MessageService,
         TuiConfirmService,
         {
             provide: TuiDialogService,
@@ -125,7 +146,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected citySlug: string = '';
     protected districtName: string = '';
     protected districtSlug: string = '';
-    protected showFullMap: { [id: string]: boolean } = {};;
+    protected showFullMap: { [id: string]: boolean } = {};
     protected elList: { [id: string]: any } = {};
     protected showButtonStates: { [id: string]: boolean } = {};
 
@@ -135,7 +156,10 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         name: new FormControl('', Validators.required),
         country: new FormControl('Việt Nam'),
         city: new FormControl('', Validators.required),
-        district: new FormControl({ value: '', disabled: true }, Validators.required),
+        district: new FormControl(
+            { value: '', disabled: true },
+            Validators.required
+        ),
         address: new FormControl('', Validators.required),
         rating: new FormControl(0, [
             Validators.required,
@@ -153,8 +177,22 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private accommodationService: AccommodationService,
         private facilityService: FacilityService,
         private addressService: AddressService,
+        private messageService: MessageService,
         private sanitizer: DomSanitizer
-    ) { }
+    ) {}
+
+    // Method để sanitize URL
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
 
     ngOnInit() {
         // this.addressService.getCities().subscribe((data: City[]) => {
@@ -198,25 +236,29 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         //     }
         // })
 
-        this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCity: string | null) => {
-            // console.log("selected city: ", selectedCity);
+        this.formAccommodation
+            .get('city')
+            ?.valueChanges.subscribe((selectedCity: string | null) => {
+                // console.log("selected city: ", selectedCity);
 
-            this.onCitySelected(selectedCity);
+                this.onCitySelected(selectedCity);
 
-            this.formAccommodation.get('district')?.reset();
-            // this.onCityChange(selectedCity);
-        });
+                this.formAccommodation.get('district')?.reset();
+                // this.onCityChange(selectedCity);
+            });
 
-        this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrict: string | null) => {
-            // console.log("selected district: ", selectedDistrict);
+        this.formAccommodation
+            .get('district')
+            ?.valueChanges.subscribe((selectedDistrict: string | null) => {
+                // console.log("selected district: ", selectedDistrict);
 
-            this.onDistrictSelected(selectedDistrict);
-            // this.onCityChange(selectedCity);
-        });
+                this.onDistrictSelected(selectedDistrict);
+                // this.onCityChange(selectedCity);
+            });
 
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
-            this.cityNames = res.data.map(city => city.name);
+            this.cityNames = res.data.map((city) => city.name);
             // this.initFormValueChanges();
         });
 
@@ -228,10 +270,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.facilities = response.data;
             this.createFacilityControls();
         });
-
-
     }
-
 
     // private initFormValueChanges(): void {
     //     this.formAccommodation.get('city')?.valueChanges
@@ -244,12 +283,14 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     // }
 
     private onCitySelected(selectedCityName: string | null): void {
-        const selectedCity = this.cities.find(city => city.name === selectedCityName);
+        const selectedCity = this.cities.find(
+            (city) => city.name === selectedCityName
+        );
 
         if (selectedCity) {
             this.citySlug = selectedCity.slug;
             this.districts = selectedCity.level2s;
-            this.districtNames = this.districts.map(d => d.name);
+            this.districtNames = this.districts.map((d) => d.name);
             this.formAccommodation.get('district')?.enable();
         } else {
             this.citySlug = '';
@@ -260,23 +301,27 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     private onDistrictSelected(selectedDistrictName: string | null): void {
-        const selectedDistrict = this.districts.find(d => d.name === selectedDistrictName);
+        const selectedDistrict = this.districts.find(
+            (d) => d.name === selectedDistrictName
+        );
         this.districtSlug = selectedDistrict?.slug ?? '';
     }
 
     changeCitySlugToName(slug: string): string {
-        const city = this.cities.find(city => city.slug === slug);
+        const city = this.cities.find((city) => city.slug === slug);
 
         return city?.name ?? '';
     }
 
     changeDistrictSlugToName(citySlug: string, districtSlug: string): string {
         // console.log("cities: ", this.cities)
-        const city = this.cities.find(city => city.slug === citySlug);
+        const city = this.cities.find((city) => city.slug === citySlug);
         let districts = city?.level2s ?? [];
 
         // console.log("districts", districts);
-        let district = districts.find(district => district.slug === districtSlug);
+        let district = districts.find(
+            (district) => district.slug === districtSlug
+        );
         // console.log(district);
 
         return district?.name ?? '';
@@ -340,17 +385,22 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             name: accommodation.name,
             city: this.changeCitySlugToName(accommodation.city),
             country: 'Việt Nam',
-            district: this.changeDistrictSlugToName(accommodation.city, accommodation.district),
+            district: this.changeDistrictSlugToName(
+                accommodation.city,
+                accommodation.district
+            ),
             description: accommodation.description,
             googleMap: accommodation.google_map,
             address: accommodation.address,
             rating: accommodation.rating,
         });
 
-        const selectedCity = this.cities.find(city => city.name === accommodation.city);
+        const selectedCity = this.cities.find(
+            (city) => city.name === accommodation.city
+        );
         if (selectedCity) {
             this.districts = selectedCity.level2s;
-            this.districtNames = this.districts.map(d => d.name);
+            this.districtNames = this.districts.map((d) => d.name);
         }
 
         console.log('accommodation: ', accommodation);
@@ -407,19 +457,44 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             return;
         }
 
-        this.accommodationService
-            .createAccommodation(accommodation)
-            .subscribe((response) => {
+        // this.accommodationService
+        //     .createAccommodation(accommodation)
+        //     .subscribe((response) => {
+        //         this.accommodations.push(response.data);
+        //         this.formAccommodation.reset();
+        //         this.formFacilities.reset();
+
+        //         this.accommodations = [...this.accommodations]; // force trigger DOM update
+        //         this.checkDescriptionOverflow();
+        //         this.showToast(
+        //             'success',
+        //             'Khách sạn đã được tạo thành công',
+        //             'Bạn có thể xem chi tiết khách sạn trong danh sách'
+        //         );
+        //     });
+        this.accommodationService.createAccommodation(accommodation).subscribe({
+            next: (response) => {
                 this.accommodations.push(response.data);
-                // this.formAccommodation.reset();
+                this.formAccommodation.reset();
                 // this.formAccommodation.setValue
-                // this.formFacilities.reset();
-
-                // this.accommodations = [...this.accommodations]; // force trigger DOM update
-                // this.checkDescriptionOverflow();
-
-                window.location.reload()
-            });
+                this.formFacilities.reset();
+                this.accommodations = [...this.accommodations]; // force trigger DOM update
+                this.checkDescriptionOverflow();
+                this.showToast(
+                    'success',
+                    'Khách sạn đã được tạo thành công',
+                    'Bạn có thể xem chi tiết khách sạn trong danh sách'
+                );
+            },
+            error: (error) => {
+                console.error('Error creating accommodation:', error);
+                this.showToast(
+                    'error',
+                    'Tạo khách sạn thất bại',
+                    'Vui lòng thử lại sau'
+                );
+            },
+        });
     }
 
     protected updateAccommodation() {
@@ -442,14 +517,24 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 this.accommodations = this.accommodations.map(
                     (accommodation) => {
                         if (accommodation.id === response.data.id) {
+                            this.showToast(
+                                'success',
+                                'Cập nhật khách sạn thành công',
+                                'Bạn có thể xem chi tiết khách sạn trong danh sách'
+                            );
                             return response.data;
                         } else {
+                            this.showToast(
+                                'error',
+                                'Cập nhật khách sạn thất bại',
+                                'Vui lòng thử lại sau'
+                            );
                             return accommodation;
                         }
                     }
                 );
 
-                window.location.reload()
+                window.location.reload();
             });
     }
 
@@ -458,6 +543,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.accommodations = this.accommodations.filter(
                 (accommodation) => accommodation.id !== id
             );
+            this.showToast('success', 'Xoá khách sạn thành công', '');
         });
     }
 

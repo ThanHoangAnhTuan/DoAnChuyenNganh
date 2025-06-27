@@ -10,12 +10,24 @@ import { TuiPassword } from '@taiga-ui/kit';
 import { Router } from '@angular/router';
 import { AdminLoginInput } from '../../../models/admin/admin.model';
 import { AuthService } from '../../../services/admin/auth.service';
-
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 @Component({
     selector: 'app-login',
-    imports: [TuiTextfield, TuiIcon, ReactiveFormsModule, TuiPassword],
+    imports: [
+        TuiTextfield,
+        TuiIcon,
+        ReactiveFormsModule,
+        TuiPassword,
+        Toast,
+        ButtonModule,
+        Ripple,
+    ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
+    providers: [MessageService],
 })
 export class LoginComponent {
     protected formLogin = new FormGroup({
@@ -23,10 +35,25 @@ export class LoginComponent {
         password: new FormControl('', Validators.required),
     });
 
-    constructor(private authSerivce: AuthService, private router: Router) {}
-
+    constructor(
+        private authSerivce: AuthService,
+        private router: Router,
+        private messageService: MessageService
+    ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
     handleLogin() {
         if (this.formLogin.invalid) {
+            this.showToast(
+                'error',
+                'Đăng nhập thất bại',
+                'Vui lòng điền đầy đủ thông tin đăng nhập'
+            );
             this.formLogin.markAllAsTouched();
             return;
         }
@@ -36,9 +63,19 @@ export class LoginComponent {
             password: this.formLogin.value.password ?? '',
         };
 
-        this.authSerivce.login(adminLogin).subscribe((response) => {
-            this.saveTokenToCookie(response.data.token);
-            this.router.navigate(['/admin/manager']);
+        this.authSerivce.login(adminLogin).subscribe({
+            next: (response) => {
+                this.saveTokenToCookie(response.data.token);
+                this.router.navigate(['/admin/manager']);
+            },
+            error: (error) => {
+                this.showToast(
+                    'error',
+                    'Đăng nhập thất bại',
+                    error.error.message ||
+                        'Vui lòng kiểm tra lại thông tin đăng nhập'
+                );
+            },
         });
     }
 

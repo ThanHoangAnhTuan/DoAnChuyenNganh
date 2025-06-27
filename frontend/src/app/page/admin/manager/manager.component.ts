@@ -21,6 +21,11 @@ import { CreateManager, Manager } from '../../../models/admin/manager.model';
 import { ManagerService } from '../../../services/admin/manager.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { RouterModule } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
+
 
 @Component({
     selector: 'app-manager',
@@ -34,9 +39,14 @@ import { RouterModule } from '@angular/router';
         TuiTextfield,
         NavbarComponent,
         RouterModule,
+        Toast,
+        ButtonModule,
+        Ripple,
+
     ],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',
+    providers: [MessageService],
 })
 export class ManagerComponent implements OnInit {
     protected managers!: Manager[];
@@ -94,14 +104,23 @@ export class ManagerComponent implements OnInit {
             });
     }
 
-    constructor(private managerService: ManagerService) {}
-
+    constructor(
+        private managerService: ManagerService,
+        private messageService: MessageService
+    ) {}
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
     ngOnInit(): void {
         // TODO: get managers by admin
         this.managerService.getManagers().subscribe({
             next: (value) => {
                 this.managers = value.data;
-                console.log(this.managers);
+                // console.log(this.managers);
             },
             error: (err) => {
                 console.error(err);
@@ -137,10 +156,20 @@ export class ManagerComponent implements OnInit {
                 // console.log("Status code: ", response.code);
 
                 this.formCreateManger.reset();
+                this.showToast(
+                    'success',
+                    'Manager created successfully',
+                    response.message
+                );
             },
             error: (err) => {
-                console.log('Message:', err.error.message);
-                this.errorMessage = err.error.message;
+                this.showToast(
+                    'error',
+                    'Error creating manager',
+                    err.error.message
+                );
+                // console.log('Message:', err.error.message);
+                // this.errorMessage = err.error.message;
             },
         });
     }
