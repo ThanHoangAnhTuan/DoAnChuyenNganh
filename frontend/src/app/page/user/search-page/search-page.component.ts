@@ -95,34 +95,17 @@ export class SearchPageComponent implements OnInit {
             if (this.hotels.length > 0) {
                 this.applyFilters(); // Cập nhật khi params thay đổi
             }
-        })
+        });
     }
 
     // Khởi tạo component
     public ngOnInit(): void {
         this.invalidTrue.markAsTouched();
         this.invalidFalse.markAsTouched();
-        this.loadHotels(); // Tải danh sách khách sạn
+        this.loadHotels();
     }
 
-    // Danh sách các checkbox filter
-    // Thêm type cho filter
     customCheckboxes = [
-        // {
-        //     id: '1',
-        //     label: 'Guest houses',
-        //     checked: false,
-        // },
-        // {
-        //     id: '2',
-        //     label: 'Very good: 8+',
-        //     checked: false,
-        // },
-        // {
-        //     id: '3',
-        //     label: 'Bed and breakfasts',
-        //     checked: false,
-        // },
         {
             id: '4',
             label: '5 stars',
@@ -140,107 +123,68 @@ export class SearchPageComponent implements OnInit {
         },
     ];
 
-    // Tải danh sách khách sạn từ service
-
-    // loadHotels(): void {
-    //     this.hotelService.getAccommodationsByCity(this.city).subscribe({
-    //         next: (hotels) => {
-    //             this.hotels = hotels.data;
-    //             console.log('Hotels loaded:', this.hotels);
-
-    //             // Lọc khách sạn theo thành phố từ URL
-    //             if (this.city && this.city.trim() !== '') {
-    //                 this.filteredHotels = this.hotels.filter((hotel) =>
-    //                     hotel.city
-    //                         .toLowerCase()
-    //                         .includes(this.city.toLowerCase())
-    //                 );
-    //                 this.filteredHotels = [...this.hotels];
-    //                 this.applyFilters(); // Áp dụng bộ lọc ngay khi tải xong
-    //             }
-    //         },
-    //         error: (err: any) => {
-    //             console.error('Error loading hotels:', err);
-    //             this.error = true;
-    //         },
-    //     });
-    // }
-
     loadHotels(): void {
-        this.hotelService.getAccommodationsByCity(this.citySlug).pipe(
-            switchMap(hotels => {
-                const hotelList = hotels.data;
-                // console.log("all hotels: ", hotelList);
+        this.hotelService
+            .getAccommodationsByCity(this.citySlug)
+            .pipe(
+                switchMap((hotels) => {
+                    const hotelList = hotels.data;
+                    const hotelWithCityName$ = hotelList.map((hotel) =>
+                        this.addressService.getCityBySlug(hotel.city).pipe(
+                            map((cityData) => {
+                                const cityName = cityData[0]?.name || 'Unknow';
 
-                // Tạo một mảng các Observable để gọi API city name
-                const hotelWithCityName$ = hotelList.map(hotel =>
-                    this.addressService.getCityBySlug(hotel.city).pipe(
-                        map(cityData => {
-                            const cityName = cityData[0]?.name || 'Unknow';
+                                const district = cityData[0]?.level2s.find(
+                                    (d) => d.slug === hotel.district
+                                );
+                                const districName = district?.name ?? 'Unknow';
 
-                            const district = cityData[0]?.level2s.find(d => d.slug === hotel.district);
-                            const districName = district?.name ?? 'Unknow';
-
-                            return {
-                                ...hotel,
-                                city: cityName, // gán city name vào
-                                district: districName, // gán distric vào
-                            };
-                        })
-                    )
-                );
-
-                // forkJoin đợi tất cả các Observable hoàn thành
-                return forkJoin(hotelWithCityName$);
-            })
-        ).subscribe({
-            next: (hotelsWithCity) => {
-                this.hotels = hotelsWithCity;
-                // console.log("Load hotels: ", this.hotels);
-
-                // Lọc khách sạn theo thành phố từ URL
-                if (this.city && this.city.trim() !== '') {
-                    this.filteredHotels = this.hotels.filter((hotel) =>
-                        hotel.city
-                            .toLowerCase()
-                            .includes(this.city.toLowerCase())
+                                return {
+                                    ...hotel,
+                                    city: cityName,
+                                    district: districName,
+                                };
+                            })
+                        )
                     );
-                    this.filteredHotels = [...this.hotels];
-                    // console.log("filterd hotel: ", this.filteredHotels);
-                    this.applyFilters(); // Áp dụng bộ lọc ngay khi tải xong
-                }
-            },
-            error: (err) => {
-                console.error('Error loading hotels:', err);
-                this.error = true;
-            }
-        });
+                    return forkJoin(hotelWithCityName$);
+                })
+            )
+            .subscribe({
+                next: (hotelsWithCity) => {
+                    this.hotels = hotelsWithCity;
+                    // Lọc khách sạn theo thành phố từ URL
+                    if (this.city && this.city.trim() !== '') {
+                        this.filteredHotels = this.hotels.filter((hotel) =>
+                            hotel.city
+                                .toLowerCase()
+                                .includes(this.city.toLowerCase())
+                        );
+                        this.filteredHotels = [...this.hotels];
+                        this.applyFilters(); // Áp dụng bộ lọc ngay khi tải xong
+                    }
+                },
+                error: (err) => {
+                    this.error = true;
+                },
+            });
     }
 
-    /**
-     * Xử lý sự kiện khi người dùng thay đổi checkbox
-     */
     onCheckboxChange(item: any, checked: boolean): void {
         item.checked = checked;
         this.applyFilters();
     }
 
-    /**
-     * Áp dụng các bộ lọc đã chọn vào danh sách khách sạn
-     */
     applyFilters(): void {
         // Bước 1: Lọc theo city từ thanh search (URL params)
         let result = [...this.hotels];
-        // console.log("result: ", result);
-
+        
         // Nếu có thành phố từ URL, lọc danh sách khách sạn
         if (this.city && this.city.trim() !== '') {
             result = result.filter((hotel) =>
                 hotel.city.toLowerCase().includes(this.city.toLowerCase())
             );
         }
-
-        // console.log("result: ", result);
 
         // Bước 2: Tiếp tục lọc theo các filter checkbox
         const activeFilters = this.customCheckboxes.filter((cb) => cb.checked);
@@ -287,22 +231,7 @@ export class SearchPageComponent implements OnInit {
             return passStarFilter && passTypeFilter && passRatingFilter;
         });
     }
-    /**
-     * Định dạng giá tiền theo VND
-     * @param price - Giá tiền
-     * @returns Chuỗi giá đã định dạng
-     */
-    // formatPrice(price: number): string {
-    //     return new Intl.NumberFormat('vi-VN', {
-    //         style: 'currency',
-    //         currency: 'VND',
-    //         minimumFractionDigits: 0
-    //     }).format(price).replace('₫', 'VND');
-    // }
 
-    /**
-     * Tạo chuỗi đánh giá sao
-     */
     getStars(rating: number): string {
         return '★'.repeat(rating) + ''.repeat(5 - rating);
     }

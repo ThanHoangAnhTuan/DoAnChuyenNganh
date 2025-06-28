@@ -20,14 +20,12 @@ import {
     SafeHtml,
     SafeResourceUrl,
 } from '@angular/platform-browser';
-
 import { AccommodationService } from '../../../services/manager/accommodation.service';
 import {
     Accommodation,
     CreateAccommodation,
     UpdateAccommodation,
 } from '../../../models/manager/accommodation.model';
-
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiIcon,
@@ -35,7 +33,6 @@ import {
     TuiDialogService,
     TuiTextfield,
     TuiAppearance,
-    TuiGroup,
 } from '@taiga-ui/core';
 import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
@@ -196,71 +193,22 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        // this.addressService.getCities().subscribe((data: City[]) => {
-        //     this.cities = data;
-
-        //     this.cityNames = this.cities.map(city => city.name);
-        //     console.log("data:", this.cityNames);
-        // })
-
-        // this.formAccommodation.get('city')?.valueChanges.subscribe((selectedCityName: string | null) => {
-        //     const selectedCity = this.cities.find(city => city.name === selectedCityName);
-
-        //     if (selectedCity) {
-        //         // console.log("selected city: ", selectedCity);
-
-        //         this.citySlug = selectedCity.slug;
-        //         this.districts = selectedCity.level2s;
-        //         // console.log("districts: ", this.districts);
-
-        //         this.districtNames = this.districts.map(d => d.name);
-        //         // console.log("districts: ", this.districtNames);
-
-        //         this.formAccommodation.get('district')?.enable();
-        //     } else {
-        //         this.citySlug = '';
-        //         this.districts = [];
-        //         this.districtNames = [];
-        //         this.formAccommodation.get('district')?.disable();
-        //     }
-        // })
-
-        // this.formAccommodation.get('district')?.valueChanges.subscribe((selectedDistrictName: string | null) => {
-        //     const selectedDistrict = this.districts.find(district => district.name === selectedDistrictName);
-
-        //     if (selectedDistrict) {
-        //         // console.log("selected district: ", selectedDistrict);
-
-        //         this.districtSlug = selectedDistrict.slug;
-        //     } else {
-        //         this.districtSlug = '';
-        //     }
-        // })
-
         this.formAccommodation
             .get('city')
             ?.valueChanges.subscribe((selectedCity: string | null) => {
-                // console.log("selected city: ", selectedCity);
-
                 this.onCitySelected(selectedCity);
-
                 this.formAccommodation.get('district')?.reset();
-                // this.onCityChange(selectedCity);
             });
 
         this.formAccommodation
             .get('district')
             ?.valueChanges.subscribe((selectedDistrict: string | null) => {
-                // console.log("selected district: ", selectedDistrict);
-
                 this.onDistrictSelected(selectedDistrict);
-                // this.onCityChange(selectedCity);
             });
 
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
             this.cityNames = res.data.map((city) => city.name);
-            // this.initFormValueChanges();
         });
 
         this.accommodationService.getAccommodations().subscribe((response) => {
@@ -272,16 +220,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.createFacilityControls();
         });
     }
-
-    // private initFormValueChanges(): void {
-    //     this.formAccommodation.get('city')?.valueChanges
-    //         .subscribe(
-    //             this.onCitySelected.bind(this)
-    //         );
-
-    //     this.formAccommodation.get('district')?.valueChanges
-    //         .subscribe(this.onDistrictSelected.bind(this));
-    // }
 
     private onCitySelected(selectedCityName: string | null): void {
         const selectedCity = this.cities.find(
@@ -315,16 +253,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     changeDistrictSlugToName(citySlug: string, districtSlug: string): string {
-        // console.log("cities: ", this.cities)
         const city = this.cities.find((city) => city.slug === citySlug);
         let districts = city?.level2s ?? [];
-
-        // console.log("districts", districts);
         let district = districts.find(
             (district) => district.slug === districtSlug
         );
-        // console.log(district);
-
         return district?.name ?? '';
     }
 
@@ -342,7 +275,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             });
         });
 
-        // Tạo FormGroup mới với các controls
         this.formFacilities = new FormGroup(facilityControls);
     }
 
@@ -404,8 +336,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.districtNames = this.districts.map((d) => d.name);
         }
 
-        console.log('accommodation: ', accommodation);
-
         this.setFacilityValues(accommodation.facilities);
 
         this.idAccommodationUpdating = accommodation.id;
@@ -458,28 +388,12 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             return;
         }
 
-        // this.accommodationService
-        //     .createAccommodation(accommodation)
-        //     .subscribe((response) => {
-        //         this.accommodations.push(response.data);
-        //         this.formAccommodation.reset();
-        //         this.formFacilities.reset();
-
-        //         this.accommodations = [...this.accommodations]; // force trigger DOM update
-        //         this.checkDescriptionOverflow();
-        //         this.showToast(
-        //             'success',
-        //             'Khách sạn đã được tạo thành công',
-        //             'Bạn có thể xem chi tiết khách sạn trong danh sách'
-        //         );
-        //     });
         this.accommodationService.createAccommodation(accommodation).subscribe({
             next: (response) => {
                 this.accommodations.push(response.data);
                 this.formAccommodation.reset();
-                // this.formAccommodation.setValue
                 this.formFacilities.reset();
-                this.accommodations = [...this.accommodations]; // force trigger DOM update
+                this.accommodations = [...this.accommodations];
                 this.checkDescriptionOverflow();
                 this.showToast(
                     'success',
@@ -528,7 +442,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                             this.showToast(
                                 'error',
                                 'Cập nhật khách sạn thất bại',
-                                'Vui lòng thử lại sau'
+                                'Cập nhật khách sạn thất bại. Vui lòng thử lại sau'
                             );
                             return accommodation;
                         }
@@ -542,7 +456,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.accommodations = this.accommodations.filter(
                 (accommodation) => accommodation.id !== id
             );
-            this.showToast('success', 'Xoá khách sạn thành công', '');
+            this.showToast('success', 'Xoá khách sạn thành công', 'Xoá khách sạn thành công');
         });
     }
 
@@ -559,12 +473,9 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.descEls.forEach((elRef) => {
                 const el = elRef.nativeElement;
                 const id = el.getAttribute('data-id');
-
                 if (id) {
                     this.showButtonStates[id] = el.scrollHeight > 60;
                 }
-
-                console.log(this.showButtonStates);
             });
         });
     }

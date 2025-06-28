@@ -44,11 +44,9 @@ export class RegisterComponent {
 
     continueWithEmail() {
         if (this.email) {
-            // Create an OTP object with the email
             const otpData: OTP = {
                 verify_key: this.email,
-                // We're sending the initial request, so no code is needed yet
-                verify_code: '', // or remove this field if your OTP interface doesn't require it for sending
+                verify_code: '',
             };
 
             this.authService.verifyOTP(otpData).subscribe({
@@ -58,7 +56,6 @@ export class RegisterComponent {
                         'OTP đã được gửi',
                         'Vui lòng kiểm tra email của bạn để xác nhận đăng ký.'
                     );
-                    console.log('OTP sent successfully: ', response);
                     // Navigate to OTP verification page with email in query params
                     this.router.navigate(['/register/verify-otp'], {
                         queryParams: { email: this.email },
@@ -71,8 +68,6 @@ export class RegisterComponent {
                         error.message ||
                             'Đã xảy ra lỗi khi gửi OTP. Vui lòng thử lại sau.'
                     );
-                    console.error('Error sending OTP:', error);
-                    // Handle error (show error message to user)
                 },
             });
         }
@@ -85,7 +80,6 @@ export class RegisterComponent {
                 'Thông tin không hợp lệ',
                 'Vui lòng nhập địa chỉ email của bạn.'
             );
-            // console.warn('Please enter your email address.');
             return;
         }
 
@@ -95,8 +89,6 @@ export class RegisterComponent {
             verify_purpose: 'TEST_USER',
         };
 
-        console.log('Email gửi đi:', this.email);
-
         this.authService.registerUser(newUser).subscribe({
             next: (response) => {
                 this.showToast(
@@ -104,7 +96,6 @@ export class RegisterComponent {
                     'Đăng ký thành công',
                     'Vui lòng kiểm tra email của bạn để xác nhận đăng ký.'
                 );
-                console.log('Thông báo:', response.message);
 
                 this.router.navigate(['/verify-otp'], {
                     queryParams: { email: this.email },
@@ -121,10 +112,4 @@ export class RegisterComponent {
             },
         });
     }
-
-    loginWithGoogle() {}
-
-    loginWithApple() {}
-
-    loginWithFacebook() {}
 }

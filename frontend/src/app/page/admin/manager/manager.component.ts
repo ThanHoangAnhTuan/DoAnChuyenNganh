@@ -26,7 +26,6 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 
-
 @Component({
     selector: 'app-manager',
     imports: [
@@ -42,7 +41,6 @@ import { Ripple } from 'primeng/ripple';
         Toast,
         ButtonModule,
         Ripple,
-
     ],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',
@@ -57,7 +55,6 @@ export class ManagerComponent implements OnInit {
         'Is Deleted',
         'Created At',
         'Updated At',
-        // 'Action',
         'Show Accommodation',
     ];
 
@@ -70,16 +67,6 @@ export class ManagerComponent implements OnInit {
         },
         { validators: this.passwordsMatchValidator }
     );
-
-    // protected formManager = new FormGroup({
-    //   account: new FormControl('', Validators.required),
-    //   username: new FormControl('', Validators.required),
-    //   login_time: new FormControl('', Validators.required),
-    //   logout_time: new FormControl('', Validators.required),
-    //   is_deleted: new FormControl('', Validators.required),
-    //   created_at: new FormControl('', Validators.required),
-    //   updated_at: new FormControl('', Validators.required),
-    // });
 
     private readonly dialogs = inject(TuiDialogService);
     protected openDialogCreate(
@@ -120,13 +107,9 @@ export class ManagerComponent implements OnInit {
         this.managerService.getManagers().subscribe({
             next: (value) => {
                 this.managers = value.data;
-                // console.log(this.managers);
             },
             error: (err) => {
                 console.error(err);
-            },
-            complete: () => {
-                console.log('Manager fetch complete.');
             },
         });
     }
@@ -145,16 +128,8 @@ export class ManagerComponent implements OnInit {
             return;
         }
 
-        console.log(manager);
-
         this.managerService.createNewManager(manager).subscribe({
             next: (response) => {
-                // this.managers.push(response.data);
-                console.log("add manager successfully")
-
-                // console.log("Message: ", response.message);
-                // console.log("Status code: ", response.code);
-
                 this.formCreateManger.reset();
                 this.showToast(
                     'success',
@@ -168,8 +143,6 @@ export class ManagerComponent implements OnInit {
                     'Error creating manager',
                     err.error.message
                 );
-                // console.log('Message:', err.error.message);
-                // this.errorMessage = err.error.message;
             },
         });
     }

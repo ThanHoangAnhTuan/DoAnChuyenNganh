@@ -109,8 +109,6 @@ export class UserProfileComponent implements OnInit {
                 next: (response: UserResponse) => {
                     this.currentUser = response.data;
 
-                    console.log('Current User:', this.currentUser);
-
                     const [dayStr, monthStr, yearStr] =
                         this.currentUser.birthday.split('-'); // ["21", "06", "2025"]
 
@@ -138,7 +136,6 @@ export class UserProfileComponent implements OnInit {
                         error.message ||
                             'Đã xảy ra lỗi khi tải thông tin người dùng. Vui lòng thử lại sau.'
                     );
-                    // console.error('Error loading user data:', error);
                 },
             });
     }
@@ -194,7 +191,6 @@ export class UserProfileComponent implements OnInit {
                         error.error?.message ||
                             'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.'
                     );
-                    // console.error('Update failed:', error);
                 },
             });
     }

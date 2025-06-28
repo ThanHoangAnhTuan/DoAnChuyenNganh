@@ -66,7 +66,6 @@ export class VerifyOtpComponent implements OnInit {
         this.route.queryParams.subscribe((params) => {
             this.email =
                 params['email'] || localStorage.getItem('resetEmail') || '';
-            console.log('Email from query param:', this.email);
             if (!this.email) {
                 this.showToast(
                     'error',
@@ -84,35 +83,6 @@ export class VerifyOtpComponent implements OnInit {
             this.countdownSub.unsubscribe();
         }
     }
-    // onOtpInput(event: any, index: number, inputElement: HTMLInputElement) {
-    //     // Lấy giá trị đã nhập
-    //     const value = inputElement.value;
-
-    //     // Auto focus tới ô tiếp theo nếu đã nhập
-    //     if (value.length === 1 && index < 5) {
-    //         const nextInput = inputElement.parentElement?.children[
-    //             index + 1
-    //         ] as HTMLInputElement;
-    //         if (nextInput) {
-    //             nextInput.focus();
-    //         }
-    //     }
-
-    //     // Quay lại ô trước nếu xóa
-    //     if (value.length === 0 && event.key === 'Backspace' && index > 0) {
-    //         const prevInput = inputElement.parentElement?.children[
-    //             index - 1
-    //         ] as HTMLInputElement;
-    //         if (prevInput) {
-    //             prevInput.focus();
-    //         }
-    //     }
-
-    //     // Cập nhật giá trị OTP tổng
-    //     setTimeout(() => {
-    //         this.updateOTPValue();
-    //     });
-    // }
 
     onOtpInput(event: any, index: number, inputElement: HTMLInputElement) {
         const value = event.target.value;
@@ -241,37 +211,6 @@ export class VerifyOtpComponent implements OnInit {
         );
     }
 
-    // verifyOTP() {
-    //     if (!this.otp || this.otp.trim() === '') {
-    //         console.warn('Please enter otp.');
-    //         return;
-    //     }
-    //     this.isVerifying = true;
-    //     // Giả lập gọi API xác thực OTP
-    //     setTimeout(() => {
-    //         this.isVerifying = false;
-    //         this.step = 2; // Chuyển sang bước cập nhật mật khẩu
-    //     }, 1500);
-
-    //     const otpData: OTP = {
-    //         verify_key: this.email,
-    //         verify_code: this.otp,
-    //     };
-
-    //     if (this.otp && this.email) {
-    //         this.authService.verifyOTP(otpData).subscribe({
-    //             next: (response) => {
-    //                 console.log('OTP verified successfully:', response);
-    //                 this.token = response.data.token; // Assuming the token is returned in the response
-    //                 // Navigate to success page or show success message
-    //             },
-    //             error: (error) => {
-    //                 console.error('Error verifying OTP:', error);
-    //                 // Handle error (show error message to user)
-    //             },
-    //         });
-    //     }
-    // }
     verifyOTP() {
         // Combine OTP values
         const otpCode = this.otpValues.join('');
@@ -367,8 +306,6 @@ export class VerifyOtpComponent implements OnInit {
             password: this.password,
         };
 
-        console.log('Updating password with token:', token);
-
         this.authService.updatePassword(passwordData).subscribe({
             next: (response) => {
                 this.showToast(
@@ -376,7 +313,6 @@ export class VerifyOtpComponent implements OnInit {
                     'Cập nhật mật khẩu thành công',
                     'Mật khẩu của bạn đã được cập nhật thành công.'
                 );
-                console.log('Password updated successfully:', response);
                 // Clear localStorage items that are no longer needed
                 localStorage.removeItem('resetToken');
                 localStorage.removeItem('resetEmail');

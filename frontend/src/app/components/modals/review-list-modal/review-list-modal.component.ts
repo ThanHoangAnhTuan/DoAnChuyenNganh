@@ -1,6 +1,5 @@
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
     Component,
     ElementRef,
     inject,
@@ -79,12 +78,7 @@ export class ReviewListModalComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        console.log('reviews: ', this.reviews);
-
         this.totalPages = Math.ceil(this.reviews.length / 10);
-        console.log('accommodation id: ', this.accommodationId);
-        console.log('total page: ', this.totalPages);
-        console.log('current page: ', this.currentPage);
     }
 
     addReview() {
@@ -135,7 +129,6 @@ export class ReviewListModalComponent implements OnInit {
                     'Review Submitted',
                     'Your review has been added successfully!'
                 );
-                console.log('Review has been added successfull:', response);
                 // Add the new review to the top of the list
                 setTimeout(() => {
                     this.reviews.unshift(response);
@@ -206,7 +199,6 @@ export class ReviewListModalComponent implements OnInit {
 
     onOpenInputOrderIdModal(): void {
         this.isInputOrderIdModalOpen = true;
-        console.log('Đã bật modal');
     }
 
     onCloseInputOrderIdModal(): void {

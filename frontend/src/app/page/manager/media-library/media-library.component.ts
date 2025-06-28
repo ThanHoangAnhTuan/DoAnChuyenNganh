@@ -39,13 +39,10 @@ export class MediaLibraryComponent {
     protected imagesPreview: string[] = [];
     protected oldImages: string[] | null = null;
     protected deleteImages: string[] = [];
-
     protected readonly apiURl = 'http://localhost:8080/uploads/';
-
     @ViewChild('fileInput')
     fileInput!: ElementRef<HTMLInputElement>;
     protected id = '';
-
     protected isDetailMode = false;
 
     constructor(
@@ -69,8 +66,6 @@ export class MediaLibraryComponent {
             this.imageService
                 .getImages(this.id, this.isDetailMode)
                 .subscribe((response) => {
-                    console.log('init');
-                    console.log('response: ', response);
                     this.oldImages = response.data;
                 });
         });
@@ -82,8 +77,6 @@ export class MediaLibraryComponent {
 
     protected onSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
-        console.log('upload');
-
         if (input.files && input.files.length > 0) {
             const filesArray = Array.from(input.files); // convert FileList -> File[]
 
@@ -98,15 +91,12 @@ export class MediaLibraryComponent {
     }
 
     protected onRemoveOldImage(imageName: string): void {
-        console.log(imageName);
         this.deleteImages.push(imageName);
-
         if (this.oldImages) {
             this.oldImages = this.oldImages.filter(
                 (item) => item !== imageName
             );
         }
-        // console.log(this.oldImages);
     }
 
     protected onRemove(index: number): void {
@@ -160,7 +150,6 @@ export class MediaLibraryComponent {
 
     protected uploadFiles() {
         const formImages = this.formImages.get('images')?.value;
-        console.log(this.formImages);
         if (
             (formImages && formImages?.length > 0) ||
             this.deleteImages.length > 0
@@ -173,9 +162,6 @@ export class MediaLibraryComponent {
                     this.isDetailMode
                 )
                 .subscribe((response) => {
-                    console.log('upload');
-                    console.log('response: ', response);
-
                     this.oldImages = response.data;
                     this.imagesPreview = [];
                     this.formImages.get('images')?.setValue([]);

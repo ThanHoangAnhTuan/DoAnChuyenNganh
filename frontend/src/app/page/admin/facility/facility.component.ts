@@ -6,7 +6,6 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiIcon,
@@ -35,7 +34,6 @@ import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { AsyncPipe, NgIf } from '@angular/common';
-
 import type { TuiFileLike } from '@taiga-ui/kit';
 import { finalize, of, Subject, switchMap } from 'rxjs';
 import type { Observable } from 'rxjs';
@@ -147,10 +145,8 @@ export class FacilityComponent implements OnInit {
 
         this.formFacility.patchValue({
             name: facility.name,
-            image: null, // or set to a File object if available
+            image: null,
         });
-
-        // console.log('facility: ', facility);
 
         this.idFacilityUpdating = facility.id;
 
@@ -167,10 +163,7 @@ export class FacilityComponent implements OnInit {
 
     protected CreateFacilityInput(): void {
         const nameValue = this.formFacility.get('name')?.value;
-        // const imageControl = this.control;
         const imageControlValue = this.formFacility.value.image;
-
-        // const imageValue = imageControl?.value;
 
         if (!nameValue) {
             this.showToast(
@@ -228,50 +221,6 @@ export class FacilityComponent implements OnInit {
         });
     }
 
-    // protected updateFacility(): void {
-    //     console.log('name', this.formFacility.get('name')?.value);
-    //     if (this.formFacility.invalid) {
-    //         this.formFacility.markAllAsTouched();
-    //         return;
-    //     }
-
-    //     const formData = new FormData();
-    //     formData.append('id', this.idFacilityUpdating);
-    //     formData.append('name', this.formFacility.get('name')?.value || '');
-    //     console.log(this.idFacilityUpdating);
-    //     console.log(this.formFacility.get('name')?.value);
-
-    //     const imageFile = this.formFacility.get('image')?.value;
-    //     if (imageFile instanceof File) {
-    //         formData.append('image', imageFile, imageFile.name);
-    //     }
-
-    //     this.facilityService.updateFacility(formData).subscribe({
-    //         next: (response) => {
-    //             console.log(response);
-    //             const updatedFacility = response.data as Facility;
-    //             this.facilities = this.facilities.map((facility) => {
-    //                 return facility.id === updatedFacility.id
-    //                     ? updatedFacility
-    //                     : facility;
-    //             });
-
-    //             // Show success message
-    //             console.log('Cập nhật cơ sở thành công');
-    //         },
-    //         error: (error) => {
-    //             console.error('Error updating facility:', error);
-    //             console.warn(
-    //                 'Cập nhật cơ sở thất bại: ' +
-    //                     (error.message || 'Đã xảy ra lỗi')
-    //             );
-    //         },
-    //         complete: () => {
-    //             // Hide loading indicator
-    //             console.log('Update facility request completed');
-    //         },
-    //     });
-    // }
     protected updateFacility(): void {
         // Create form data for the update
         const formData = new FormData();
@@ -300,7 +249,6 @@ export class FacilityComponent implements OnInit {
 
         this.facilityService.updateFacility(formData).subscribe({
             next: (response) => {
-                console.log(response);
                 const updatedFacility = response.data as Facility;
                 this.facilities = this.facilities.map((facility) => {
                     return facility.id === updatedFacility.id

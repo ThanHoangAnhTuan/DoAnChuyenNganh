@@ -5,7 +5,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { StatsService } from '../../../services/manager/stat.service';
 import { Observable } from 'rxjs';
-import { NavbarComponent } from "../../../components/navbar/navbar.component";
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     selector: 'app-stats',
@@ -111,8 +111,6 @@ export class StatsComponent {
             { length: daysInMonth },
             (_, i) => `Ngày ${i + 1}`
         );
-
-        console.log(labels);
 
         obs.subscribe({
             next: (res) => {

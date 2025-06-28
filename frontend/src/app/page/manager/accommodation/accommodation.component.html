@@ -165,16 +165,9 @@
                     tuiTextfield
                 />
                 <tui-icon tuiTooltip="You can't change here" />
-                <!-- @if(formAccommodation.get('country')?.invalid &&
-                formAccommodation.get('country')?.touched) {
-                <div>
-                    <small class="text-red-500">Country is required</small>
-                </div>
-                } -->
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>City</label>
-                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
                 <tui-data-list-wrapper
                     *tuiTextfieldDropdown
@@ -321,17 +314,10 @@
                     [readOnly]="true"
                 />
                 <tui-icon tuiTooltip="You can't change here" />
-                <!-- @if(formAccommodation.get('country')?.invalid &&
-                formAccommodation.get('country')?.touched) {
-                <div>
-                    <small class="text-red-500">Country is required</small>
-                </div>
-                } -->
             </tui-textfield>
 
             <tui-textfield>
                 <label tuiLabel>City</label>
-                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
                 <tui-data-list-wrapper
                     *tuiTextfieldDropdown

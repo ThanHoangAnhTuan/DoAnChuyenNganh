@@ -187,7 +187,6 @@ export class AccommodationDetailComponent implements OnInit {
             .getRoomDetailByAccommodationId(id, this.checkIn, this.checkOut)
             .subscribe({
                 next: (value) => {
-                    console.log(value);
                     this.rooms = value.data;
                 },
                 error: (err) => {
