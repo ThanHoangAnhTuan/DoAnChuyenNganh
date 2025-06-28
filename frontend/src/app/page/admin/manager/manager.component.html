@@ -1,12 +1,7 @@
 <p-toast></p-toast>
 <app-navbar />
 <main>
-    <button
-        size="l"
-        tuiButton
-        type="button"
-        (click)="openDialogCreate(createForm)"
-    >
+    <button style="margin: 10px 0" size="l" tuiButton type="button" (click)="openDialogCreate(createForm)">
         New
     </button>
 
@@ -33,30 +28,51 @@
                 <td *tuiCell="'Updated At'" tuiTd>
                     {{ manager.updated_at }}
                 </td>
+                <!-- <td *tuiCell="'Action'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'" 
+                            >
+                            Edit
+                        </button>
+                        <button appearance="action" iconStart="@tui.trash" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.color]="'red'">
+                            Delete
+                        </button>
+                    </span>
+                </td> -->
+                <td *tuiCell="'Show Accommodation'" tuiTd>
+                    <a class="button" target="_blank" [routerLink]="['/admin/manager/',manager.id,'accommodations']">Show</a>
+                </td>
             </tr>
             }
         </tbody>
     </table>
 
     <ng-template #createForm>
-        <form
-            tuiCardLarge
-            [formGroup]="formCreateManger"
-            [style.max-width.rem]="32"
-            [style.padding.px]="5"
-            (ngSubmit)="createManager()"
-        >
+        <form tuiCardLarge [formGroup]="formCreateManger" [style.max-width.rem]="32" [style.padding.px]="5"
+            (ngSubmit)="createManager()">
             <tui-textfield>
                 <label tuiLabel>Account</label>
-                <input
-                    formControlName="account"
-                    placeholder="Account"
-                    tuiTextfield
-                />
+                <input formControlName="account" placeholder="Account" tuiTextfield />
                 @if(formCreateManger.get('account')?.invalid &&
                 formCreateManger.get('account')?.touched) {
                 <div>
                     <small class="text-red-500">Account is required</small>
+                </div>
+                } @if(errorMessage) {account: this.formCreateManger.get('account')?.value || '',
+                <div>
+                    <small class="text-red-500">{{ errorMessage }}</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>User Name</label>
+                <input formControlName="username" placeholder="User Name" tuiTextfield />
+                @if(formCreateManger.get('username')?.invalid &&
+                formCreateManger.get('username')?.touched) {
+                <div>
+                    <small class="text-red-500">User name is required</small>
                 </div>
                 } @if(errorMessage) {
                 <div>
@@ -66,11 +82,7 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Password</label>
-                <input
-                    formControlName="password"
-                    placeholder="Password"
-                    tuiTextfield
-                />
+                <input formControlName="password" placeholder="Password" tuiTextfield />
                 @if(formCreateManger.get('password')?.invalid &&
                 formCreateManger.get('password')?.touched) {
                 <div>
@@ -80,11 +92,7 @@
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>Confirm Password</label>
-                <input
-                    formControlName="confirm"
-                    placeholder="Confirm"
-                    tuiTextfield
-                />
+                <input formControlName="confirm" placeholder="Confirm" tuiTextfield />
                 @if(formCreateManger.get('country')?.invalid &&
                 formCreateManger.get('country')?.touched) {
                 <div>

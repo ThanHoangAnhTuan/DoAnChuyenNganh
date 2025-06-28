@@ -1,0 +1,122 @@
+<app-navbar></app-navbar>
+<main>
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+        <tbody tuiTbody>
+            @for(accommodation of accommodations; track accommodation.id) {
+            <tr tuiTr>
+                <td *tuiCell="'Name'" tuiTd>
+                    {{ accommodation.name }}
+                </td>
+                <td *tuiCell="'Country'" tuiTd>
+                    {{ accommodation.country }}
+                </td>
+                <td *tuiCell="'City'" tuiTd>
+                    {{ changeCitySlugToName(accommodation.city) }}
+                </td>
+                <td *tuiCell="'District'" tuiTd>
+                    {{ changeDistrictSlugToName( accommodation.city ,accommodation.district) }}
+                </td>
+                <td *tuiCell="'Address'" tuiTd>
+                    {{ accommodation.address }}
+                </td>
+                <td *tuiCell="'Image'" tuiTd>
+                    <a class="button" target="_blank" [routerLink]="[
+                            '/manager/accommodation/',
+                            accommodation.id,
+                            'images'
+                        ]">Quản lý hình ảnh</a>
+                </td>
+                <td *tuiCell="'Description'" tuiTd>
+                    <div #descEl [innerHTML]="getDescription(accommodation.description)"
+                        [attr.data-id]="accommodation.id" [class.collapsed]="!showFullMap[accommodation.id]">
+                    </div>
+
+                    @if(showButtonStates[accommodation.id]) {
+                    <p (click)="toggleDescription(accommodation.id)" class="see-more-button">
+                        {{ isDescriptionShown(accommodation.id) ? 'Thu gọn' : 'Xem thêm' }}
+                    </p>
+                    }
+                </td>
+
+                <td *tuiCell="'Rating'" tuiTd>
+                    {{ accommodation.rating }}
+                </td>
+                <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
+                    {{ accommodation.google_map }}
+                </td>
+
+                <td *tuiCell="'Is Verified'" tuiTd>
+                    <div class="has-edit-button">
+                        @if(isUpdateVerified && updateId == accommodation.id) {
+                        <select name="is_verified" id="is_verified" [(ngModel)]="accommodation.is_verified"
+                            (blur)="openVerifyConfirmModal()" class="change-input">
+                            <option [value]="1">Yes</option>
+                            <option [value]="0">No</option>
+                        </select>
+                        } @else {
+                        {{ accommodation.is_verified ? 'Yes' : 'No' }}
+                        }
+
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeVerifiedApply(accommodation.id)">
+                            Edit
+                        </button>
+                    </div>
+                </td>
+                <td *tuiCell="'Is Deleted'" tuiTd>
+                    <div class="has-edit-button">
+                        @if(isUpdateDeleted && updateId == accommodation.id) {
+                        <select name="is_deleted" id="is_deleted" [(ngModel)]="accommodation.is_verified"
+                            (blur)="openDeleteConfirmModal()" class="change-input">
+                            <option [value]="1">Yes</option>
+                            <option [value]="0">No</option>
+                        </select>
+                        } @else {
+                        {{ accommodation.is_deleted ? 'Yes' : 'No' }}
+                        }
+
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeDeletedApply(accommodation.id)">
+                            Edit
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</main>
+
+<!-- Confirm Modal -->
+@if(isModalConfirmVerifyOpen) {
+<div class="outside-modal" (click)="$event.stopPropagation()" (click)="closeVerifyConfirmModal()">
+    <div class="modal">
+        <h3>Xác nhận hành động</h3>
+        <p>Bạn có chắc chắn muốn xác nhận thay đổi?</p>
+
+        <div class="modal-buttons">
+            <button (click)="changeVerifiedFinish()">Xác nhận</button>
+            <button (click)="closeVerifyConfirmModal()">Hủy</button>
+        </div>
+    </div>
+</div>
+}
+
+@if(isModalConfirmDeleteOpen) {
+<div class="outside-modal" (click)="$event.stopPropagation()" (click)="closeDeleteConfirmModal()">
+    <div class="modal">
+        <h3>Xác nhận hành động</h3>
+        <p>Bạn có chắc chắn muốn xác nhận thay đổi?</p>
+
+        <div class="modal-buttons">
+            <button (click)="changeDeleteFinish()">Xác nhận</button>
+            <button (click)="closeDeleteConfirmModal()">Hủy</button>
+        </div>
+    </div>
+</div>
+}
