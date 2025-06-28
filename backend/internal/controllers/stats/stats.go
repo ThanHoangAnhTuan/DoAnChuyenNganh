@@ -2,6 +2,8 @@ package stats
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -133,4 +135,95 @@ func (c *Controller) GetMonthlyEarningsByYear(ctx *gin.Context) {
 	fmt.Printf("GetMonthlyEarningsByYear success")
 	global.Logger.Info("GetMonthlyEarningsByYear success")
 	response.SuccessResponse(ctx, codeStatus, data)
+}
+
+func (c *Controller) ExportDailyEarningsCSV(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("ExportDailyEarningsCSV validation not found\n")
+		global.Logger.Error("ExportDailyEarningsCSV validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.GetDailyEarningsByMonthInput
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		fmt.Printf("ExportDailyEarningsCSV binding error")
+		global.Logger.Error("ExportDailyEarningsCSV binding error")
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("ExportDailyEarningsCSV validation error: %s\n", validationErrors)
+		global.Logger.Error("ExportDailyEarningsCSV validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeStatus, data, err := services.Stats().ExportDailyEarningsCSV(ctx, &params)
+	if err != nil {
+		fmt.Printf("ExportDailyEarningsCSV error: %s\n", err.Error())
+		global.Logger.Error("ExportDailyEarningsCSV error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("ExportDailyEarningsCSV success")
+	global.Logger.Info("ExportDailyEarningsCSV success")
+	response.SuccessResponse(ctx, codeStatus, data)
+
+	// Set headers for CSV download
+	filename := fmt.Sprintf("daily_earnings_%d_%02d.csv", params.Year, params.Month)
+	ctx.Header("Content-Type", "text/csv")
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	ctx.Header("Content-Length", strconv.Itoa(len(data)))
+
+	ctx.Data(http.StatusOK, "text/csv", data)
+}
+
+func (c *Controller) ExportMonthlyEarningsCSV(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("ExportMonthlyEarningsCSV validation not found\n")
+		global.Logger.Error("ExportMonthlyEarningsCSV validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.GetMonthlyEarningsByYearInput
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		fmt.Printf("ExportMonthlyEarningsCSV binding error")
+		global.Logger.Error("ExportMonthlyEarningsCSV binding error")
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("ExportMonthlyEarningsCSV validation error: %s\n", validationErrors)
+		global.Logger.Error("ExportMonthlyEarningsCSV validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeStatus, data, err := services.Stats().ExportMonthlyEarningsCSV(ctx, &params)
+	if err != nil {
+		fmt.Printf("ExportMonthlyEarningsCSV error: %s\n", err.Error())
+		global.Logger.Error("ExportMonthlyEarningsCSV error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("ExportMonthlyEarningsCSV success")
+	global.Logger.Info("ExportMonthlyEarningsCSV success")
+	filename := fmt.Sprintf("monthly_earnings_%d.csv", params.Year)
+	ctx.Header("Content-Type", "text/csv")
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	ctx.Header("Content-Length", strconv.Itoa(len(data)))
+
+	ctx.Data(http.StatusOK, "text/csv", data)
 }

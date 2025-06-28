@@ -17,4 +17,8 @@ type Service interface {
 
 	// Daily stats cho tháng cụ thể
 	GetDailyEarningsByMonth(ctx *gin.Context, in *vo.GetDailyEarningsByMonthInput) (codeStatus int, out []*vo.GetDailyEarningsOutput, err error)
+
+	ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEarningsByMonthInput) (codeStatus int, csvData []byte, err error)
+
+	ExportMonthlyEarningsCSV(ctx *gin.Context, in *vo.GetMonthlyEarningsByYearInput) (codeStatus int, csvData []byte, err error)
 }

@@ -18,6 +18,7 @@ import { PaymentComponent } from './page/payment/payment.component';
 import { FacilityDetailComponent } from './page/admin/facility-detail/facility-detail.component';
 import { StatsComponent } from './page/manager/stats/stats.component';
 import { ManagerComponent } from './page/admin/manager/manager.component';
+import { RoomComponent } from './page/manager/room/room.component';
 
 export const routes: Routes = [
     {
@@ -55,6 +56,12 @@ export const routes: Routes = [
     {
         path: 'manager/accommodation/stats',
         component: StatsComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'manager' },
+    },
+    {
+        path: 'manager/accommodation/detail/:id/rooms',
+        component: RoomComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'manager' },
     },

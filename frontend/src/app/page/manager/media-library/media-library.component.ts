@@ -38,6 +38,7 @@ import { Ripple } from 'primeng/ripple';
 export class MediaLibraryComponent {
     protected imagesPreview: string[] = [];
     protected oldImages: string[] | null = null;
+    protected deleteImages: string[] = [];
 
     protected readonly apiURl = 'http://localhost:8080/uploads/';
 
@@ -68,6 +69,8 @@ export class MediaLibraryComponent {
             this.imageService
                 .getImages(this.id, this.isDetailMode)
                 .subscribe((response) => {
+                    console.log('init');
+                    console.log('response: ', response);
                     this.oldImages = response.data;
                 });
         });
@@ -95,16 +98,15 @@ export class MediaLibraryComponent {
     }
 
     protected onRemoveOldImage(imageName: string): void {
+        console.log(imageName);
+        this.deleteImages.push(imageName);
+
         if (this.oldImages) {
             this.oldImages = this.oldImages.filter(
                 (item) => item !== imageName
             );
-            this.showToast(
-                'info',
-                'Xóa ảnh thành công',
-                `Ảnh ${imageName} đã được xóa khỏi danh sách cũ.`
-            );
         }
+        // console.log(this.oldImages);
     }
 
     protected onRemove(index: number): void {
@@ -158,25 +160,37 @@ export class MediaLibraryComponent {
 
     protected uploadFiles() {
         const formImages = this.formImages.get('images')?.value;
+        console.log(this.formImages);
+        if (
+            (formImages && formImages?.length > 0) ||
+            this.deleteImages.length > 0
+        ) {
+            this.imageService
+                .uploadImages(
+                    this.deleteImages,
+                    formImages ?? [],
+                    this.id,
+                    this.isDetailMode
+                )
+                .subscribe((response) => {
+                    console.log('upload');
+                    console.log('response: ', response);
 
-        this.imageService
-            .uploadImages(
-                this.oldImages ?? [],
-                formImages ?? [],
-                this.id,
-                this.isDetailMode
-            )
-            .subscribe((response) => {
-                this.oldImages = [];
-                if (response.data) {
-                    this.oldImages.push(...response.data);
-                }
-                this.imagesPreview = [];
-                this.showToast(
-                    'success',
-                    'Tải ảnh thành công',
-                    'Ảnh đã được tải lên thành công.'
-                );
-            });
+                    this.oldImages = response.data;
+                    this.imagesPreview = [];
+                    this.formImages.get('images')?.setValue([]);
+                    this.showToast(
+                        'success',
+                        'Tải ảnh thành công',
+                        'Ảnh đã được tải lên thành công.'
+                    );
+                });
+        } else {
+            this.showToast(
+                'warn',
+                'Tải ảnh không thành công',
+                'Vui lòng chọn thêm ảnh mới hoặc xoá ảnh cũ trước khi upload'
+            );
+        }
     }
 }

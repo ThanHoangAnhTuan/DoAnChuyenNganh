@@ -12,6 +12,10 @@ type GetAccommodationDetailsInput struct {
 	CheckOut        string `form:"check_out"`
 }
 
+type GetAccommodationDetailsByManagerInput struct {
+	AccommodationID string `uri:"id"`
+}
+
 type CreateAccommodationDetailInput struct {
 	AccommodationID string   `json:"accommodation_id" validate:"required"`
 	Name            string   `json:"name" validate:"required,min=1,max=255"`
@@ -51,6 +55,17 @@ type GetAccommodationDetailsOutput struct {
 	Price             string                 `json:"price"`
 	DiscountID        string                 `json:"discount_id"`
 	Images            []string               `json:"images"`
+}
+
+type GetAccommodationDetailsByManagerOutput struct {
+	ID             string                 `json:"id"`
+	Name           string                 `json:"name"`
+	Guests         uint8                  `json:"guests"`
+	Beds           Beds                   `json:"beds"`
+	Facilities     []FacilityDetailOutput `json:"facilities"`
+	AvailableRooms uint8                  `json:"available_rooms"`
+	Price          string                 `json:"price"`
+	DiscountID     string                 `json:"discount_id"`
 }
 
 type UpdateAccommodationDetailInput struct {

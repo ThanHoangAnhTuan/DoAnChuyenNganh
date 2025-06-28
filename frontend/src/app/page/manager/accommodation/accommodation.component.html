@@ -15,8 +15,12 @@
             <tr tuiThGroup></tr>
         </thead>
         <tbody tuiTbody>
-            @for(accommodation of accommodations; track accommodation.id) {
+            @for(accommodation of accommodations; track accommodation.id; let i
+            = $index) {
             <tr tuiTr>
+                <td *tuiCell="'ID'" tuiTd>
+                    {{ i + 1 }}
+                </td>
                 <td *tuiCell="'Name'" tuiTd>
                     {{ accommodation.name }}
                 </td>

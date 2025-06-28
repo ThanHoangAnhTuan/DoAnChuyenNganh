@@ -78,6 +78,9 @@ func (a *serviceImpl) UpdateAccommodationRoom(ctx *gin.Context, in *vo.UpdateAcc
 		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
 	}
 
+	fmt.Printf("managerID: %v", userID)
+	fmt.Printf("AccommodationRoomID: %v", in.ID)
+
 	// TODO: check accommodation room belongs to manager
 	isBelongs, err := a.sqlc.CheckAccommodationRoomBelongsToManager(ctx, database.CheckAccommodationRoomBelongsToManagerParams{
 		ManagerID:           userID,
@@ -107,7 +110,7 @@ func (a *serviceImpl) UpdateAccommodationRoom(ctx *gin.Context, in *vo.UpdateAcc
 
 	out.ID = in.ID
 	out.Name = in.Name
-	out.Status = in.Status
+	out.Status = string(in.Status)
 	return response.ErrCodeUpdateAccommodationRoomSuccess, out, nil
 }
 
@@ -152,10 +155,10 @@ func (a *serviceImpl) GetAccommodationRooms(ctx *gin.Context, in *vo.GetAccommod
 
 	for _, accommodationRoom := range accommodationRooms {
 		out = append(out, &vo.GetAccommodationRoomsOutput{
-			ID:                  accommodationRoom.ID,
-			AccommodationTypeID: accommodationRoom.AccommodationType,
-			Name:                accommodationRoom.Name,
-			Status:              string(accommodationRoom.Status),
+			ID: accommodationRoom.ID,
+			// AccommodationTypeID: accommodationRoom.AccommodationType,
+			Name:   accommodationRoom.Name,
+			Status: string(accommodationRoom.Status),
 		})
 	}
 	return response.ErrCodeGetAccommodationRoomSuccess, out, nil
@@ -219,10 +222,10 @@ func (a *serviceImpl) CreateAccommodationRoom(ctx *gin.Context, in *vo.CreateAcc
 
 	for _, accommodationRoom := range accommodationRooms {
 		out = append(out, &vo.CreateAccommodationRoomOutput{
-			ID:                  accommodationRoom.ID,
-			AccommodationTypeID: accommodationRoom.AccommodationType,
-			Name:                accommodationRoom.Name,
-			Status:              string(accommodationRoom.Status),
+			ID: accommodationRoom.ID,
+			// AccommodationTypeID: accommodationRoom.AccommodationType,
+			Name:   accommodationRoom.Name,
+			Status: string(accommodationRoom.Status),
 		})
 	}
 

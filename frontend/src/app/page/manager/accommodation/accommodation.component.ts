@@ -124,6 +124,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected accommodations!: Accommodation[];
     protected facilities!: Facility[];
     protected columns: string[] = [
+        'ID',
         'Name',
         'Country',
         'City',
@@ -533,8 +534,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                         }
                     }
                 );
-
-                window.location.reload();
             });
     }
 

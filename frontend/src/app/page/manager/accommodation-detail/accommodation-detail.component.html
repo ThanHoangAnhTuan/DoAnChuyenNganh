@@ -10,10 +10,10 @@
     </thead>
     <tbody tuiTbody>
         @for(accommodationDetail of accommodationDetails; track
-        accommodationDetail.id) {
+        accommodationDetail.id; let i = $index) {
         <tr tuiTr>
             <td *tuiCell="'ID'" tuiTd>
-                {{ accommodationDetail.id }}
+                {{ i + 1 }}
             </td>
             <td class="text-nowrap" *tuiCell="'Manager ID'" tuiTd>
                 {{ accommodationDetail.accommodation_id }}
@@ -36,21 +36,24 @@
             <td *tuiCell="'Extra Large Double Bed'" tuiTd>
                 {{ accommodationDetail.beds.extra_large_double_bed }}
             </td>
-            <td *tuiCell="'Available Rooms'" tuiTd>
-                {{ accommodationDetail.available_rooms }}
-            </td>
             <td *tuiCell="'Price'" tuiTd>
                 {{ accommodationDetail.price }}
             </td>
-            <td *tuiCell="'Accommodation'" tuiTd>
-                {{ accommodationDetail.accommodation_name }}
+            <td *tuiCell="'Available Rooms'" tuiTd>
+                {{ accommodationDetail.available_rooms }}
             </td>
-            <!-- <td *tuiCell="'Facilities'" tuiTd>
-                {{ accommodationDetail.facilities }}
+            <td *tuiCell="'Room'" tuiTd>
+                <a
+                    class="button"
+                    target="_blank"
+                    [routerLink]="[
+                        '/manager/accommodation/detail/',
+                        accommodationDetail.id,
+                        'rooms'
+                    ]"
+                    >Quản lý phòng</a
+                >
             </td>
-            <td *tuiCell="'Discount'" tuiTd>
-                {{ accommodationDetail.discount_id }}
-            </td> -->
             <td *tuiCell="'Image'" tuiTd>
                 <a
                     class="button"
@@ -175,7 +178,7 @@
             </div>
             }
         </tui-textfield>
-        <tui-textfield>
+        <!-- <tui-textfield>
             <label tuiLabel>Available Rooms</label>
             <input tuiInputNumber formControlName="availableRooms" />
             @if(formAccommodationDetail.get('availableRooms')?.invalid &&
@@ -184,7 +187,7 @@
                 <small class="text-red-500">Available Rooms is required</small>
             </div>
             }
-        </tui-textfield>
+        </tui-textfield> -->
         <tui-textfield>
             <label tuiLabel>Price</label>
             <input tuiInputNumber formControlName="price" />
@@ -333,7 +336,7 @@
             }
         </tui-textfield>
 
-        <tui-textfield>
+        <!-- <tui-textfield>
             <label tuiLabel>Available Rooms</label>
             <input tuiInputNumber formControlName="availableRooms" />
             @if(formAccommodationDetail.get('availableRooms')?.invalid &&
@@ -342,7 +345,7 @@
                 <small class="text-red-500">Available Rooms is required</small>
             </div>
             }
-        </tui-textfield>
+        </tui-textfield> -->
 
         <tui-textfield>
             <label tuiLabel>Price</label>

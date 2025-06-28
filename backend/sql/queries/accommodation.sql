@@ -280,7 +280,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
-    AND `is_deleted` = 0 AND `is_verified` = 1;
+    AND `is_deleted` = 0;
 
 -- name: UpdateStatusAccommodation :exec
 UPDATE `ecommerce_go_accommodation`

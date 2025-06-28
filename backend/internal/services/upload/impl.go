@@ -78,6 +78,11 @@ func (i *serviceImpl) DeleteImage(ctx *gin.Context, fileName string) (err error)
 }
 
 func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeStatus int, savedImagePaths []string, err error) {
+	fmt.Printf("image: %v\n", in.Images)
+	fmt.Printf("delete: %v\n", in.DeleteImages)
+	fmt.Printf("id: %v\n", in.ID)
+	fmt.Printf("detail: %v\n", in.IsDetail)
+
 	// TODO: check accommodation exists in db
 	if !in.IsDetail {
 		isExists, err := i.sqlc.CheckAccommodationExists(ctx, in.ID)
@@ -88,32 +93,15 @@ func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeS
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
 		}
 
-		// TODO: Get all image of accommodation
-		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.ID)
-		if err != nil {
-			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
-		}
-
 		// TODO: Remove image
-		if len(in.OldImages) > 0 {
+		if len(in.DeleteImages) > 0 {
 			deleteFileNames := []string{}
-
-			for _, accommodationImage := range accommodationImages {
-				is_deleted := false
-				for _, deteleImage := range in.OldImages {
-					if deteleImage == accommodationImage.Image {
-						is_deleted = true
-						break
-					}
+			for _, image := range in.DeleteImages {
+				err := i.sqlc.DeleteAccommodationImage(ctx, image)
+				if err != nil {
+					return response.ErrCodeDeleteAccommodationImagesFailed, nil, fmt.Errorf("delete images in db of accommodation failed: %s", err)
 				}
-
-				if !is_deleted {
-					err := i.sqlc.DeleteAccommodationImage(ctx, accommodationImage.Image)
-					if err != nil {
-						return response.ErrCodeDeleteAccommodationImagesFailed, nil, fmt.Errorf("delete images in db of accommodation failed: %s", err)
-					}
-					deleteFileNames = append(deleteFileNames, accommodationImage.Image)
-				}
+				deleteFileNames = append(deleteFileNames, image)
 			}
 
 			err = uploader.DeleteImageToDisk(deleteFileNames)
@@ -128,6 +116,7 @@ func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeS
 			if err != nil {
 				return codeStatus, nil, err
 			}
+
 			// TODO: Save image to db
 			for _, image := range imagesFileName {
 				id := uuid.New().String()
@@ -146,7 +135,7 @@ func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeS
 		}
 
 		// TODO: Get all image
-		accommodationImages, err = i.sqlc.GetAccommodationImages(ctx, in.ID)
+		accommodationImages, err := i.sqlc.GetAccommodationImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
@@ -164,37 +153,21 @@ func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeS
 			return response.ErrCodeAccommodationDetailNotFound, nil, fmt.Errorf("accommodation detail not found")
 		}
 
-		// TODO: Get all image of accommodation detail
-		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
-		if err != nil {
-			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get images of accommodation detail failed: %s", err)
-		}
-
 		// TODO: Remove old image
-
-		deleteFileNames := []string{}
-
-		for _, deteleImage := range in.OldImages {
-			is_deleted := false
-			for _, accommodationDetailImage := range accommodationDetailImages {
-				if deteleImage == accommodationDetailImage.Image {
-					is_deleted = true
-					break
-				}
-			}
-
-			if !is_deleted {
-				err := i.sqlc.DeleteAccommodationDetailImage(ctx, deteleImage)
+		if len(in.DeleteImages) > 0 {
+			deleteFileNames := []string{}
+			for _, image := range in.DeleteImages {
+				err := i.sqlc.DeleteAccommodationDetailImage(ctx, image)
 				if err != nil {
 					return response.ErrCodeDeleteAccommodationDetailImagesFailed, nil, fmt.Errorf("delete images in db of accommodation detail failed: %s", err)
 				}
-				deleteFileNames = append(deleteFileNames, deteleImage)
+				deleteFileNames = append(deleteFileNames, image)
 			}
-		}
 
-		err = uploader.DeleteImageToDisk(deleteFileNames)
-		if err != nil {
-			return response.ErrCodeDeleteAccommodationDetailImagesFailed, nil, fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
+			err = uploader.DeleteImageToDisk(deleteFileNames)
+			if err != nil {
+				return response.ErrCodeDeleteAccommodationDetailImagesFailed, nil, fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
+			}
 		}
 
 		// TODO: Save image to disk
@@ -220,7 +193,7 @@ func (i *serviceImpl) UploadImages(ctx *gin.Context, in *vo.UploadImages) (codeS
 		}
 
 		// TODO: Get all image
-		accommodationDetailImages, err = i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
+		accommodationDetailImages, err := i.sqlc.GetAccommodationDetailImages(ctx, in.ID)
 		if err != nil {
 			return response.ErrCodeGetAccommodationDetailImagesFailed, nil, fmt.Errorf("get images of accommodation detail failed: %s", err)
 		}

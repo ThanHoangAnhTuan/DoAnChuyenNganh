@@ -1,7 +1,10 @@
 package stats
 
 import (
+	"bytes"
+	"encoding/csv"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -62,6 +65,7 @@ func (s *serviceImpl) GetDailyEarningsByMonth(ctx *gin.Context, in *vo.GetDailyE
 	}
 
 	for _, dailyEarning := range dailyEarnings {
+
 		out = append(out, &vo.GetDailyEarningsOutput{
 			Day:          dailyEarning.Day.Format("02-01-2006"),
 			TotalOrders:  dailyEarning.TotalOrders,
@@ -123,6 +127,126 @@ func (s *serviceImpl) GetMonthlyEarnings(ctx *gin.Context) (codeStatus int, out 
 	return s.GetMonthlyEarningsByYear(ctx, &vo.GetMonthlyEarningsByYearInput{
 		Year: now.Year(),
 	})
+}
+
+func (s *serviceImpl) ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEarningsByMonthInput) (codeStatus int, csvData []byte, err error) {
+	// Get daily earnings data
+	statusCode, dailyEarnings, err := s.GetDailyEarningsByMonth(ctx, in)
+	if err != nil {
+		return statusCode, nil, err
+	}
+
+	var buf bytes.Buffer
+	writer := csv.NewWriter(&buf)
+
+	// Write header
+	header := []string{"Date", "Total Orders", "Total Revenue"}
+	if err := writer.Write(header); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV header: %w", err)
+	}
+
+	// Write data
+	var totalOrders int64
+	var totalRevenue float64
+
+	for _, earning := range dailyEarnings {
+		record := []string{
+			earning.Day,
+			strconv.FormatInt(earning.TotalOrders, 10),
+			earning.TotalRevenue,
+		}
+		if err := writer.Write(record); err != nil {
+			return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV record: %w", err)
+		}
+
+		rev, err := strconv.ParseFloat(earning.TotalRevenue, 64)
+		if err != nil {
+			return response.ErrCodeParseStringToFloatFailed, nil, err
+		}
+
+		totalOrders += earning.TotalOrders
+		totalRevenue += rev
+	}
+
+	// Write summary
+	summaryRecord := []string{
+		"TOTAL",
+		strconv.FormatInt(totalOrders, 10),
+		fmt.Sprintf("%.2f", totalRevenue),
+	}
+	if err := writer.Write(summaryRecord); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV summary: %w", err)
+	}
+
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("CSV writer error: %w", err)
+	}
+
+	return response.ErrCodeExportSuccess, buf.Bytes(), nil
+}
+
+func (s *serviceImpl) ExportMonthlyEarningsCSV(ctx *gin.Context, in *vo.GetMonthlyEarningsByYearInput) (codeStatus int, csvData []byte, err error) {
+	// Get monthly earnings data
+	statusCode, monthlyEarnings, err := s.GetMonthlyEarningsByYear(ctx, in)
+	if err != nil {
+		return statusCode, nil, err
+	}
+
+	var buf bytes.Buffer
+	writer := csv.NewWriter(&buf)
+
+	// Write header
+	header := []string{"Month", "Total Orders", "Total Revenue"}
+	if err := writer.Write(header); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV header: %w", err)
+	}
+
+	// Write data
+	var totalOrders int64
+	var totalRevenue float64
+
+	monthNames := []string{
+		"", "January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December",
+	}
+
+	for _, earning := range monthlyEarnings {
+		monthName := monthNames[earning.Month]
+		record := []string{
+			monthName,
+			strconv.FormatInt(earning.TotalOrders, 10),
+			earning.TotalRevenue,
+		}
+		if err := writer.Write(record); err != nil {
+			return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV record: %w", err)
+		}
+
+		rev, err := strconv.ParseFloat(earning.TotalRevenue, 64)
+		if err != nil {
+			return response.ErrCodeParseStringToFloatFailed, nil, err
+		}
+
+		totalOrders += earning.TotalOrders
+		totalRevenue += rev
+	}
+
+	// Write summary
+	summaryRecord := []string{
+		"TOTAL",
+		strconv.FormatInt(totalOrders, 10),
+		fmt.Sprintf("%.2f", totalRevenue),
+	}
+	if err := writer.Write(summaryRecord); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV summary: %w", err)
+	}
+
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		return response.ErrCodeExportFailed, nil, fmt.Errorf("CSV writer error: %w", err)
+	}
+
+	return response.ErrCodeExportSuccess, buf.Bytes(), nil
 }
 
 func (s *serviceImpl) getCurrentTimeForClient(clientTimezone string) time.Time {

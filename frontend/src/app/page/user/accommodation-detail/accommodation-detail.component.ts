@@ -169,12 +169,8 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodationDetailService
             .getAccommodationDetailById(id)
             .subscribe((data: GetAccommodationByIdResponse) => {
-                console.log(data);
-
                 if (data) {
                     this.accommodation = data.data;
-                    console.log('accommodation: ', this.accommodation);
-
                     this.getCityBySlug(this.accommodation.city);
                 } else {
                     this.showToast(
@@ -182,26 +178,25 @@ export class AccommodationDetailComponent implements OnInit {
                         'Lỗi tải dữ liệu',
                         'Không tìm thấy thông tin chỗ ở.'
                     );
-                    // console.log("Can't get accommodation");
                 }
             });
     }
 
     getRoomByAccommodationId(id: string) {
         this.roomService
-            .getRoomDetailByAccommodationId(id)
-            .subscribe((data: GetAccommodationDetailsResponse) => {
-                if (data) {
-                    this.rooms = data.data;
-                    // console.log("room: ", this.rooms);
-                } else {
+            .getRoomDetailByAccommodationId(id, this.checkIn, this.checkOut)
+            .subscribe({
+                next: (value) => {
+                    console.log(value);
+                    this.rooms = value.data;
+                },
+                error: (err) => {
                     this.showToast(
                         'error',
                         'Lỗi tải dữ liệu',
                         'Không tìm thấy thông tin phòng cho chỗ ở này.'
                     );
-                    // console.log("Can't get accommodation room");
-                }
+                },
             });
     }
 
@@ -223,8 +218,6 @@ export class AccommodationDetailComponent implements OnInit {
                     this.avarageRating =
                         Math.floor((totalRating / this.reviews.length) * 10) /
                         10;
-
-                    // console.log("reviews: ", this.reviews);
                 } else {
                     this.reviews = [];
                     this.avarageRating = 0;
@@ -233,7 +226,6 @@ export class AccommodationDetailComponent implements OnInit {
                         'Cảnh báo',
                         'Không có đánh giá nào cho chỗ ở này.'
                     );
-                    // console.log('No reviews found for this accommodation.');
                 }
             });
     }
@@ -262,8 +254,6 @@ export class AccommodationDetailComponent implements OnInit {
             room_selected: roomSelected,
         };
 
-        console.log(payment);
-
         const token = GetToken();
 
         if (token == null) {
@@ -282,8 +272,6 @@ export class AccommodationDetailComponent implements OnInit {
                     'Thành công',
                     'Tạo liên kết thanh toán thành công. Vui lòng kiểm tra liên kết.'
                 );
-                // console.log('Payment URL created successfully:', response.body);
-
                 if (!response.body.data.url) {
                     this.showToast(
                         'error',
@@ -317,16 +305,12 @@ export class AccommodationDetailComponent implements OnInit {
                     (d) => d.slug === this.accommodation.district
                 );
                 this.accommodationDistrict = district?.name ?? '';
-
-                // console.log("City: ", this.accommodationCity);
-                // console.log("District", this.accommodationDistrict);
             } else {
                 this.showToast(
                     'error',
                     'Lỗi tải dữ liệu',
                     'Không tìm thấy thông tin thành phố cho chỗ ở này.'
                 );
-                // console.log("Can't get city by id");
             }
         });
     }
@@ -368,9 +352,6 @@ export class AccommodationDetailComponent implements OnInit {
             quantity,
             total: price,
         };
-
-        console.log('Selected Rooms: ', this.selectedRooms);
-        console.log('values:', Object.values(this.selectedRooms));
     }
 
     numberRoomSelected(): number {

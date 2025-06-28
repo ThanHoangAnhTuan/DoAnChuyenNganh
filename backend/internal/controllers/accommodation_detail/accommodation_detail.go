@@ -107,6 +107,51 @@ func (c *Controller) GetAccommodationDetails(ctx *gin.Context) {
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
+func (c *Controller) GetAccommodationDetailsByManager(ctx *gin.Context) {
+	validation, exists := ctx.Get("validation")
+	if !exists {
+		fmt.Printf("GetAccommodationDetailsByManager validation not found\n")
+		global.Logger.Error("GetAccommodationDetailsByManager validation not found")
+		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		return
+	}
+
+	var params vo.GetAccommodationDetailsByManagerInput
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		fmt.Printf("GetAccommodationDetailsByManager uri binding error: %s\n", err.Error())
+		global.Logger.Error("GetAccommodationDetailsByManager uri binding error", zap.Error(err))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+
+	if err := ctx.ShouldBindQuery(&params); err != nil {
+		fmt.Printf("GetAccommodationDetailsByManager query binding error: %s\n", err.Error())
+		global.Logger.Error("GetAccommodationDetailsByManager query binding error", zap.Error(err))
+		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		return
+	}
+	err := validation.(*validator.Validate).Struct(params)
+	if err != nil {
+		validationErrors := response.FormatValidationErrorsToStruct(err)
+		fmt.Printf("GetAccommodationDetailsByManager validation error: %s\n", validationErrors)
+		global.Logger.Error("GetAccommodationDetailsByManager validation error: ", zap.Any("error", validationErrors))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+		return
+	}
+
+	codeStatus, data, err := services.AccommodationDetail().GetAccommodationDetailsByManager(ctx, &params)
+	if err != nil {
+		fmt.Printf("GetAccommodationDetailsByManager error: %s\n", err.Error())
+		global.Logger.Error("GetAccommodationDetailsByManager error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, codeStatus, nil)
+		return
+	}
+
+	fmt.Printf("GetAccommodationDetailsByManager success: %s", params.AccommodationID)
+	global.Logger.Info("GetAccommodationDetailsByManager success", zap.String("accommodationDetailId", params.AccommodationID))
+	response.SuccessResponse(ctx, codeStatus, data)
+}
+
 func (c *Controller) UpdateAccommodationDetail(ctx *gin.Context) {
 	validation, exists := ctx.Get("validation")
 	if !exists {

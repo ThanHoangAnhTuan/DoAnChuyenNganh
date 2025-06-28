@@ -86,10 +86,10 @@ export class AccommodationDetailComponent implements OnInit {
         'Double Bed',
         'Large Double Bed',
         'Extra Large Double Bed',
-        'Available Rooms',
         'Price',
+        'Available Rooms',
         'Image',
-        'Accommodation',
+        'Room',
         'Action',
         // 'Discount',
         // 'FacilityDetails',
@@ -107,7 +107,7 @@ export class AccommodationDetailComponent implements OnInit {
         largeDoubleBed: new FormControl<number | 0>(0),
         extraLargeDoubleBed: new FormControl<number | 0>(0),
         price: new FormControl<number | 0>(0, Validators.min(1)),
-        availableRooms: new FormControl<number | 0>(0),
+        // availableRooms: new FormControl<number | 0>(0),
         accommodationId: new FormControl<string | ''>(''),
         discountId: new FormControl<string | ''>(''),
         facilityDetails: new FormControl<string | ''>(''),
@@ -117,7 +117,7 @@ export class AccommodationDetailComponent implements OnInit {
 
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
-        availableRooms: 0,
+        // availableRooms: 0,
         discountId: '',
         doubleBed: 0,
         extraLargeDoubleBed: 0,
@@ -151,7 +151,7 @@ export class AccommodationDetailComponent implements OnInit {
         this.route.params.subscribe((params) => {
             this.accommodationId = params['id'];
             this.accommodationDetailService
-                .getAccommodationDetails(params['id'])
+                .getAccommodationDetailsByManager(params['id'])
                 .subscribe((response) => {
                     this.accommodationDetails = response.data;
                 });
@@ -222,7 +222,7 @@ export class AccommodationDetailComponent implements OnInit {
         this.formAccommodationDetail.patchValue({
             name: accommodationDetail.name,
             accommodationId: accommodationDetail.accommodation_id,
-            availableRooms: accommodationDetail.available_rooms,
+            // availableRooms: accommodationDetail.available_rooms,
             discountId: accommodationDetail.discount_id,
 
             doubleBed: accommodationDetail.beds.double_bed,
@@ -286,8 +286,8 @@ export class AccommodationDetailComponent implements OnInit {
                     this.formAccommodationDetail.get('extraLargeDoubleBed')
                         ?.value || 0,
             },
-            available_rooms:
-                this.formAccommodationDetail.get('availableRooms')?.value || 0,
+            // available_rooms:
+            //     this.formAccommodationDetail.get('availableRooms')?.value || 0,
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             accommodation_id: this.accommodationId,
             discount_id:
@@ -327,8 +327,8 @@ export class AccommodationDetailComponent implements OnInit {
             id: this.idAccommodationDetailUpdating,
             accommodation_id: this.accommodationId,
             name: this.formAccommodationDetail.get('name')?.value || '',
-            available_rooms:
-                this.formAccommodationDetail.get('availableRooms')?.value || 0,
+            // available_rooms:
+            //     this.formAccommodationDetail.get('availableRooms')?.value || 0,
             beds: {
                 single_bed:
                     this.formAccommodationDetail.get('singleBed')?.value || 0,

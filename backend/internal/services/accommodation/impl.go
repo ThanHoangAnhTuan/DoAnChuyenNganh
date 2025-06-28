@@ -365,6 +365,8 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodationsInput) (codeStatus int, out []*vo.GetAccommodationsOutput, pagination *vo.BasePaginationOutput, err error) {
 	out = []*vo.GetAccommodationsOutput{}
 
+	fmt.Printf("city: %v", in.City)
+
 	page := in.GetPage()
 	limit := in.GetLimit()
 

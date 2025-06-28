@@ -19,6 +19,8 @@ export class HotelService {
     getAccommodationsByCity(
         city: string
     ): Observable<GetAccommodationResponse> {
+        console.log("city: ", city);
+        
         return this.http.get<GetAccommodationResponse>(
             this.apiUrl + '?city=' + city
         );

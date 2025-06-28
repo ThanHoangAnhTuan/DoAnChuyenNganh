@@ -4,8 +4,7 @@ import "mime/multipart"
 
 type UploadImages struct {
 	Images       []*multipart.FileHeader `form:"images"`
-	OldImages    []string                `form:"old_images"`
-	DeleteImages []string                `form:"old_images"`
+	DeleteImages []string                `form:"delete_images"`
 	ID           string                  `form:"id"`
 	IsDetail     bool                    `form:"is_detail"`
 }

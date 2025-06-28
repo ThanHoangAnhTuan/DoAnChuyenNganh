@@ -231,6 +231,9 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 		// TODO: Get accommodation name by id
 		accommodationName, err := a.sqlc.GetAccommodationNameById(ctx, accommodationDetail.AccommodationID)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
+			}
 			return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
 		}
 
@@ -269,6 +272,69 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 			Price:             accommodationDetail.Price.String(),
 			DiscountID:        accommodationDetail.DiscountID.String,
 			Images:            pathNames,
+		})
+	}
+	return response.ErrCodeGetAccommodationDetailsSuccess, out, nil
+}
+
+func (a *serviceImpl) GetAccommodationDetailsByManager(ctx *gin.Context, in *vo.GetAccommodationDetailsByManagerInput) (codeStatus int, out []*vo.GetAccommodationDetailsByManagerOutput, err error) {
+	out = []*vo.GetAccommodationDetailsByManagerOutput{}
+
+	// TODO: check accommodation exists
+	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
+		}
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %w", err)
+	}
+
+	// TODO: get accommodation details by accommodation id
+	accommodationDetails, err := a.sqlc.GetAccommodationDetails(ctx, accommodation.ID)
+	if err != nil {
+		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id failed: %s", err)
+	}
+
+	for _, accommodationDetail := range accommodationDetails {
+		beds := vo.Beds{}
+		if err := json.Unmarshal(accommodationDetail.Beds, &beds); err != nil {
+			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling beds: %s", err)
+		}
+
+		// TODO: get facility
+		var facilityIDs []string
+		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIDs); err != nil {
+			return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		facilities := []vo.FacilityDetailOutput{}
+
+		for _, facilityID := range facilityIDs {
+			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
+			if err != nil {
+				return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			}
+
+			facilities = append(facilities, vo.FacilityDetailOutput{
+				ID:   facility.ID,
+				Name: facility.Name,
+			})
+		}
+
+		availableRooms, err := a.sqlc.CountAccommodationRoomAvailableByManager(ctx, accommodationDetail.ID)
+		if err != nil {
+			return response.ErrCodeGetAccommodationRoomFailed, nil, fmt.Errorf("get accommodation room failed: %s", err)
+		}
+
+		out = append(out, &vo.GetAccommodationDetailsByManagerOutput{
+			ID:             accommodationDetail.ID,
+			Name:           accommodationDetail.Name,
+			Guests:         accommodationDetail.Guests,
+			Beds:           beds,
+			Facilities:     facilities,
+			AvailableRooms: uint8(availableRooms),
+			Price:          accommodationDetail.Price.String(),
+			DiscountID:     accommodationDetail.DiscountID.String,
 		})
 	}
 	return response.ErrCodeGetAccommodationDetailsSuccess, out, nil

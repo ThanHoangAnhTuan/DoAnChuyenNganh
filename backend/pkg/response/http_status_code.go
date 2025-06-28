@@ -2,20 +2,21 @@ package response
 
 const (
 	// global
-	ErrCodeSaveDataFailed         = 20001
-	ErrCodeUpdateDataFailed       = 20002
-	ErrCodeMarshalFailed          = 20003
-	ErrCodeUnMarshalFailed        = 20004
-	ErrCodeCreateJWTTokenFailed   = 20005
-	ErrCodeParamsInvalid          = 20006
-	ErrCodeUnauthorized           = 20007
-	ErrCodeForbidden              = 20008
-	ErrCodeValidatorNotFound      = 20009
-	ErrCodeValidator              = 20010
-	ErrCodeConvertISOToUnixFailed = 20011
-	ErrCodeConvertUnixToISOFailed = 20012
-	ErrCodeSuccessfully           = 20013
-	ErrCodeParseTimeFailed        = 20014
+	ErrCodeSaveDataFailed           = 20001
+	ErrCodeUpdateDataFailed         = 20002
+	ErrCodeMarshalFailed            = 20003
+	ErrCodeUnMarshalFailed          = 20004
+	ErrCodeCreateJWTTokenFailed     = 20005
+	ErrCodeParamsInvalid            = 20006
+	ErrCodeUnauthorized             = 20007
+	ErrCodeForbidden                = 20008
+	ErrCodeValidatorNotFound        = 20009
+	ErrCodeValidator                = 20010
+	ErrCodeConvertISOToUnixFailed   = 20011
+	ErrCodeConvertUnixToISOFailed   = 20012
+	ErrCodeSuccessfully             = 20013
+	ErrCodeParseTimeFailed          = 20014
+	ErrCodeParseStringToFloatFailed = 20015
 
 	// register
 	ErrCodeInvalidEmailFormat = 30001
@@ -183,24 +184,29 @@ const (
 	ErrCodeDeleteAccommodationRoomFailed                = 210011
 	ErrCodeDeleteAccommodationRoomSuccess               = 210012
 	ErrCodeAccommodationRoomNotFound                    = 210013
+
+	// export
+	ErrCodeExportFailed  = 220001
+	ErrCodeExportSuccess = 220002
 )
 
 var message = map[int]string{
 	// global
-	ErrCodeSaveDataFailed:         "Save data failed",
-	ErrCodeUpdateDataFailed:       "Update data failed",
-	ErrCodeMarshalFailed:          "Marshal failed",
-	ErrCodeUnMarshalFailed:        "Unmarshal failed",
-	ErrCodeCreateJWTTokenFailed:   "Create JWT token failed",
-	ErrCodeParamsInvalid:          "Params invalid",
-	ErrCodeUnauthorized:           "Unauthorized",
-	ErrCodeForbidden:              "You do not have permission to access this resource.",
-	ErrCodeValidatorNotFound:      "Validator not found",
-	ErrCodeValidator:              "Validator error",
-	ErrCodeConvertISOToUnixFailed: "Convert ISO to Unix failed",
-	ErrCodeConvertUnixToISOFailed: "Convert Unix to ISO failed",
-	ErrCodeSuccessfully:           "Success",
-	ErrCodeParseTimeFailed:        "Parse time failed",
+	ErrCodeSaveDataFailed:           "Save data failed",
+	ErrCodeUpdateDataFailed:         "Update data failed",
+	ErrCodeMarshalFailed:            "Marshal failed",
+	ErrCodeUnMarshalFailed:          "Unmarshal failed",
+	ErrCodeCreateJWTTokenFailed:     "Create JWT token failed",
+	ErrCodeParamsInvalid:            "Params invalid",
+	ErrCodeUnauthorized:             "Unauthorized",
+	ErrCodeForbidden:                "You do not have permission to access this resource.",
+	ErrCodeValidatorNotFound:        "Validator not found",
+	ErrCodeValidator:                "Validator error",
+	ErrCodeConvertISOToUnixFailed:   "Convert ISO to Unix failed",
+	ErrCodeConvertUnixToISOFailed:   "Convert Unix to ISO failed",
+	ErrCodeSuccessfully:             "Success",
+	ErrCodeParseTimeFailed:          "Parse time failed",
+	ErrCodeParseStringToFloatFailed: "Parse string to float failed",
 
 	// register
 	ErrCodeInvalidEmailFormat: "Invalid email format",
@@ -366,4 +372,8 @@ var message = map[int]string{
 	ErrCodeDeleteAccommodationRoomFailed:                "Delete accommodation room failed",
 	ErrCodeDeleteAccommodationRoomSuccess:               "Delete accommodation room successfully",
 	ErrCodeAccommodationRoomNotFound:                    "Accommodation room not found",
+
+	// export
+	ErrCodeExportFailed:  "Export failed",
+	ErrCodeExportSuccess: "Export successfully",
 }

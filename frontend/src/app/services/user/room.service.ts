@@ -4,30 +4,36 @@ import { map, Observable } from 'rxjs';
 import { GetAccommodationDetailsResponse } from '../../models/manager/accommodation-detail.model';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class RoomService {
-  private baseUrl = 'http://localhost:8080/api/v1/accommodation-detail';
+    private baseUrl = 'http://localhost:8080/api/v1/accommodation-detail';
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
-  getRoomDetailByAccommodationId(id: string): Observable<GetAccommodationDetailsResponse> {
-    return this.http.get<GetAccommodationDetailsResponse>(this.baseUrl + '/get-accommodation-details/' + id);
-  }
+    getRoomDetailByAccommodationId(
+        id: string,
+        checkIn: string,
+        checkOut: string
+    ): Observable<GetAccommodationDetailsResponse> {
+        return this.http.get<GetAccommodationDetailsResponse>(
+            `${this.baseUrl}/get-accommodation-details/${id}?check_in=${checkIn}&check_out=${checkOut}`
+        );
+    }
 
-  // getAccommodationDetailByName(name: string): Observable<any[]> {
-  //   return this.http.get<any>(`${this.baseUrl}?name=${encodeURIComponent(name)}`).pipe(
-  //     map(response => response.data)
-  //   );
-  // }
+    // getAccommodationDetailByName(name: string): Observable<any[]> {
+    //   return this.http.get<any>(`${this.baseUrl}?name=${encodeURIComponent(name)}`).pipe(
+    //     map(response => response.data)
+    //   );
+    // }
 
-  // getAccommodationDetailByCity(city: string): Observable<any[]> {
-  //   return this.http.get<any[]>(`${this.baseUrl}?city=${encodeURIComponent(city)}`);
-  // }
+    // getAccommodationDetailByCity(city: string): Observable<any[]> {
+    //   return this.http.get<any[]>(`${this.baseUrl}?city=${encodeURIComponent(city)}`);
+    // }
 
-  // getAccommodationImagesByName(name: string): Observable<any> {
-  //   return this.getAccommodationDetailByName(name).pipe(
-  //     map(data => data[0]?.images || [])
-  //   );
-  // }
+    // getAccommodationImagesByName(name: string): Observable<any> {
+    //   return this.getAccommodationDetailByName(name).pipe(
+    //     map(data => data[0]?.images || [])
+    //   );
+    // }
 }
