@@ -24,7 +24,6 @@ import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-manager',
@@ -40,7 +39,6 @@ import { Ripple } from 'primeng/ripple';
         RouterModule,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',

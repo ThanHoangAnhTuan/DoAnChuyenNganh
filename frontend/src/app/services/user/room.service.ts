@@ -20,20 +20,4 @@ export class RoomService {
             `${this.baseUrl}/get-accommodation-details/${id}?check_in=${checkIn}&check_out=${checkOut}`
         );
     }
-
-    // getAccommodationDetailByName(name: string): Observable<any[]> {
-    //   return this.http.get<any>(`${this.baseUrl}?name=${encodeURIComponent(name)}`).pipe(
-    //     map(response => response.data)
-    //   );
-    // }
-
-    // getAccommodationDetailByCity(city: string): Observable<any[]> {
-    //   return this.http.get<any[]>(`${this.baseUrl}?city=${encodeURIComponent(city)}`);
-    // }
-
-    // getAccommodationImagesByName(name: string): Observable<any> {
-    //   return this.getAccommodationDetailByName(name).pipe(
-    //     map(data => data[0]?.images || [])
-    //   );
-    // }
 }

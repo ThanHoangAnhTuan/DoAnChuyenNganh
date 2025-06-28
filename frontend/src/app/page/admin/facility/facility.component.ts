@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
-    TuiIcon,
     TuiButton,
     TuiDialogService,
     TuiTextfield,
@@ -28,7 +27,6 @@ import {
     TUI_EDITOR_DEFAULT_EXTENSIONS,
     TUI_EDITOR_EXTENSIONS,
 } from '@taiga-ui/editor';
-import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { Facility } from '../../../models/facility/facility.model';
 import { FacilityService } from '../../../services/facility/facility.service';
@@ -40,7 +38,6 @@ import type { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-facility',
@@ -54,8 +51,6 @@ import { Ripple } from 'primeng/ripple';
         TuiAppearance,
         TuiCardLarge,
         TuiFiles,
-        TuiIcon,
-        RouterLink,
         TuiInputTimeModule,
         TuiSelect,
         NavbarComponent,
@@ -65,7 +60,6 @@ import { Ripple } from 'primeng/ripple';
         NgIf,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './facility.component.html',
     styleUrl: './facility.component.scss',

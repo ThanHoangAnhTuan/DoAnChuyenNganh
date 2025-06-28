@@ -10,14 +10,13 @@ import {
 import { TuiValidationError } from '@taiga-ui/cdk';
 import { TuiFiles } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../../services/manager/image.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-media-library',
@@ -29,7 +28,6 @@ import { Ripple } from 'primeng/ripple';
         NavbarComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',

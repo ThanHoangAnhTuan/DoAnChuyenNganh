@@ -12,7 +12,6 @@ import {
 import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AddressService } from '../../../services/address/address.service';
-import { Accommodation } from '../../../models/manager/accommodation.model';
 import { forkJoin, map, switchMap } from 'rxjs';
 
 @Component({
@@ -178,7 +177,7 @@ export class SearchPageComponent implements OnInit {
     applyFilters(): void {
         // Bước 1: Lọc theo city từ thanh search (URL params)
         let result = [...this.hotels];
-        
+
         // Nếu có thành phố từ URL, lọc danh sách khách sạn
         if (this.city && this.city.trim() !== '') {
             result = result.filter((hotel) =>

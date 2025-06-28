@@ -17,11 +17,7 @@ import { RoomService } from '../../../services/user/room.service';
 import { RoomInformationModalComponent } from '../../../components/modals/room-information-modal/room-information-modal.component';
 import { ReviewService } from '../../../services/user/review.service';
 import { GetAccommodationByIdResponse } from '../../../models/manager/accommodation.model';
-import { GetAccommodationDetailsResponse } from '../../../models/manager/accommodation-detail.model';
-import {
-    GetReviewsByAccommodationIdResponse,
-    Review,
-} from '../../../models/user/review.model';
+import { GetReviewsByAccommodationIdResponse } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from '../../../components/modals/review-list-modal/review-list-modal.component';
 import { PaymentService } from '../../../services/user/payment.service';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -31,7 +27,6 @@ import { GetToken } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -48,7 +43,6 @@ import { Ripple } from 'primeng/ripple';
         ReviewListModalComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',

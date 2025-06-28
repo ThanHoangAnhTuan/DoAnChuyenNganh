@@ -1,22 +1,16 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TuiIcon } from '@taiga-ui/core';
 import { AuthService } from '../../../services/user/auth.service';
-import {
-    OTP,
-    RegisterModel,
-    RegisterResponse,
-} from '../../../models/user/auth.model';
+import { OTP, RegisterModel } from '../../../models/user/auth.model';
 import { IsLoggedIn } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-register',
-    imports: [FormsModule, TuiIcon, Toast, ButtonModule, Ripple],
+    imports: [FormsModule, Toast, ButtonModule],
     templateUrl: './register.component.html',
     styleUrl: './register.component.scss',
     providers: [MessageService],

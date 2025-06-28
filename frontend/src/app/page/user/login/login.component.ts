@@ -8,12 +8,11 @@ import { SaveTokenToCookie } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule, Ripple],
+    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
     providers: [MessageService, provideAnimations()],

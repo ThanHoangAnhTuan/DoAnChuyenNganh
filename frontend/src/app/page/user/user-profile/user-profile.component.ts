@@ -23,15 +23,13 @@ import {
 } from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
 import { finalize } from 'rxjs';
-import { TuiButton, TuiCalendar, TuiLabel, TuiLoader } from '@taiga-ui/core';
+import { TuiButton, TuiLabel, TuiLoader } from '@taiga-ui/core';
 import { TuiRadio } from '@taiga-ui/kit';
-import { TuiDay } from '@taiga-ui/cdk';
 import { TuiTextfield } from '@taiga-ui/core';
 import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-user-profile',
@@ -52,7 +50,6 @@ import { Ripple } from 'primeng/ripple';
         DatePicker,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './user-profile.component.html',
     standalone: true,

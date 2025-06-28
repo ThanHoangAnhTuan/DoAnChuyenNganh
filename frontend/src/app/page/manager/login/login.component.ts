@@ -14,7 +14,6 @@ import { SaveTokenToCookie } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-login',
@@ -25,7 +24,6 @@ import { Ripple } from 'primeng/ripple';
         TuiPassword,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',

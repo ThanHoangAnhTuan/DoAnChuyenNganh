@@ -6,10 +6,8 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
-    TuiIcon,
     TuiButton,
     TuiDialogService,
     TuiTextfield,
@@ -19,22 +17,18 @@ import type { PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import { TuiInputModule } from '@taiga-ui/legacy';
 import { TuiFiles, tuiCreateTimePeriods, TuiSelect } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import {
     Facility,
     FacilityDetail,
 } from '../../../models/facility/facility.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
-import { AsyncPipe, NgIf } from '@angular/common';
-
 import type { Observable } from 'rxjs';
 import { FacilityDetailService } from '../../../services/facility-detail/facility-detail.service';
 import { TUI_DIALOGS_CLOSE } from '@taiga-ui/core';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 @Component({
     selector: 'app-facility-detail',
     imports: [
@@ -47,18 +41,13 @@ import { Ripple } from 'primeng/ripple';
         TuiAppearance,
         TuiCardLarge,
         TuiFiles,
-        TuiIcon,
-        RouterLink,
         TuiInputTimeModule,
         TuiSelect,
         NavbarComponent,
-        AsyncPipe,
         FormsModule,
         TuiFiles,
-        NgIf,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './facility-detail.component.html',
     styleUrl: './facility-detail.component.scss',

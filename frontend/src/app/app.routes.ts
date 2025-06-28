@@ -3,7 +3,6 @@ import { HomeComponent } from './page/user/home/home.component';
 import { AccommodationComponent } from './page/manager/accommodation/accommodation.component';
 import { AccommodationDetailComponent } from './page/user/accommodation-detail/accommodation-detail.component';
 import { AccommodationDetailComponent as ManagerAccommodationDetailComponent } from './page/manager/accommodation-detail/accommodation-detail.component';
-
 import { LoginComponent as ManagerLoginComponent } from './page/manager/login/login.component';
 import { LoginComponent as AdminLoginComponent } from './page/admin/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';

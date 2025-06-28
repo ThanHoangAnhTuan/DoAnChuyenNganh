@@ -22,7 +22,6 @@ import { TuiInputModule } from '@taiga-ui/legacy';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 @Component({
     selector: 'app-review-list-modal',
     imports: [
@@ -36,7 +35,6 @@ import { Ripple } from 'primeng/ripple';
         ReactiveFormsModule,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     providers: [DatePipe, MessageService],
     templateUrl: './review-list-modal.component.html',

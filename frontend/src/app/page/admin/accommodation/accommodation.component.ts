@@ -12,7 +12,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
-    TuiIcon,
     TuiButton,
     TuiDialogService,
     TuiTextfield,
@@ -25,17 +24,13 @@ import {
     TuiFiles,
     tuiCreateTimePeriods,
     TuiSelect,
-    TuiTooltip,
-    TuiDataListWrapperComponent,
     TuiDataListWrapper,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
-import { TuiCardLarge } from '@taiga-ui/layout';
 import {
     TUI_EDITOR_DEFAULT_EXTENSIONS,
     TUI_EDITOR_DEFAULT_TOOLS,
     TUI_EDITOR_EXTENSIONS,
-    TuiEditor,
 } from '@taiga-ui/editor';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
@@ -52,8 +47,6 @@ import {
     standalone: true,
     selector: 'app-accommodation',
     imports: [
-        TuiIcon,
-        TuiTooltip,
         TuiTable,
         TuiButton,
         TuiInputModule,
@@ -61,14 +54,11 @@ import {
         ReactiveFormsModule,
         TuiTextfield,
         TuiAppearance,
-        TuiCardLarge,
         TuiFiles,
-        TuiEditor,
         RouterLink,
         TuiInputTimeModule,
         TuiSelect,
         TuiSelectModule,
-        TuiDataListWrapperComponent,
         TuiDataListWrapper,
         NavbarComponent,
     ],

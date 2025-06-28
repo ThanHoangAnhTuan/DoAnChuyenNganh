@@ -12,11 +12,8 @@ export class PaymentService {
     constructor(private http: HttpClient) {}
 
     createPayment(): Observable<any> {
-        return this.http.post<any>(
-            `${this.apiUrl}/create_payment_url`,
-            {
-                "amount": 1000000,
-            }
-        );
+        return this.http.post<any>(`${this.apiUrl}/create_payment_url`, {
+            amount: 1000000,
+        });
     }
 }

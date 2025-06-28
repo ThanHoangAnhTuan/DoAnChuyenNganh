@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
-    TuiIcon,
     TuiButton,
     TuiDialogService,
     TuiTextfield,
@@ -19,34 +18,24 @@ import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import {
     TuiConfirmService,
     TuiFiles,
-    TuiRating,
     TuiSelect,
-    TuiTooltip,
     TuiDataListWrapperComponent,
     TuiDataListWrapper,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import {
-    TUI_EDITOR_DEFAULT_EXTENSIONS,
-    TUI_EDITOR_EXTENSIONS,
-    TuiEditor,
-} from '@taiga-ui/editor';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 import { RoomService } from '../../../services/manager/room.service';
 import { CreateRoom, Room } from '../../../models/manager/room.model';
 
 @Component({
     selector: 'app-room',
     imports: [
-        TuiIcon,
-        TuiTooltip,
         TuiTable,
         TuiButton,
         TuiInputModule,
@@ -56,10 +45,7 @@ import { CreateRoom, Room } from '../../../models/manager/room.model';
         TuiAppearance,
         TuiCardLarge,
         TuiFiles,
-        TuiEditor,
-        RouterLink,
         TuiInputTimeModule,
-        TuiRating,
         TuiSelect,
         TuiSelectModule,
         TuiDataListWrapperComponent,
@@ -67,7 +53,6 @@ import { CreateRoom, Room } from '../../../models/manager/room.model';
         NavbarComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './room.component.html',
     styleUrl: './room.component.scss',
@@ -77,16 +62,6 @@ import { CreateRoom, Room } from '../../../models/manager/room.model';
         {
             provide: TuiDialogService,
             useExisting: TuiResponsiveDialogService,
-        },
-        {
-            provide: TUI_EDITOR_EXTENSIONS,
-            deps: [Injector],
-            useFactory: (injector: Injector) => [
-                ...TUI_EDITOR_DEFAULT_EXTENSIONS,
-                import('@taiga-ui/editor').then(({ setup }) =>
-                    setup({ injector })
-                ),
-            ],
         },
     ],
 })

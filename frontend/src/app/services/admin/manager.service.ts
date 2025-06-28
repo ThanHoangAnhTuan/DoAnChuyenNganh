@@ -31,11 +31,20 @@ export class ManagerService {
         return this.http.get<GetManagerOutput>(`${this.adminUrl}/managers`);
     }
 
-    getAccommodationsOfManagerByAdmin(id: string): Observable<GetAccommodationsOfManagerByAdminOutput> {
-        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(`${this.adminUrl}/manager/${id}/accommodations`);
+    getAccommodationsOfManagerByAdmin(
+        id: string
+    ): Observable<GetAccommodationsOfManagerByAdminOutput> {
+        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(
+            `${this.adminUrl}/manager/${id}/accommodations`
+        );
     }
 
-    updateVerified(newVerify: VerifyAccommodationInput): Observable<VerifyAccommodationOutput> {
-        return this.http.put<VerifyAccommodationOutput>(this.adminUrl + '/verify-accommodation', newVerify);
+    updateVerified(
+        newVerify: VerifyAccommodationInput
+    ): Observable<VerifyAccommodationOutput> {
+        return this.http.put<VerifyAccommodationOutput>(
+            this.adminUrl + '/verify-accommodation',
+            newVerify
+        );
     }
 }

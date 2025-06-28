@@ -64,7 +64,6 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     standalone: true,
@@ -92,7 +91,6 @@ import { Ripple } from 'primeng/ripple';
         NavbarComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',

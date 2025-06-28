@@ -8,11 +8,10 @@ import { AuthService } from '../../../services/user/auth.service';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-verify-otp',
-    imports: [FormsModule, CommonModule, Toast, ButtonModule, Ripple],
+    imports: [FormsModule, CommonModule, Toast, ButtonModule],
     templateUrl: './verify-otp.component.html',
     styleUrl: './verify-otp.component.scss',
     providers: [MessageService],
