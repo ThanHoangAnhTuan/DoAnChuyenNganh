@@ -6,8 +6,6 @@ import {
     TuiButton,
     TuiDataList,
     TuiDialogService,
-    TuiGroup,
-    TuiIcon,
     TuiTextfield,
 } from '@taiga-ui/core';
 import {
@@ -43,7 +41,6 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -51,7 +48,6 @@ import { Ripple } from 'primeng/ripple';
         TuiTable,
         FormsModule,
         ReactiveFormsModule,
-        // TuiIcon,
         TuiButton,
         TuiInputModule,
         FormsModule,
@@ -59,7 +55,6 @@ import { Ripple } from 'primeng/ripple';
         TuiTextfield,
         TuiAppearance,
         TuiCardLarge,
-        // TuiGroup,
         TuiCheckbox,
         RouterLink,
         TuiInputNumber,
@@ -69,7 +64,6 @@ import { Ripple } from 'primeng/ripple';
         NavbarComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
@@ -86,19 +80,16 @@ export class AccommodationDetailComponent implements OnInit {
         'Double Bed',
         'Large Double Bed',
         'Extra Large Double Bed',
-        'Available Rooms',
         'Price',
+        'Available Rooms',
         'Image',
-        'Accommodation',
+        'Room',
         'Action',
-        // 'Discount',
-        // 'FacilityDetails',
     ];
     protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
     protected idAccommodationDetailUpdating = '';
-
     private readonly dialogs = inject(TuiDialogService);
-
+    protected accommodationId: string = '';
     protected formAccommodationDetail = new FormGroup({
         name: new FormControl<string | ''>('', Validators.required),
         guests: new FormControl<number | 0>(0, Validators.min(1)),
@@ -107,17 +98,13 @@ export class AccommodationDetailComponent implements OnInit {
         largeDoubleBed: new FormControl<number | 0>(0),
         extraLargeDoubleBed: new FormControl<number | 0>(0),
         price: new FormControl<number | 0>(0, Validators.min(1)),
-        availableRooms: new FormControl<number | 0>(0),
         accommodationId: new FormControl<string | ''>(''),
         discountId: new FormControl<string | ''>(''),
         facilityDetails: new FormControl<string | ''>(''),
     });
     protected formFacilityDetail = new FormGroup({});
-    protected accommodationId: string = '';
-
     protected readonly resetFormAccommodationDetail = {
         accommodationId: '',
-        availableRooms: 0,
         discountId: '',
         doubleBed: 0,
         extraLargeDoubleBed: 0,
@@ -128,10 +115,19 @@ export class AccommodationDetailComponent implements OnInit {
         singleBed: 0,
         facilityDetails: '',
     };
-
     protected accommodations!: Accommodation[];
-
     protected accommodationItems: readonly AccommodationSelect[] = [];
+
+    protected readonly contentAccommodation: PolymorpheusContent<
+        TuiContext<string | null>
+    > = ({ $implicit: id }) =>
+        this.accommodationItems.find((item) => item.id === id)?.name ?? '';
+    protected readonly discountItems: readonly DiscountSelect[] = [];
+    protected readonly contentDiscount: PolymorpheusContent<
+        TuiContext<string | null>
+    > = ({ $implicit: id }) =>
+        this.discountItems.find((item) => item.id === id)?.name ?? '';
+
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
@@ -139,19 +135,12 @@ export class AccommodationDetailComponent implements OnInit {
         private facilityDetailService: FacilityDetailService,
         private messageService: MessageService
     ) {}
-    showToast(
-        severity: 'success' | 'info' | 'warn' | 'error',
-        summary: string,
-        detail: string
-    ): void {
-        this.messageService.add({ severity, summary, detail });
-    }
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
             this.accommodationId = params['id'];
             this.accommodationDetailService
-                .getAccommodationDetails(params['id'])
+                .getAccommodationDetailsByManager(params['id'])
                 .subscribe((response) => {
                     this.accommodationDetails = response.data;
                 });
@@ -168,6 +157,15 @@ export class AccommodationDetailComponent implements OnInit {
             this.createFacilityControls();
         });
     }
+
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
+    }
+
     private createFacilityControls() {
         const facilityControls: { [key: string]: FormControl<boolean> } = {};
 
@@ -182,9 +180,9 @@ export class AccommodationDetailComponent implements OnInit {
             });
         });
 
-        // Tạo FormGroup mới với các controls
         this.formFacilityDetail = new FormGroup(facilityControls);
     }
+
     getSelectedFacilityIds(): string[] {
         if (!this.facilities || this.facilities.length === 0) {
             return [];
@@ -222,7 +220,6 @@ export class AccommodationDetailComponent implements OnInit {
         this.formAccommodationDetail.patchValue({
             name: accommodationDetail.name,
             accommodationId: accommodationDetail.accommodation_id,
-            availableRooms: accommodationDetail.available_rooms,
             discountId: accommodationDetail.discount_id,
 
             doubleBed: accommodationDetail.beds.double_bed,
@@ -249,6 +246,7 @@ export class AccommodationDetailComponent implements OnInit {
                 },
             });
     }
+
     private setFacilityDetailValues(
         accommodationFacilityDetail: FacilityDetail[]
     ) {
@@ -267,10 +265,6 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     protected createAccommodationDetail() {
-        // this.formAccommodationDetail.patchValue({
-        //     accommodationId: this.accommodationId,
-        // });
-
         const accommodationDetail: CreateAccommodationDetails = {
             name: this.formAccommodationDetail.get('name')?.value || '',
             guests: this.formAccommodationDetail.get('guests')?.value || 0,
@@ -286,8 +280,6 @@ export class AccommodationDetailComponent implements OnInit {
                     this.formAccommodationDetail.get('extraLargeDoubleBed')
                         ?.value || 0,
             },
-            available_rooms:
-                this.formAccommodationDetail.get('availableRooms')?.value || 0,
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             accommodation_id: this.accommodationId,
             discount_id:
@@ -295,12 +287,9 @@ export class AccommodationDetailComponent implements OnInit {
             facilities: this.getSelectedFacilityIds(),
         };
 
-        console.log(accommodationDetail);
-
         if (this.formAccommodationDetail.invalid) {
             this.showToast('warn', 'Vui lòng điền đầy đủ thông tin', '');
             this.formAccommodationDetail.markAllAsTouched();
-            console.log('here');
             return;
         }
 
@@ -323,8 +312,6 @@ export class AccommodationDetailComponent implements OnInit {
             id: this.idAccommodationDetailUpdating,
             accommodation_id: this.accommodationId,
             name: this.formAccommodationDetail.get('name')?.value || '',
-            available_rooms:
-                this.formAccommodationDetail.get('availableRooms')?.value || 0,
             beds: {
                 single_bed:
                     this.formAccommodationDetail.get('singleBed')?.value || 0,
@@ -347,7 +334,6 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodationDetailService
             .updateAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
-                // console.log(response);
                 this.accommodationDetails = this.accommodationDetails.map(
                     (accommodationDetail) => {
                         if (accommodationDetail.id === response.data.id) {
@@ -379,16 +365,4 @@ export class AccommodationDetailComponent implements OnInit {
                 );
             });
     }
-
-    protected readonly contentAccommodation: PolymorpheusContent<
-        TuiContext<string | null>
-    > = ({ $implicit: id }) =>
-        this.accommodationItems.find((item) => item.id === id)?.name ?? '';
-
-    protected readonly discountItems: readonly DiscountSelect[] = [];
-
-    protected readonly contentDiscount: PolymorpheusContent<
-        TuiContext<string | null>
-    > = ({ $implicit: id }) =>
-        this.discountItems.find((item) => item.id === id)?.name ?? '';
 }

@@ -28,7 +28,7 @@ export class FacilityService {
             formData
         );
     }
-    
+
     updateFacility(formData: FormData): Observable<UpdateFacilityResponse> {
         return this.http.put<UpdateFacilityResponse>(
             `${this.facilityUrl}/update-facility`,

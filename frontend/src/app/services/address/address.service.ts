@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { City, CityResponse } from '../../models/address/address.model';
@@ -8,7 +7,6 @@ import { City, CityResponse } from '../../models/address/address.model';
     providedIn: 'root',
 })
 export class AddressService {
-    // private readonly localUrl = `tinh_tp.json`;
     private readonly localUrl = `data/tinh_tp.json`;
 
     constructor(private http: HttpClient) {}
@@ -27,9 +25,7 @@ export class AddressService {
 
     getCityBySlug(slug: string): Observable<City[]> {
         return this.getCities().pipe(
-            map((cities) =>
-                cities.data.filter((city) => city.slug === slug)
-            )
+            map((cities) => cities.data.filter((city) => city.slug === slug))
         );
     }
 }

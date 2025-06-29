@@ -14,13 +14,15 @@ export interface Accommodation {
     facilities: Facility[];
     images: string[];
     google_map: string;
+    is_verified: boolean;
+    is_deleted: boolean;
 }
 
 export interface GetAccommodationResponse {
     data: Accommodation[];
     code: number;
     message: string;
-    pagination: Pagination
+    pagination: Pagination;
 }
 
 export interface GetAccommodationByIdResponse {

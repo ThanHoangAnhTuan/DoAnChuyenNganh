@@ -17,7 +17,7 @@ func (c *Controller) Register(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Manager register validation not found\n")
 		global.Logger.Error("Manager register validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -25,13 +25,13 @@ func (c *Controller) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("Manager register binding error: %s\n", err.Error())
 		global.Logger.Error("Manager register binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("Manager register validation error: %s\n", validationErrors)
 		global.Logger.Error("Manager register validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -56,7 +56,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Manager login validation not found\n")
 		global.Logger.Error("Manager login validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -64,13 +64,13 @@ func (c *Controller) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("Manager login binding error: %s\n", err.Error())
 		global.Logger.Error("Manager login binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("Manager login validation error: %s\n", validationErrors)
 		global.Logger.Error("Manager login validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

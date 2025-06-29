@@ -68,17 +68,19 @@ INSERT INTO
     ` + "`" + `ecommerce_go_user_manager` + "`" + ` (
         ` + "`" + `id` + "`" + `,
         ` + "`" + `account` + "`" + `,
+        ` + "`" + `user_name` + "`" + `,
         ` + "`" + `password` + "`" + `,
         ` + "`" + `created_at` + "`" + `,
         ` + "`" + `updated_at` + "`" + `
     )
 VALUES
-    (?, ?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?)
 `
 
 type CreateUserManageParams struct {
 	ID        string
 	Account   string
+	UserName  string
 	Password  string
 	CreatedAt uint64
 	UpdatedAt uint64
@@ -88,6 +90,7 @@ func (q *Queries) CreateUserManage(ctx context.Context, arg CreateUserManagePara
 	_, err := q.db.ExecContext(ctx, createUserManage,
 		arg.ID,
 		arg.Account,
+		arg.UserName,
 		arg.Password,
 		arg.CreatedAt,
 		arg.UpdatedAt,

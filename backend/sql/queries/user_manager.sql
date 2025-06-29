@@ -3,12 +3,13 @@ INSERT INTO
     `ecommerce_go_user_manager` (
         `id`,
         `account`,
+        `user_name`,
         `password`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?);
 
 -- name: UpdateUserManagerLogin :exec
 UPDATE `ecommerce_go_user_manager`

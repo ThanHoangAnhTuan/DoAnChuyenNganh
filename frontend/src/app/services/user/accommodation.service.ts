@@ -9,10 +9,14 @@ import { GetAccommodationByIdResponse } from '../../models/manager/accommodation
 })
 export class AccommodationService {
     private apiUrl = `${environment.apiUrl}/accommodations`;
-    
-    constructor(private http: HttpClient) { }
 
-    getAccommodationDetailById(id: string): Observable<GetAccommodationByIdResponse> {
-        return this.http.get<GetAccommodationByIdResponse>(this.apiUrl + '/' + id);
+    constructor(private http: HttpClient) {}
+
+    getAccommodationDetailById(
+        id: string
+    ): Observable<GetAccommodationByIdResponse> {
+        return this.http.get<GetAccommodationByIdResponse>(
+            this.apiUrl + '/' + id
+        );
     }
 }

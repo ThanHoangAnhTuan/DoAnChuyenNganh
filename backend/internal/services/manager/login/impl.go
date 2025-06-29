@@ -1,7 +1,9 @@
 package login
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -32,12 +34,15 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.ManagerLoginInput) (codeSta
 	// TODO: get manager info
 	userManager, err := m.sqlc.GetUserManager(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeLoginFailed, nil, fmt.Errorf("manager not found")
+		}
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user manager failed: %s", err)
 	}
 
 	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userManager.Password) {
-		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
+		return response.ErrCodeLoginFailed, nil, fmt.Errorf("dose not match password")
 	}
 
 	// TODO: check two-factor authentication
@@ -58,18 +63,18 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.ManagerLoginInput) (codeSta
 
 	userManagerInforJson, err := json.Marshal(userManagerInfor)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert to json failed: %v", err)
 	}
 
 	// TODO: save manager info to redis
 	err = global.Redis.SetEx(ctx, subToken, userManagerInforJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save manager info to redis failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("save manager info to redis failed: %s", err)
 	}
 
 	out.Token, err = auth.CreateToken(userManager.ID, consts.MANAGER)
 	if err != nil {
-		return response.ErrCodeCreateJWTTokenFailed, nil, fmt.Errorf("error for create token failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for create token failed: %s", err)
 	}
 
 	out.Account = userManagerInfor.Account
@@ -88,21 +93,21 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.ManagerRegisterInput) (c
 	// TODO: check user exists
 	exists, err := m.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserAdminFailed, fmt.Errorf("get user admin failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get user admin failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserAdminNotFound, fmt.Errorf("user admin not found")
+		return response.ErrCodeForbidden, fmt.Errorf("user admin not found")
 	}
 
 	// TODO: check email exists in user manager
 	managerFound, err := m.sqlc.CheckUserManagerExistsByEmail(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check manager already exists: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for check manager already exists: %s", err)
 	}
 
 	if managerFound {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("manager already exists")
+		return response.ErrCodeAccountAlreadyExists, fmt.Errorf("manager already exists")
 	}
 
 	// TODO: check user spam / rate limiting by ip
@@ -112,19 +117,20 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.ManagerRegisterInput) (c
 	now := utiltime.GetTimeNow()
 	hashPassword, err := crypto.HashPassword(in.UserPassword)
 	if err != nil {
-		return response.ErrCodeHashPasswordFailed, fmt.Errorf("hash password failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("hash password failed: %s", err)
 	}
 
 	err = m.sqlc.CreateUserManage(ctx, database.CreateUserManageParams{
 		ID:        id,
 		Account:   in.UserAccount,
+		UserName:  in.Username,
 		Password:  hashPassword,
 		CreatedAt: now,
 		UpdatedAt: now,
 	})
 
 	if err != nil {
-		return response.ErrCodeRegisterFailed, fmt.Errorf("error for register manager failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for register manager failed: %s", err)
 	}
 
 	return response.ErrCodeRegisterSuccess, nil

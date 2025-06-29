@@ -17,11 +17,7 @@ import { RoomService } from '../../../services/user/room.service';
 import { RoomInformationModalComponent } from '../../../components/modals/room-information-modal/room-information-modal.component';
 import { ReviewService } from '../../../services/user/review.service';
 import { GetAccommodationByIdResponse } from '../../../models/manager/accommodation.model';
-import { GetAccommodationDetailsResponse } from '../../../models/manager/accommodation-detail.model';
-import {
-    GetReviewsByAccommodationIdResponse,
-    Review,
-} from '../../../models/user/review.model';
+import { GetReviewsByAccommodationIdResponse } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from '../../../components/modals/review-list-modal/review-list-modal.component';
 import { PaymentService } from '../../../services/user/payment.service';
 import { TuiAlertService } from '@taiga-ui/core';
@@ -31,7 +27,6 @@ import { GetToken } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -48,7 +43,6 @@ import { Ripple } from 'primeng/ripple';
         ReviewListModalComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
@@ -169,12 +163,8 @@ export class AccommodationDetailComponent implements OnInit {
         this.accommodationDetailService
             .getAccommodationDetailById(id)
             .subscribe((data: GetAccommodationByIdResponse) => {
-                console.log(data);
-
                 if (data) {
                     this.accommodation = data.data;
-                    console.log('accommodation: ', this.accommodation);
-
                     this.getCityBySlug(this.accommodation.city);
                 } else {
                     this.showToast(
@@ -182,26 +172,24 @@ export class AccommodationDetailComponent implements OnInit {
                         'Lỗi tải dữ liệu',
                         'Không tìm thấy thông tin chỗ ở.'
                     );
-                    // console.log("Can't get accommodation");
                 }
             });
     }
 
     getRoomByAccommodationId(id: string) {
         this.roomService
-            .getRoomDetailByAccommodationId(id)
-            .subscribe((data: GetAccommodationDetailsResponse) => {
-                if (data) {
-                    this.rooms = data.data;
-                    // console.log("room: ", this.rooms);
-                } else {
+            .getRoomDetailByAccommodationId(id, this.checkIn, this.checkOut)
+            .subscribe({
+                next: (value) => {
+                    this.rooms = value.data;
+                },
+                error: (err) => {
                     this.showToast(
                         'error',
                         'Lỗi tải dữ liệu',
                         'Không tìm thấy thông tin phòng cho chỗ ở này.'
                     );
-                    // console.log("Can't get accommodation room");
-                }
+                },
             });
     }
 
@@ -223,8 +211,6 @@ export class AccommodationDetailComponent implements OnInit {
                     this.avarageRating =
                         Math.floor((totalRating / this.reviews.length) * 10) /
                         10;
-
-                    // console.log("reviews: ", this.reviews);
                 } else {
                     this.reviews = [];
                     this.avarageRating = 0;
@@ -233,7 +219,6 @@ export class AccommodationDetailComponent implements OnInit {
                         'Cảnh báo',
                         'Không có đánh giá nào cho chỗ ở này.'
                     );
-                    // console.log('No reviews found for this accommodation.');
                 }
             });
     }
@@ -262,8 +247,6 @@ export class AccommodationDetailComponent implements OnInit {
             room_selected: roomSelected,
         };
 
-        console.log(payment);
-
         const token = GetToken();
 
         if (token == null) {
@@ -282,8 +265,6 @@ export class AccommodationDetailComponent implements OnInit {
                     'Thành công',
                     'Tạo liên kết thanh toán thành công. Vui lòng kiểm tra liên kết.'
                 );
-                // console.log('Payment URL created successfully:', response.body);
-
                 if (!response.body.data.url) {
                     this.showToast(
                         'error',
@@ -317,16 +298,12 @@ export class AccommodationDetailComponent implements OnInit {
                     (d) => d.slug === this.accommodation.district
                 );
                 this.accommodationDistrict = district?.name ?? '';
-
-                // console.log("City: ", this.accommodationCity);
-                // console.log("District", this.accommodationDistrict);
             } else {
                 this.showToast(
                     'error',
                     'Lỗi tải dữ liệu',
                     'Không tìm thấy thông tin thành phố cho chỗ ở này.'
                 );
-                // console.log("Can't get city by id");
             }
         });
     }
@@ -368,9 +345,6 @@ export class AccommodationDetailComponent implements OnInit {
             quantity,
             total: price,
         };
-
-        console.log('Selected Rooms: ', this.selectedRooms);
-        console.log('values:', Object.values(this.selectedRooms));
     }
 
     numberRoomSelected(): number {

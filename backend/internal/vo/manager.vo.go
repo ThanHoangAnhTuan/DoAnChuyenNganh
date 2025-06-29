@@ -2,7 +2,8 @@ package vo
 
 type ManagerRegisterInput struct {
 	UserAccount  string `json:"account" validate:"required,email"`
-	UserPassword string `json:"password" validate:"required"`
+	UserPassword string `json:"password" validate:"required,strongpassword"`
+	Username     string `json:"username" validate:"required"`
 }
 
 type ManagerLoginInput struct {

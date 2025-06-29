@@ -52,7 +52,8 @@ FROM
     `ecommerce_go_accommodation_room`
 WHERE
     `accommodation_type` = sqlc.arg ("accommodationTypeID")
-    AND `is_deleted` = 0;
+    AND `is_deleted` = 0
+ORDER BY `created_at` ASC;
 
 -- name: UpdateAccommodationRooms :exec
 UPDATE `ecommerce_go_accommodation_room`
@@ -113,6 +114,15 @@ WHERE
             AND ego.order_status in ('payment_success', 'checked_in')
     )
     AND ar.accommodation_type = sqlc.arg ("accommodation_type_id")
-    and ar.status in ('available')
+    and ar.status in ('available') AND `is_deleted` = 0
 LIMIT
     1;
+
+-- name: CountAccommodationRoomAvailableByManager :one
+SELECT
+    COUNT(ar.id)
+FROM
+    `ecommerce_go_accommodation_room` ar
+WHERE
+    ar.accommodation_type = sqlc.arg ("accommodation_type_id")
+    AND ar.status in ('available') AND `is_deleted` = 0;

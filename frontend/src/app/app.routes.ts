@@ -3,7 +3,6 @@ import { HomeComponent } from './page/user/home/home.component';
 import { AccommodationComponent } from './page/manager/accommodation/accommodation.component';
 import { AccommodationDetailComponent } from './page/user/accommodation-detail/accommodation-detail.component';
 import { AccommodationDetailComponent as ManagerAccommodationDetailComponent } from './page/manager/accommodation-detail/accommodation-detail.component';
-
 import { LoginComponent as ManagerLoginComponent } from './page/manager/login/login.component';
 import { LoginComponent as AdminLoginComponent } from './page/admin/login/login.component';
 import { RoleGuard } from './shared/guards/role.guard';
@@ -18,6 +17,8 @@ import { PaymentComponent } from './page/payment/payment.component';
 import { FacilityDetailComponent } from './page/admin/facility-detail/facility-detail.component';
 import { StatsComponent } from './page/manager/stats/stats.component';
 import { ManagerComponent } from './page/admin/manager/manager.component';
+import { RoomComponent } from './page/manager/room/room.component';
+import { AccommodationComponent as AdminAccommodationComponent } from './page/admin/accommodation/accommodation.component';
 
 export const routes: Routes = [
     {
@@ -59,6 +60,12 @@ export const routes: Routes = [
         data: { expectedRole: 'manager' },
     },
     {
+        path: 'manager/accommodation/detail/:id/rooms',
+        component: RoomComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'manager' },
+    },
+    {
         path: 'admin/login',
         component: AdminLoginComponent,
     },
@@ -71,6 +78,12 @@ export const routes: Routes = [
     {
         path: 'admin/manager',
         component: ManagerComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'admin' },
+    },
+    {
+        path: 'admin/manager/:id/accommodations',
+        component: AdminAccommodationComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'admin' },
     },

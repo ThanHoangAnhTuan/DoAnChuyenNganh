@@ -19,7 +19,7 @@ func (c *Controller) CancelOrder(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CancelOrder validation not found \n")
 		global.Logger.Error("CancelOrder validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -27,13 +27,13 @@ func (c *Controller) CancelOrder(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CancelOrder binding error: %s\n", err.Error())
 		global.Logger.Error("CancelOrder binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CancelOrderInput validation error: %s\n", validationErrors)
 		global.Logger.Error("CancelOrderInput validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -59,7 +59,7 @@ func (c *Controller) CheckIn(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CheckIn validation not found \n")
 		global.Logger.Error("CheckIn validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -67,13 +67,13 @@ func (c *Controller) CheckIn(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CheckIn binding error: %s\n", err.Error())
 		global.Logger.Error("CheckIn binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CheckInInput validation error: %s\n", validationErrors)
 		global.Logger.Error("CheckInInput validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -99,7 +99,7 @@ func (c *Controller) CheckOut(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CheckOut validation not found \n")
 		global.Logger.Error("CheckOut validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -107,13 +107,13 @@ func (c *Controller) CheckOut(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CheckOut binding error: %s\n", err.Error())
 		global.Logger.Error("CheckOut binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CheckOutInput validation error: %s\n", validationErrors)
 		global.Logger.Error("CheckOutInput validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -139,7 +139,7 @@ func (c *Controller) GetOrderInfoAfterPayment(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("GetOrderInfoAfterPayment validation not found \n")
 		global.Logger.Error("GetOrderInfoAfterPayment validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -147,13 +147,13 @@ func (c *Controller) GetOrderInfoAfterPayment(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("GetOrderInfoAfterPayment binding error: %s\n", err.Error())
 		global.Logger.Error("GetOrderInfoAfterPayment binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("GetOrderInfoAfterPaymentInput validation error: %s\n", validationErrors)
 		global.Logger.Error("GetOrderInfoAfterPaymentInput validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

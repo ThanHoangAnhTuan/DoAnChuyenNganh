@@ -145,7 +145,6 @@ export class UserProfileComponent implements OnInit {
             .subscribe({
                 next: (response: UserResponse) => {
                     this.currentUser = response.data;
-
                     console.log('Current User:', this.currentUser);
 
                     let birthdayDate: Date;
@@ -237,7 +236,6 @@ export class UserProfileComponent implements OnInit {
                         error.error?.message ||
                             'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.'
                     );
-                    // console.error('Update failed:', error);
                 },
             });
     }
