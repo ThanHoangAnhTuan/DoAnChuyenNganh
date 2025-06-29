@@ -173,7 +173,6 @@ func (c *Controller) ExportDailyEarningsCSV(ctx *gin.Context) {
 
 	fmt.Printf("ExportDailyEarningsCSV success")
 	global.Logger.Info("ExportDailyEarningsCSV success")
-	response.SuccessResponse(ctx, codeStatus, data)
 
 	// Set headers for CSV download
 	filename := fmt.Sprintf("daily_earnings_%d_%02d.csv", params.Year, params.Month)

@@ -1,13 +1,26 @@
 <app-navbar></app-navbar>
 <main>
-    <h2>Thống kê doanh thu</h2>
-    <label for="mode">Chọn loại thống kê:</label>
-    <select [(ngModel)]="selectedMode" (change)="updateUI()">
-        <option value="current-year">Doanh thu theo năm hiện tại</option>
-        <option value="custom-year">Doanh thu theo năm chọn</option>
-        <option value="current-month">Doanh thu theo tháng hiện tại</option>
-        <option value="custom-month">Doanh thu theo tháng và năm chọn</option>
-    </select>
+    <div class="stats">
+        <div>
+            <h2>Thống kê doanh thu</h2>
+            <label for="mode">Chọn loại thống kê:</label>
+            <select [(ngModel)]="selectedMode" (change)="updateUI()">
+                <option value="current-year">
+                    Doanh thu theo năm hiện tại
+                </option>
+                <option value="custom-year">Doanh thu theo năm chọn</option>
+                <option value="current-month">
+                    Doanh thu theo tháng hiện tại
+                </option>
+                <option value="custom-month">
+                    Doanh thu theo tháng và năm chọn
+                </option>
+            </select>
+        </div>
+        <div>
+            <button (click)="export()">Export</button>
+        </div>
+    </div>
 
     <div
         *ngIf="
