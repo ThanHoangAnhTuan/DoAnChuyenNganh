@@ -288,11 +288,7 @@ export class AccommodationDetailComponent implements OnInit {
         };
 
         if (this.formAccommodationDetail.invalid) {
-            this.showToast(
-                'error',
-                'Tạo chi tiết chỗ ở thất bại',
-                'Vui lòng điền đầy đủ thông tin'
-            );
+            this.showToast('warn', 'Vui lòng điền đầy đủ thông tin', '');
             this.formAccommodationDetail.markAllAsTouched();
             return;
         }

@@ -3,7 +3,6 @@ import {
     TuiInputModule,
     TuiInputPhoneModule,
 } from '@taiga-ui/legacy';
-import { AuthService } from './../../../services/user/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
@@ -76,7 +75,6 @@ export class UserProfileComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private authService: AuthService,
         private messageService: MessageService
     ) {}
     showToast(
@@ -91,12 +89,54 @@ export class UserProfileComponent implements OnInit {
             username: ['', Validators.required],
             phone: [''],
             gender: [Gender.Male],
-            birthday: new FormControl<Date | null>(null),
+            birthday: new FormControl(null, []),
         });
 
         this.loadUserData();
     }
 
+    // loadUserData(): void {
+    //     this.isLoading = true;
+    //     this.userService
+    //         .getUserInfo()
+    //         .pipe(finalize(() => (this.isLoading = false)))
+    //         .subscribe({
+    //             next: (response: UserResponse) => {
+    //                 this.currentUser = response.data;
+
+    //                 console.log('Current User:', this.currentUser);
+
+    //                 const [dayStr, monthStr, yearStr] =
+    //                     this.currentUser.birthday.split('-'); // ["21", "06", "2025"]
+
+    //                 const checkInDay = Number(dayStr); // 21
+    //                 const checkInMonth = Number(monthStr); // 6
+    //                 const checkInYear = Number(yearStr); // 2025
+
+    //                 const birthdayDate = new Date(
+    //                     checkInYear,
+    //                     checkInMonth - 1,
+    //                     checkInDay
+    //                 );
+
+    //                 this.profileForm.patchValue({
+    //                     username: this.currentUser.username,
+    //                     phone: this.currentUser.phone,
+    //                     gender: this.currentUser.gender,
+    //                     birthday: birthdayDate,
+    //                 });
+    //             },
+    //             error: (error) => {
+    //                 this.showToast(
+    //                     'error',
+    //                     'Lỗi tải thông tin người dùng',
+    //                     error.message ||
+    //                         'Đã xảy ra lỗi khi tải thông tin người dùng. Vui lòng thử lại sau.'
+    //                 );
+    //                 // console.error('Error loading user data:', error);
+    //             },
+    //         });
+    // }
     loadUserData(): void {
         this.isLoading = true;
         this.userService
@@ -105,19 +145,27 @@ export class UserProfileComponent implements OnInit {
             .subscribe({
                 next: (response: UserResponse) => {
                     this.currentUser = response.data;
+                    console.log('Current User:', this.currentUser);
 
-                    const [dayStr, monthStr, yearStr] =
-                        this.currentUser.birthday.split('-'); // ["21", "06", "2025"]
+                    let birthdayDate: Date;
 
-                    const checkInDay = Number(dayStr); // 21
-                    const checkInMonth = Number(monthStr); // 6
-                    const checkInYear = Number(yearStr); // 2025
+                    if (this.currentUser.birthday) {
+                        // parse từ chuỗi "21-06-2025"
+                        const [dayStr, monthStr, yearStr] =
+                            this.currentUser.birthday.split('-');
+                        const checkInDay = Number(dayStr);
+                        const checkInMonth = Number(monthStr);
+                        const checkInYear = Number(yearStr);
 
-                    const birthdayDate = new Date(
-                        checkInYear,
-                        checkInMonth - 1,
-                        checkInDay
-                    );
+                        birthdayDate = new Date(
+                            checkInYear,
+                            checkInMonth - 1,
+                            checkInDay
+                        );
+                    } else {
+                        // Không có ngày sinh => dùng ngày hiện tại
+                        birthdayDate = new Date();
+                    }
 
                     this.profileForm.patchValue({
                         username: this.currentUser.username,
