@@ -158,11 +158,7 @@ export class FacilityDetailComponent implements OnInit {
         const nameValue = this.formFacility.get('name')?.value;
 
         if (!nameValue) {
-            this.showToast(
-                'warn',
-                'Facility Issue',
-                'Vui lòng nhập tên facility'
-            );
+            this.showToast('warn', 'Cơ sở Bắt buộc', 'Vui lòng nhập tên cơ sở');
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -181,17 +177,13 @@ export class FacilityDetailComponent implements OnInit {
 
                 this.formFacility.reset();
                 this.close$.subscribe();
-                this.showToast(
-                    'success',
-                    'Facility Created',
-                    'Cơ sở đã được tạo thành công'
-                );
+                this.showToast('success', 'Cơ sở Đã Được Tạo Thành Công!', '');
             },
             error: (error) => {
                 this.showToast(
                     'error',
-                    'Facility Creation Error',
-                    `Lỗi khi tạo cơ sở: ${error.message || 'Unknown error'}`
+                    'Lỗi khi tạo cơ sở',
+                    `${error.message || ''}`
                 );
             },
         });
@@ -200,11 +192,7 @@ export class FacilityDetailComponent implements OnInit {
     protected updateFacility(): void {
         // console.log('name', this.formFacility.get('name')?.value);
         if (this.formFacility.invalid) {
-            this.showToast(
-                'warn',
-                'Facility Update Issue',
-                'Vui lòng nhập tên cơ sở'
-            );
+            this.showToast('warn', 'Cơ sở Bắt buộc', 'Vui lòng nhập tên cơ sở');
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -224,20 +212,14 @@ export class FacilityDetailComponent implements OnInit {
                 });
 
                 // Show success message
-                this.showToast(
-                    'success',
-                    'Facility Updated',
-                    'Cơ sở đã được cập nhật thành công'
-                );
+                this.showToast('success', 'Cập nhật Cơ Sở Thành Công', '');
                 // console.log('Cập nhật cơ sở thành công');
             },
             error: (error) => {
                 this.showToast(
                     'error',
-                    'Facility Update Error',
-                    `Lỗi khi cập nhật cơ sở: ${
-                        error.message || 'Unknown error'
-                    }`
+                    'Cập nhật Cơ Sở Thất Bại',
+                    `${error.message || ''}`
                 );
                 // console.error('Error updating facility:', error);
                 // console.warn(
@@ -248,8 +230,8 @@ export class FacilityDetailComponent implements OnInit {
             complete: () => {
                 this.showToast(
                     'info',
-                    'Update Facility Request Completed',
-                    'Yêu cầu cập nhật cơ sở đã hoàn thành'
+                    'Yêu cầu cập nhật cơ sở đã hoàn thành',
+                    ''
                 );
                 // Hide loading indicator
                 console.log('Update facility request completed');
@@ -261,11 +243,7 @@ export class FacilityDetailComponent implements OnInit {
             this.facilities = this.facilities.filter(
                 (facility) => facility.id !== id
             );
-            this.showToast(
-                'success',
-                'Facility Deleted',
-                'Cơ sở đã được xóa thành công'
-            );
+            this.showToast('success', 'Cơ sở đã được xóa thành công', '');
         });
     }
 }

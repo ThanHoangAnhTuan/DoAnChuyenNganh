@@ -149,14 +149,14 @@ export class ManagerComponent implements OnInit {
                 this.formCreateManger.reset();
                 this.showToast(
                     'success',
-                    'Manager created successfully',
+                    'Tài khoản Quản Lý Đã Được Tạo Thành Công',
                     response.message
                 );
             },
             error: (err) => {
                 this.showToast(
                     'error',
-                    'Error creating manager',
+                    'Lỗi khi tạo tài khoản quản lý',
                     err.error.message
                 );
                 // console.log('Message:', err.error.message);

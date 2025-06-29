@@ -1,5 +1,6 @@
 <p-toast></p-toast>
 <app-navbar></app-navbar>
+
 <div class="profile-container">
     <h1 class="profile-title">Thông tin cá nhân</h1>
     <p class="profile-subtitle">
@@ -23,46 +24,48 @@
         *ngIf="!isLoading"
         [formGroup]="profileForm"
         (ngSubmit)="updateUserProfile()"
+        class="profile-form"
     >
         <div class="profile-card">
-            <!-- Name field -->
-            <div class="profile-row">
-                <div class="field-label">Tên</div>
-                <div class="field-value">
-                    <tui-input formControlName="username">
-                        Tên người dùng
-                    </tui-input>
-                    <div
-                        *ngIf="
-                            profileForm.get('username')?.invalid &&
-                            profileForm.get('username')?.touched
-                        "
-                        class="error-message"
-                    >
-                        Vui lòng nhập tên
-                    </div>
+            <!-- Name -->
+            <div class="form-group">
+                <label class="field-label">Tên:</label>
+                <tui-input
+                    class="no-padding"
+                    formControlName="username"
+                    placeholder="Tên người dùng"
+                ></tui-input>
+                <!-- <div
+                    *ngIf="
+                        profileForm.get('username')?.invalid &&
+                        profileForm.get('username')?.touched
+                    "
+                    class="error-message"
+                >
+                    Vui lòng nhập tên
+                </div> -->
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group phone-field">
+                <label class="field-label">Số điện thoại: </label>
+                <tui-input
+                    class="no-padding-phone"
+                    formControlName="phone"
+                    placeholder="Số điện thoại"
+                >
+                    <input autocomplete="tel" tuiTextfieldLegacy />
+                </tui-input>
+                <div class="field-hint">
+                    Chỗ nghỉ hoặc địa điểm tham quan bạn đặt sẽ liên lạc với bạn
+                    qua số này nếu cần.
                 </div>
             </div>
 
-            <!-- Phone field -->
-            <div class="profile-row">
-                <div class="field-label">Số điện thoại</div>
-                <div class="field-value">
-                    <tui-input formControlName="phone">
-                        Số điện thoại
-                        <input autocomplete="tel" tuiTextfieldLegacy />
-                    </tui-input>
-                    <div class="field-hint">
-                        Chỗ nghỉ hoặc địa điểm tham quan bạn đặt sẽ liên lạc với
-                        bạn qua số này nếu cần.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gender field -->
-            <div class="profile-row">
-                <div class="field-label">Giới tính</div>
-                <div>
+            <!-- Gender -->
+            <div class="form-group">
+                <label class="field-label">Giới tính</label>
+                <div class="gender-options">
                     <label tuiLabel>
                         <input
                             tuiRadio
@@ -73,7 +76,6 @@
                         />
                         Nam
                     </label>
-
                     <label tuiLabel>
                         <input
                             tuiRadio
@@ -87,17 +89,16 @@
                 </div>
             </div>
 
-            <!-- Birthday field -->
-            <div class="profile-row">
+            <!-- Birthday -->
+            <div class="form-group">
                 <label class="field-label">Ngày sinh</label>
                 <p-datepicker
                     formControlName="birthday"
                     dateFormat="dd.mm.yy"
-                />
+                ></p-datepicker>
             </div>
         </div>
 
-        <!-- Save button -->
         <div class="action-buttons">
             <button
                 tuiButton

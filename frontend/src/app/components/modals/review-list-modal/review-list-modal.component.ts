@@ -93,29 +93,29 @@ export class ReviewListModalComponent implements OnInit {
         if (!this.newTitle || this.newTitle.trim() === '') {
             this.showToast(
                 'warn',
-                'Review Required',
-                'Please enter review title.'
+                'Đánh giá bắt buộc',
+                'Vui lòng nhập tiêu đề đánh giá.'
             );
             return;
         } else if (!this.newComment || this.newComment.trim() === '') {
             this.showToast(
                 'warn',
-                'Review Required',
-                'Please enter review content.'
+                'Nội dung đánh giá bắt buộc',
+                'Vui lòng nhập nội dung đánh giá.'
             );
             return;
         } else if (this.newRating <= 0 || this.newRating > 5) {
             this.showToast(
                 'warn',
-                'Rating Required',
-                'Please select a rating between 1 and 5.'
+                'Đánh giá không hợp lệ',
+                'Vui lòng chọn đánh giá từ 1 đến 5.'
             );
             return;
         } else if (!token) {
             this.showToast(
                 'error',
-                'Authentication Required',
-                'Please log in first'
+                'Yêu cầu xác thực',
+                'Vui lòng đăng nhập trước'
             );
             return;
         }
@@ -130,12 +130,8 @@ export class ReviewListModalComponent implements OnInit {
 
         this.reviewService.addReview(newReview).subscribe({
             next: (response) => {
-                this.showToast(
-                    'success',
-                    'Review Submitted',
-                    'Your review has been added successfully!'
-                );
-                console.log('Review has been added successfull:', response);
+                this.showToast('success', 'Đánh giá của bạn đã được thêm', '');
+                // console.log('Review has been added successfull:', response);
                 // Add the new review to the top of the list
                 setTimeout(() => {
                     this.reviews.unshift(response);
@@ -152,8 +148,8 @@ export class ReviewListModalComponent implements OnInit {
                 console.error('Lỗi khi thêm đánh giá:', error);
                 this.showToast(
                     'error',
-                    'Review Failed',
-                    'Have error when adding review. Please try again later.'
+                    'Lỗi khi thêm đánh giá',
+                    error.error?.message || 'Đã xảy ra lỗi khi thêm đánh giá.'
                 );
                 // Reset form fields
                 this.newTitle = '';
@@ -220,15 +216,15 @@ export class ReviewListModalComponent implements OnInit {
         if (!token) {
             this.showToast(
                 'error',
-                'Authentication Required',
-                'Please log in first'
+                'Yêu cầu xác thực',
+                'Vui lòng đăng nhập trước'
             );
             return;
         } else if (orderId == '' || orderId.length < 8) {
             this.showToast(
                 'warn',
-                'Input Required',
-                'Please input a valid order ID'
+                'Thông tin bắt buộc',
+                'Vui lòng nhập một ID đơn hàng hợp lệ'
             );
             return;
         } else {
