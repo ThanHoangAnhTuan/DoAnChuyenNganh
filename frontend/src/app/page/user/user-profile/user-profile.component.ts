@@ -147,9 +147,9 @@ export class UserProfileComponent implements OnInit {
                     this.currentUser = response.data;
                     console.log('Current User:', this.currentUser);
 
-                    let birthdayDate: Date;
+                    let birthdayDate: Date | null = null;
 
-                    if (this.currentUser.birthday) {
+                    if (this.currentUser.birthday.length === 10) {
                         // parse từ chuỗi "21-06-2025"
                         const [dayStr, monthStr, yearStr] =
                             this.currentUser.birthday.split('-');
@@ -164,7 +164,7 @@ export class UserProfileComponent implements OnInit {
                         );
                     } else {
                         // Không có ngày sinh => dùng ngày hiện tại
-                        birthdayDate = new Date();
+                        birthdayDate = null
                     }
 
                     this.profileForm.patchValue({
