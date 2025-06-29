@@ -69,33 +69,42 @@
                 @if(formCreateManger.get('account')?.invalid &&
                 formCreateManger.get('account')?.touched) {
                 <div>
-                    <small class="text-red-500">Account is required</small>
-                </div>
-                } @if(errorMessage) {account:
-                this.formCreateManger.get('account')?.value || '',
-                <div>
-                    <small class="text-red-500">{{ errorMessage }}</small>
+                    @if (formCreateManger.get('account')?.hasError('required'))
+                    {
+                    <small class="text-red-500">Vui lòng nhập tài khoản</small>
+                    } @else if
+                    (formCreateManger.get('account')?.hasError('backend')) {
+                    <small class="text-red-500">{{
+                        formCreateManger.get("account")?.errors?.['backend']
+                    }}</small>
+                    }
                 </div>
                 }
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>User Name</label>
                 <input
                     formControlName="username"
-                    placeholder="User Name"
+                    placeholder="Username"
                     tuiTextfield
                 />
                 @if(formCreateManger.get('username')?.invalid &&
                 formCreateManger.get('username')?.touched) {
                 <div>
-                    <small class="text-red-500">User name is required</small>
-                </div>
-                } @if(errorMessage) {
-                <div>
-                    <small class="text-red-500">{{ errorMessage }}</small>
+                    @if (formCreateManger.get('username')?.hasError('required'))
+                    {
+                    <small class="text-red-500"> Vui lòng nhập họ tên </small>
+                    } @else if
+                    (formCreateManger.get('username')?.hasError('backend')) {
+                    <small class="text-red-500">{{
+                        formCreateManger.get("username")?.errors?.['backend']
+                    }}</small>
+                    }
                 </div>
                 }
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>Password</label>
                 <input
@@ -105,11 +114,21 @@
                 />
                 @if(formCreateManger.get('password')?.invalid &&
                 formCreateManger.get('password')?.touched) {
+
                 <div>
-                    <small class="text-red-500">Password is required</small>
+                    @if (formCreateManger.get('username')?.hasError('required'))
+                    {
+                    <small class="text-red-500">Vui lòng nhập mật khẩu</small>
+                    } @else if
+                    (formCreateManger.get('password')?.hasError('backend')) {
+                    <small class="text-red-500">{{
+                        formCreateManger.get("password")?.errors?.['backend']
+                    }}</small>
+                    }
                 </div>
                 }
             </tui-textfield>
+
             <tui-textfield>
                 <label tuiLabel>Confirm Password</label>
                 <input
@@ -117,15 +136,18 @@
                     placeholder="Confirm"
                     tuiTextfield
                 />
-                @if(formCreateManger.get('country')?.invalid &&
-                formCreateManger.get('country')?.touched) {
+                @if(formCreateManger.get('confirm')?.invalid &&
+                formCreateManger.get('confirm')?.touched) {
                 <div>
-                    <small class="text-red-500">Country is required</small>
+                    @if (formCreateManger.get('confirm')?.hasError('required'))
+                    {
+                    <small class="text-red-500">Vui lòng nhập mật khẩu</small>
+                    }
                 </div>
-                } @if(formCreateManger.errors?.['passwordMismatch'] &&
+                }@else if(formCreateManger.errors?.['passwordMismatch'] &&
                 formCreateManger.touched) {
                 <div>
-                    <small class="text-red-500">Passwords do not match</small>
+                    <small class="text-red-500">Mật khẩu không khớp</small>
                 </div>
                 }
             </tui-textfield>

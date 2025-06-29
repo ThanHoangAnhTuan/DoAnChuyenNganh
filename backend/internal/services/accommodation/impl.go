@@ -34,13 +34,13 @@ func (t *serviceImpl) GetAccommodation(ctx *gin.Context, in *vo.GetAccommodation
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
 		}
-		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation by id: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation by id: %s", err)
 	}
 
 	// TODO: get facility
 	var facilityIDs []string
 	if err := json.Unmarshal(accommodation.Facilities, &facilityIDs); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("unmarshaling facilities: %s", err)
 	}
 
 	facilities := []vo.FacilitiesOutput{}
@@ -63,13 +63,13 @@ func (t *serviceImpl) GetAccommodation(ctx *gin.Context, in *vo.GetAccommodation
 
 	rules := vo.Rule{}
 	if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling rules: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("unmarshaling rules: %s", err)
 	}
 
 	// TODO: get images of accommodation
 	images, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("error for get images of accommodation by id failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get images of accommodation by id failed: %s", err)
 	}
 
 	var imagesName []string
@@ -107,11 +107,11 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, nil, fmt.Errorf("manager not found")
 	}
 
 	page := in.GetPage()
@@ -123,7 +123,7 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 	// TODO: get accommodations
 	totalAccommodation, err = t.sqlc.CountAccommodationByManager(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count accommodations failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("count accommodations failed: %s", err)
 	}
 
 	offset := (page - 1) * limit
@@ -135,7 +135,7 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 	})
 
 	if err != nil {
-		return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
 	}
 
 	for _, acc := range accommodations {
@@ -152,6 +152,8 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 			GgMap:       acc.GgMap,
 			Facilities:  acc.Facilities,
 			Rules:       acc.Rules,
+			IsVerified:  acc.IsVerified == 1,
+			IsDeleted:   acc.IsDeleted == 1,
 		})
 	}
 
@@ -159,7 +161,7 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 		// TODO: get facility
 		var facilityIDs []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
 		facilities := []vo.FacilitiesOutput{}
@@ -182,13 +184,13 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 
 		rules := vo.Rule{}
 		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
 		}
 
 		// TODO: get images of accommodation
 		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 		if err != nil {
-			return response.ErrCodeGetAccommodationImagesFailed, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
 
 		var imagePaths []string
@@ -210,6 +212,8 @@ func (t *serviceImpl) GetAccommodationsByManager(ctx *gin.Context, in *vo.GetAcc
 			Facilities:  facilities,
 			Rules:       rules,
 			Images:      imagePaths,
+			IsVerified:  accommodation.IsVerified,
+			IsDeleted:   accommodation.IsDeleted,
 		})
 	}
 
@@ -234,11 +238,11 @@ func (t *serviceImpl) DeleteAccommodation(ctx *gin.Context, in *vo.DeleteAccommo
 	// TODO: check manager exists in database
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation exists in database
@@ -247,12 +251,12 @@ func (t *serviceImpl) DeleteAccommodation(ctx *gin.Context, in *vo.DeleteAccommo
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, fmt.Errorf("accommodation not found")
 		}
-		return response.ErrCodeGetAccommodationFailed, fmt.Errorf("error for get accommodation: %w", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get accommodation: %w", err)
 	}
 
 	// TODO: check if the manager is the owner of the accommodation
 	if accommodation.ManagerID != userID {
-		return response.ErrCodeUnauthorized, fmt.Errorf("user is not the owner of the accommodation")
+		return response.ErrCodeForbidden, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
 	// TODO: delete accommodation
@@ -261,7 +265,7 @@ func (t *serviceImpl) DeleteAccommodation(ctx *gin.Context, in *vo.DeleteAccommo
 		UpdatedAt: utiltime.GetTimeNow(),
 	})
 	if err != nil {
-		return response.ErrCodeDeleteAccommodationFailed, fmt.Errorf("error for delete accommodation: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for delete accommodation: %s", err)
 	}
 
 	return response.ErrCodeDeleteAccommodationSuccess, nil
@@ -279,11 +283,11 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 	// TODO: check manager exists in database
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: get accommodation in database
@@ -292,24 +296,24 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
 		}
-		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("error for get accommodation: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get accommodation: %w", err)
 	}
 
 	// TODO: check if the manager is the owner of the accommodation
 	if accommodation.ManagerID != userID {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user is not the owner of the accommodation")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user is not the owner of the accommodation")
 	}
 
 	// TODO: update accommodation
 	now := utiltime.GetTimeNow()
 	facilitiesJSON, err := json.Marshal(in.Facilities)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
 	rulesJSON, err := json.Marshal(in.Rules)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal rules: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for marshal rules: %s", err)
 	}
 
 	err = t.sqlc.UpdateAccommodation(ctx, database.UpdateAccommodationParams{
@@ -326,7 +330,7 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 		UpdatedAt:   now,
 	})
 	if err != nil {
-		return response.ErrCodeUpdateAccommodationFailed, nil, fmt.Errorf("error for update accommodation: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for update accommodation: %s", err)
 	}
 
 	// TODO: get facility
@@ -365,8 +369,6 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodationsInput) (codeStatus int, out []*vo.GetAccommodationsOutput, pagination *vo.BasePaginationOutput, err error) {
 	out = []*vo.GetAccommodationsOutput{}
 
-	fmt.Printf("city: %v", in.City)
-
 	page := in.GetPage()
 	limit := in.GetLimit()
 
@@ -377,7 +379,7 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 	if in.City != "" {
 		totalAccommodation, err = t.sqlc.CountAccommodationByCity(ctx, in.City)
 		if err != nil {
-			return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("count reviews failed: %s", err)
 		}
 
 		offset := (page - 1) * limit
@@ -387,9 +389,8 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 			Limit:  limit,
 			Offset: offset,
 		})
-
 		if err != nil {
-			return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
 		}
 
 		for _, acc := range accommodations {
@@ -412,7 +413,7 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 		// TODO: get accommodations
 		totalAccommodation, err = t.sqlc.CountAccommodation(ctx)
 		if err != nil {
-			return response.ErrCodeGetCountAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("count reviews failed: %s", err)
 		}
 
 		offset := (page - 1) * limit
@@ -423,7 +424,7 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 		})
 
 		if err != nil {
-			return response.ErrCodeGetAccommodationsFailed, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error for get accommodations: %s", err)
 		}
 
 		for _, acc := range accommodations {
@@ -448,7 +449,7 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 		// TODO: get facility
 		var facilityIDs []string
 		if err := json.Unmarshal(accommodation.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 		}
 
 		facilities := []vo.FacilitiesOutput{}
@@ -471,13 +472,13 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 
 		rules := vo.Rule{}
 		if err := json.Unmarshal(accommodation.Rules, &rules); err != nil {
-			return response.ErrCodeUnMarshalFailed, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("error unmarshaling property surroundings: %s", err)
 		}
 
 		// TODO: get images of accommodation
 		accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 		if err != nil {
-			return response.ErrCodeGetAccommodationImagesFailed, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 		}
 
 		var imagePaths []string
@@ -525,11 +526,11 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	// TODO: check manager exists in database
 	manager, err := t.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: convert struct to json
@@ -538,12 +539,12 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 
 	facilitiesJSON, err := json.Marshal(in.Facilities)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal facilities: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for marshal facilities: %s", err)
 	}
 
 	rulesJSON, err := json.Marshal(in.Rules)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("error for marshal rules: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for marshal rules: %s", err)
 	}
 
 	// TODO: create accommodation
@@ -565,13 +566,13 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	})
 
 	if err != nil {
-		return response.ErrCodeCreateAccommodationFailed, nil, fmt.Errorf("error for create accommodation: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for create accommodation: %s", err)
 	}
 
 	// TODO: get accommodation
 	accommodation, err := t.sqlc.GetAccommodationByIdNoVerify(ctx, id)
 	if err != nil {
-		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get accommodation failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation failed: %s", err)
 	}
 
 	out.ID = accommodation.ID
@@ -588,13 +589,13 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	// TODO: get facility
 	var facilitieIDs []string
 	if err := json.Unmarshal(accommodation.Facilities, &facilitieIDs); err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
 	}
 
 	for _, facilityID := range facilitieIDs {
 		facility, err := t.sqlc.GetAccommodationFacilityById(ctx, facilityID)
 		if err != nil {
-			return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 		}
 
 		out.Facilities = append(out.Facilities, vo.FacilitiesOutput{
@@ -606,13 +607,13 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 
 	err = json.Unmarshal(accommodation.Rules, &out.Rules)
 	if err != nil {
-		return response.ErrCodeUnMarshalFailed, nil, fmt.Errorf("error for unmarshal rules: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for unmarshal rules: %s", err)
 	}
 
 	// TODO: get images of accommodation
 	accommodationImages, err := t.sqlc.GetAccommodationImages(ctx, accommodation.ID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationImagesFailed, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get images of accommodation failed: %s", err)
 	}
 
 	for _, i := range accommodationImages {

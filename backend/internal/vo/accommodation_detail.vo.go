@@ -44,17 +44,15 @@ type CreateAccommodationDetailOutput struct {
 }
 
 type GetAccommodationDetailsOutput struct {
-	ID                string                 `json:"id"`
-	AccommodationID   string                 `json:"accommodation_id"`
-	AccommodationName string                 `json:"accommodation_name"`
-	Name              string                 `json:"name"`
-	Guests            uint8                  `json:"guests"`
-	Beds              Beds                   `json:"beds"`
-	Facilities        []FacilityDetailOutput `json:"facilities"`
-	AvailableRooms    uint8                  `json:"available_rooms"`
-	Price             string                 `json:"price"`
-	DiscountID        string                 `json:"discount_id"`
-	Images            []string               `json:"images"`
+	ID             string                 `json:"id"`
+	Name           string                 `json:"name"`
+	Guests         uint8                  `json:"guests"`
+	Beds           Beds                   `json:"beds"`
+	Facilities     []FacilityDetailOutput `json:"facilities"`
+	AvailableRooms uint8                  `json:"available_rooms"`
+	Price          string                 `json:"price"`
+	DiscountID     string                 `json:"discount_id"`
+	Images         []string               `json:"images"`
 }
 
 type GetAccommodationDetailsByManagerOutput struct {

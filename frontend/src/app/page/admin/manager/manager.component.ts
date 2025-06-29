@@ -74,17 +74,11 @@ export class ManagerComponent implements OnInit {
 
         this.dialogs
             .open<string>(content, {
-                label: 'Create Manager',
+                label: 'Tạo manager',
             })
             .subscribe({
-                next: (result) => {
-                    console.log('Dialog result:', result);
-                },
                 complete: () => {
-                    console.log('Dialog closed');
-                },
-                error: (err) => {
-                    console.error('Dialog error:', err);
+                    this.formCreateManger.reset();
                 },
             });
     }
@@ -101,13 +95,19 @@ export class ManagerComponent implements OnInit {
         this.messageService.add({ severity, summary, detail });
     }
     ngOnInit(): void {
-        // TODO: get managers by admin
+        this.getManagers();
+    }
+
+    protected getManagers() {
         this.managerService.getManagers().subscribe({
             next: (value) => {
                 this.managers = value.data;
             },
             error: (err) => {
-                console.error(err);
+                const message =
+                    err.error?.message ||
+                    'Không thể tải danh sách quản lý. Vui lòng thử lại sau.';
+                this.showToast('error', 'Lỗi tải danh sách quản lý', message);
             },
         });
     }
@@ -128,14 +128,26 @@ export class ManagerComponent implements OnInit {
 
         this.managerService.createNewManager(manager).subscribe({
             next: (response) => {
+                console.log(response);
                 this.formCreateManger.reset();
                 this.showToast(
                     'success',
                     'Manager created successfully',
                     response.message
                 );
+                this.getManagers();
             },
             error: (err) => {
+                console.log(err);
+                console.log(err.error.error.length);
+
+                for (let index = 0; index < err.error.error.length; index++) {
+                    this.formCreateManger
+                        .get(err.error.error[index]['field'])
+                        ?.setErrors({
+                            backend: err.error.error[index]['message'],
+                        });
+                }
                 this.showToast(
                     'error',
                     'Error creating manager',

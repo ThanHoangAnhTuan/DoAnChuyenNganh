@@ -2,7 +2,7 @@ package vo
 
 type AdminRegisterInput struct {
 	UserAccount  string `json:"account" validate:"required,email"`
-	UserPassword string `json:"password" validate:"required"`
+	UserPassword string `json:"password" validate:"required,strongpassword"`
 }
 
 type AdminLoginInput struct {

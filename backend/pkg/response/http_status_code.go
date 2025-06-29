@@ -2,378 +2,178 @@ package response
 
 const (
 	// global
-	ErrCodeSaveDataFailed           = 20001
-	ErrCodeUpdateDataFailed         = 20002
-	ErrCodeMarshalFailed            = 20003
-	ErrCodeUnMarshalFailed          = 20004
-	ErrCodeCreateJWTTokenFailed     = 20005
-	ErrCodeParamsInvalid            = 20006
-	ErrCodeUnauthorized             = 20007
-	ErrCodeForbidden                = 20008
-	ErrCodeValidatorNotFound        = 20009
-	ErrCodeValidator                = 20010
-	ErrCodeConvertISOToUnixFailed   = 20011
-	ErrCodeConvertUnixToISOFailed   = 20012
-	ErrCodeSuccessfully             = 20013
-	ErrCodeParseTimeFailed          = 20014
-	ErrCodeParseStringToFloatFailed = 20015
-
-	// register
-	ErrCodeInvalidEmailFormat = 30001
-	ErrCodeUserAlreadyExists  = 30002
-	ErrCodeOTPAlreadyExists   = 30003
-	ErrCodeSendEmailFailed    = 30004
-	ErrCodeRegisterSuccess    = 30005
-	ErrCodeRegisterFailed     = 30006
-
-	// verify otp
-	ErrCodeOTPNotExists           = 40001
-	ErrCodeOTPNotMatch            = 40002
-	ErrCodeGetInfoOTPFailed       = 40003
-	ErrCodeUpdateUserVerifyFailed = 40004
-	ErrCodeVerifyOTPSuccess       = 40005
-	ErrCodeOTPAlreadyVerified     = 40006
-
-	// update password register
-	ErrCodeOTPNotVerified                = 50001
-	ErrCodeHashPasswordFailed            = 50002
-	ErrCodeUpdatePasswordRegisterSuccess = 50003
+	ErrCodeInternalServerError = 100001
+	ErrCodeUnauthorized        = 100002
+	ErrCodeValidator           = 100003
+	ErrCodeForbidden           = 100004
+	ErrCodeSuccessfully        = 100005
 
 	// login
-	ErrCodeGetUserInfoFailed     = 60001
-	ErrCodePasswordNotMatch      = 60002
-	ErrCodeLoginSuccess          = 60003
-	ErrCodeGetUserInfoSuccess    = 60004
-	ErrCodeGetUserInfoNotFound   = 60005
-	ErrCodeUpdateUserInfoFailed  = 60006
-	ErrCodeUpdateUserInfoSuccess = 60007
+	ErrCodeLoginSuccess    = 200001
+	ErrCodeLoginFailed     = 200002
+	ErrCodeRegisterSuccess = 200003
 
-	// jwt
-	ErrCodeMissAuthorizationHeader    = 70001
-	ErrCodeInvalidAuthorizationFormat = 70002
-	ErrCodeInvalidToken               = 70003
+	// otp
+	ErrCodeOTPNotMatch        = 300001
+	ErrCodeVerifyOTPSuccess   = 300002
+	ErrCodeOTPAlreadyVerified = 300003
+	ErrCodeOTPNotVerified     = 300004
+	ErrCodeOTPAlreadyExists   = 300005
 
-	// accommodation
-	ErrCodeCreateAccommodationFailed   = 80001
-	ErrCodeCreateAccommodationSuccess  = 80002
-	ErrCodeManagerNotFound             = 80003
-	ErrCodeGetAccommodationsFailed     = 80004
-	ErrCodeGetAccommodationSuccess     = 80005
-	ErrCodeGetAccommodationFailed      = 80006
-	ErrCodeAccommodationNotFound       = 80007
-	ErrCodeUpdateAccommodationSuccess  = 80008
-	ErrCodeUpdateAccommodationFailed   = 80009
-	ErrCodeDeleteAccommodationFailed   = 80010
-	ErrCodeDeleteAccommodationSuccess  = 80011
-	ErrCodeGetCountAccommodationFailed = 80012
-
-	// accommodation image
-	ErrCodeGetAccommodationImagesFailed    = 80013
-	ErrCodeGetAccommodationImagesSuccess   = 80014
-	ErrCodeDeleteAccommodationImagesFailed = 80015
-	ErrCodeSaveAccommodationImagesFailed   = 80016
-
-	// accommodation detail
-	ErrCodeCreateAccommodationDetailFailed   = 90001
-	ErrCodeCreateAccommodationDetailSuccess  = 90002
-	ErrCodeGetAccommodationDetailsFailed     = 90004
-	ErrCodeGetAccommodationDetailsSuccess    = 90005
-	ErrCodeGetAccommodationDetailFailed      = 90006
-	ErrCodeAccommodationDetailNotFound       = 90007
-	ErrCodeUpdateAccommodationDetailSuccess  = 90008
-	ErrCodeUpdateAccommodationDetailFailed   = 90009
-	ErrCodeDeleteAccommodationDetailFailed   = 90010
-	ErrCodeDeleteAccommodationDetailSuccess  = 90011
-	ErrCodeGetCountAccommodationDetailFailed = 90012
-	ErrCodeNumberOfAvailableRoomsNotEnough   = 90013
-
-	// accommodation detail image
-	ErrCodeGetAccommodationDetailImagesFailed    = 90014
-	ErrCodeGetAccommodationDetailImagesSuccess   = 90015
-	ErrCodeDeleteAccommodationDetailImagesFailed = 90016
-	ErrCodeSaveAccommodationDetailImagesFailed   = 90017
-
-	// file
-	ErrCodeOpenFileFailed     = 100001
-	ErrCodeReadFileFailed     = 100002
-	ErrCodeInvalidFileType    = 100003
-	ErrCodeGetFilesFailed     = 100006
-	ErrCodeDeleteFileFailed   = 100007
-	ErrCodeCreateFolderFailed = 100008
-	ErrCodeUploadFileSuccess  = 100009
-	ErrCodeUploadFileFailed   = 100010
-
-	// manager
-	ErrCodeUpdateManagerFailed        = 110001
-	ErrCodeGetManagerFailed           = 110002
-	ErrCodeGetManagerSuccess          = 110003
-	ErrCodeCountNumberOfManagerFailed = 110004
-
-	// admin
-	ErrCodeGetAdminFailed = 120001
-	ErrCodeUserNotAdmin   = 120002
-
-	// facility
-	ErrCodeCreateFacilitySuccess       = 130001
-	ErrCodeCreateFacilityFailed        = 130002
-	ErrCodeGetFacilityFailed           = 130003
-	ErrCodeGetFacilitySuccess          = 130004
-	ErrCodeUpdateFacilityFailed        = 130005
-	ErrCodeUpdateFacilitySuccess       = 130006
-	ErrCodeDeleteFacilityImageFailed   = 130007
-	ErrCodeDeleteFacilityFailed        = 130008
-	ErrCodeDeleteFacilitySuccess       = 130009
-	ErrCodeUpdateFacilityDetailFailed  = 130010
-	ErrCodeUpdateFacilityDetailSuccess = 130011
-	ErrCodeDeleteFacilityDetailFailed  = 130012
-	ErrCodeDeleteFacilityDetailSuccess = 130013
-
-	// user base
-	ErrCodeGetUserBaseFailed = 140001
-	ErrCodeUserBaseNotFound  = 140002
+	// user manager
+	ErrCodeManagerNotFound   = 400001
+	ErrCodeGetManagerSuccess = 400002
 
 	// user admin
-	ErrCodeGetUserAdminFailed = 140003
-	ErrCodeUserAdminNotFound  = 140004
+	ErrCodeGetAdminFailed        = 500001
+	ErrCodeAdminPasswordNotMatch = 500002
+	ErrCodeAdminLoginSuccess     = 500003
+	ErrCodeAccountAlreadyExists  = 500004
 
-	// transaction
-	ErrCodeBeginTransactionFailed  = 150001
-	ErrCodeCommitTransactionFailed = 150002
+	// user base
+	ErrCodeUserNotFound      = 600001
+	ErrCodeGetUserSuccess    = 600002
+	ErrCodeUpdateUserSuccess = 600003
 
-	// order
-	ErrCodeCreateOrderDetailFailed  = 160001
-	ErrCodeCreateOrderFailed        = 160002
-	ErrCodeCreateOrderSuccess       = 160003
-	ErrCodeGetOrderFailed           = 160004
-	ErrCodeGetOrderByUserIDNotFound = 160005
-	ErrCodeUpdateOrderStatusFailed  = 160006
-	ErrCodeUpdateOrderStatusSuccess = 160007
-	ErrCodeGetOrderSuccess          = 160008
-	ErrCodeOrderNotFound            = 160009
+	// accommodation
+	ErrCodeCreateAccommodationSuccess = 700001
+	ErrCodeGetAccommodationSuccess    = 700002
+	ErrCodeAccommodationNotFound      = 700003
+	ErrCodeUpdateAccommodationSuccess = 700004
+	ErrCodeDeleteAccommodationSuccess = 700005
 
-	// payment
-	ErrCodeCreatePaymentURLSuccess = 170001
-	ErrCodeCreatePaymentFailed     = 170002
-	ErrCodeGetPaymentFailed        = 170003
-
-	// review
-	ErrCodeCreateReviewFailed             = 180001
-	ErrCodeCreateReviewSuccess            = 180002
-	ErrCodeGetReviewByAccommodationFailed = 180003
-	ErrCodeGetReviewsSuccess              = 180004
-
-	// stats
-	ErrCodeGetMonthlyEarningSuccess = 190001
-	ErrCodeGetMonthlyEarningFailed  = 190002
-
-	// Decimal
-	ErrCodeInvalidPriceFormat  = 200001
-	ErrCodePriceMustBePositive = 200002
+	// accommodation type
+	ErrCodeCreateAccommodationTypeSuccess = 800001
+	ErrCodeAccommodationTypeNotFound      = 800002
+	ErrCodeDeleteAccommodationTypeSuccess = 800003
+	ErrCodeGetAccommodationTypeSuccess    = 800004
+	ErrCodeUpdateAccommodationTypeSuccess = 800005
 
 	// accommodation room
-	ErrCodeCheckAccommodationTypeBelongsToManagerFailed = 210001
-	ErrCodeCheckAccommodationTypeNotBelongsToManager    = 210002
-	ErrCodeCreateAccommodationRoomFailed                = 210003
-	ErrCodeCreateAccommodationRoomSuccess               = 210004
-	ErrCodeGetAccommodationRoomFailed                   = 210005
-	ErrCodeGetAccommodationRoomSuccess                  = 210006
-	ErrCodeCheckAccommodationRoomBelongsToManagerFailed = 210007
-	ErrCodeCheckAccommodationRoomNotBelongsToManager    = 210008
-	ErrCodeUpdateAccommodationRoomFailed                = 210009
-	ErrCodeUpdateAccommodationRoomSuccess               = 210010
-	ErrCodeDeleteAccommodationRoomFailed                = 210011
-	ErrCodeDeleteAccommodationRoomSuccess               = 210012
-	ErrCodeAccommodationRoomNotFound                    = 210013
+	ErrCodeCreateAccommodationRoomSuccess = 900001
+	ErrCodeGetAccommodationRoomSuccess    = 900002
+	ErrCodeUpdateAccommodationRoomSuccess = 900003
+	ErrCodeDeleteAccommodationRoomSuccess = 900004
+	ErrCodeAccommodationRoomNotFound      = 900005
+
+	// facility
+	ErrCodeCreateFacilitySuccess = 1000001
+	ErrCodeGetFacilitySuccess    = 1000002
+	ErrCodeUpdateFacilitySuccess = 1000003
+	ErrCodeDeleteFacilitySuccess = 1000004
+
+	// facility detail
+	ErrCodeCreateFacilityDetailSuccess = 1100001
+	ErrCodeGetFacilityDetailSuccess    = 1100002
+	ErrCodeDeleteFacilityDetailSuccess = 1100003
+	ErrCodeUpdateFacilityDetailSuccess = 1100004
+
+	// order
+	ErrCodeOrderNotFound      = 1200001
+	ErrCodeGetOrderSuccess    = 1200002
+	ErrCodeUpdateOrderSuccess = 1200003
+
+	// review
+	ErrCodeCreateReviewSuccess      = 1300001
+	ErrCodeUserNotBookAccommodation = 1300002
+	ErrCodeGetReviewsSuccess        = 1300003
+
+	// stats
+	ErrCodeStatsSuccess = 1400001
 
 	// export
-	ErrCodeExportFailed  = 220001
-	ErrCodeExportSuccess = 220002
+	ErrCodeExportSuccess = 1500001
+
+	// image
+	ErrCodeGetFileSuccess    = 1600001
+	ErrCodeUploadFileSuccess = 1600002
 )
 
 var message = map[int]string{
 	// global
-	ErrCodeSaveDataFailed:           "Save data failed",
-	ErrCodeUpdateDataFailed:         "Update data failed",
-	ErrCodeMarshalFailed:            "Marshal failed",
-	ErrCodeUnMarshalFailed:          "Unmarshal failed",
-	ErrCodeCreateJWTTokenFailed:     "Create JWT token failed",
-	ErrCodeParamsInvalid:            "Params invalid",
-	ErrCodeUnauthorized:             "Unauthorized",
-	ErrCodeForbidden:                "You do not have permission to access this resource.",
-	ErrCodeValidatorNotFound:        "Validator not found",
-	ErrCodeValidator:                "Validator error",
-	ErrCodeConvertISOToUnixFailed:   "Convert ISO to Unix failed",
-	ErrCodeConvertUnixToISOFailed:   "Convert Unix to ISO failed",
-	ErrCodeSuccessfully:             "Success",
-	ErrCodeParseTimeFailed:          "Parse time failed",
-	ErrCodeParseStringToFloatFailed: "Parse string to float failed",
-
-	// register
-	ErrCodeInvalidEmailFormat: "Invalid email format",
-	ErrCodeUserAlreadyExists:  "User already exists",
-	ErrCodeOTPAlreadyExists:   "OTP already exists",
-	ErrCodeSendEmailFailed:    "Send email failed",
-	ErrCodeRegisterSuccess:    "Register successfully",
-	ErrCodeRegisterFailed:     "Register failed",
-
-	// verify otp
-	ErrCodeOTPNotExists:           "OTP not exists",
-	ErrCodeOTPNotMatch:            "OTP not match",
-	ErrCodeGetInfoOTPFailed:       "Get info OTP failed",
-	ErrCodeUpdateUserVerifyFailed: "Update user verify failed",
-	ErrCodeVerifyOTPSuccess:       "Verify OTP successfully",
-	ErrCodeOTPAlreadyVerified:     "OTP already verified",
-
-	// update password register
-	ErrCodeOTPNotVerified:                "OTP not verified",
-	ErrCodeHashPasswordFailed:            "Hash password failed",
-	ErrCodeUpdatePasswordRegisterSuccess: "Update password register successfully",
+	ErrCodeInternalServerError: "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.",
+	ErrCodeValidator:           "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các trường thông tin.",
+	ErrCodeUnauthorized:        "Bạn chưa đăng nhập. Vui lòng đăng nhập",
+	ErrCodeForbidden:           "Bạn không có quyền truy cập tài nguyên này.",
+	ErrCodeSuccessfully:        "Thành công",
 
 	// login
-	ErrCodeGetUserInfoFailed:     "Get user infor failed",
-	ErrCodePasswordNotMatch:      "Password not match",
-	ErrCodeLoginSuccess:          "Login successfully",
-	ErrCodeGetUserInfoSuccess:    "Get user infor successfully",
-	ErrCodeGetUserInfoNotFound:   "User info not found",
-	ErrCodeUpdateUserInfoFailed:  "Update user info failed",
-	ErrCodeUpdateUserInfoSuccess: "Update user info successfully",
-
-	// jwt
-	ErrCodeMissAuthorizationHeader:    "Missing authorization header",
-	ErrCodeInvalidAuthorizationFormat: "Invalid authorization format",
-	ErrCodeInvalidToken:               "Invalid token",
+	ErrCodeLoginSuccess:    "Đăng nhập thành công",
+	ErrCodeRegisterSuccess: "Đăng ký thành công",
+	ErrCodeLoginFailed:     "Tài khoản hoặc mật khẩu không đúng",
 
 	// accommodation
-	ErrCodeCreateAccommodationFailed:   "Create accommodation failed",
-	ErrCodeCreateAccommodationSuccess:  "Create accommodation successfully",
-	ErrCodeGetAccommodationsFailed:     "Get accommodations failed",
-	ErrCodeManagerNotFound:             "Manager not found",
-	ErrCodeGetAccommodationSuccess:     "Get accommodations successfully",
-	ErrCodeGetAccommodationFailed:      "Get accommodation failed",
-	ErrCodeAccommodationNotFound:       "Accommodation not found",
-	ErrCodeUpdateAccommodationSuccess:  "Update accommodation successfully",
-	ErrCodeUpdateAccommodationFailed:   "Update accommodation failed",
-	ErrCodeDeleteAccommodationFailed:   "Delete accommodation failed",
-	ErrCodeDeleteAccommodationSuccess:  "Delete accommodation successfully",
-	ErrCodeGetCountAccommodationFailed: "Get count accommodation failed",
-
-	// accommodation image
-	ErrCodeGetAccommodationImagesFailed:    "Get images of accommodation failed",
-	ErrCodeDeleteAccommodationImagesFailed: "Delete images of accommodation failed",
-	ErrCodeGetAccommodationImagesSuccess:   "Get images of accommodation success",
-	ErrCodeSaveAccommodationImagesFailed:   "Save images of accommodation failed",
-
-	// accommodation detail
-	ErrCodeCreateAccommodationDetailFailed:   "Create accommodation details failed",
-	ErrCodeCreateAccommodationDetailSuccess:  "Create accommodation details successfully",
-	ErrCodeGetAccommodationDetailsFailed:     "Get accommodation details failed",
-	ErrCodeGetAccommodationDetailsSuccess:    "Get accommodation details successfully",
-	ErrCodeGetAccommodationDetailFailed:      "Get accommodation details failed",
-	ErrCodeAccommodationDetailNotFound:       "Accommodation details not found",
-	ErrCodeUpdateAccommodationDetailSuccess:  "Update accommodation detail successfully",
-	ErrCodeUpdateAccommodationDetailFailed:   "Update accommodation detail failed",
-	ErrCodeDeleteAccommodationDetailFailed:   "Delete accommodation detail failed",
-	ErrCodeDeleteAccommodationDetailSuccess:  "Delete accommodation detail successfully",
-	ErrCodeGetCountAccommodationDetailFailed: "Get count accommodation detail failed",
-	ErrCodeNumberOfAvailableRoomsNotEnough:   "Number of available rooms not enough",
-
-	// accommodation detail image
-	ErrCodeGetAccommodationDetailImagesFailed:    "Get images of accommodation detail failed",
-	ErrCodeDeleteAccommodationDetailImagesFailed: "Delete images of accommodation detail failed",
-	ErrCodeGetAccommodationDetailImagesSuccess:   "Get images of accommodation detail success",
-	ErrCodeSaveAccommodationDetailImagesFailed:   "Save images of accommodation detail failed",
-
-	// file
-	ErrCodeOpenFileFailed:     "Open file failed",
-	ErrCodeReadFileFailed:     "Read file failed",
-	ErrCodeInvalidFileType:    "Invalid file type",
-	ErrCodeGetFilesFailed:     "Get files failed",
-	ErrCodeDeleteFileFailed:   "Delete file failed",
-	ErrCodeCreateFolderFailed: "Create folder failed",
-	ErrCodeUploadFileSuccess:  "Upload files success",
-	ErrCodeUploadFileFailed:   "Upload files failed",
-
-	// manager
-	ErrCodeUpdateManagerFailed:        "Update manager failed",
-	ErrCodeGetManagerFailed:           "Get manager failed",
-	ErrCodeGetManagerSuccess:          "Get manager successfully",
-	ErrCodeCountNumberOfManagerFailed: "Count number of managers failed",
-
-	// admin
-	ErrCodeGetAdminFailed: "Get admin failed",
-
-	// facility
-	ErrCodeCreateFacilitySuccess:       "Create facility successfully",
-	ErrCodeCreateFacilityFailed:        "Create facility failed",
-	ErrCodeGetFacilityFailed:           "Get facility failed",
-	ErrCodeGetFacilitySuccess:          "Get facility successfully",
-	ErrCodeUpdateFacilityFailed:        "Update facility failed",
-	ErrCodeUpdateFacilitySuccess:       "Update facility successfully",
-	ErrCodeDeleteFacilityImageFailed:   "Detele facitliy image failed",
-	ErrCodeDeleteFacilityFailed:        "Detele facitliy failed",
-	ErrCodeDeleteFacilitySuccess:       "Detele facitliy successfully",
-	ErrCodeUpdateFacilityDetailFailed:  "Update facitliy detail failed",
-	ErrCodeUpdateFacilityDetailSuccess: "Update facitliy detail successfully",
-	ErrCodeDeleteFacilityDetailFailed:  "Detele facitliy detail failed",
-	ErrCodeDeleteFacilityDetailSuccess: "Detele facitliy detail successfully",
-
-	// user base
-	ErrCodeGetUserBaseFailed: "Get user base failed",
-	ErrCodeUserBaseNotFound:  "User base not found",
-
-	// user admin
-	ErrCodeGetUserAdminFailed: "Get user admin failed",
-	ErrCodeUserAdminNotFound:  "User admin not found",
-
-	// transaction
-	ErrCodeBeginTransactionFailed:  "Start transaction failed",
-	ErrCodeCommitTransactionFailed: "Commit transaction failed",
-
-	// order vs order detail
-	ErrCodeCreateOrderDetailFailed:  "Create order detail failed",
-	ErrCodeCreateOrderFailed:        "Create order failed",
-	ErrCodeCreateOrderSuccess:       "Create order successfully",
-	ErrCodeGetOrderFailed:           "Get order failed",
-	ErrCodeGetOrderSuccess:          "Get order successfully",
-	ErrCodeGetOrderByUserIDNotFound: "Get order by user id not found",
-	ErrCodeUpdateOrderStatusFailed:  "Update order status failed",
-	ErrCodeUpdateOrderStatusSuccess: "Update order status successfully",
-	ErrCodeOrderNotFound:            "Order not found",
-
-	// payment
-	ErrCodeCreatePaymentURLSuccess: "Create payment url successfully",
-	ErrCodeCreatePaymentFailed:     "Create payment failed",
-	ErrCodeGetPaymentFailed:        "Get payment failed",
-
-	// review
-	ErrCodeCreateReviewFailed:             "Create review failed",
-	ErrCodeCreateReviewSuccess:            "Create review successfully",
-	ErrCodeGetReviewByAccommodationFailed: "Get reviews by accommodation failed",
-	ErrCodeGetReviewsSuccess:              "Get reviews successfully",
-
-	// stats
-	ErrCodeGetMonthlyEarningSuccess: "Get monthly earning successfully",
-	ErrCodeGetMonthlyEarningFailed:  "Get monthly earning failed",
-
-	// Decimal
-	ErrCodeInvalidPriceFormat: "Invalid price format",
+	ErrCodeAccommodationNotFound:      "Không tìm thấy khách sạn",
+	ErrCodeGetAccommodationSuccess:    "Tải dữ liệu khách sạn thành công",
+	ErrCodeDeleteAccommodationSuccess: "Xoá khách sạn thành công",
+	ErrCodeUpdateAccommodationSuccess: "Cập nhập thông tin khách sạn thành công",
+	ErrCodeCreateAccommodationSuccess: "Tạo khách sạn thành công",
 
 	// accommodation type
-	ErrCodeCheckAccommodationTypeBelongsToManagerFailed: "Check accommodation type belongs to manager failed",
-	ErrCodeCheckAccommodationTypeNotBelongsToManager:    "Accommodation type not belongs to manager",
-	ErrCodeCreateAccommodationRoomFailed:                "Create accommodation room failed",
-	ErrCodeCreateAccommodationRoomSuccess:               "Create accommodation room successfully",
-	ErrCodeGetAccommodationRoomFailed:                   "Get accommodation room failed",
-	ErrCodeGetAccommodationRoomSuccess:                  "Get accommodation room successfully",
-	ErrCodeCheckAccommodationRoomBelongsToManagerFailed: "Check accommodation room belongs to manager failed",
-	ErrCodeCheckAccommodationRoomNotBelongsToManager:    "Accommodation room not belongs to manager",
-	ErrCodeUpdateAccommodationRoomFailed:                "Update accommodation room failed",
-	ErrCodeUpdateAccommodationRoomSuccess:               "Update accommodation room successfully",
-	ErrCodeDeleteAccommodationRoomFailed:                "Delete accommodation room failed",
-	ErrCodeDeleteAccommodationRoomSuccess:               "Delete accommodation room successfully",
-	ErrCodeAccommodationRoomNotFound:                    "Accommodation room not found",
+	ErrCodeCreateAccommodationTypeSuccess: "Tạo loại phòng khách sạn thành công",
+	ErrCodeAccommodationTypeNotFound:      "Không tìm thấy loại phòng khách sạn",
+	ErrCodeDeleteAccommodationTypeSuccess: "Xoá loại phòng khách sạn thành công",
+	ErrCodeGetAccommodationTypeSuccess:    "Tải dữ liệu loại phòng khách sạn thành công",
+	ErrCodeUpdateAccommodationTypeSuccess: "Cập nhập dữ liệu loại phòng khách sạn thành công",
+
+	// accommodation room
+	ErrCodeDeleteAccommodationRoomSuccess: "Xoá phòng thành công",
+	ErrCodeUpdateAccommodationRoomSuccess: "Cập nhập thông tin phòng thành công",
+	ErrCodeGetAccommodationRoomSuccess:    "Tải dữ liệu phòng khách sạn thành công",
+	ErrCodeCreateAccommodationRoomSuccess: "Tạo phòng khách sạn thành công",
+	ErrCodeAccommodationRoomNotFound:      "Không tìm thấy phòng khách sạn",
+
+	// facility
+	ErrCodeDeleteFacilitySuccess: "Xoá tiện nghi khách sạn thành công",
+	ErrCodeUpdateFacilitySuccess: "Cập nhập tiện nghi khách sạn thành công",
+	ErrCodeCreateFacilitySuccess: "Tạo tiện nghi khách sạn thành công",
+	ErrCodeGetFacilitySuccess:    "Tải dữ liệu tiện nghi khách sạn thành công",
+
+	// facility detail
+	ErrCodeDeleteFacilityDetailSuccess: "Xoá tiện nghi phòng thành công",
+	ErrCodeUpdateFacilityDetailSuccess: "Cập nhập tiện nghi phòng thành công",
+	ErrCodeCreateFacilityDetailSuccess: "Tạo tiện nghi phòng thành công",
+	ErrCodeGetFacilityDetailSuccess:    "Tải dữ liệu tiện nghi phòng thành công",
+
+	// order
+	ErrCodeOrderNotFound:      "Đơn hàng không tồn tại",
+	ErrCodeUpdateOrderSuccess: "Cập nhật đơn hàng thành công",
+	ErrCodeGetOrderSuccess:    "Tải thông tin đơn hàng thành công",
+
+	// review
+	ErrCodeCreateReviewSuccess:      "Bình luận thành công",
+	ErrCodeUserNotBookAccommodation: "Bạn chưa đặt phòng, nên không có quyền bình luận",
+	ErrCodeGetReviewsSuccess:        "Tải danh sách bình luận thành công",
+
+	// stats
+	ErrCodeStatsSuccess: "Thống kê thành công",
 
 	// export
-	ErrCodeExportFailed:  "Export failed",
-	ErrCodeExportSuccess: "Export successfully",
+	ErrCodeExportSuccess: "Tải file thành công",
+
+	// image
+	ErrCodeGetFileSuccess:    "Lấy file thành công",
+	ErrCodeUploadFileSuccess: "Tải file thành công",
+
+	// user manager
+	ErrCodeManagerNotFound:   "Bạn không có quyền truy cập tài nguyên này.",
+	ErrCodeGetManagerSuccess: "Tải danh sách quản lý thành công",
+
+	// user admin
+	ErrCodeGetAdminFailed:        "Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau",
+	ErrCodeAdminPasswordNotMatch: "Tải khoản hoặc mật khẩu không đúng",
+	ErrCodeAdminLoginSuccess:     "Đăng nhập thành công",
+	ErrCodeAccountAlreadyExists:  "Tài khoản đã tồn tại. Vui lòng chọn email khác.",
+
+	// user base
+	ErrCodeUserNotFound:      "Người dùng không tồn tại",
+	ErrCodeGetUserSuccess:    "Lấy thông tin người dùng thành công",
+	ErrCodeUpdateUserSuccess: "Cập nhật thông tin người dùng thành công",
+
+	// otp
+	ErrCodeOTPAlreadyVerified: "OTP không hợp lệ",
+	ErrCodeOTPNotMatch:        "OTP không đúng",
+	ErrCodeVerifyOTPSuccess:   "Xác thực OTP thành công",
+	ErrCodeOTPNotVerified:     "Bạn chưa xác thực OTP",
+	ErrCodeOTPAlreadyExists:   "OTP đã tồn tại",
 }

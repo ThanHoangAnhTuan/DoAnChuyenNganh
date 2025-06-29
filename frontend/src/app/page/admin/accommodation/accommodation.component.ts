@@ -9,7 +9,7 @@ import {
     ViewChildren,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiButton,
@@ -86,6 +86,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
 
     protected columns: string[] = [
+        'ID',
         'Name',
         'Country',
         'City',
@@ -94,7 +95,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         'Description',
         'Rating',
         'Google Map',
-        'Image',
+        // 'Image',
         'Is Verified',
         'Is Deleted',
     ];
@@ -121,6 +122,10 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected timePeriods = tuiCreateTimePeriods();
     private readonly alerts = inject(TuiAlertService);
 
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
     protected getAlert(label: string, content: string): void {
         this.alerts
             .open(content, {
@@ -144,6 +149,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.accommodationService
                 .getAccommodationsOfManagerByAdmin(this.managerId)
                 .subscribe((response) => {
+                    console.log(response);
                     this.accommodations = response.data;
                 });
         });

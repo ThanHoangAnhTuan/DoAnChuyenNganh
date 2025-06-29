@@ -128,6 +128,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         'Description',
         'Rating',
         'Google Map',
+        'Is Verified',
+        'Is Deleted',
         'Image',
         'Action',
         'Show Accommodation Detail',
@@ -210,6 +212,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         });
 
         this.accommodationService.getAccommodations().subscribe((response) => {
+            console.log(response);
             this.accommodations = response.data;
         });
 

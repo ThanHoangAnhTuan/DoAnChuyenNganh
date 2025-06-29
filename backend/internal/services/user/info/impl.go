@@ -34,13 +34,13 @@ func (u *serviceImpl) UploadUserAvatar(ctx *gin.Context, in *vo.UploadUserAvatar
 	// TODO: get user info from db
 	user, err := u.sqlc.GetUserInfoByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, "", fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, "", fmt.Errorf("get user info failed: %s", err)
 	}
 
 	if user.Image != "" {
 		err = uploader.DeleteImageToDisk([]string{user.Image})
 		if err != nil {
-			return response.ErrCodeDeleteAccommodationDetailImagesFailed, "", fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
+			return response.ErrCodeInternalServerError, "", fmt.Errorf("delete images in disk of accommodation detail failed: %s", err)
 		}
 	}
 
@@ -57,10 +57,10 @@ func (u *serviceImpl) UploadUserAvatar(ctx *gin.Context, in *vo.UploadUserAvatar
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateUserInfoFailed, "", fmt.Errorf("update avatar failed: %s", err)
+		return response.ErrCodeInternalServerError, "", fmt.Errorf("update avatar failed: %s", err)
 	}
 
-	return response.ErrCodeUpdateUserInfoSuccess, imagesFileName[0], nil
+	return response.ErrCodeUploadFileSuccess, imagesFileName[0], nil
 }
 
 func (u *serviceImpl) GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.GetUserInfoOutput, err error) {
@@ -75,7 +75,7 @@ func (u *serviceImpl) GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.Get
 	// TODO: get user info from db
 	user, err := u.sqlc.GetUserInfoByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
 	out.Account = user.Account
@@ -86,7 +86,7 @@ func (u *serviceImpl) GetUserInfo(ctx *gin.Context) (codeStatus int, out *vo.Get
 	out.Phone = user.Phone.String
 	out.Username = user.UserName
 
-	return response.ErrCodeGetUserInfoSuccess, out, nil
+	return response.ErrCodeGetUserSuccess, out, nil
 }
 
 func (u *serviceImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInput) (codeStatus int, out *vo.UpdateUserInfoOutput, err error) {
@@ -100,11 +100,11 @@ func (u *serviceImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInpu
 
 	isExists, err := u.sqlc.CheckUserInfoExists(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
 	if !isExists {
-		return response.ErrCodeGetUserInfoNotFound, nil, fmt.Errorf("user info not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user info not found")
 	}
 
 	// TODO: update user info
@@ -115,24 +115,20 @@ func (u *serviceImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInpu
 			String: in.Phone,
 			Valid:  true,
 		},
-		Gender:   in.Gender,
-		Birthday: in.Birthday,
-		// Email: sql.NullString{
-		// 	String: in.Email,
-		// 	Valid:  true,
-		// },
+		Gender:    in.Gender,
+		Birthday:  in.Birthday,
 		UpdatedAt: now,
 		ID:        userID,
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateUserInfoSuccess, nil, fmt.Errorf("update user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("update user info failed: %s", err)
 	}
 
 	// TODO: get user info
 	user, err := u.sqlc.GetUserInfoByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
 	out.Account = user.Account
@@ -142,5 +138,5 @@ func (u *serviceImpl) UpdateUserInfo(ctx *gin.Context, in *vo.UpdateUserInfoInpu
 	out.Phone = user.Phone.String
 	out.Username = user.UserName
 
-	return response.ErrCodeUpdateUserInfoSuccess, out, nil
+	return response.ErrCodeUpdateUserSuccess, out, nil
 }

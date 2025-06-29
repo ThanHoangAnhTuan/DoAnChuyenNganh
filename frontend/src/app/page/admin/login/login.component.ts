@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -13,6 +13,7 @@ import { AuthService } from '../../../services/admin/auth.service';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { SaveTokenToCookie } from '../../../shared/token/token';
 @Component({
     selector: 'app-login',
     imports: [
@@ -27,7 +28,7 @@ import { ButtonModule } from 'primeng/button';
     styleUrl: './login.component.scss',
     providers: [MessageService],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     protected formLogin = new FormGroup({
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
@@ -38,6 +39,25 @@ export class LoginComponent {
         private router: Router,
         private messageService: MessageService
     ) {}
+
+    ngOnInit() {
+        this.formLogin.get('account')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+
+        this.formLogin.get('password')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+    }
+
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,
@@ -47,11 +67,6 @@ export class LoginComponent {
     }
     handleLogin() {
         if (this.formLogin.invalid) {
-            this.showToast(
-                'error',
-                'Đăng nhập thất bại',
-                'Vui lòng điền đầy đủ thông tin đăng nhập'
-            );
             this.formLogin.markAllAsTouched();
             return;
         }
@@ -63,31 +78,16 @@ export class LoginComponent {
 
         this.authSerivce.login(adminLogin).subscribe({
             next: (response) => {
-                this.saveTokenToCookie(response.data.token);
+                SaveTokenToCookie(response.data.token);
                 this.router.navigate(['/admin/manager']);
             },
             error: (error) => {
-                this.showToast(
-                    'error',
-                    'Đăng nhập thất bại',
-                    error.error.message ||
-                        'Vui lòng kiểm tra lại thông tin đăng nhập'
-                );
+                const errorMessage =
+                    error.error.message || 'Tải khoản hoặc mật khẩu không đúng';
+                this.formLogin
+                    .get('account')
+                    ?.setErrors({ backend: errorMessage });
             },
         });
-    }
-
-    private saveTokenToCookie(token: string) {
-        // Tham số của document.cookie: name=value; expires=date; path=path; domain=domain; secure
-
-        // Thiết lập thời gian hết hạn (1h)
-        const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + 1 * 60 * 60 * 1000);
-
-        // Thiết lập cookie với các tùy chọn bảo mật
-        document.cookie = `auth_token=${token}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Strict`;
-
-        // Nếu sử dụng HTTPS, bạn có thể thêm thuộc tính 'secure'
-        // document.cookie = `auth_token=${token}; expires=${expirationDate.toUTCString()}; path=/; SameSite=Strict; secure`;
     }
 }

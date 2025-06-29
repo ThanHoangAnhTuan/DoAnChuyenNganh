@@ -74,7 +74,6 @@
                     </p>
                     }
                 </td>
-
                 <td *tuiCell="'Rating'" tuiTd>
                     {{ accommodation.rating }}
                 </td>
@@ -89,7 +88,12 @@
                         referrerpolicy="no-referrer-when-downgrade"
                     ></iframe>
                 </td>
-
+                <td *tuiCell="'Is Verified'" tuiTd>
+                    {{ accommodation.is_verified }}
+                </td>
+                <td *tuiCell="'Is Deleted'" tuiTd>
+                    {{ accommodation.is_deleted }}
+                </td>
                 <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
                         <button

@@ -10,7 +10,7 @@ import (
 type Response struct {
 	Code       int                      `json:"code"`
 	Message    string                   `json:"message"`
-	Data       interface{}              `json:"data"`
+	Data       interface{}              `json:"data,omitempty"`
 	Error      interface{}              `json:"error,omitempty"`
 	Pagination *vo.BasePaginationOutput `json:"pagination,omitempty"`
 }

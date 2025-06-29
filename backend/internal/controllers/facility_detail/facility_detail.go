@@ -17,7 +17,7 @@ func (c *Controller) CreateFacilityDetail(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CreateFacilityDetail validation not found\n")
 		global.Logger.Error("CreateFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -25,13 +25,13 @@ func (c *Controller) CreateFacilityDetail(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CreateFacilityDetail binding error: %s\n", err.Error())
 		global.Logger.Error("CreateFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CreateFacilityDetail validation error: %s\n", validationErrors)
 		global.Logger.Error("CreateFacilityDetail validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -70,7 +70,7 @@ func (c *Controller) UpdateFacilityDetail(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("UpdateFacilityDetail validation not found\n")
 		global.Logger.Error("UpdateFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -78,13 +78,13 @@ func (c *Controller) UpdateFacilityDetail(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("UpdateFacilityDetail binding error: %s\n", err.Error())
 		global.Logger.Error("UpdateFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("UpdateFacilityDetail validation error: %s\n", validationErrors)
 		global.Logger.Error("UpdateFacilityDetail validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -109,7 +109,7 @@ func (c *Controller) DeleteFacilityDetail(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("DeleteFacilityDetail validation not found\n")
 		global.Logger.Error("DeleteFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -117,13 +117,13 @@ func (c *Controller) DeleteFacilityDetail(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("DeleteFacilityDetail binding error: %s\n", err.Error())
 		global.Logger.Error("DeleteFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("DeleteFacilityDetail validation error: %s\n", validationErrors)
 		global.Logger.Error("DeleteFacilityDetail validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

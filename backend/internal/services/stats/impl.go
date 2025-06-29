@@ -44,11 +44,11 @@ func (s *serviceImpl) GetDailyEarningsByMonth(ctx *gin.Context, in *vo.GetDailyE
 	// TODO: check user is manager
 	manager, err := s.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	clientTZ := ctx.GetHeader("X-Timezone")
@@ -61,7 +61,7 @@ func (s *serviceImpl) GetDailyEarningsByMonth(ctx *gin.Context, in *vo.GetDailyE
 	})
 
 	if err != nil {
-		return response.ErrCodeGetMonthlyEarningFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	for _, dailyEarning := range dailyEarnings {
@@ -73,7 +73,7 @@ func (s *serviceImpl) GetDailyEarningsByMonth(ctx *gin.Context, in *vo.GetDailyE
 		})
 	}
 
-	return response.ErrCodeGetMonthlyEarningSuccess, out, nil
+	return response.ErrCodeStatsSuccess, out, nil
 }
 
 func (s *serviceImpl) GetMonthlyEarningsByYear(ctx *gin.Context, in *vo.GetMonthlyEarningsByYearInput) (codeStatus int, out []*vo.GetMonthlyEarningsOutput, err error) {
@@ -86,11 +86,11 @@ func (s *serviceImpl) GetMonthlyEarningsByYear(ctx *gin.Context, in *vo.GetMonth
 	// TODO: check user is manager
 	manager, err := s.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: get monthly earnings of manager
@@ -103,10 +103,8 @@ func (s *serviceImpl) GetMonthlyEarningsByYear(ctx *gin.Context, in *vo.GetMonth
 		EndTime:   endEpoch,
 	})
 
-	fmt.Printf("monthlyEarnings: %v", monthlyEarnings)
-
 	if err != nil {
-		return response.ErrCodeGetMonthlyEarningFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	for _, monthlyEarning := range monthlyEarnings {
@@ -117,7 +115,7 @@ func (s *serviceImpl) GetMonthlyEarningsByYear(ctx *gin.Context, in *vo.GetMonth
 		})
 	}
 
-	return response.ErrCodeGetMonthlyEarningSuccess, out, nil
+	return response.ErrCodeStatsSuccess, out, nil
 }
 
 func (s *serviceImpl) GetMonthlyEarnings(ctx *gin.Context) (codeStatus int, out []*vo.GetMonthlyEarningsOutput, err error) {
@@ -130,7 +128,6 @@ func (s *serviceImpl) GetMonthlyEarnings(ctx *gin.Context) (codeStatus int, out 
 }
 
 func (s *serviceImpl) ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEarningsByMonthInput) (codeStatus int, csvData []byte, err error) {
-	// Get daily earnings data
 	statusCode, dailyEarnings, err := s.GetDailyEarningsByMonth(ctx, in)
 	if err != nil {
 		return statusCode, nil, err
@@ -139,13 +136,11 @@ func (s *serviceImpl) ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEa
 	var buf bytes.Buffer
 	writer := csv.NewWriter(&buf)
 
-	// Write header
 	header := []string{"Date", "Total Orders", "Total Revenue"}
 	if err := writer.Write(header); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV header: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV header: %w", err)
 	}
 
-	// Write data
 	var totalOrders int64
 	var totalRevenue float64
 
@@ -156,12 +151,12 @@ func (s *serviceImpl) ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEa
 			earning.TotalRevenue,
 		}
 		if err := writer.Write(record); err != nil {
-			return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV record: %w", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV record: %w", err)
 		}
 
 		rev, err := strconv.ParseFloat(earning.TotalRevenue, 64)
 		if err != nil {
-			return response.ErrCodeParseStringToFloatFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		totalOrders += earning.TotalOrders
@@ -175,12 +170,12 @@ func (s *serviceImpl) ExportDailyEarningsCSV(ctx *gin.Context, in *vo.GetDailyEa
 		fmt.Sprintf("%.2f", totalRevenue),
 	}
 	if err := writer.Write(summaryRecord); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV summary: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV summary: %w", err)
 	}
 
 	writer.Flush()
 	if err := writer.Error(); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("CSV writer error: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("CSV writer error: %w", err)
 	}
 
 	return response.ErrCodeExportSuccess, buf.Bytes(), nil
@@ -199,7 +194,7 @@ func (s *serviceImpl) ExportMonthlyEarningsCSV(ctx *gin.Context, in *vo.GetMonth
 	// Write header
 	header := []string{"Month", "Total Orders", "Total Revenue"}
 	if err := writer.Write(header); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV header: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV header: %w", err)
 	}
 
 	// Write data
@@ -219,12 +214,12 @@ func (s *serviceImpl) ExportMonthlyEarningsCSV(ctx *gin.Context, in *vo.GetMonth
 			earning.TotalRevenue,
 		}
 		if err := writer.Write(record); err != nil {
-			return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV record: %w", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV record: %w", err)
 		}
 
 		rev, err := strconv.ParseFloat(earning.TotalRevenue, 64)
 		if err != nil {
-			return response.ErrCodeParseStringToFloatFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		totalOrders += earning.TotalOrders
@@ -238,12 +233,12 @@ func (s *serviceImpl) ExportMonthlyEarningsCSV(ctx *gin.Context, in *vo.GetMonth
 		fmt.Sprintf("%.2f", totalRevenue),
 	}
 	if err := writer.Write(summaryRecord); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("failed to write CSV summary: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("failed to write CSV summary: %w", err)
 	}
 
 	writer.Flush()
 	if err := writer.Error(); err != nil {
-		return response.ErrCodeExportFailed, nil, fmt.Errorf("CSV writer error: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("CSV writer error: %w", err)
 	}
 
 	return response.ErrCodeExportSuccess, buf.Bytes(), nil

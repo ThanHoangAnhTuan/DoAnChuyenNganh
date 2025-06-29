@@ -603,7 +603,9 @@ SELECT
     ` + "`" + `gg_map` + "`" + `,
     ` + "`" + `address` + "`" + `,
     ` + "`" + `rules` + "`" + `,
-    ` + "`" + `rating` + "`" + `
+    ` + "`" + `rating` + "`" + `,
+    ` + "`" + `is_deleted` + "`" + `,
+    ` + "`" + `is_verified` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
@@ -634,6 +636,8 @@ type GetAccommodationsByManagerWithPaginationRow struct {
 	Address     string
 	Rules       json.RawMessage
 	Rating      uint8
+	IsDeleted   uint8
+	IsVerified  uint8
 }
 
 func (q *Queries) GetAccommodationsByManagerWithPagination(ctx context.Context, arg GetAccommodationsByManagerWithPaginationParams) ([]GetAccommodationsByManagerWithPaginationRow, error) {
@@ -658,6 +662,8 @@ func (q *Queries) GetAccommodationsByManagerWithPagination(ctx context.Context, 
 			&i.Address,
 			&i.Rules,
 			&i.Rating,
+			&i.IsDeleted,
+			&i.IsVerified,
 		); err != nil {
 			return nil, err
 		}

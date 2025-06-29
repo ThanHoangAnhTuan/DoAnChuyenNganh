@@ -17,7 +17,7 @@ func (c *Controller) CreatePaymentURL(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CreatePaymentURL validation not found\n")
 		global.Logger.Error("CreatePaymentURL validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -25,13 +25,13 @@ func (c *Controller) CreatePaymentURL(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CreatePaymentURL binding error: %s\n", err.Error())
 		global.Logger.Error("CreatePaymentURL binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CreatePaymentURL validation error: %s\n", validationErrors)
 		global.Logger.Error("CreatePaymentURL validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

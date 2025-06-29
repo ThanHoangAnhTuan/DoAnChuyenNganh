@@ -262,7 +262,9 @@ SELECT
     `gg_map`,
     `address`,
     `rules`,
-    `rating`
+    `rating`,
+    `is_deleted`,
+    `is_verified`
 FROM
     `ecommerce_go_accommodation`
 WHERE

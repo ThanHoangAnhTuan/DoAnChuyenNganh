@@ -64,7 +64,7 @@ func (c *Controller) GetDailyEarningsByMonth(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("GetDailyEarningsByMonth validation not found\n")
 		global.Logger.Error("GetDailyEarningsByMonth validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -72,13 +72,13 @@ func (c *Controller) GetDailyEarningsByMonth(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("GetDailyEarningsByMonth binding error")
 		global.Logger.Error("GetDailyEarningsByMonth binding error")
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("GetDailyEarningsByMonth validation error: %s\n", validationErrors)
 		global.Logger.Error("GetDailyEarningsByMonth validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -103,7 +103,7 @@ func (c *Controller) GetMonthlyEarningsByYear(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("GetMonthlyEarningsByYear validation not found\n")
 		global.Logger.Error("GetMonthlyEarningsByYear validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -111,13 +111,13 @@ func (c *Controller) GetMonthlyEarningsByYear(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("GetMonthlyEarningsByYear binding error")
 		global.Logger.Error("GetMonthlyEarningsByYear binding error")
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("GetMonthlyEarningsByYear validation error: %s\n", validationErrors)
 		global.Logger.Error("GetMonthlyEarningsByYear validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -142,7 +142,7 @@ func (c *Controller) ExportDailyEarningsCSV(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("ExportDailyEarningsCSV validation not found\n")
 		global.Logger.Error("ExportDailyEarningsCSV validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -150,13 +150,13 @@ func (c *Controller) ExportDailyEarningsCSV(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("ExportDailyEarningsCSV binding error")
 		global.Logger.Error("ExportDailyEarningsCSV binding error")
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("ExportDailyEarningsCSV validation error: %s\n", validationErrors)
 		global.Logger.Error("ExportDailyEarningsCSV validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -189,7 +189,7 @@ func (c *Controller) ExportMonthlyEarningsCSV(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("ExportMonthlyEarningsCSV validation not found\n")
 		global.Logger.Error("ExportMonthlyEarningsCSV validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -197,13 +197,13 @@ func (c *Controller) ExportMonthlyEarningsCSV(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("ExportMonthlyEarningsCSV binding error")
 		global.Logger.Error("ExportMonthlyEarningsCSV binding error")
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("ExportMonthlyEarningsCSV validation error: %s\n", validationErrors)
 		global.Logger.Error("ExportMonthlyEarningsCSV validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
