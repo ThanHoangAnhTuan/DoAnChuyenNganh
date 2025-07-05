@@ -52,7 +52,6 @@ export default class SearchBoxComponent implements OnInit {
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
     protected readonly today = TuiDay.currentLocal(); // Lấy ngày hiện tại
-    protected selectedCityId: string | null = null;
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,

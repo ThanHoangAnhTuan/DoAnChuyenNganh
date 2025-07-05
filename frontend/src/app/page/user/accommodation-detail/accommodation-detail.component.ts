@@ -193,7 +193,7 @@ export class AccommodationDetailComponent implements OnInit {
             .subscribe((data: GetAccommodationDetailsResponse) => {
                 if (data) {
                     this.rooms = data.data;
-                    // console.log("room: ", this.rooms);
+                    console.log("room: ", this.rooms);
                 } else {
                     this.showToast(
                         'error',
