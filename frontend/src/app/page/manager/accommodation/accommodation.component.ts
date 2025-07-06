@@ -176,7 +176,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private facilityService: FacilityService,
         private addressService: AddressService,
         private messageService: MessageService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
     ) {}
 
     // Method để sanitize URL

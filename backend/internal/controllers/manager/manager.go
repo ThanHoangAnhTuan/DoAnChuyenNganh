@@ -77,15 +77,15 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.ManagerLogin().Login(ctx, &params)
+	codeStatus, data, err := services.ManagerLogin().Login(ctx, &params)
 	if err != nil {
 		fmt.Printf("Manager login error: %s\n", err.Error())
 		global.Logger.Error("Manager login error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("Manager login success: %s\n", data.Token)
 	global.Logger.Info("Manager login success: ", zap.String("info", data.Token))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

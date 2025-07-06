@@ -79,17 +79,17 @@ func (c *CUserLogin) VerifyOTP(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserLogin().VerifyOTP(ctx, &params)
+	codeStatus, data, err := services.UserLogin().VerifyOTP(ctx, &params)
 	if err != nil {
 		fmt.Printf("User verifyOTP error: %s\n", err.Error())
 		global.Logger.Error("User verifyOTP error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("User verifyOTP success: %s\n", params.VerifyKey)
 	global.Logger.Info("User verifyOTP success: ", zap.String("info", params.VerifyKey))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
@@ -117,17 +117,17 @@ func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, err := services.UserLogin().UpdatePasswordRegister(ctx, &params)
+	codeStatus, err := services.UserLogin().UpdatePasswordRegister(ctx, &params)
 	if err != nil {
 		fmt.Printf("User updatePasswordRegister error: %s\n", err.Error())
 		global.Logger.Error("User updatePasswordRegister error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("User updatePasswordRegister success: %s\n", params.Token)
 	global.Logger.Info("User updatePasswordRegister success: ", zap.String("info", params.Token))
-	response.SuccessResponse(ctx, codeResult, nil)
+	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CUserLogin) Login(ctx *gin.Context) {
@@ -155,14 +155,14 @@ func (c *CUserLogin) Login(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserLogin().Login(ctx, &params)
+	codeStatus, data, err := services.UserLogin().Login(ctx, &params)
 	if err != nil {
 		fmt.Printf("User login error: %s\n", err.Error())
 		global.Logger.Error("User login error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 	fmt.Printf("User login success: %s\n", data.Token)
 	global.Logger.Info("User login success: ", zap.String("info", data.Token))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

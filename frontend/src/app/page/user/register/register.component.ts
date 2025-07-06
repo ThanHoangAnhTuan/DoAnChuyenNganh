@@ -80,7 +80,7 @@ export class RegisterComponent {
         const newUser: RegisterModel = {
             verify_key: this.email,
             verify_type: 1,
-            verify_purpose: 'TEST_USER',
+            verify_purpose: '',
         };
 
         this.authService.registerUser(newUser).subscribe({

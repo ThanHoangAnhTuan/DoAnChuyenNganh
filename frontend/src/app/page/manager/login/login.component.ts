@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -29,7 +29,7 @@ import { ButtonModule } from 'primeng/button';
     styleUrl: './login.component.scss',
     providers: [MessageService],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     protected formLogin = new FormGroup({
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
@@ -40,7 +40,24 @@ export class LoginComponent {
         private router: Router,
         private messageService: MessageService
     ) {}
-    
+    ngOnInit(): void {
+        this.formLogin.get('account')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+
+        this.formLogin.get('password')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+    }
+
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,
@@ -66,13 +83,11 @@ export class LoginComponent {
                 this.router.navigate(['/manager/accommodation']);
             },
             error: (error) => {
-                console.error('Login error:', error);
-                this.showToast(
-                    'error',
-                    'Đăng nhập thất bại',
-                    error.error.message ||
-                        'Vui lòng kiểm tra lại thông tin đăng nhập.'
-                );
+                const errorMessage =
+                    error.error.message || 'Tải khoản hoặc mật khẩu không đúng';
+                this.formLogin
+                    .get('account')
+                    ?.setErrors({ backend: errorMessage });
             },
         });
     }

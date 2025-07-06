@@ -27,6 +27,7 @@ import { GetToken } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -102,6 +103,27 @@ export class AccommodationDetailComponent implements OnInit {
 
     private readonly alerts = inject(TuiAlertService);
 
+    
+
+    constructor(
+        private accommodationDetailService: AccommodationDetailService,
+        private route: ActivatedRoute,
+        private roomService: RoomService,
+        private reviewService: ReviewService,
+        private paymentService: PaymentService,
+        private addressService: AddressService,
+        private messageService: MessageService,
+        private sanitizer: DomSanitizer,
+    ) {
+        this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
+        this.updateDescription();
+    }
+
+    // Method để sanitize URL
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
     protected getAlert(label: string, content: string): void {
         this.alerts
             .open(content, {
@@ -111,19 +133,7 @@ export class AccommodationDetailComponent implements OnInit {
             })
             .subscribe();
     }
-
-    constructor(
-        private accommodationDetailService: AccommodationDetailService,
-        private route: ActivatedRoute,
-        private roomService: RoomService,
-        private reviewService: ReviewService,
-        private paymentService: PaymentService,
-        private addressService: AddressService,
-        private messageService: MessageService
-    ) {
-        this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
-        this.updateDescription();
-    }
+    
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,

@@ -122,12 +122,21 @@ export class SearchPageComponent implements OnInit {
         },
     ];
 
+    page = 1;
+
+    loadMoreHotels(): void {
+        this.page++;
+        this.loadHotels()
+    }
+
     loadHotels(): void {
         this.hotelService
-            .getAccommodationsByCity(this.citySlug)
+            .getAccommodationsByCity(this.citySlug, this.page)
             .pipe(
                 switchMap((hotels) => {
                     const hotelList = hotels.data;
+                    console.log('hotelList', hotels);
+                    
                     const hotelWithCityName$ = hotelList.map((hotel) =>
                         this.addressService.getCityBySlug(hotel.city).pipe(
                             map((cityData) => {

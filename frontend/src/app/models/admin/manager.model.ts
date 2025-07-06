@@ -61,10 +61,21 @@ export interface GetAccommodationsOfManagerByAdminOutput {
 
 export interface VerifyAccommodationInput {
     accommodation_id: string;
-    status: number;
+    status: boolean;
+}
+
+export interface SetDeletedAccommodationInput {
+    accommodation_id: string;
+    status: boolean;
 }
 
 export interface VerifyAccommodationOutput {
+    code: number,
+    message: string,
+    data: null
+}
+
+export interface SetDeletedAccommodationOutput {
     code: number,
     message: string,
     data: null

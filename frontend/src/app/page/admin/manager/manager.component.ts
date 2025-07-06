@@ -132,7 +132,7 @@ export class ManagerComponent implements OnInit {
                 this.formCreateManger.reset();
                 this.showToast(
                     'success',
-                    'Tài khoản Quản Lý Đã Được Tạo Thành Công',
+                    'Tạo tài khoản quản lý thành công',
                     response.message
                 );
                 this.getManagers();

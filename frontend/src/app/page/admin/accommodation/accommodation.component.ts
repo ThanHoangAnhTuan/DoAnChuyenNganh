@@ -9,7 +9,11 @@ import {
     ViewChildren,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import {
+    DomSanitizer,
+    SafeHtml,
+    SafeResourceUrl,
+} from '@angular/platform-browser';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiButton,
@@ -40,6 +44,7 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { ManagerService } from '../../../services/admin/manager.service';
 import {
     GetAccommodationsOfManagerByAdmin,
+    SetDeletedAccommodationInput,
     VerifyAccommodationInput,
 } from '../../../models/admin/manager.model';
 
@@ -159,14 +164,26 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private updateVerify(id: string, status: number) {
+    private updateVerify(id: string, status: boolean) {
         let newVerify: VerifyAccommodationInput = {
             accommodation_id: id,
-            status: Number(status),
+            status: status,
         };
-
         this.accommodationService
             .updateVerified(newVerify)
+            .subscribe((response) => {
+                const message = response.message;
+                this.getAlert('Notification', message);
+            });
+    }
+
+    private updateDelete(id: string, status: boolean) {
+        let newDelete: SetDeletedAccommodationInput = {
+            accommodation_id: id,
+            status: status,
+        };
+        this.accommodationService
+            .updateDeleted(newDelete)
             .subscribe((response) => {
                 const message = response.message;
                 this.getAlert('Notification', message);
@@ -219,13 +236,17 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
 
     protected changeVerifiedFinish() {
         const id: string = this.updateId;
-        const accommodation: any = this.accommodations.find((a) => a.id === id);
+        const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            const status: number = accommodation.is_verified;
-            this.updateVerify(id, status);
+            this.updateVerify(id, accommodation.is_verified);
         }
         this.updateId = '';
         this.isUpdateVerified = false;
+    }
+
+    protected resetInput() {
+        this.isUpdateVerified = false;
+        this.isUpdateDeleted = false;
     }
 
     protected openVerifyConfirmModal() {
@@ -245,11 +266,10 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
 
     protected changeDeleteFinish() {
         const id: string = this.updateId;
-        const accommodation: any = this.accommodations.find((a) => a.id === id);
+        const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            this.getAlert('Notification', 'Update successfully');
+            this.updateDelete(id, accommodation.is_deleted);
         }
-
         this.updateId = '';
         this.isUpdateDeleted = false;
     }

@@ -87,14 +87,15 @@
                             name="is_verified"
                             id="is_verified"
                             [(ngModel)]="accommodation.is_verified"
-                            (blur)="openVerifyConfirmModal()"
+                            (change)="openVerifyConfirmModal()"
+                            (blur)="resetInput()"
                             class="change-input"
                         >
-                            <option [value]="1">Yes</option>
-                            <option [value]="0">No</option>
+                            <option [ngValue]="true">True</option>
+                            <option [ngValue]="false">False</option>
                         </select>
                         } @else {
-                        {{ accommodation.is_verified ? "Yes" : "No" }}
+                        {{ accommodation.is_verified ? "True" : "False" }}
                         }
 
                         <button
@@ -118,15 +119,16 @@
                         <select
                             name="is_deleted"
                             id="is_deleted"
-                            [(ngModel)]="accommodation.is_verified"
-                            (blur)="openDeleteConfirmModal()"
+                            [(ngModel)]="accommodation.is_deleted"
+                            (change)="openDeleteConfirmModal()"
+                            (blur)="resetInput()"
                             class="change-input"
                         >
-                            <option [value]="1">Yes</option>
-                            <option [value]="0">No</option>
+                            <option [ngValue]="true">True</option>
+                            <option [ngValue]="false">False</option>
                         </select>
                         } @else {
-                        {{ accommodation.is_deleted ? "Yes" : "No" }}
+                        {{ accommodation.is_deleted ? "True" : "False" }}
                         }
 
                         <button

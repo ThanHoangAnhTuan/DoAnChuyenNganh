@@ -11,10 +11,11 @@ export class HotelService {
     constructor(private http: HttpClient) {}
 
     getAccommodationsByCity(
-        city: string
+        city: string,
+        page: number = 1,
     ): Observable<GetAccommodationResponse> {
         return this.http.get<GetAccommodationResponse>(
-            this.apiUrl + '?city=' + city
+            this.apiUrl + '?city=' + city + '&page=' + page,
         );
     }
 }

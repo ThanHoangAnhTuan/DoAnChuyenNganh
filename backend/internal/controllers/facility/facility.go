@@ -130,15 +130,15 @@ func (c *Controller) DeleteFacility(ctx *gin.Context) {
 }
 
 func (c *Controller) GetFacilities(ctx *gin.Context) {
-	codeResult, data, err := services.Facility().GetFacilities(ctx)
+	codeStatus, data, err := services.Facility().GetFacilities(ctx)
 	if err != nil {
 		fmt.Printf("GetFacilities error: %s\n", err.Error())
 		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("GetFacilities success\n")
 	global.Logger.Info("GetFacilities success")
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

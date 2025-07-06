@@ -55,17 +55,17 @@ func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserInfo().UpdateUserInfo(ctx, &params)
+	codeStatus, data, err := services.UserInfo().UpdateUserInfo(ctx, &params)
 	if err != nil {
 		fmt.Printf("UpdateUserInfo error: %s\n", err.Error())
 		global.Logger.Error("UpdateUserInfo error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("UpdateUserInfo success: %s\n", params.Username)
 	global.Logger.Info("UpdateUserInfo success: ", zap.String("info", params.Username))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
@@ -94,15 +94,15 @@ func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserInfo().UploadUserAvatar(ctx, &params)
+	codeStatus, data, err := services.UserInfo().UploadUserAvatar(ctx, &params)
 	if err != nil {
 		fmt.Printf("UploadUserAvatar error: %s\n", err.Error())
 		global.Logger.Error("UploadUserAvatar error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("UploadUserAvatar success: %s\n", data)
 	global.Logger.Info("UploadUserAvatar success: ", zap.String("info", data))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

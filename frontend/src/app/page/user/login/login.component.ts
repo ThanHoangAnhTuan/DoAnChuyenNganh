@@ -73,6 +73,7 @@ export class LoginComponent {
 
         this.authService.loginUser(loginData).subscribe({
             next: (response) => {
+                this.isLoading = false;
                 SaveTokenToCookie(response.data.token);
                 this.router.navigate(['/']);
             },

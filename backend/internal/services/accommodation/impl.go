@@ -585,6 +585,8 @@ func (t *serviceImpl) CreateAccommodation(ctx *gin.Context, in *vo.CreateAccommo
 	out.GoogleMap = accommodation.GgMap
 	out.Address = accommodation.Address
 	out.Rating = accommodation.Rating
+	out.IsDeleted = accommodation.IsDeleted == 1
+	out.IsVerified = accommodation.IsVerified == 1
 
 	// TODO: get facility
 	var facilitieIDs []string
