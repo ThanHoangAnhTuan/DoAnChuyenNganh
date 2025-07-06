@@ -1,7 +1,13 @@
 
-main {
-    margin-top: 20px;
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid #ddd;
 }
+
 .flex {
     display: flex;
 }
@@ -52,7 +58,7 @@ main {
     margin-bottom: 8px;
 }
 
-.facility-image{
+.facility-image {
     width: 20px;
     height: 20px;
     object-fit: cover;

@@ -1,7 +1,6 @@
 import { TuiComboBoxModule, TuiInputDateRangeModule } from '@taiga-ui/legacy';
 import {
     TuiButton,
-    tuiItemsHandlersProvider,
     TuiTextfield,
     TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
@@ -12,13 +11,12 @@ import {
     Validators,
 } from '@angular/forms';
 import {
-    TuiChevron,
     TuiDataListWrapper,
     TuiDataListWrapperComponent,
     TuiFilterByInputPipe,
 } from '@taiga-ui/kit';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk';
 import { AddressService } from '../../services/address/address.service';
 import { City } from '../../models/address/address.model';
@@ -43,15 +41,14 @@ import { City } from '../../models/address/address.model';
 })
 export default class SearchBoxComponent implements OnInit {
     protected city: string = '';
-    //danh sách các thành phố có sẵn để người dùng chọn
     protected cities: City[] = [];
     protected cityNames: string[] = [];
     protected selectedCitySlug: string = '';
+    protected selectedCityId: string = '';
     protected level2Adress: any;
     protected readonly DayControl = new FormControl();
     protected searchCityControl = new FormControl('', Validators.required);
     protected readonly today = TuiDay.currentLocal(); // Lấy ngày hiện tại
-    protected selectedCityId: string | null = null;
     constructor(
         private activatedRoute: ActivatedRoute,
         private router: Router,
@@ -73,7 +70,6 @@ export default class SearchBoxComponent implements OnInit {
                     Number(value.from.formattedMonthPart) - 1,
                     Number(value.from.formattedDayPart)
                 );
-                console.log(newFromDate);
                 const newToDate = new Date(
                     Number(value.to.formattedYear),
                     Number(value.to.formattedMonthPart) - 1,
@@ -92,12 +88,8 @@ export default class SearchBoxComponent implements OnInit {
     }
     ngOnInit(): void {
         this.addressService.getCities().subscribe((data) => {
-            console.log(data);
             this.cities = data.data;
-            console.log(this.cities);
-
             this.cityNames = this.cities.map((city) => city.name);
-            // console.log("data:", this.cities);
         });
 
         // Lấy thành phố từ URL parameter
@@ -116,7 +108,6 @@ export default class SearchBoxComponent implements OnInit {
                 );
                 if (selectedCity) {
                     this.selectedCityId = selectedCity.level1_id;
-                    console.log('City id đã chọn:', this.selectedCityId);
                 }
             }
         );

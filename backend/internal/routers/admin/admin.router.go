@@ -20,5 +20,7 @@ func (ar *AdminRouter) InitAdminRouter(Router *gin.RouterGroup) {
 	adminRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
 		adminRouterPrivate.GET("/managers", controllers.AdminManager.GetManagers)
+		adminRouterPrivate.GET("/manager/:id/accommodations", controllers.AdminManager.GetAccommodationsOfManager)
+		adminRouterPrivate.PUT("/verify-accommodation", controllers.AdminManager.VerifyAccommodation)
 	}
 }

@@ -29,5 +29,9 @@ func (r StatsRouter) InitStatsRouter(Router *gin.RouterGroup) {
 
 		// GET /stats/monthly/:year => thống kê các tháng trong năm cụ thể
 		statsRouterPublic.GET("/monthly/:year", controllers.Stats.GetMonthlyEarningsByYear)
+
+		statsRouterPublic.GET("/export/daily-earnings/csv/:year/:month", controllers.Stats.ExportDailyEarningsCSV)
+
+		statsRouterPublic.GET("/export/monthly-earnings/csv/:year", controllers.Stats.ExportMonthlyEarningsCSV)
 	}
 }

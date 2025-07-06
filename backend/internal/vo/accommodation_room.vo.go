@@ -7,10 +7,10 @@ type CreateAccommodationRoomInput struct {
 }
 
 type CreateAccommodationRoomOutput struct {
-	ID                  string `json:"id"`
-	AccommodationTypeID string `json:"accommodation_type_id"`
-	Name                string `json:"name"`
-	Status              string `json:"status"`
+	ID string `json:"id"`
+	// AccommodationTypeID string `json:"accommodation_type_id"`
+	Name   string `json:"name"`
+	Status string `json:"status"`
 }
 
 type GetAccommodationRoomsInput struct {
@@ -18,16 +18,24 @@ type GetAccommodationRoomsInput struct {
 }
 
 type GetAccommodationRoomsOutput struct {
-	ID                  string `json:"id"`
-	AccommodationTypeID string `json:"accommodation_type_id"`
-	Name                string `json:"name"`
-	Status              string `json:"status"`
-}
-
-type UpdateAccommodationRoomInput struct {
-	ID     string `json:"id"`
+	ID string `json:"id"`
+	// AccommodationTypeID string `json:"accommodation_type_id"`
 	Name   string `json:"name"`
 	Status string `json:"status"`
+}
+
+type RoomStatus string
+
+const (
+	StatusAvailable   RoomStatus = "available"
+	StatusUnavailable RoomStatus = "unavailable"
+	StatusOccupied    RoomStatus = "occupied"
+)
+
+type UpdateAccommodationRoomInput struct {
+	ID     string     `json:"id"`
+	Name   string     `json:"name"`
+	Status RoomStatus `json:"status"`
 }
 
 type UpdateAccommodationRoomOutput struct {

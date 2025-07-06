@@ -1,6 +1,5 @@
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
     Component,
     ElementRef,
     inject,
@@ -23,7 +22,6 @@ import { TuiInputModule } from '@taiga-ui/legacy';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 @Component({
     selector: 'app-review-list-modal',
     imports: [
@@ -37,7 +35,6 @@ import { Ripple } from 'primeng/ripple';
         ReactiveFormsModule,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     providers: [DatePipe, MessageService],
     templateUrl: './review-list-modal.component.html',
@@ -79,12 +76,7 @@ export class ReviewListModalComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        console.log('reviews: ', this.reviews);
-
         this.totalPages = Math.ceil(this.reviews.length / 10);
-        console.log('accommodation id: ', this.accommodationId);
-        console.log('total page: ', this.totalPages);
-        console.log('current page: ', this.currentPage);
     }
 
     addReview() {
@@ -132,6 +124,7 @@ export class ReviewListModalComponent implements OnInit {
             next: (response) => {
                 this.showToast('success', 'Đánh giá của bạn đã được thêm', '');
                 // console.log('Review has been added successfull:', response);
+
                 // Add the new review to the top of the list
                 setTimeout(() => {
                     this.reviews.unshift(response);
@@ -202,7 +195,6 @@ export class ReviewListModalComponent implements OnInit {
 
     onOpenInputOrderIdModal(): void {
         this.isInputOrderIdModalOpen = true;
-        console.log('Đã bật modal');
     }
 
     onCloseInputOrderIdModal(): void {

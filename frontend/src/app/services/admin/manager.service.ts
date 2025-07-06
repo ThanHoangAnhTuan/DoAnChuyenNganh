@@ -5,7 +5,10 @@ import { Observable } from 'rxjs';
 import {
     CreateManager,
     CreateManagerOutput,
+    GetAccommodationsOfManagerByAdminOutput,
     GetManagerOutput,
+    VerifyAccommodationInput,
+    VerifyAccommodationOutput,
 } from '../../models/admin/manager.model';
 
 @Injectable({
@@ -26,5 +29,22 @@ export class ManagerService {
 
     getManagers(): Observable<GetManagerOutput> {
         return this.http.get<GetManagerOutput>(`${this.adminUrl}/managers`);
+    }
+
+    getAccommodationsOfManagerByAdmin(
+        id: string
+    ): Observable<GetAccommodationsOfManagerByAdminOutput> {
+        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(
+            `${this.adminUrl}/manager/${id}/accommodations`
+        );
+    }
+
+    updateVerified(
+        newVerify: VerifyAccommodationInput
+    ): Observable<VerifyAccommodationOutput> {
+        return this.http.put<VerifyAccommodationOutput>(
+            this.adminUrl + '/verify-accommodation',
+            newVerify
+        );
     }
 }

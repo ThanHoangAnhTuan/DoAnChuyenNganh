@@ -19,7 +19,7 @@ func (c *CAdminLogin) Register(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Admin register validation not found\n")
 		global.Logger.Error("Admin register validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -27,13 +27,13 @@ func (c *CAdminLogin) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("Admin register binding error: %s\n", err.Error())
 		global.Logger.Error("Admin register binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("Admin register validation error: %s\n", validationErrors)
 		global.Logger.Error("Admin register validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -58,7 +58,7 @@ func (c *CAdminLogin) Login(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Admin login validation not found\n")
 		global.Logger.Error("Admin login validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -66,13 +66,13 @@ func (c *CAdminLogin) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("Admin login binding error: %s\n", err.Error())
 		global.Logger.Error("Admin login binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("Admin login validation error: %s\n", validationErrors)
 		global.Logger.Error("Admin login validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

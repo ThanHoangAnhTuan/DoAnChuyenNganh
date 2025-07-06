@@ -35,11 +35,6 @@ export class NavbarComponent implements OnInit {
                     routerLink: '/user-profile',
                     icon: '@tui.user',
                 },
-                // {
-                //     label: 'Reviews',
-                //     routerLink: '/',
-                //     icon: '@tui.message-circle-code',
-                // },
                 {
                     label: 'Bookings & Trips',
                     routerLink: '/',
@@ -64,23 +59,6 @@ export class NavbarComponent implements OnInit {
             this.isAdminLoggedIn = true;
         }
     }
-
-    // loadUserInfo(): void {
-    //     // Add this method to your UserService to get user profile info
-    //     this.userService.getUserProfile().subscribe({
-    //         next: (user) => {
-    //             this.userName = user.name || user.email;
-    //             this.userAvatar = user.avatar;
-    //         },
-    //         error: (error) => {
-    //             console.error('Error loading user profile:', error);
-    //             // Handle token expiration or other auth errors
-    //             if (error.status === 401) {
-    //                 this.logout();
-    //             }
-    //         },
-    //     });
-    // }
 
     logout(): void {
         // Lưu trạng thái trước khi reset

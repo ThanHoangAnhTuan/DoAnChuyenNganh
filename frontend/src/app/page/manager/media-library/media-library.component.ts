@@ -10,14 +10,13 @@ import {
 import { TuiValidationError } from '@taiga-ui/cdk';
 import { TuiFiles } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { TuiButton, TuiIcon } from '@taiga-ui/core';
+import { TuiButton } from '@taiga-ui/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageService } from '../../../services/manager/image.service';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-media-library',
@@ -29,7 +28,6 @@ import { Ripple } from 'primeng/ripple';
         NavbarComponent,
         Toast,
         ButtonModule,
-        Ripple,
     ],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',
@@ -38,13 +36,11 @@ import { Ripple } from 'primeng/ripple';
 export class MediaLibraryComponent {
     protected imagesPreview: string[] = [];
     protected oldImages: string[] | null = null;
-
+    protected deleteImages: string[] = [];
     protected readonly apiURl = 'http://localhost:8080/uploads/';
-
     @ViewChild('fileInput')
     fileInput!: ElementRef<HTMLInputElement>;
     protected id = '';
-
     protected isDetailMode = false;
 
     constructor(
@@ -79,8 +75,6 @@ export class MediaLibraryComponent {
 
     protected onSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
-        console.log('upload');
-
         if (input.files && input.files.length > 0) {
             const filesArray = Array.from(input.files); // convert FileList -> File[]
 
@@ -95,14 +89,10 @@ export class MediaLibraryComponent {
     }
 
     protected onRemoveOldImage(imageName: string): void {
+        this.deleteImages.push(imageName);
         if (this.oldImages) {
             this.oldImages = this.oldImages.filter(
                 (item) => item !== imageName
-            );
-            this.showToast(
-                'info',
-                'Xóa ảnh thành công',
-                `Ảnh ${imageName} đã được xóa khỏi danh sách cũ.`
             );
         }
     }
@@ -158,25 +148,33 @@ export class MediaLibraryComponent {
 
     protected uploadFiles() {
         const formImages = this.formImages.get('images')?.value;
-
-        this.imageService
-            .uploadImages(
-                this.oldImages ?? [],
-                formImages ?? [],
-                this.id,
-                this.isDetailMode
-            )
-            .subscribe((response) => {
-                this.oldImages = [];
-                if (response.data) {
-                    this.oldImages.push(...response.data);
-                }
-                this.imagesPreview = [];
-                this.showToast(
-                    'success',
-                    'Tải ảnh thành công',
-                    'Ảnh đã được tải lên thành công.'
-                );
-            });
+        if (
+            (formImages && formImages?.length > 0) ||
+            this.deleteImages.length > 0
+        ) {
+            this.imageService
+                .uploadImages(
+                    this.deleteImages,
+                    formImages ?? [],
+                    this.id,
+                    this.isDetailMode
+                )
+                .subscribe((response) => {
+                    this.oldImages = response.data;
+                    this.imagesPreview = [];
+                    this.formImages.get('images')?.setValue([]);
+                    this.showToast(
+                        'success',
+                        'Tải ảnh thành công',
+                        'Ảnh đã được tải lên thành công.'
+                    );
+                });
+        } else {
+            this.showToast(
+                'warn',
+                'Tải ảnh không thành công',
+                'Vui lòng chọn thêm ảnh mới hoặc xoá ảnh cũ trước khi upload'
+            );
+        }
     }
 }

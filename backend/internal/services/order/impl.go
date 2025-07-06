@@ -34,17 +34,17 @@ func (o *serviceImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (co
 	// TODO: check user exists
 	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, fmt.Errorf("user base not found")
 	}
 
 	// TODO: check order exists
 	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("check order exists failed: %s", err)
 	}
 
 	if !isExists {
@@ -63,10 +63,10 @@ func (o *serviceImpl) CancelOrder(ctx *gin.Context, in *vo.CancelOrderInput) (co
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("update order status failed: %s", err)
 	}
 
-	return response.ErrCodeUpdateOrderStatusSuccess, nil
+	return response.ErrCodeUpdateOrderSuccess, nil
 }
 
 func (o *serviceImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus int, err error) {
@@ -79,17 +79,17 @@ func (o *serviceImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus
 	// TODO: check user exists
 	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, fmt.Errorf("user base not found")
 	}
 
 	// TODO: check order exists
 	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("check order exists failed: %s", err)
 	}
 
 	if !isExists {
@@ -108,10 +108,10 @@ func (o *serviceImpl) CheckIn(ctx *gin.Context, in *vo.CheckInInput) (codeStatus
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("update order status failed: %s", err)
 	}
 
-	return response.ErrCodeUpdateOrderStatusSuccess, nil
+	return response.ErrCodeUpdateOrderSuccess, nil
 }
 
 func (o *serviceImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStatus int, err error) {
@@ -124,17 +124,17 @@ func (o *serviceImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStat
 	// TODO: check user exists
 	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, fmt.Errorf("user base not found")
 	}
 
 	// TODO: check order exists
 	isExists, err := o.sqlc.CheckOrderExists(ctx, in.OrderID)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, fmt.Errorf("check order exists failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("check order exists failed: %s", err)
 	}
 
 	if !isExists {
@@ -153,10 +153,10 @@ func (o *serviceImpl) CheckOut(ctx *gin.Context, in *vo.CheckOutInput) (codeStat
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateOrderStatusFailed, fmt.Errorf("update order status failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("update order status failed: %s", err)
 	}
 
-	return response.ErrCodeUpdateOrderStatusSuccess, nil
+	return response.ErrCodeUpdateOrderSuccess, nil
 }
 
 func (o *serviceImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrderInfoAfterPaymentInput) (codeStatus int, out *vo.GetOrderInfoAfterPaymentOutput, err error) {
@@ -165,7 +165,7 @@ func (o *serviceImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrder
 	// TODO: get order info by order id extenal
 	order, err := o.sqlc.GetOrderInfoByOrderIDExternal(ctx, in.OrderIDExternal)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	// TODO: get payment info by transaction id
@@ -178,22 +178,22 @@ func (o *serviceImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrder
 	})
 
 	if err != nil {
-		return response.ErrCodeGetPaymentFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	orderDate, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CreatedAt))
 	if err != nil {
-		return response.ErrCodeConvertUnixToISOFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	checkIn, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckinDate))
 	if err != nil {
-		return response.ErrCodeConvertUnixToISOFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	checkOut, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckoutDate))
 	if err != nil {
-		return response.ErrCodeConvertUnixToISOFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	out.CheckIn = checkIn
@@ -207,7 +207,7 @@ func (o *serviceImpl) GetOrderInfoAfterPayment(ctx *gin.Context, in *vo.GetOrder
 	// TODO: get username from user info by user id
 	username, err := o.sqlc.GetUsernameByID(ctx, order.UserID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	out.Username = username
@@ -227,22 +227,22 @@ func (o *serviceImpl) GetOrdersByManager(ctx *gin.Context) (codeStatus int, out 
 	// TODO: check user exists
 	exists, err := o.sqlc.CheckUserManagerExistsByID(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user base not found")
 	}
 	orders, err := o.sqlc.GetOrdersByManager(ctx, managerID)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get order failed: %s", err)
 	}
 
 	for _, order := range orders {
 		// TODO: get order detail:
 		orderDetails, err := o.sqlc.GetOrderDetailsByManager(ctx, order.OrderID)
 		if err != nil {
-			return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order detail failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get order detail failed: %s", err)
 		}
 		detail := []vo.OrderDetailOutput{}
 		for _, orderDetail := range orderDetails {
@@ -255,12 +255,12 @@ func (o *serviceImpl) GetOrdersByManager(ctx *gin.Context) (codeStatus int, out 
 
 		checkIn, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckinDate))
 		if err != nil {
-			return response.ErrCodeConvertUnixToISOFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		checkOut, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckoutDate))
 		if err != nil {
-			return response.ErrCodeConvertUnixToISOFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		out = append(out, &vo.GetOrdersByManagerOutput{
@@ -292,22 +292,22 @@ func (o *serviceImpl) GetOrdersByUser(ctx *gin.Context) (codeStatus int, out []*
 	// TODO: check user exists
 	exists, err := o.sqlc.CheckUserBaseExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user base not found")
 	}
 	orders, err := o.sqlc.GetOrdersByUser(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get order failed: %s", err)
 	}
 
 	for _, order := range orders {
 		// TODO: get order detail:
 		orderDetails, err := o.sqlc.GetOrderDetailsByUser(ctx, order.OrderID)
 		if err != nil {
-			return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order detail failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get order detail failed: %s", err)
 		}
 		detail := []vo.OrderDetailOutput{}
 		for _, orderDetail := range orderDetails {
@@ -321,11 +321,11 @@ func (o *serviceImpl) GetOrdersByUser(ctx *gin.Context) (codeStatus int, out []*
 
 		checkIn, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckinDate))
 		if err != nil {
-			return response.ErrCodeConvertUnixToISOFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 		checkOut, err := utiltime.ConvertUnixTimestampToISO(ctx, int64(order.CheckoutDate))
 		if err != nil {
-			return response.ErrCodeConvertUnixToISOFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		out = append(out, &vo.GetOrdersByUserOutput{

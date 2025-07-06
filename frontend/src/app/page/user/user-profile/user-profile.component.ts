@@ -145,8 +145,10 @@ export class UserProfileComponent implements OnInit {
                 next: (response: UserResponse) => {
                     this.currentUser = response.data;
                     console.log('Current User:', this.currentUser);
-                    let birthdayDate: Date;
-                    if (this.currentUser.birthday) {
+
+                    let birthdayDate: Date | null = null;
+
+                    if (this.currentUser.birthday.length === 10) {
                         // parse từ chuỗi "21-06-2025"
                         const [dayStr, monthStr, yearStr] =
                             this.currentUser.birthday.split('-');
@@ -160,7 +162,7 @@ export class UserProfileComponent implements OnInit {
                         );
                     } else {
                         // Không có ngày sinh => dùng ngày hiện tại
-                        birthdayDate = new Date();
+                        birthdayDate = null
                     }
                     this.profileForm.patchValue({
                         username: this.currentUser.username,
@@ -229,7 +231,6 @@ export class UserProfileComponent implements OnInit {
                         error.error?.message ||
                             'Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.'
                     );
-                    // console.error('Update failed:', error);
                 },
             });
     }

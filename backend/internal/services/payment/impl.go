@@ -266,7 +266,7 @@ func (p *serviceImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		})
 
 		if err != nil {
-			return response.ErrCodeUpdateOrderStatusFailed, err
+			return response.ErrCodeInternalServerError, err
 		}
 
 		// TODO: redirect to frontend
@@ -302,16 +302,16 @@ func (p *serviceImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateOrderStatusFailed, err
+		return response.ErrCodeInternalServerError, err
 	}
 
 	// TODO: get order id
 	orderAndUserID, err := p.sqlc.GetOrderIdAndUserIdByOrderIdExternal(ctx, orderIDExternal)
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, err
+		return response.ErrCodeInternalServerError, err
 	}
 
-	// Create payment
+	// TODO: Create payment
 	paymentID := uuid.NewString()
 	now = utiltime.GetTimeNow()
 	err = p.sqlc.CreatePayment(ctx, database.CreatePaymentParams{
@@ -329,7 +329,7 @@ func (p *serviceImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 	})
 
 	if err != nil {
-		return response.ErrCodeCreatePaymentFailed, err
+		return response.ErrCodeInternalServerError, err
 	}
 
 	p.redirectToReactWithResult(ctx, vo.PaymentResultData{
@@ -343,13 +343,13 @@ func (p *serviceImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 
 	formatted, err := utiltime.FormatVNPayTime(payDate)
 	if err != nil {
-		return response.ErrCodeParseTimeFailed, fmt.Errorf("format time from vnpay failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("format time from vnpay failed: %s", err)
 	}
 
 	// TODO: get email of user payment
 	emailAndUsername, err := p.sqlc.GetEmailAndUsernameByID(ctx, orderAndUserID.UserID)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, fmt.Errorf("get email of user info failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get email of user info failed: %s", err)
 	}
 
 	// TODO: send email
@@ -361,7 +361,7 @@ func (p *serviceImpl) VNPayReturn(ctx *gin.Context) (codeStatus int, err error) 
 		"responseCode": responseCode,
 	}, consts.PAYMENT_CONFIRMATION)
 	if err != nil {
-		return response.ErrCodeSendEmailFailed, fmt.Errorf("send email failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("send email failed: %s", err)
 	}
 
 	return response.ErrCodeSuccessfully, nil
@@ -379,11 +379,11 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	// TODO: check user exists
 	exists, err := p.sqlc.CheckUserBaseExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if !exists {
-		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user base not found")
 	}
 
 	// TODO: create payment url
@@ -400,7 +400,7 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	checkInDate, err1 := time.Parse(layout, in.CheckIn)
 	checkOutDate, err2 := time.Parse(layout, in.CheckOut)
 	if err1 != nil || err2 != nil {
-		return response.ErrCodeParseTimeFailed, nil, err1
+		return response.ErrCodeInternalServerError, nil, err1
 	}
 
 	duration := checkOutDate.Sub(checkInDate)
@@ -408,7 +408,7 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	numDays := int64(duration.Hours() / 24)
 
 	if numDays <= 0 {
-		return response.ErrCodeParamsInvalid, nil, fmt.Errorf("check_out must come after check_in")
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("check_out must come after check_in")
 	}
 
 	// TODO: get total price
@@ -421,7 +421,7 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		})
 
 		if err != nil {
-			return response.ErrCodeGetAccommodationDetailFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 		quantity := decimal.NewFromInt(int64(roomSelected.Quantity))
 		roomSubtotal := accommodationDetail.Price.Mul(quantity)
@@ -463,12 +463,12 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 	checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
 	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
 	}
 
 	checkOut, err := utiltime.ConvertISOToUnixTimestamp(in.CheckOut)
 	if err != nil {
-		return response.ErrCodeConvertISOToUnixFailed, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
 	}
 
 	createdAt := utiltime.GetTimeNow()
@@ -493,7 +493,7 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 	})
 
 	if err != nil {
-		return response.ErrCodeCreateOrderFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	// TODO: lấy thông tin của accommodation detail
@@ -502,10 +502,8 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 			ID:              roomSelected.ID,
 			AccommodationID: in.AccommodationID,
 		})
-		fmt.Printf("accommodationDetail: %v\n", accommodationDetail.ID)
-
 		if err != nil {
-			return response.ErrCodeGetAccommodationDetailFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 
 		// TODO: get accommodation detail available
@@ -519,10 +517,8 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 			if errors.Is(err, sql.ErrNoRows) {
 				return response.ErrCodeAccommodationRoomNotFound, nil, fmt.Errorf("accommodation room not found")
 			}
-			return response.ErrCodeGetAccommodationRoomFailed, nil, fmt.Errorf("get accommodation room failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation room failed: %s", err)
 		}
-
-		fmt.Printf("accommodationRoom: %v\n", accommodationRoom.ID)
 
 		orderDetailID := uuid.NewString()
 		err = p.sqlc.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
@@ -537,12 +533,12 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 		})
 
 		if err != nil {
-			return response.ErrCodeCreateOrderDetailFailed, nil, err
+			return response.ErrCodeInternalServerError, nil, err
 		}
 	}
 
 	out.Url = finalURL
-	return response.ErrCodeCreatePaymentURLSuccess, out, nil
+	return response.ErrCodeSuccessfully, out, nil
 }
 
 func (p *serviceImpl) redirectToReactWithResult(ctx *gin.Context, data vo.PaymentResultData) {

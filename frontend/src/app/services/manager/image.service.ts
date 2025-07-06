@@ -27,7 +27,7 @@ export class ImageService {
     }
 
     uploadImages(
-        oldImages: string[],
+        deleteImages: string[],
         formImages: File[],
         id: string,
         isDetail: boolean
@@ -38,15 +38,11 @@ export class ImageService {
             formData.append('images', file);
         });
 
-        oldImages.forEach((image) => {
-            formData.append('old_images', image);
+        deleteImages.forEach((image) => {
+            formData.append('delete_images', image);
         });
         formData.append('id', id);
         formData.append('is_detail', isDetail.toString());
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
 
         return this.http.post<UploadImagesResponse>(
             `${this.apiUrl}/upload-images`,

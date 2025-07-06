@@ -84,7 +84,7 @@ WHERE
             AND ego.order_status in ('payment_success', 'checked_in')
     )
     AND ar.accommodation_type = ?
-    and ar.status in ('available')
+    and ar.status in ('available') AND ` + "`" + `is_deleted` + "`" + ` = 0
 LIMIT
     1
 `
@@ -97,6 +97,23 @@ type CountAccommodationRoomAvailableParams struct {
 
 func (q *Queries) CountAccommodationRoomAvailable(ctx context.Context, arg CountAccommodationRoomAvailableParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countAccommodationRoomAvailable, arg.CheckOut, arg.CheckIn, arg.AccommodationTypeID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countAccommodationRoomAvailableByManager = `-- name: CountAccommodationRoomAvailableByManager :one
+SELECT
+    COUNT(ar.id)
+FROM
+    ` + "`" + `ecommerce_go_accommodation_room` + "`" + ` ar
+WHERE
+    ar.accommodation_type = ?
+    AND ar.status in ('available') AND ` + "`" + `is_deleted` + "`" + ` = 0
+`
+
+func (q *Queries) CountAccommodationRoomAvailableByManager(ctx context.Context, accommodationTypeID string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countAccommodationRoomAvailableByManager, accommodationTypeID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -207,6 +224,7 @@ FROM
 WHERE
     ` + "`" + `accommodation_type` + "`" + ` = ?
     AND ` + "`" + `is_deleted` + "`" + ` = 0
+ORDER BY ` + "`" + `created_at` + "`" + ` ASC
 `
 
 type GetAccommodationRoomsRow struct {

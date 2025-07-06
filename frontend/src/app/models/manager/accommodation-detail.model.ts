@@ -49,7 +49,7 @@ export interface CreateAccommodationDetails {
     name: string;
     guests: number;
     beds: Beds;
-    available_rooms: number;
+    // available_rooms: number;
     price: string;
     discount_id: string;
     facilities: string[];
@@ -68,7 +68,7 @@ export interface UpdateAccommodationDetails {
     guests: number;
     beds: Beds;
     // facilities: Facilities;
-    available_rooms: number;
+    // available_rooms: number;
     price: string;
     discount_id: string;
     facilities: string[];

@@ -15,8 +15,12 @@
             <tr tuiThGroup></tr>
         </thead>
         <tbody tuiTbody>
-            @for(accommodation of accommodations; track accommodation.id) {
+            @for(accommodation of accommodations; track accommodation.id; let i
+            = $index) {
             <tr tuiTr>
+                <td *tuiCell="'ID'" tuiTd>
+                    {{ i + 1 }}
+                </td>
                 <td *tuiCell="'Name'" tuiTd>
                     {{ accommodation.name }}
                 </td>
@@ -70,14 +74,26 @@
                     </p>
                     }
                 </td>
-
                 <td *tuiCell="'Rating'" tuiTd>
                     {{ accommodation.rating }}
                 </td>
                 <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
-                    {{ accommodation.google_map }}
+                    <iframe
+                        [src]="getSafeUrl(accommodation.google_map)"
+                        width="300"
+                        height="200"
+                        style="border: 0"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </td>
-
+                <td *tuiCell="'Is Verified'" tuiTd>
+                    {{ accommodation.is_verified }}
+                </td>
+                <td *tuiCell="'Is Deleted'" tuiTd>
+                    {{ accommodation.is_deleted }}
+                </td>
                 <td *tuiCell="'Action'" tuiTd>
                     <span tuiStatus style="display: flex">
                         <button
@@ -153,16 +169,9 @@
                     tuiTextfield
                 />
                 <tui-icon tuiTooltip="You can't change here" />
-                <!-- @if(formAccommodation.get('country')?.invalid &&
-                formAccommodation.get('country')?.touched) {
-                <div>
-                    <small class="text-red-500">Country is required</small>
-                </div>
-                } -->
             </tui-textfield>
             <tui-textfield>
                 <label tuiLabel>City</label>
-                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
                 <tui-data-list-wrapper
                     *tuiTextfieldDropdown
@@ -309,17 +318,10 @@
                     [readOnly]="true"
                 />
                 <tui-icon tuiTooltip="You can't change here" />
-                <!-- @if(formAccommodation.get('country')?.invalid &&
-                formAccommodation.get('country')?.touched) {
-                <div>
-                    <small class="text-red-500">Country is required</small>
-                </div>
-                } -->
             </tui-textfield>
 
             <tui-textfield>
                 <label tuiLabel>City</label>
-                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
                 <input formControlName="city" tuiSelect />
                 <tui-data-list-wrapper
                     *tuiTextfieldDropdown

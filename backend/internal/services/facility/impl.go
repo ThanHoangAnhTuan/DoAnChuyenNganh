@@ -32,28 +32,28 @@ func (f *serviceImpl) DeleteFacility(ctx *gin.Context, in *vo.DeleteFacilityInpu
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, fmt.Errorf("user not admin")
 	}
 
 	// TODO: get facility
 	facility, err := f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	// TODO: delete image
 	err = uploader.DeleteImageToDisk([]string{facility.Image})
 	if err != nil {
-		return response.ErrCodeDeleteFacilityImageFailed, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
 	}
 
 	err = f.sqlc.DeleteFacility(ctx, facility.ID)
 	if err != nil {
-		return response.ErrCodeDeleteFacilityFailed, fmt.Errorf("delete facility failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("delete facility failed: %s", err)
 	}
 	return response.ErrCodeDeleteFacilitySuccess, nil
 }
@@ -70,17 +70,17 @@ func (f *serviceImpl) UpdateFacility(ctx *gin.Context, in *vo.UpdateFacilityInpu
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user not admin")
 	}
 
 	// TODO: get facility
 	facility, err := f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	// TODO:
@@ -88,7 +88,7 @@ func (f *serviceImpl) UpdateFacility(ctx *gin.Context, in *vo.UpdateFacilityInpu
 		// TODO: delete image
 		err = uploader.DeleteImageToDisk([]string{facility.Image})
 		if err != nil {
-			return response.ErrCodeDeleteFacilityImageFailed, nil, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("delete images in disk of facitliy failed: %s", err)
 		}
 
 		// TODO: save image to disk
@@ -105,7 +105,7 @@ func (f *serviceImpl) UpdateFacility(ctx *gin.Context, in *vo.UpdateFacilityInpu
 			ID:        in.ID,
 		})
 		if err != nil {
-			return response.ErrCodeUpdateFacilityFailed, nil, fmt.Errorf("update facility failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("update facility failed: %s", err)
 		}
 	} else {
 		now := utiltime.GetTimeNow()
@@ -115,14 +115,14 @@ func (f *serviceImpl) UpdateFacility(ctx *gin.Context, in *vo.UpdateFacilityInpu
 			UpdatedAt: now,
 		})
 		if err != nil {
-			return response.ErrCodeUpdateFacilityFailed, nil, fmt.Errorf("update facility failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("update facility failed: %s", err)
 		}
 	}
 
 	// TODO: get facility
 	facility, err = f.sqlc.GetAccommodationFacilityById(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	out.ID = facility.ID
@@ -144,11 +144,11 @@ func (f *serviceImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInpu
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user not admin")
 	}
 
 	// TODO: save image to disk
@@ -168,13 +168,13 @@ func (f *serviceImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInpu
 		UpdatedAt: now,
 	})
 	if err != nil {
-		return response.ErrCodeCreateFacilityFailed, nil, fmt.Errorf("create facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("create facility failed: %s", err)
 	}
 
 	// TODO: get facility
 	facility, err := f.sqlc.GetAccommodationFacilityById(ctx, id)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	out.ID = facility.ID
@@ -185,30 +185,10 @@ func (f *serviceImpl) CreateFacility(ctx *gin.Context, in *vo.CreateFacilityInpu
 }
 
 func (f *serviceImpl) GetFacilities(ctx *gin.Context) (codeStatus int, out []*vo.GetFacilitiesOutput, err error) {
-	// TODO: get user id in gin.Context
-	// val := ctx.Value("userId")
-	// if val == nil {
-	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("unauthorized")
-	// }
-	// userID, ok := val.(string)
-	// if !ok {
-	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("invalid user id format")
-	// }
-
-	// TODO: check user is admin
-	// isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
-	// if err != nil {
-	// 	return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
-	// }
-
-	// if !isExists {
-	// 	return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
-	// }
-
 	// TODO: get facilities
 	facilities, err := f.sqlc.GetAccommodationFacilityNames(ctx)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	for _, facility := range facilities {

@@ -17,7 +17,7 @@ func (c *Controller) UploadImages(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Validation not found")
 		global.Logger.Error("Validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -25,13 +25,13 @@ func (c *Controller) UploadImages(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("UploadImages binding error: %s\n", err.Error())
 		global.Logger.Error("UploadImages binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("UploadImages validation error: %s\n", validationErrors)
 		global.Logger.Error("UploadImages validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -56,7 +56,7 @@ func (c *Controller) GetImages(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("Validation not found")
 		global.Logger.Error("Validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -64,20 +64,20 @@ func (c *Controller) GetImages(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("GetImages id binding error: %s\n", err.Error())
 		global.Logger.Error("GetImages id binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	if err := ctx.ShouldBindQuery(&params); err != nil {
 		fmt.Printf("GetImages is detail binding error: %s\n", err.Error())
 		global.Logger.Error("GetImages is detail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("GetImages validation error: %s\n", validationErrors)
 		global.Logger.Error("GetImages validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
