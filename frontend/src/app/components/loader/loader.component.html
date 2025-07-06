@@ -1,0 +1,18 @@
+<div
+    class="loader-container"
+    [class.overlay]="overlay"
+    [class.transparent]="transparent"
+>
+    <div class="loader-content" [class.centered]="centered">
+        <tui-loader
+            [showLoader]="true"
+            [overlay]="false"
+            [inheritColor]="inheritColor"
+            [size]="size"
+        >
+            @if (text) {
+            <div class="loader-text">{{ text }}</div>
+            }
+        </tui-loader>
+    </div>
+</div>

@@ -7,16 +7,19 @@ import { IsLoggedIn } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-register',
-    imports: [FormsModule, Toast, ButtonModule],
+    imports: [FormsModule, Toast, ButtonModule, LoaderComponent],
     templateUrl: './register.component.html',
     styleUrl: './register.component.scss',
     providers: [MessageService],
 })
 export class RegisterComponent {
     email: string = '';
+    isLoading: boolean = false;
 
     constructor(
         private router: Router,
@@ -37,13 +40,26 @@ export class RegisterComponent {
     }
 
     continueWithEmail() {
-        if (this.email) {
-            const otpData: OTP = {
-                verify_key: this.email,
-                verify_code: '',
-            };
+        if (!this.email || this.email.trim() === '') {
+            this.showToast(
+                'warn',
+                'Thông tin không hợp lệ',
+                'Vui lòng nhập địa chỉ email'
+            );
+            return;
+        }
 
-            this.authService.verifyOTP(otpData).subscribe({
+        this.isLoading = true;
+
+        const otpData: OTP = {
+            verify_key: this.email,
+            verify_code: '',
+        };
+
+        this.authService
+            .verifyOTP(otpData)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
                 next: (response) => {
                     this.showToast(
                         'success',
@@ -56,15 +72,33 @@ export class RegisterComponent {
                     });
                 },
                 error: (error) => {
-                    this.showToast(
-                        'error',
-                        'Lỗi gửi OTP',
-                        error.message ||
-                            'Đã xảy ra lỗi khi gửi OTP. Vui lòng thử lại sau.'
-                    );
+                    console.log('Error response:', error);
+
+                    // Check if the error indicates an OTP was already sent
+                    if (
+                        error.error?.code === 'OTP_ALREADY_SENT' ||
+                        error.error?.message
+                            ?.toLowerCase()
+                            .includes('OTP đã tồn tại') ||
+                        error.error?.message
+                            ?.toLowerCase()
+                            .includes('đã gửi otp')
+                    ) {
+                        // Navigate to OTP verification page since OTP was already sent
+                        this.router.navigate(['/register/verify-otp'], {
+                            queryParams: { email: this.email },
+                        });
+                    } else {
+                        // Handle other errors
+                        this.showToast(
+                            'error',
+                            'Lỗi gửi OTP',
+                            error.error?.message ||
+                                'Đã xảy ra lỗi khi gửi OTP. Vui lòng thử lại sau.'
+                        );
+                    }
                 },
             });
-        }
     }
 
     registerByEmail() {
@@ -77,33 +111,39 @@ export class RegisterComponent {
             return;
         }
 
+        this.isLoading = true;
+
         const newUser: RegisterModel = {
             verify_key: this.email,
             verify_type: 1,
             verify_purpose: 'TEST_USER',
         };
 
-        this.authService.registerUser(newUser).subscribe({
-            next: (response) => {
-                this.showToast(
-                    'success',
-                    'Đăng ký thành công',
-                    'Vui lòng kiểm tra email của bạn để xác nhận đăng ký.'
-                );
+        this.authService
+            .registerUser(newUser)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    console.log('Đăng ký thành công:', response);
+                    this.showToast(
+                        'success',
+                        'Đăng ký thành công',
+                        'Vui lòng kiểm tra email của bạn để xác nhận đăng ký.'
+                    );
 
-                this.router.navigate(['/verify-otp'], {
-                    queryParams: { email: this.email },
-                });
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi đăng ký',
-                    error.error?.message ||
-                        'Đã xảy ra lỗi khi tạo người dùng. Vui lòng thử lại sau.'
-                );
-                console.error('Lỗi khi tạo người dùng:', error);
-            },
-        });
+                    this.router.navigate(['/verify-otp'], {
+                        queryParams: { email: this.email },
+                    });
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi đăng ký',
+                        error.error?.message ||
+                            'Đã xảy ra lỗi khi tạo người dùng. Vui lòng thử lại sau.'
+                    );
+                    console.error('Lỗi khi tạo người dùng:', error);
+                },
+            });
     }
 }

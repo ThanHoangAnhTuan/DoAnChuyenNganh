@@ -1,4 +1,7 @@
 <p-toast position="top-right"></p-toast>
+@if (isLoading) {
+<app-loader text="Loading..." [overlay]="true"></app-loader>
+}
 
 <div class="login-container">
     <div class="login-card">

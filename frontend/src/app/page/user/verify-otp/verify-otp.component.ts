@@ -2,21 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OTP, UpdatePassword } from '../../../models/user/auth.model';
-import { interval, Subscription, take } from 'rxjs';
+import { finalize, interval, Subscription, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/user/auth.service';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
+import { InputOtpModule } from 'primeng/inputotp';
+import { TuiInputNumber } from '@taiga-ui/kit';
+import { TuiTextfield } from '@taiga-ui/core';
 
 @Component({
     selector: 'app-verify-otp',
-    imports: [FormsModule, CommonModule, Toast, ButtonModule],
+    imports: [
+        FormsModule,
+        CommonModule,
+        Toast,
+        ButtonModule,
+        LoaderComponent,
+        InputOtpModule,
+        TuiInputNumber,
+        TuiTextfield,
+    ],
     templateUrl: './verify-otp.component.html',
     styleUrl: './verify-otp.component.scss',
     providers: [MessageService],
 })
 export class VerifyOtpComponent implements OnInit {
+    isLoading: boolean = false;
     otp: string = '';
     password: string = '';
     token: string = '';
@@ -25,8 +39,6 @@ export class VerifyOtpComponent implements OnInit {
     confirmPassword = '';
     showPassword = false;
     showConfirmPassword = false;
-    isVerifying = false;
-    isUpdating = false;
     resendCountdown = 0;
     username: string = '';
     phone: string = '';
@@ -62,98 +74,38 @@ export class VerifyOtpComponent implements OnInit {
 
     ngOnInit(): void {
         // Lấy email từ query params
-        this.route.queryParams.subscribe((params) => {
-            this.email =
-                params['email'] || localStorage.getItem('resetEmail') || '';
-            if (!this.email) {
-                this.showToast(
-                    'error',
-                    'Lỗi xác thực',
-                    'Không tìm thấy email để xác thực. Vui lòng thử lại.'
-                );
-                // Redirect to forgot password if no email found
-                this.router.navigate(['/']);
-                return;
-            }
-        });
+        this.route.queryParams
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (params) => {
+                    this.email =
+                        params['email'] ||
+                        localStorage.getItem('resetEmail') ||
+                        '';
+                    if (!this.email) {
+                        this.showToast(
+                            'error',
+                            'Lỗi xác thực',
+                            'Không tìm thấy email để xác thực. Vui lòng thử lại.'
+                        );
+                        // Redirect to forgot password if no email found
+                        this.router.navigate(['/']);
+                    }
+                },
+                error: (error) => {
+                    console.error('Error loading params:', error);
+                    this.showToast(
+                        'error',
+                        'Lỗi kết nối',
+                        'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.'
+                    );
+                },
+            });
     }
     ngOnDestroy() {
         if (this.countdownSub) {
             this.countdownSub.unsubscribe();
         }
-    }
-
-    onOtpInput(event: any, index: number, inputElement: HTMLInputElement) {
-        const value = event.target.value;
-
-        // Store the value
-        this.otpValues[index] = value;
-
-        // Clear error message when user types
-        this.errorMessage = '';
-
-        // Auto-focus next input if value is entered
-        if (value.length === 1 && index < 5) {
-            const nextInput = inputElement.parentElement?.querySelector(
-                `input:nth-child(${index + 2})`
-            ) as HTMLInputElement;
-            if (nextInput) nextInput.focus();
-        }
-    }
-    onOtpPaste(event: ClipboardEvent) {
-        event.preventDefault();
-        if (!event.clipboardData) return;
-
-        const pastedText = event.clipboardData.getData('text');
-        if (!pastedText) return;
-
-        const otpInputs = document.querySelectorAll(
-            '.otp-input'
-        ) as NodeListOf<HTMLInputElement>;
-
-        // Điền các ký tự vào các ô input
-        for (
-            let i = 0;
-            i < Math.min(otpInputs.length, pastedText.length);
-            i++
-        ) {
-            if (/^\d+$/.test(pastedText[i])) {
-                otpInputs[i].value = pastedText[i];
-            }
-        }
-
-        // Focus vào ô cuối cùng hoặc ô tiếp theo
-        const lastFilledIndex = Math.min(
-            otpInputs.length - 1,
-            pastedText.length - 1
-        );
-        if (lastFilledIndex >= 0) {
-            otpInputs[lastFilledIndex].focus();
-        }
-
-        this.updateOTPValue();
-    }
-
-    private updateOTPValue() {
-        const otpInputs = document.querySelectorAll(
-            '.otp-input'
-        ) as NodeListOf<HTMLInputElement>;
-        this.otp = Array.from(otpInputs)
-            .map((input) => input.value)
-            .join('');
-    }
-    resendOTP() {
-        // Giả lập gọi API gửi lại OTP
-        this.resendCountdown = 60;
-
-        this.countdownSub = interval(1000)
-            .pipe(take(60))
-            .subscribe(() => {
-                this.resendCountdown--;
-                if (this.resendCountdown === 0 && this.countdownSub) {
-                    this.countdownSub.unsubscribe();
-                }
-            });
     }
 
     togglePassword() {
@@ -200,16 +152,6 @@ export class VerifyOtpComponent implements OnInit {
         );
     }
 
-    canUpdateUserInfo() {
-        return (
-            this.username &&
-            this.phone &&
-            this.gender !== null &&
-            this.birthday &&
-            this.birthday.trim() !== ''
-        );
-    }
-
     verifyOTP() {
         // Combine OTP values
         const otpCode = this.otpValues.join('');
@@ -225,7 +167,7 @@ export class VerifyOtpComponent implements OnInit {
             return;
         }
 
-        this.isVerifying = true;
+        this.isLoading = true;
         // this.errorMessage = '';
 
         // Create otpData object
@@ -235,34 +177,41 @@ export class VerifyOtpComponent implements OnInit {
         };
 
         // Call your authentication service to verify the OTP
-        this.authService.verifyOTP(this.email, otpCode, otpData).subscribe({
-            next: (response) => {
-                // Store verification token if your API returns one
-                if (response.data?.token) {
-                    this.verificationToken = response.data.token;
-                    localStorage.setItem('resetToken', this.verificationToken);
-                }
+        this.authService
+            .verifyOTP(this.email, otpCode, otpData)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    // Store verification token if your API returns one
+                    if (response.data?.token) {
+                        this.verificationToken = response.data.token;
+                        localStorage.setItem(
+                            'resetToken',
+                            this.verificationToken
+                        );
+                    }
 
-                // Success - move to step 2
-                this.step = 2;
-                this.showToast(
-                    'success',
-                    'Xác thực thành công',
-                    'Mã OTP đã được xác thực thành công. Vui lòng cập nhật mật khẩu mới.'
-                );
-                this.isVerifying = false;
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi xác thực OTP',
-                    error.error?.message ||
-                        'Mã OTP không đúng. Vui lòng thử lại.'
-                );
-                // console.error('OTP verification error:', error);
-                this.isVerifying = false;
-            },
-        });
+                    // Success - move to step 2
+                    this.step = 2;
+                    this.showToast(
+                        'success',
+                        'Xác thực thành công',
+                        'Mã OTP đã được xác thực thành công. Vui lòng cập nhật mật khẩu mới.'
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi xác thực OTP',
+                        error.error?.message ||
+                            'Mã OTP không đúng. Vui lòng thử lại.'
+                    );
+                },
+            });
     }
 
     updatePassword() {
@@ -298,41 +247,156 @@ export class VerifyOtpComponent implements OnInit {
             return;
         }
 
-        this.isUpdating = true;
+        this.isLoading = true;
 
         const passwordData: UpdatePassword = {
             token: token, // Use the correct token from verification
             password: this.password,
         };
 
-        this.authService.updatePassword(passwordData).subscribe({
-            next: (response) => {
-                this.showToast(
-                    'success',
-                    'Cập nhật mật khẩu thành công',
-                    'Mật khẩu của bạn đã được cập nhật thành công.'
+        this.authService
+            .updatePassword(passwordData)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.showToast(
+                        'success',
+                        'Cập nhật mật khẩu thành công',
+                        'Mật khẩu của bạn đã được cập nhật thành công.'
+                    );
+                    // Clear localStorage items that are no longer needed
+                    localStorage.removeItem('resetToken');
+                    localStorage.removeItem('resetEmail');
+
+                    // Show success toast and navigate after delay to ensure toast is seen
+                    setTimeout(() => {
+                        this.router.navigate(['/login'], {
+                            queryParams: { passwordUpdated: 'success' },
+                        });
+                    }, 2000);
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi cập nhật mật khẩu',
+                        error.error?.message ||
+                            'Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.'
+                    );
+                    console.error('Error updating password:', error);
+                },
+            });
+    }
+    // In verify-otp.component.ts
+
+    // Update the method to handle changes in the Taiga UI inputs
+    onOtpChange(index: number, value: number | null): void {
+        // Store the value (convert null to empty string)
+        this.otpValues[index] = value === null ? '' : String(value);
+
+        // Clear error message when user types
+        this.errorMessage = '';
+
+        // Auto-focus next input if value is entered and it's not the last input
+        if (value !== null && value !== undefined && index < 5) {
+            const inputs = document.querySelectorAll(
+                '.tui-otp-input'
+            ) as NodeListOf<HTMLInputElement>;
+            if (inputs && inputs[index + 1]) {
+                // Set timeout to ensure value is updated before focusing next field
+                setTimeout(() => {
+                    inputs[index + 1].focus();
+                }, 10);
+            }
+        }
+
+        // If backspace is pressed and current field is empty, go back to previous field
+        if (value === null && index > 0) {
+            const inputs = document.querySelectorAll(
+                '.tui-otp-input'
+            ) as NodeListOf<HTMLInputElement>;
+            if (inputs && inputs[index - 1]) {
+                inputs[index - 1].focus();
+            }
+        }
+    }
+    // Add this method to your component
+    onKeyDown(event: KeyboardEvent, index: number): void {
+        // Handle backspace - go to previous input when backspace is pressed in an empty field
+        if (event.key === 'Backspace' && this.otpValues[index] === '') {
+            if (index > 0) {
+                const inputs = document.querySelectorAll(
+                    '.tui-otp-input'
+                ) as NodeListOf<HTMLInputElement>;
+                inputs[index - 1].focus();
+                // Optionally clear the previous input
+                // this.otpValues[index - 1] = '';
+            }
+        }
+
+        // Handle arrow left/right for navigation between inputs
+        if (event.key === 'ArrowLeft' && index > 0) {
+            const inputs = document.querySelectorAll(
+                '.tui-otp-input'
+            ) as NodeListOf<HTMLInputElement>;
+            inputs[index - 1].focus();
+        }
+
+        if (event.key === 'ArrowRight' && index < 5) {
+            const inputs = document.querySelectorAll(
+                '.tui-otp-input'
+            ) as NodeListOf<HTMLInputElement>;
+            inputs[index + 1].focus();
+        }
+    }
+
+    // Keep your existing onOtpPaste method but update the selector
+    onOtpPaste(event: ClipboardEvent): void {
+        event.preventDefault();
+        if (!event.clipboardData) return;
+
+        const pastedText = event.clipboardData.getData('text').trim();
+        if (!pastedText) return;
+
+        // Changed selector from '.tui-otp-input input' to '.tui-otp-input'
+        const otpInputs = document.querySelectorAll(
+            '.tui-otp-input'
+        ) as NodeListOf<HTMLInputElement>;
+
+        // Fill inputs with pasted characters
+        for (
+            let i = 0;
+            i < Math.min(otpInputs.length, pastedText.length);
+            i++
+        ) {
+            if (/^\d+$/.test(pastedText[i])) {
+                this.otpValues[i] = pastedText[i];
+                // Update the input value directly
+                otpInputs[i].value = pastedText[i];
+            }
+        }
+
+        // Trigger Angular change detection
+        setTimeout(() => {
+            // Submit automatically if all 6 digits are filled
+            if (this.otpValues.filter((v) => v !== '').length === 6) {
+                // Optional: auto-submit when all fields are filled
+                // this.verifyOTP();
+            } else {
+                // Focus on the next empty field
+                const nextEmptyIndex = this.otpValues.findIndex(
+                    (val) => val === ''
                 );
-                // Clear localStorage items that are no longer needed
-                localStorage.removeItem('resetToken');
-                localStorage.removeItem('resetEmail');
-                // Navigate to login page or show success message
-                this.router.navigate(['/login'], {
-                    queryParams: { passwordUpdated: 'success' },
-                });
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi cập nhật mật khẩu',
-                    error.error?.message ||
-                        'Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.'
-                );
-                console.error('Error updating password:', error);
-                this.isUpdating = false;
-            },
-            complete: () => {
-                this.isUpdating = false;
-            },
-        });
+                if (nextEmptyIndex >= 0 && nextEmptyIndex < otpInputs.length) {
+                    otpInputs[nextEmptyIndex].focus();
+                } else {
+                    // Or focus on the last field if all are filled
+                    otpInputs[otpInputs.length - 1].focus();
+                }
+            }
+        }, 10);
     }
 }
