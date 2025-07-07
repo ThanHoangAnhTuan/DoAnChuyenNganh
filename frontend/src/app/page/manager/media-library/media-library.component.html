@@ -35,9 +35,15 @@
     </form>
 </main>
 
-<div style="display: flex; flex-direction: row">
+<div>
     @if (imagesPreview.length > 0) {
-    <div style="display: flex; gap: 10px; flex-direction: row; padding: 10px">
+    <div
+        style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        "
+    >
         @for(image of imagesPreview; track $index; let i = $index) {
         <div
             style="
@@ -71,7 +77,13 @@
         }
     </div>
     } @if (oldImages && oldImages.length > 0) {
-    <div style="display: flex; gap: 10px; flex-direction: row; padding: 10px">
+    <div
+        style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        "
+    >
         @for(image of oldImages; track $index; let i = $index) {
         <div
             style="

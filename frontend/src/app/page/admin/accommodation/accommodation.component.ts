@@ -1,12 +1,21 @@
-import { AfterViewInit, Component, ElementRef, inject, Injector, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
-    FormsModule,
-    ReactiveFormsModule,
-} from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+    AfterViewInit,
+    Component,
+    ElementRef,
+    inject,
+    Injector,
+    OnInit,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    DomSanitizer,
+    SafeHtml,
+    SafeResourceUrl,
+} from '@angular/platform-browser';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
-    TuiIcon,
     TuiButton,
     TuiDialogService,
     TuiTextfield,
@@ -18,19 +27,14 @@ import {
     TuiConfirmService,
     TuiFiles,
     tuiCreateTimePeriods,
-    TuiRating,
     TuiSelect,
-    TuiTooltip,
-    TuiDataListWrapperComponent,
     TuiDataListWrapper,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
-import { TuiCardLarge } from '@taiga-ui/layout';
 import {
     TUI_EDITOR_DEFAULT_EXTENSIONS,
     TUI_EDITOR_DEFAULT_TOOLS,
     TUI_EDITOR_EXTENSIONS,
-    TuiEditor,
 } from '@taiga-ui/editor';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
@@ -38,15 +42,16 @@ import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { ManagerService } from '../../../services/admin/manager.service';
-import { GetAccommodationsOfManagerByAdmin, VerifyAccommodationInput } from '../../../models/admin/manager.model';
-import { Accommodation } from '../../../models/manager/accommodation.model';
+import {
+    GetAccommodationsOfManagerByAdmin,
+    SetDeletedAccommodationInput,
+    VerifyAccommodationInput,
+} from '../../../models/admin/manager.model';
 
 @Component({
     standalone: true,
     selector: 'app-accommodation',
     imports: [
-        TuiIcon,
-        TuiTooltip,
         TuiTable,
         TuiButton,
         TuiInputModule,
@@ -54,14 +59,10 @@ import { Accommodation } from '../../../models/manager/accommodation.model';
         ReactiveFormsModule,
         TuiTextfield,
         TuiAppearance,
-        TuiCardLarge,
         TuiFiles,
-        TuiEditor,
-        RouterLink,
         TuiInputTimeModule,
         TuiSelect,
         TuiSelectModule,
-        TuiDataListWrapperComponent,
         TuiDataListWrapper,
         NavbarComponent,
     ],
@@ -89,6 +90,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
 
     protected columns: string[] = [
+        'ID',
         'Name',
         'Country',
         'City',
@@ -97,7 +99,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         'Description',
         'Rating',
         'Google Map',
-        'Image',
+        // 'Image',
         'Is Verified',
         'Is Deleted',
     ];
@@ -112,7 +114,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected citySlug: string = '';
     protected districtName: string = '';
     protected districtSlug: string = '';
-    protected showFullMap: { [id: string]: boolean } = {};;
+    protected showFullMap: { [id: string]: boolean } = {};
     protected elList: { [id: string]: any } = {};
     protected showButtonStates: { [id: string]: boolean } = {};
     protected isUpdateVerified: boolean = false;
@@ -121,10 +123,12 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected isModalConfirmVerifyOpen: boolean = false;
     protected isModalConfirmDeleteOpen: boolean = false;
 
-    // private readonly dialogs = inject(TuiDialogService);
-
     protected timePeriods = tuiCreateTimePeriods();
     private readonly alerts = inject(TuiAlertService);
+
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
 
     protected getAlert(label: string, content: string): void {
         this.alerts
@@ -140,53 +144,63 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private accommodationService: ManagerService,
         private addressService: AddressService,
         private sanitizer: DomSanitizer,
-        private route: ActivatedRoute,
-    ) { }
+        private route: ActivatedRoute
+    ) {}
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
             this.managerId = params['id'];
-            this.accommodationService.getAccommodationsOfManagerByAdmin(this.managerId).subscribe((response) => {
-                this.accommodations = response.data;
-
-                console.log(this.accommodations);
-            })
+            this.accommodationService
+                .getAccommodationsOfManagerByAdmin(this.managerId)
+                .subscribe((response) => {
+                    console.log(response);
+                    this.accommodations = response.data;
+                });
         });
 
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
-            this.cityNames = res.data.map(city => city.name);
+            this.cityNames = res.data.map((city) => city.name);
         });
     }
 
-    private updateVerify(id: string, status: number) {
+    private updateVerify(id: string, status: boolean) {
         let newVerify: VerifyAccommodationInput = {
             accommodation_id: id,
-            status: Number(status)
-        }
+            status: status,
+        };
+        this.accommodationService
+            .updateVerified(newVerify)
+            .subscribe((response) => {
+                const message = response.message;
+                this.getAlert('Notification', message);
+            });
+    }
 
-        this.accommodationService.updateVerified(newVerify).subscribe((response) => {
-            const message = response.message;
-
-            this.getAlert('Notification', message);
-        })
+    private updateDelete(id: string, status: boolean) {
+        let newDelete: SetDeletedAccommodationInput = {
+            accommodation_id: id,
+            status: status,
+        };
+        this.accommodationService
+            .updateDeleted(newDelete)
+            .subscribe((response) => {
+                const message = response.message;
+                this.getAlert('Notification', message);
+            });
     }
 
     changeCitySlugToName(slug: string): string {
-        const city = this.cities.find(city => city.slug === slug);
-
+        const city = this.cities.find((city) => city.slug === slug);
         return city?.name ?? '';
     }
 
     changeDistrictSlugToName(citySlug: string, districtSlug: string): string {
-        // console.log("cities: ", this.cities)
-        const city = this.cities.find(city => city.slug === citySlug);
+        const city = this.cities.find((city) => city.slug === citySlug);
         let districts = city?.level2s ?? [];
-
-        // console.log("districts", districts);
-        let district = districts.find(district => district.slug === districtSlug);
-        // console.log(district);
-
+        let district = districts.find(
+            (district) => district.slug === districtSlug
+        );
         return district?.name ?? '';
     }
 
@@ -207,12 +221,9 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.descEls.forEach((elRef) => {
                 const el = elRef.nativeElement;
                 const id = el.getAttribute('data-id');
-
                 if (id) {
                     this.showButtonStates[id] = el.scrollHeight > 60;
                 }
-
-                console.log(this.showButtonStates);
             });
         });
     }
@@ -225,15 +236,17 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
 
     protected changeVerifiedFinish() {
         const id: string = this.updateId;
-        const accommodation: any = this.accommodations.find(a => a.id === id);
+        const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            const status: number = accommodation.is_verified;
-
-            this.updateVerify(id, status);
+            this.updateVerify(id, accommodation.is_verified);
         }
-
         this.updateId = '';
         this.isUpdateVerified = false;
+    }
+
+    protected resetInput() {
+        this.isUpdateVerified = false;
+        this.isUpdateDeleted = false;
     }
 
     protected openVerifyConfirmModal() {
@@ -253,14 +266,10 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
 
     protected changeDeleteFinish() {
         const id: string = this.updateId;
-        const accommodation: any = this.accommodations.find(a => a.id === id);
+        const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            const status: number = accommodation.is_deleted;
-
-            // this.updateVerify(id, status);
-            this.getAlert("Notification", "Update successfully");
+            this.updateDelete(id, accommodation.is_deleted);
         }
-
         this.updateId = '';
         this.isUpdateDeleted = false;
     }

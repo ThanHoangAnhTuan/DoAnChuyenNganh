@@ -17,7 +17,7 @@ func (c *Controller) CreateFacility(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CreateFacility validation not found\n")
 		global.Logger.Error("CreateFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -25,13 +25,13 @@ func (c *Controller) CreateFacility(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CreateFacility binding error: %s\n", err.Error())
 		global.Logger.Error("CreateFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CreateFacility validation error: %s\n", validationErrors)
 		global.Logger.Error("CreateFacility validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -56,7 +56,7 @@ func (c *Controller) UpdateFacility(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("UpdateFacility validation not found\n")
 		global.Logger.Error("UpdateFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -64,13 +64,13 @@ func (c *Controller) UpdateFacility(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("UpdateFacility binding error: %s\n", err.Error())
 		global.Logger.Error("UpdateFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("UpdateFacility validation error: %s\n", validationErrors)
 		global.Logger.Error("UpdateFacility validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -95,7 +95,7 @@ func (c *Controller) DeleteFacility(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("DeleteFacility validation not found\n")
 		global.Logger.Error("DeleteFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -103,13 +103,13 @@ func (c *Controller) DeleteFacility(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("DeleteFacility binding error: %s\n", err.Error())
 		global.Logger.Error("DeleteFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("DeleteFacility validation error: %s\n", validationErrors)
 		global.Logger.Error("DeleteFacility validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -130,15 +130,15 @@ func (c *Controller) DeleteFacility(ctx *gin.Context) {
 }
 
 func (c *Controller) GetFacilities(ctx *gin.Context) {
-	codeResult, data, err := services.Facility().GetFacilities(ctx)
+	codeStatus, data, err := services.Facility().GetFacilities(ctx)
 	if err != nil {
 		fmt.Printf("GetFacilities error: %s\n", err.Error())
 		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("GetFacilities success\n")
 	global.Logger.Info("GetFacilities success")
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

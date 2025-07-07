@@ -5,7 +5,7 @@ import { GalleriaModule } from 'primeng/galleria';
     selector: 'app-image-list-modal',
     imports: [GalleriaModule],
     templateUrl: './image-list-modal.component.html',
-    styleUrl: './image-list-modal.component.scss'
+    styleUrl: './image-list-modal.component.scss',
 })
 export class ImageListModalComponent implements OnInit {
     activeIndex: number = 0;
@@ -15,7 +15,7 @@ export class ImageListModalComponent implements OnInit {
 
     @Output() close = new EventEmitter<void>();
 
-    constructor() { }
+    constructor() {}
 
     ngOnInit() {
         document.body.style.overflow = 'hidden'; // chặn scroll nền
@@ -30,23 +30,23 @@ export class ImageListModalComponent implements OnInit {
     responsiveOptions = [
         {
             breakpoint: '1024px',
-            numVisible: 5
+            numVisible: 5,
         },
         {
             breakpoint: '950px',
-            numVisible: 4
+            numVisible: 4,
         },
         {
             breakpoint: '700px',
-            numVisible: 3
+            numVisible: 3,
         },
         {
             breakpoint: '560px',
-            numVisible: 2
+            numVisible: 2,
         },
         {
             breakpoint: '390px',
-            numVisible: 1
-        }
+            numVisible: 1,
+        },
     ];
 }

@@ -38,17 +38,17 @@ func (u *serviceImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStat
 	// TODO: check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, in.VerifyKey)
 	if err != nil {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check user already exists: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for check user already exists: %s", err)
 	}
 
 	if userFound {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("user already exists")
+		return response.ErrCodeAccountAlreadyExists, fmt.Errorf("user already exists")
 	}
 
 	// TODO: check user verified otp
 	isVerified, err := u.sqlc.CheckUserVerifiedOTP(ctx, in.VerifyKey)
 	if err != nil {
-		return response.ErrCodeOTPAlreadyVerified, fmt.Errorf("error for otp verified: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for otp verified: %s", err)
 	}
 
 	if isVerified {
@@ -66,9 +66,8 @@ func (u *serviceImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStat
 	switch {
 	// key not exists
 	case err == redis.Nil:
-		fmt.Println("otp not found")
 	case err != nil:
-		return response.ErrCodeOTPAlreadyExists, fmt.Errorf("error for get otp: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get otp: %s", err)
 	case otpFound != "":
 		return response.ErrCodeOTPAlreadyExists, fmt.Errorf("otp already exists")
 	}
@@ -82,7 +81,7 @@ func (u *serviceImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStat
 	// TODO: save otp in redis
 	err = global.Redis.SetEx(ctx, userKey, otpNew, time.Duration(consts.TIME_OTP_REGISTER*time.Minute)).Err()
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, fmt.Errorf("save otp in redis failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("save otp in redis failed: %s", err)
 	}
 
 	// TODO: send otp to verify type (email, sms)
@@ -111,7 +110,7 @@ func (u *serviceImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStat
 			"otp": otpNew,
 		}, consts.OTP_VERIFY)
 		if err != nil {
-			return response.ErrCodeSendEmailFailed, fmt.Errorf("send email failed: %s", err)
+			return response.ErrCodeInternalServerError, fmt.Errorf("send email failed: %s", err)
 		}
 	}
 
@@ -128,7 +127,7 @@ func (u *serviceImpl) Register(ctx *gin.Context, in *vo.RegisterInput) (codeStat
 	})
 
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, fmt.Errorf("save otp to database failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("save otp to database failed: %s", err)
 	}
 
 	// TODO: return
@@ -144,7 +143,7 @@ func (u *serviceImpl) VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (codeSt
 	// TODO: check otp already exists in redis
 	otpFound, err := global.Redis.Get(ctx, utils.GetUserKey(hashKey)).Result()
 	if err != nil {
-		return response.ErrCodeOTPNotExists, nil, fmt.Errorf("error for check otp in redis: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for check otp in redis: %s", err)
 	}
 
 	// TODO: check otp match
@@ -155,7 +154,7 @@ func (u *serviceImpl) VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (codeSt
 	// TODO: if match, get info otp
 	infoOTP, err := u.sqlc.GetUserUnverify(ctx, hashKey)
 	if err != nil {
-		return response.ErrCodeGetInfoOTPFailed, nil, fmt.Errorf("get info otp failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get info otp failed: %s", err)
 	}
 
 	if infoOTP.IsVerified != 0 {
@@ -169,7 +168,7 @@ func (u *serviceImpl) VerifyOTP(ctx *gin.Context, in *vo.VerifyOTPInput) (codeSt
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateUserVerifyFailed, nil, fmt.Errorf("update user verify failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("update user verify failed: %s", err)
 	}
 
 	// TODO: delete otp in redis
@@ -188,7 +187,7 @@ func (u *serviceImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePass
 	// TODO: get info otp by key hash
 	infoOTP, err := u.sqlc.GetUserVerified(ctx, in.Token)
 	if err != nil {
-		return response.ErrCodeGetInfoOTPFailed, fmt.Errorf("get info otp failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("get info otp failed: %s", err)
 	}
 
 	// TODO: check otp is verified
@@ -199,17 +198,17 @@ func (u *serviceImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePass
 	// TODO: check user base exists
 	userFound, err := u.sqlc.CheckUserBaseExists(ctx, infoOTP.VerifyKey)
 	if err != nil {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check user already exists: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for check user already exists: %s", err)
 	}
 
 	if userFound {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("user already exists")
+		return response.ErrCodeAccountAlreadyExists, fmt.Errorf("user already exists")
 	}
 
 	// TODO: update user base
 	hashPassword, err := crypto.HashPassword(in.Password)
 	if err != nil {
-		return response.ErrCodeHashPasswordFailed, fmt.Errorf("hash password failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("hash password failed: %s", err)
 	}
 	now := utiltime.GetTimeNow()
 
@@ -225,7 +224,7 @@ func (u *serviceImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePass
 		UpdatedAt:  now,
 	})
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, fmt.Errorf("save user base failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("save user base failed: %s", err)
 	}
 
 	// TODO: create user info
@@ -240,10 +239,10 @@ func (u *serviceImpl) UpdatePasswordRegister(ctx *gin.Context, in *vo.UpdatePass
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateDataFailed, fmt.Errorf("update password register failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("update password register failed: %s", err)
 	}
 
-	return response.ErrCodeUpdatePasswordRegisterSuccess, nil
+	return response.ErrCodeSuccessfully, nil
 }
 
 func (u *serviceImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int, out *vo.LoginOutput, err error) {
@@ -252,12 +251,12 @@ func (u *serviceImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int
 	// TODO: get user info
 	userBase, err := u.sqlc.GetUserBaseByAccount(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
 	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userBase.Password) {
-		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
+		return response.ErrCodeLoginFailed, nil, fmt.Errorf("dose not match password")
 	}
 
 	// TODO: check two-factor authentication
@@ -275,23 +274,23 @@ func (u *serviceImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int
 	// TODO: get user info
 	infoUser, err := u.sqlc.GetUserInfo(ctx, userBase.Account)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 
 	infoUserJson, err := json.Marshal(infoUser)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert to json failed: %v", err)
 	}
 
 	// TODO: give info user json to redis
 	err = global.Redis.SetEx(ctx, subToken, infoUserJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save user info to redis failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("save user info to redis failed: %s", err)
 	}
 
 	out.Token, err = auth.CreateToken(userBase.ID, consts.USER)
 	if err != nil {
-		return response.ErrCodeCreateJWTTokenFailed, nil, err
+		return response.ErrCodeInternalServerError, nil, err
 	}
 
 	return response.ErrCodeLoginSuccess, out, nil

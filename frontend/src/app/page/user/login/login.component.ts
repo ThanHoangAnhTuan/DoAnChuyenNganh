@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/user/auth.service';
@@ -8,17 +8,16 @@ import { SaveTokenToCookie } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule, Ripple],
+    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
     providers: [MessageService, provideAnimations()],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
     loginForm: FormGroup;
     isLoading: boolean = false;
     errorMessage: string = '';
@@ -43,14 +42,6 @@ export class LoginComponent implements OnInit {
     ): void {
         this.messageService.add({ severity, summary, detail });
     }
-
-    ngOnInit(): void {
-        // Check if user is already logged in
-        // if (this.userService.isLoggedIn()) {
-        //   this.router.navigate(['/']);
-        // }
-    }
-
     get email() {
         return this.loginForm.get('email')!;
     }
@@ -82,9 +73,8 @@ export class LoginComponent implements OnInit {
 
         this.authService.loginUser(loginData).subscribe({
             next: (response) => {
-                // console.log('Login successful:', response);
+                this.isLoading = false;
                 SaveTokenToCookie(response.data.token);
-                // Navigate to home or dashboard
                 this.router.navigate(['/']);
             },
             error: (error) => {
@@ -94,10 +84,6 @@ export class LoginComponent implements OnInit {
                     error.error?.message ||
                         'Email hoặc mật khẩu không đúng. Vui lòng thử lại.'
                 );
-                // console.error('Login failed:', error);
-                // this.errorMessage =
-                //     error.error?.message ||
-                //     'Invalid email or password. Please try again.';
                 this.isLoading = false;
             },
             complete: () => {
@@ -105,18 +91,4 @@ export class LoginComponent implements OnInit {
             },
         });
     }
-    // loginWithGoogle(): void {
-    //     // Implement Google login
-    //     console.log('Google login clicked');
-    // }
-
-    // loginWithFacebook(): void {
-    //     // Implement Facebook login
-    //     console.log('Facebook login clicked');
-    // }
-
-    // loginWithApple(): void {
-    //     // Implement Apple login
-    //     console.log('Apple login clicked');
-    // }
 }

@@ -30,16 +30,16 @@ func (f *serviceImpl) DeleteFacilityDetail(ctx *gin.Context, in *vo.DeleteFacili
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, fmt.Errorf("user not admin")
 	}
 
 	err = f.sqlc.DeleteFacilityDetail(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeDeleteFacilityDetailFailed, fmt.Errorf("delete facility detail failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("delete facility detail failed: %s", err)
 	}
 	return response.ErrCodeDeleteFacilityDetailSuccess, nil
 }
@@ -56,11 +56,11 @@ func (f *serviceImpl) UpdateFacilityDetail(ctx *gin.Context, in *vo.UpdateFacili
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user not admin")
 	}
 
 	// TODO: update facility
@@ -71,13 +71,13 @@ func (f *serviceImpl) UpdateFacilityDetail(ctx *gin.Context, in *vo.UpdateFacili
 		ID:        in.ID,
 	})
 	if err != nil {
-		return response.ErrCodeUpdateFacilityDetailFailed, nil, fmt.Errorf("update facility detail failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("update facility detail failed: %s", err)
 	}
 
 	// TODO: get facility
 	facility, err := f.sqlc.GetAccommodationFacilityDetailById(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	out.ID = facility.ID
@@ -97,11 +97,11 @@ func (f *serviceImpl) CreateFacilityDetail(ctx *gin.Context, in *vo.CreateFacili
 	// TODO: check user is admin
 	isExists, err := f.sqlc.CheckUserAdminExistsById(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get admin failed")
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get admin failed")
 	}
 
 	if !isExists {
-		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user not admin")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("user not admin")
 	}
 
 	// TODO: save facility
@@ -114,25 +114,25 @@ func (f *serviceImpl) CreateFacilityDetail(ctx *gin.Context, in *vo.CreateFacili
 		UpdatedAt: now,
 	})
 	if err != nil {
-		return response.ErrCodeCreateFacilityFailed, nil, fmt.Errorf("create facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("create facility failed: %s", err)
 	}
 
 	// TODO: get facility
 	facility, err := f.sqlc.GetAccommodationFacilityDetailById(ctx, id)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	out.ID = facility.ID
 	out.Name = facility.Name
-	return response.ErrCodeCreateFacilitySuccess, out, nil
+	return response.ErrCodeCreateFacilityDetailSuccess, out, nil
 }
 
 func (f *serviceImpl) GetFacilityDetail(ctx *gin.Context) (codeStatus int, out []*vo.GetFacilityDetailOutput, err error) {
 	// TODO: get facilities
 	facilities, err := f.sqlc.GetAccommodationFacilityDetail(ctx)
 	if err != nil {
-		return response.ErrCodeGetFacilityFailed, nil, fmt.Errorf("get facility failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
 	}
 
 	for _, facility := range facilities {
@@ -142,5 +142,5 @@ func (f *serviceImpl) GetFacilityDetail(ctx *gin.Context) (codeStatus int, out [
 		})
 	}
 
-	return response.ErrCodeGetFacilitySuccess, out, nil
+	return response.ErrCodeGetFacilityDetailSuccess, out, nil
 }

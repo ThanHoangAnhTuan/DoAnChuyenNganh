@@ -13,7 +13,7 @@ func (ur *AccommodationRoomRouter) InitAccommodationRoomRouter(Router *gin.Route
 	userRouterPrivate := Router.Group("/accommodation-room")
 	userRouterPrivate.Use(middlewares.AuthMiddleware())
 	{
-		userRouterPrivate.GET("/:accommodation-type-id", controllers.AccommodationRoom.GetAccommodationRooms)
+		userRouterPrivate.GET("/:accommodation_type_id", controllers.AccommodationRoom.GetAccommodationRooms)
 		userRouterPrivate.POST("", controllers.AccommodationRoom.CreateAccommodationRoom)
 		userRouterPrivate.PUT("", controllers.AccommodationRoom.UpdateAccommodationRoom)
 		userRouterPrivate.DELETE("/:id", controllers.AccommodationRoom.DeleteAccommodationRoom)

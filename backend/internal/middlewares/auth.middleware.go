@@ -20,14 +20,14 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			response.ErrorResponse(ctx, response.ErrCodeMissAuthorizationHeader, nil)
+			response.ErrorResponse(ctx, response.ErrCodeUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
 
 		const prefix = "Bearer "
 		if !strings.HasPrefix(authHeader, prefix) {
-			response.ErrorResponse(ctx, response.ErrCodeInvalidAuthorizationFormat, nil)
+			response.ErrorResponse(ctx, response.ErrCodeUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
@@ -39,17 +39,15 @@ func AuthMiddleware() gin.HandlerFunc {
 		}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
 
 		if err != nil || !token.Valid {
-			response.ErrorResponse(ctx, response.ErrCodeInvalidToken, nil)
+			response.ErrorResponse(ctx, response.ErrCodeUnauthorized, nil)
 			ctx.Abort()
 			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			// c := context.WithValue(ctx.Request.Context(), UserIDKey, claims["sub"])
 			ctx.Set("userId", claims["sub"])
-			// ctx.Request = ctx.Request.WithContext(c)
 		} else {
-			response.ErrorResponse(ctx, response.ErrCodeInvalidToken, nil)
+			response.ErrorResponse(ctx, response.ErrCodeUnauthorized, nil)
 			ctx.Abort()
 			return
 		}

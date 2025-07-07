@@ -19,7 +19,7 @@ func SaveImageToDisk(ctx *gin.Context, images []*multipart.FileHeader) (codeStat
 	// TODO: Make sure the directory exists
 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
-			return response.ErrCodeCreateFolderFailed, nil, fmt.Errorf("cannot create upload directory: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("cannot create upload directory: %s", err)
 		}
 	}
 
@@ -33,7 +33,7 @@ func SaveImageToDisk(ctx *gin.Context, images []*multipart.FileHeader) (codeStat
 
 		// TODO: save file
 		if err := ctx.SaveUploadedFile(file, savePath); err != nil {
-			return response.ErrCodeUploadFileFailed, nil, fmt.Errorf("error upload images: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error upload images: %s", err)
 		}
 		savedImagePaths = append(savedImagePaths, fileName)
 	}

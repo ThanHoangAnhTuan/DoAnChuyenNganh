@@ -27,13 +27,21 @@ export class AccommodationDetailService {
         );
     }
 
+    getAccommodationDetailsByManager(
+        accommodationId: string
+    ): Observable<GetAccommodationDetailsResponse> {
+        return this.http.get<GetAccommodationDetailsResponse>(
+            `${this.apiUrl}/get-accommodation-details-by-manager/${accommodationId}`
+        );
+    }
+
     createAccommodationDetail(
         accommodationDetail: CreateAccommodationDetails
     ): Observable<CreateAccommodationDetailResponse> {
         const newAccommodationDetail: CreateAccommodationDetails = {
             name: accommodationDetail.name,
             accommodation_id: accommodationDetail.accommodation_id,
-            available_rooms: accommodationDetail.available_rooms,
+            // available_rooms: accommodationDetail.available_rooms,
             beds: {
                 single_bed: accommodationDetail.beds.single_bed,
                 double_bed: accommodationDetail.beds.double_bed,
@@ -59,7 +67,7 @@ export class AccommodationDetailService {
             id: accommodationDetail.id,
             name: accommodationDetail.name,
             accommodation_id: accommodationDetail.accommodation_id,
-            available_rooms: accommodationDetail.available_rooms,
+            // available_rooms: accommodationDetail.available_rooms,
             beds: {
                 single_bed: accommodationDetail.beds.single_bed,
                 double_bed: accommodationDetail.beds.double_bed,

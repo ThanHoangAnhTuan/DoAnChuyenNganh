@@ -7,6 +7,8 @@ import {
     CreateManagerOutput,
     GetAccommodationsOfManagerByAdminOutput,
     GetManagerOutput,
+    SetDeletedAccommodationInput,
+    SetDeletedAccommodationOutput,
     VerifyAccommodationInput,
     VerifyAccommodationOutput,
 } from '../../models/admin/manager.model';
@@ -31,11 +33,32 @@ export class ManagerService {
         return this.http.get<GetManagerOutput>(`${this.adminUrl}/managers`);
     }
 
-    getAccommodationsOfManagerByAdmin(id: string): Observable<GetAccommodationsOfManagerByAdminOutput> {
-        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(`${this.adminUrl}/manager/${id}/accommodations`);
+    getAccommodationsOfManagerByAdmin(
+        id: string
+    ): Observable<GetAccommodationsOfManagerByAdminOutput> {
+        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(
+            `${this.adminUrl}/manager/${id}/accommodations`
+        );
     }
 
-    updateVerified(newVerify: VerifyAccommodationInput): Observable<VerifyAccommodationOutput> {
-        return this.http.put<VerifyAccommodationOutput>(this.adminUrl + '/verify-accommodation', newVerify);
+    updateVerified(
+        newVerify: VerifyAccommodationInput
+    ): Observable<VerifyAccommodationOutput> {
+        return this.http.put<VerifyAccommodationOutput>(
+            this.adminUrl + '/verify-accommodation',
+            newVerify
+        );
+    }
+
+    updateDeleted(
+        newDeleted: SetDeletedAccommodationInput
+    ): Observable<SetDeletedAccommodationOutput> {  
+        console.log("service");
+        console.log(newDeleted);
+        
+        return this.http.put<SetDeletedAccommodationOutput>(
+            this.adminUrl + '/set-deleted-accommodation',
+            newDeleted
+        );
     }
 }

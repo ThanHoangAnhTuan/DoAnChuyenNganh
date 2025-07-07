@@ -18,6 +18,7 @@ import (
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/auth"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/crypto"
 	utiltime "github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils/util_time"
+	"go.uber.org/zap"
 )
 
 type serviceImpl struct {
@@ -35,23 +36,29 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatu
 	userAdmin, err := m.sqlc.GetUserAdmin(ctx, in.UserAccount)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return response.ErrCodeUserAdminNotFound, nil, fmt.Errorf("user admin not found")
+			return response.ErrCodeLoginFailed, nil, fmt.Errorf("user admin not found")
 		}
-		return response.ErrCodeGetAdminFailed, nil, fmt.Errorf("get user admin failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user admin failed: %s", err)
 	}
 
 	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userAdmin.Password) {
-		return response.ErrCodePasswordNotMatch, nil, fmt.Errorf("dose not match password")
+		return response.ErrCodeLoginFailed, nil, fmt.Errorf("dose not match password")
 	}
 
 	// TODO: check two-factor authentication
 
 	// TODO: update login
-	go m.sqlc.UpdateUserAdminLogin(ctx, database.UpdateUserAdminLoginParams{
-		LoginTime: utiltime.GetTimeNow(),
-		Account:   in.UserAccount,
-	})
+	go func() {
+		err := m.sqlc.UpdateUserAdminLogin(ctx, database.UpdateUserAdminLoginParams{
+			LoginTime: utiltime.GetTimeNow(),
+			Account:   in.UserAccount,
+		})
+		if err != nil {
+			fmt.Printf("failed to update user login time: %v", err.Error())
+			global.Logger.Error("failed to update user login time: ", zap.String("error", err.Error()))
+		}
+	}()
 
 	// TODO: create uuid user
 	subToken := utils.GenerateCliTokenUUID(userAdmin.ID)
@@ -63,23 +70,24 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatu
 
 	userAdminInforJson, err := json.Marshal(userAdminInfor)
 	if err != nil {
-		return response.ErrCodeMarshalFailed, nil, fmt.Errorf("convert to json failed: %v", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert admin info to json failed: %v", err)
 	}
 
 	// TODO: save admin info to redis
 	err = global.Redis.SetEx(ctx, subToken, userAdminInforJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
 	if err != nil {
-		return response.ErrCodeSaveDataFailed, nil, fmt.Errorf("save admin info to redis failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("save admin info to redis failed: %s", err)
 	}
 
+	// TODO: create jwt token
 	out.Token, err = auth.CreateToken(userAdmin.ID, consts.ADMIN)
 	if err != nil {
-		return response.ErrCodeCreateJWTTokenFailed, nil, fmt.Errorf("error for create token failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("create token failed: %s", err)
 	}
 
+	// TODO: response
 	out.Account = userAdminInfor.Account
 	out.UserName = userAdminInfor.UserName
-
 	return response.ErrCodeLoginSuccess, out, nil
 }
 
@@ -87,11 +95,11 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.AdminRegisterInput) (cod
 	// TODO: check email exists in user admin
 	adminFound, err := m.sqlc.CheckUserAdminExistsByEmail(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("error for check admin already exists: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("check admin already exists failed: %s", err)
 	}
 
 	if adminFound {
-		return response.ErrCodeUserAlreadyExists, fmt.Errorf("admin already exists")
+		return response.ErrCodeAccountAlreadyExists, fmt.Errorf("admin already exists")
 	}
 
 	// TODO: check user spam / rate limiting by ip
@@ -101,7 +109,7 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.AdminRegisterInput) (cod
 	now := utiltime.GetTimeNow()
 	hashPassword, err := crypto.HashPassword(in.UserPassword)
 	if err != nil {
-		return response.ErrCodeHashPasswordFailed, fmt.Errorf("hash password failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("hash password admin failed: %s", err)
 	}
 
 	err = m.sqlc.CreateUserAdmin(ctx, database.CreateUserAdminParams{
@@ -113,7 +121,7 @@ func (m *serviceImpl) Register(ctx *gin.Context, in *vo.AdminRegisterInput) (cod
 	})
 
 	if err != nil {
-		return response.ErrCodeRegisterFailed, fmt.Errorf("error for register admin failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("register admin failed: %s", err)
 	}
 
 	return response.ErrCodeRegisterSuccess, nil

@@ -5,7 +5,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { StatsService } from '../../../services/manager/stat.service';
 import { Observable } from 'rxjs';
-import { NavbarComponent } from "../../../components/navbar/navbar.component";
+import { NavbarComponent } from '../../../components/navbar/navbar.component';
 
 @Component({
     selector: 'app-stats',
@@ -112,8 +112,6 @@ export class StatsComponent {
             (_, i) => `Ngày ${i + 1}`
         );
 
-        console.log(labels);
-
         obs.subscribe({
             next: (res) => {
                 if (res.data) {
@@ -157,4 +155,51 @@ export class StatsComponent {
         responsive: false,
     };
     public lineChartLegend = true;
+
+    protected export() {
+        if (
+            this.selectedMode === 'current-year' ||
+            this.selectedMode === 'custom-year'
+        ) {
+            this.statsService
+                .exportMonthlyEarningsCSV(this.selectedYear)
+                .subscribe({
+                    next: (blob: Blob) => {
+                        const filename = `monthly_earnings_${this.selectedYear}.csv`;
+
+                        this.statsService.downloadFile(blob, filename);
+
+                        // this.isDownloading = false;
+                        console.log('File downloaded successfully');
+                    },
+                    error: (error) => {
+                        // this.isDownloading = false;
+                    },
+                });
+        } else if (
+            this.selectedMode === 'current-month' ||
+            this.selectedMode === 'custom-month'
+        ) {
+            this.statsService
+                .exportDailyEarningsCSV(this.selectedMonth, this.selectedYear)
+                .subscribe({
+                    next: (blob: Blob) => {
+                        const filename = `daily_earnings_${
+                            this.selectedYear
+                        }_${this.selectedMonth
+                            .toString()
+                            .padStart(2, '0')}.csv`;
+
+                        this.statsService.downloadFile(blob, filename);
+
+                        // this.isDownloading = false;
+                        console.log('File downloaded successfully');
+                    },
+                    error: (error) => {
+                        console.error('Error downloading file:', error);
+                        // this.isDownloading = false;
+                    },
+                });
+        }
+    }
 }

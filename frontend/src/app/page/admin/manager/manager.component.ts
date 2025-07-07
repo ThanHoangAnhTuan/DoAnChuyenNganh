@@ -24,8 +24,6 @@ import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
-
 
 @Component({
     selector: 'app-manager',
@@ -41,8 +39,6 @@ import { Ripple } from 'primeng/ripple';
         RouterModule,
         Toast,
         ButtonModule,
-        Ripple,
-
     ],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',
@@ -57,7 +53,6 @@ export class ManagerComponent implements OnInit {
         'Is Deleted',
         'Created At',
         'Updated At',
-        // 'Action',
         'Show Accommodation',
     ];
 
@@ -71,16 +66,6 @@ export class ManagerComponent implements OnInit {
         { validators: this.passwordsMatchValidator }
     );
 
-    // protected formManager = new FormGroup({
-    //   account: new FormControl('', Validators.required),
-    //   username: new FormControl('', Validators.required),
-    //   login_time: new FormControl('', Validators.required),
-    //   logout_time: new FormControl('', Validators.required),
-    //   is_deleted: new FormControl('', Validators.required),
-    //   created_at: new FormControl('', Validators.required),
-    //   updated_at: new FormControl('', Validators.required),
-    // });
-
     private readonly dialogs = inject(TuiDialogService);
     protected openDialogCreate(
         content: PolymorpheusContent<TuiDialogContext<string, void>>
@@ -89,17 +74,11 @@ export class ManagerComponent implements OnInit {
 
         this.dialogs
             .open<string>(content, {
-                label: 'Create Manager',
+                label: 'Tạo manager',
             })
             .subscribe({
-                next: (result) => {
-                    console.log('Dialog result:', result);
-                },
                 complete: () => {
-                    console.log('Dialog closed');
-                },
-                error: (err) => {
-                    console.error('Dialog error:', err);
+                    this.formCreateManger.reset();
                 },
             });
     }
@@ -116,17 +95,19 @@ export class ManagerComponent implements OnInit {
         this.messageService.add({ severity, summary, detail });
     }
     ngOnInit(): void {
-        // TODO: get managers by admin
+        this.getManagers();
+    }
+
+    protected getManagers() {
         this.managerService.getManagers().subscribe({
             next: (value) => {
                 this.managers = value.data;
-                // console.log(this.managers);
             },
             error: (err) => {
-                console.error(err);
-            },
-            complete: () => {
-                console.log('Manager fetch complete.');
+                const message =
+                    err.error?.message ||
+                    'Không thể tải danh sách quản lý. Vui lòng thử lại sau.';
+                this.showToast('error', 'Lỗi tải danh sách quản lý', message);
             },
         });
     }
@@ -145,31 +126,33 @@ export class ManagerComponent implements OnInit {
             return;
         }
 
-        console.log(manager);
-
         this.managerService.createNewManager(manager).subscribe({
             next: (response) => {
-                // this.managers.push(response.data);
-                console.log("add manager successfully")
-
-                // console.log("Message: ", response.message);
-                // console.log("Status code: ", response.code);
-
+                console.log(response);
                 this.formCreateManger.reset();
                 this.showToast(
                     'success',
-                    'Manager created successfully',
+                    'Tạo tài khoản quản lý thành công',
                     response.message
                 );
+                this.getManagers();
             },
             error: (err) => {
+                console.log(err);
+                console.log(err.error.error.length);
+
+                for (let index = 0; index < err.error.error.length; index++) {
+                    this.formCreateManger
+                        .get(err.error.error[index]['field'])
+                        ?.setErrors({
+                            backend: err.error.error[index]['message'],
+                        });
+                }
                 this.showToast(
                     'error',
-                    'Error creating manager',
+                    'Lỗi khi tạo tài khoản quản lý',
                     err.error.message
                 );
-                // console.log('Message:', err.error.message);
-                // this.errorMessage = err.error.message;
             },
         });
     }

@@ -22,5 +22,6 @@ func (ar *AdminRouter) InitAdminRouter(Router *gin.RouterGroup) {
 		adminRouterPrivate.GET("/managers", controllers.AdminManager.GetManagers)
 		adminRouterPrivate.GET("/manager/:id/accommodations", controllers.AdminManager.GetAccommodationsOfManager)
 		adminRouterPrivate.PUT("/verify-accommodation", controllers.AdminManager.VerifyAccommodation)
+		adminRouterPrivate.PUT("/set-deleted-accommodation", controllers.AdminManager.SetDeletedAccommodation)
 	}
 }

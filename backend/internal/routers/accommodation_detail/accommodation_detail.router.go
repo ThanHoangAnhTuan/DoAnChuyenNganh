@@ -13,6 +13,7 @@ func (ur *AccommodationDetailRouter) InitAccommodationDetailRouter(Router *gin.R
 	userRouterPublic := Router.Group("/accommodation-detail")
 	{
 		userRouterPublic.GET("/get-accommodation-details/:id", controllers.AccommodationDetail.GetAccommodationDetails)
+		userRouterPublic.GET("/get-accommodation-details-by-manager/:id", controllers.AccommodationDetail.GetAccommodationDetailsByManager)
 	}
 
 	userRouterPrivate := Router.Group("/accommodation-detail")

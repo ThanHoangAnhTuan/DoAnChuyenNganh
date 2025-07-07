@@ -20,7 +20,7 @@ func (c *CUserLogin) Register(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("User register validation not found\n")
 		global.Logger.Error("User register validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -28,13 +28,13 @@ func (c *CUserLogin) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("User register binding error: %s\n", err.Error())
 		global.Logger.Error("User register binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("User register validation error: %s\n", validationErrors)
 		global.Logger.Error("User register validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -59,7 +59,7 @@ func (c *CUserLogin) VerifyOTP(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("User verifyOTP validation not found\n")
 		global.Logger.Error("User verifyOTP validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -67,7 +67,7 @@ func (c *CUserLogin) VerifyOTP(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("User verifyOTP binding error: %s\n", err.Error())
 		global.Logger.Error("User verifyOTP binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
@@ -79,17 +79,17 @@ func (c *CUserLogin) VerifyOTP(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserLogin().VerifyOTP(ctx, &params)
+	codeStatus, data, err := services.UserLogin().VerifyOTP(ctx, &params)
 	if err != nil {
 		fmt.Printf("User verifyOTP error: %s\n", err.Error())
 		global.Logger.Error("User verifyOTP error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("User verifyOTP success: %s\n", params.VerifyKey)
 	global.Logger.Info("User verifyOTP success: ", zap.String("info", params.VerifyKey))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
@@ -97,7 +97,7 @@ func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("User updatePasswordRegister validation not found\n")
 		global.Logger.Error("User updatePasswordRegister validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -105,7 +105,7 @@ func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("User updatePasswordRegister binding error: %s\n", err.Error())
 		global.Logger.Error("User updatePasswordRegister binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
@@ -117,17 +117,17 @@ func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, err := services.UserLogin().UpdatePasswordRegister(ctx, &params)
+	codeStatus, err := services.UserLogin().UpdatePasswordRegister(ctx, &params)
 	if err != nil {
 		fmt.Printf("User updatePasswordRegister error: %s\n", err.Error())
 		global.Logger.Error("User updatePasswordRegister error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("User updatePasswordRegister success: %s\n", params.Token)
 	global.Logger.Info("User updatePasswordRegister success: ", zap.String("info", params.Token))
-	response.SuccessResponse(ctx, codeResult, nil)
+	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CUserLogin) Login(ctx *gin.Context) {
@@ -135,7 +135,7 @@ func (c *CUserLogin) Login(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("User login validation not found\n")
 		global.Logger.Error("User login validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -143,7 +143,7 @@ func (c *CUserLogin) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		fmt.Printf("User login binding eror: %s\n", err.Error())
 		global.Logger.Error("User login binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
@@ -155,14 +155,14 @@ func (c *CUserLogin) Login(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.UserLogin().Login(ctx, &params)
+	codeStatus, data, err := services.UserLogin().Login(ctx, &params)
 	if err != nil {
 		fmt.Printf("User login error: %s\n", err.Error())
 		global.Logger.Error("User login error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 	fmt.Printf("User login success: %s\n", data.Token)
 	global.Logger.Info("User login success: ", zap.String("info", data.Token))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

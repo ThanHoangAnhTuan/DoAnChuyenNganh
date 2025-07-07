@@ -30,11 +30,11 @@ func (a *serviceImpl) DeleteAccommodationRoom(ctx *gin.Context, in *vo.DeleteAcc
 	// TODO: check user is manager
 	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation room belongs to manager
@@ -44,17 +44,17 @@ func (a *serviceImpl) DeleteAccommodationRoom(ctx *gin.Context, in *vo.DeleteAcc
 	})
 
 	if err != nil {
-		return response.ErrCodeCheckAccommodationRoomBelongsToManagerFailed, fmt.Errorf("check accommodation room belong to manager failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("check accommodation room belong to manager failed: %s", err)
 	}
 
 	if !isBelongs {
-		return response.ErrCodeCheckAccommodationRoomNotBelongsToManager, fmt.Errorf("accommodaion room not belongs to manager")
+		return response.ErrCodeForbidden, fmt.Errorf("accommodaion room not belongs to manager")
 	}
 
 	// TODO: update accommodation room
 	err = a.sqlc.DeleteAccommodationRoom(ctx, in.ID)
 	if err != nil {
-		return response.ErrCodeDeleteAccommodationRoomFailed, fmt.Errorf("delete accommodation room failed: %s", err)
+		return response.ErrCodeInternalServerError, fmt.Errorf("delete accommodation room failed: %s", err)
 	}
 	return response.ErrCodeDeleteAccommodationRoomSuccess, nil
 }
@@ -71,11 +71,11 @@ func (a *serviceImpl) UpdateAccommodationRoom(ctx *gin.Context, in *vo.UpdateAcc
 	// TODO: check user is manager
 	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation room belongs to manager
@@ -85,11 +85,11 @@ func (a *serviceImpl) UpdateAccommodationRoom(ctx *gin.Context, in *vo.UpdateAcc
 	})
 
 	if err != nil {
-		return response.ErrCodeCheckAccommodationRoomBelongsToManagerFailed, nil, fmt.Errorf("check accommodation room belong to manager failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("check accommodation room belong to manager failed: %s", err)
 	}
 
 	if !isBelongs {
-		return response.ErrCodeCheckAccommodationRoomNotBelongsToManager, nil, fmt.Errorf("accommodaion room not belongs to manager")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("accommodaion room not belongs to manager")
 	}
 
 	// TODO: update accommodation room
@@ -102,12 +102,12 @@ func (a *serviceImpl) UpdateAccommodationRoom(ctx *gin.Context, in *vo.UpdateAcc
 	})
 
 	if err != nil {
-		return response.ErrCodeUpdateAccommodationRoomFailed, nil, fmt.Errorf("update accommodation room failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("update accommodation room failed: %s", err)
 	}
 
 	out.ID = in.ID
 	out.Name = in.Name
-	out.Status = in.Status
+	out.Status = string(in.Status)
 	return response.ErrCodeUpdateAccommodationRoomSuccess, out, nil
 }
 
@@ -123,11 +123,11 @@ func (a *serviceImpl) GetAccommodationRooms(ctx *gin.Context, in *vo.GetAccommod
 	// TODO: check user is manager
 	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation type of manager
@@ -137,25 +137,24 @@ func (a *serviceImpl) GetAccommodationRooms(ctx *gin.Context, in *vo.GetAccommod
 	})
 
 	if err != nil {
-		return response.ErrCodeCheckAccommodationTypeBelongsToManagerFailed, nil, fmt.Errorf("check accommodation type belong to manager failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("check accommodation type belong to manager failed: %s", err)
 	}
 
 	if !isBelongs {
-		return response.ErrCodeCheckAccommodationTypeNotBelongsToManager, nil, fmt.Errorf("accommodaion type not belongs to manager")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("accommodaion type not belongs to manager")
 	}
 
 	// TODO: get accommodation room
 	accommodationRooms, err := a.sqlc.GetAccommodationRooms(ctx, in.AccommodationTypeID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationRoomFailed, nil, fmt.Errorf("get accommodation room failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation room failed: %s", err)
 	}
 
 	for _, accommodationRoom := range accommodationRooms {
 		out = append(out, &vo.GetAccommodationRoomsOutput{
-			ID:                  accommodationRoom.ID,
-			AccommodationTypeID: accommodationRoom.AccommodationType,
-			Name:                accommodationRoom.Name,
-			Status:              string(accommodationRoom.Status),
+			ID:     accommodationRoom.ID,
+			Name:   accommodationRoom.Name,
+			Status: string(accommodationRoom.Status),
 		})
 	}
 	return response.ErrCodeGetAccommodationRoomSuccess, out, nil
@@ -173,11 +172,11 @@ func (a *serviceImpl) CreateAccommodationRoom(ctx *gin.Context, in *vo.CreateAcc
 	// TODO: check user is manager
 	manager, err := a.sqlc.CheckUserManagerExistsByID(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetManagerFailed, nil, fmt.Errorf("error for get manager: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get manager: %s", err)
 	}
 
 	if !manager {
-		return response.ErrCodeManagerNotFound, nil, fmt.Errorf("manager not found")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("manager not found")
 	}
 
 	// TODO: check accommodation type of manager
@@ -187,11 +186,11 @@ func (a *serviceImpl) CreateAccommodationRoom(ctx *gin.Context, in *vo.CreateAcc
 	})
 
 	if err != nil {
-		return response.ErrCodeCheckAccommodationTypeBelongsToManagerFailed, nil, fmt.Errorf("check accommodation type belong to manager failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("check accommodation type belong to manager failed: %s", err)
 	}
 
 	if !isBelongs {
-		return response.ErrCodeCheckAccommodationTypeNotBelongsToManager, nil, fmt.Errorf("accommodaion type not belongs to manager")
+		return response.ErrCodeForbidden, nil, fmt.Errorf("accommodaion type not belongs to manager")
 	}
 
 	for i := range in.Quantity {
@@ -207,22 +206,21 @@ func (a *serviceImpl) CreateAccommodationRoom(ctx *gin.Context, in *vo.CreateAcc
 		})
 
 		if err != nil {
-			return response.ErrCodeCreateAccommodationRoomFailed, nil, fmt.Errorf("create accommodation room failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("create accommodation room failed: %s", err)
 		}
 	}
 
 	// TODO: get accommodation room
 	accommodationRooms, err := a.sqlc.GetAccommodationRooms(ctx, in.AccommodationTypeID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationRoomFailed, nil, fmt.Errorf("get accommodation room failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation room failed: %s", err)
 	}
 
 	for _, accommodationRoom := range accommodationRooms {
 		out = append(out, &vo.CreateAccommodationRoomOutput{
-			ID:                  accommodationRoom.ID,
-			AccommodationTypeID: accommodationRoom.AccommodationType,
-			Name:                accommodationRoom.Name,
-			Status:              string(accommodationRoom.Status),
+			ID:     accommodationRoom.ID,
+			Name:   accommodationRoom.Name,
+			Status: string(accommodationRoom.Status),
 		})
 	}
 

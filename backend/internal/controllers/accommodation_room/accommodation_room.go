@@ -19,7 +19,7 @@ func (c *Controller) CreateAccommodationRoom(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("CreateAccommodationRoom validation not found\n")
 		global.Logger.Error("CreateAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -27,13 +27,13 @@ func (c *Controller) CreateAccommodationRoom(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("CreateAccommodationRoom binding error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodationRoom binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, err)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, err)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("CreateAccommodationRoom validation error: %s\n", validationErrors)
 		global.Logger.Error("CreateAccommodationRoom validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -67,7 +67,7 @@ func (c *Controller) GetAccommodationRooms(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("GetAccommodationRooms validation not found\n")
 		global.Logger.Error("GetAccommodationRooms validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -75,13 +75,13 @@ func (c *Controller) GetAccommodationRooms(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("GetAccommodationRooms binding error")
 		global.Logger.Error("GetAccommodationRooms binding error")
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("GetAccommodationRooms validation error: %s\n", validationErrors)
 		global.Logger.Error("GetAccommodationRooms validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -106,7 +106,7 @@ func (c *Controller) UpdateAccommodationRoom(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("UpdateAccommodationRoom validation not found \n")
 		global.Logger.Error("UpdateAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -114,13 +114,13 @@ func (c *Controller) UpdateAccommodationRoom(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&params); err != nil {
 		fmt.Printf("UpdateAccommodationRoom binding error: %s\n", err.Error())
 		global.Logger.Error("UpdateAccommodationRoom binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("UpdateAccommodationRoomInput validation error: %s\n", validationErrors)
 		global.Logger.Error("UpdateAccommodationRoomInput validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
@@ -155,7 +155,7 @@ func (c *Controller) DeleteAccommodationRoom(ctx *gin.Context) {
 	if !exists {
 		fmt.Printf("DeleteAccommodationRoom validation not found\n")
 		global.Logger.Error("DeleteAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeValidatorNotFound, nil)
+		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
 		return
 	}
 
@@ -163,13 +163,13 @@ func (c *Controller) DeleteAccommodationRoom(ctx *gin.Context) {
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		fmt.Printf("DeleteAccommodationRoom binding error: %s\n", err.Error())
 		global.Logger.Error("DeleteAccommodationRoom binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeParamsInvalid, nil)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err)
+		validationErrors := response.FormatValidationErrorsToStruct(err, params)
 		fmt.Printf("DeleteAccommodationRoom validation error: %s\n", validationErrors)
 		global.Logger.Error("DeleteAccommodationRoom validation error: ", zap.Any("error", validationErrors))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)

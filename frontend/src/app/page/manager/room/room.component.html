@@ -1,0 +1,144 @@
+<p-toast></p-toast>
+<app-navbar></app-navbar>
+<main>
+    <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="openDialogCreate(createForm)"
+    >
+        New
+    </button>
+
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+        <tbody tuiTbody>
+            @for(room of rooms; track room.id; let i = $index) {
+            <tr tuiTr>
+                <td *tuiCell="'ID'" tuiTd>
+                    {{ i + 1 }}
+                </td>
+                <td *tuiCell="'Name'" tuiTd>
+                    {{ room.name }}
+                </td>
+                <td *tuiCell="'Status'" tuiTd>
+                    {{ room.status }}
+                </td>
+                <td *tuiCell="'Action'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            (click)="openDialogUpdate(updateForm, room)"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            appearance="action"
+                            iconStart="@tui.trash"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.color]="'red'"
+                            (click)="deleteRoom(room.id)"
+                        >
+                            Delete
+                        </button>
+                    </span>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <ng-template #createForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formCreateRoom"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="createRoom()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Prefix</label>
+                <input
+                    formControlName="prefix"
+                    placeholder="Prefix"
+                    tuiTextfield
+                />
+                @if(formCreateRoom.get('prefix')?.invalid &&
+                formCreateRoom.get('prefix')?.touched) {
+                <div>
+                    <small class="text-red-500">Prefix is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Quantity</label>
+                <input tuiInputNumber formControlName="quantity" />
+                @if(formCreateRoom.get('quantity')?.invalid &&
+                formCreateRoom.get('quantity')?.touched) {
+                <div>
+                    @if(formCreateRoom.get('quantity')?.errors?.['min']) {
+                    <small class="text-red-500">
+                        Quantity must be at least 1
+                    </small>
+                    } @if(formCreateRoom.get('quantity')?.errors?.['max']) {
+                    <small class="text-red-500">
+                        Quantity must be less than 100
+                    </small>
+                    }
+                </div>
+                }
+            </tui-textfield>
+        </form>
+        <button tuiButton type="button" (click)="createRoom()">Submit</button>
+    </ng-template>
+
+    <ng-template #updateForm>
+        <form
+            tuiCardLarge
+            [formGroup]="formUpdateRoom"
+            [style.max-width.rem]="32"
+            [style.padding.px]="5"
+            (ngSubmit)="updateRoom()"
+        >
+            <tui-textfield>
+                <label tuiLabel>Name</label>
+                <input formControlName="name" placeholder="Name" tuiTextfield />
+                @if(formUpdateRoom.get('name')?.invalid &&
+                formUpdateRoom.get('name')?.touched) {
+                <div>
+                    <small class="text-red-500">Name is required</small>
+                </div>
+                }
+            </tui-textfield>
+            <tui-textfield>
+                <label tuiLabel>Status</label>
+                <!-- <input formControlName="city" placeholder="City" tuiTextfield /> -->
+                <input formControlName="status" tuiSelect />
+                <tui-data-list-wrapper
+                    *tuiTextfieldDropdown
+                    new
+                    [items]="status"
+                />
+                @if(formUpdateRoom.get('status')?.invalid &&
+                formUpdateRoom.get('status')?.touched) {
+                <div>
+                    <small class="text-red-500">Status is required</small>
+                </div>
+                }
+            </tui-textfield>
+        </form>
+        <button tuiButton type="button" (click)="updateRoom()">Submit</button>
+    </ng-template>
+</main>

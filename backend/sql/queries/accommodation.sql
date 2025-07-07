@@ -92,12 +92,35 @@ SELECT
     `facilities`,
     `gg_map`,
     `rules`,
-    `rating`
+    `rating`,
+    `is_deleted`,
+    `is_verified`
 FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
     AND `is_deleted` = 0;
+
+-- name: GetAccommodationByIdByAdmin :one
+SELECT
+    `id`,
+    `manager_id`,
+    `country`,
+    `name`,
+    `city`,
+    `district`,
+    `address`,
+    `description`,
+    `facilities`,
+    `gg_map`,
+    `rules`,
+    `rating`,
+    `is_deleted`,
+    `is_verified`
+FROM
+    `ecommerce_go_accommodation`
+WHERE
+    `id` = ?;
 
 
 -- name: GetAccommodationsByCity :many
@@ -142,6 +165,15 @@ WHERE
     `id` = ?
     AND `is_deleted` = 0;
 
+-- name: RestoreAccommodation :exec
+UPDATE `ecommerce_go_accommodation`
+SET
+    `is_deleted` = 0,
+    `updated_at` = ?
+WHERE
+    `id` = ?
+    AND `is_deleted` = 1;
+
 -- name: CheckAccommodationExists :one
 SELECT
     EXISTS (
@@ -168,8 +200,7 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0
-    AND `manager_id` = sqlc.arg ("manager_id");
+    `manager_id` = sqlc.arg ("manager_id");
 
 -- name: CountAccommodationByCity :one
 SELECT
@@ -218,8 +249,7 @@ SELECT
 FROM
     `ecommerce_go_accommodation`
 WHERE
-    `is_deleted` = 0
-    AND `manager_id` = ?
+    `manager_id` = ?
 LIMIT
     ?
 OFFSET
@@ -262,7 +292,9 @@ SELECT
     `gg_map`,
     `address`,
     `rules`,
-    `rating`
+    `rating`,
+    `is_deleted`,
+    `is_verified`
 FROM
     `ecommerce_go_accommodation`
 WHERE
@@ -280,7 +312,7 @@ FROM
     `ecommerce_go_accommodation`
 WHERE
     `id` = ?
-    AND `is_deleted` = 0 AND `is_verified` = 1;
+    AND `is_deleted` = 0;
 
 -- name: UpdateStatusAccommodation :exec
 UPDATE `ecommerce_go_accommodation`

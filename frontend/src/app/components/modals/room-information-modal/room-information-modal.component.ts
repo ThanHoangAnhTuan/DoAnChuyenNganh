@@ -13,8 +13,6 @@ export class RoomInformationModalComponent implements OnInit {
     @Input() roomImages: string[] = [];
 
     ngOnInit(): void {
-        console.log('Room Name:', this.roomName);
-        console.log('Room Images:', this.roomImages);
     }
     
     // Responsive của Galleria

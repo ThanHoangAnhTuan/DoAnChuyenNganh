@@ -34,17 +34,17 @@ func (r *serviceImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (
 	// TODO: check user exists
 	account, err := r.sqlc.GetUserBaseByIdAndReturnAccount(ctx, userID)
 	if err != nil {
-		return response.ErrCodeGetUserBaseFailed, nil, fmt.Errorf("get user base failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	if account == "" {
-		return response.ErrCodeUserBaseNotFound, nil, fmt.Errorf("user base not found")
+		return response.ErrCodeUnauthorized, nil, fmt.Errorf("user base not found")
 	}
 
 	// TODO: check accommodation exists
 	accommodationExists, err := r.sqlc.CheckAccommodationExists(ctx, in.AccommodationID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationFailed, nil, fmt.Errorf("get acommodation failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get acommodation failed: %s", err)
 	}
 
 	if !accommodationExists {
@@ -57,11 +57,11 @@ func (r *serviceImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (
 		OrderIDExternal: in.OrderIDExternal,
 	})
 	if err != nil {
-		return response.ErrCodeGetOrderFailed, nil, fmt.Errorf("get order failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get order failed: %s", err)
 	}
 
 	if !booked {
-		return response.ErrCodeGetOrderByUserIDNotFound, nil, fmt.Errorf("user not booked accommodation")
+		return response.ErrCodeUserNotBookAccommodation, nil, fmt.Errorf("user not booked accommodation")
 	}
 
 	// TODO: Create review
@@ -79,13 +79,13 @@ func (r *serviceImpl) CreateReview(ctx *gin.Context, in *vo.CreateReviewInput) (
 	})
 
 	if err != nil {
-		return response.ErrCodeCreateReviewFailed, nil, fmt.Errorf("create review failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("create review failed: %s", err)
 	}
 
 	// TODO: get user info
 	userInfo, err := r.sqlc.GetNameAndImageUserInfo(ctx, account)
 	if err != nil {
-		return response.ErrCodeGetUserInfoFailed, nil, fmt.Errorf("get user info failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
 	}
 	out.Name = userInfo.UserName
 	out.Image = userInfo.Image
@@ -107,7 +107,7 @@ func (r *serviceImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (code
 	// TODO: check accommodation exists
 	accommodationExists, err := r.sqlc.CheckAccommodationExists(ctx, in.AccommodationID)
 	if err != nil {
-		return response.ErrCodeGetAccommodationFailed, nil, nil, fmt.Errorf("get acommodation failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get acommodation failed: %s", err)
 	}
 
 	if !accommodationExists {
@@ -116,7 +116,7 @@ func (r *serviceImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (code
 
 	totalReviews, err := r.sqlc.CountReviewsByAccommodation(ctx, in.AccommodationID)
 	if err != nil {
-		return response.ErrCodeGetReviewByAccommodationFailed, nil, nil, fmt.Errorf("count reviews failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("count reviews failed: %s", err)
 	}
 
 	offset := (page - 1) * limit
@@ -128,7 +128,7 @@ func (r *serviceImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (code
 		Offset:          offset,
 	})
 	if err != nil {
-		return response.ErrCodeGetReviewByAccommodationFailed, nil, nil, fmt.Errorf("get reviews by accommodation failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get reviews by accommodation failed: %s", err)
 	}
 
 	for _, review := range reviews {
@@ -137,17 +137,17 @@ func (r *serviceImpl) GetReviews(ctx *gin.Context, in *vo.GetReviewsInput) (code
 		// TODO: check user exists
 		account, err := r.sqlc.GetUserBaseByIdAndReturnAccount(ctx, review.UserID)
 		if err != nil {
-			return response.ErrCodeGetUserBaseFailed, nil, nil, fmt.Errorf("get user base failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get user base failed: %s", err)
 		}
 
 		if account == "" {
-			return response.ErrCodeUserBaseNotFound, nil, nil, fmt.Errorf("user base not found")
+			return response.ErrCodeUserNotFound, nil, nil, fmt.Errorf("user base not found")
 		}
 
 		// TODO: get info user
 		userInfo, err := r.sqlc.GetNameAndImageUserInfo(ctx, account)
 		if err != nil {
-			return response.ErrCodeGetUserInfoFailed, nil, nil, fmt.Errorf("get user info failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, nil, fmt.Errorf("get user info failed: %s", err)
 		}
 
 		out = append(out, &vo.GetReviewOutput{
