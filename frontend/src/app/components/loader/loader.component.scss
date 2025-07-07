@@ -1,0 +1,39 @@
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: rgba(255, 255, 255, 0.7);
+    
+    &.transparent {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  &.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.loader-text {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: var(--tui-text-01);
+  text-align: center;
+}

@@ -1,4 +1,7 @@
 <p-toast></p-toast>
+@if (isLoading) {
+<app-loader text="Loading..."></app-loader>
+}
 
 <div class="verify-otp-container">
     <div class="otp-card">
@@ -35,36 +38,28 @@
                     </div> -->
                     <p>Mã xác thực đã được gửi đến email của bạn</p>
                 </div>
-
                 <div class="otp-input-group">
+                    @for (i of [0, 1, 2, 3, 4, 5]; track i; let idx = $index) {
                     <input
-                        type="text"
-                        maxlength="1"
-                        class="otp-input"
-                        *ngFor="let i of [0, 1, 2, 3, 4, 5]; let idx = index"
-                        #otpInput
-                        (keyup)="onOtpInput($event, idx, otpInput)"
+                        type="number"
+                        class="tui-text-field tui-otp-input"
+                        [ngModel]="otpValues[idx]"
+                        (ngModelChange)="onOtpChange(idx, $event)"
                         (paste)="onOtpPaste($event)"
+                        (keydown)="onKeyDown($event, idx)"
+                        min="0"
+                        max="9"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        autocomplete="one-time-code"
                     />
+                    }
                 </div>
 
                 <div class="form-actions">
                     <button class="btn-primary" (click)="verifyOTP()">
-                        <span *ngIf="isVerifying" class="spinner"></span>
-                        <span *ngIf="!isVerifying">Xác thực</span>
+                        <span>Xác thực</span>
                     </button>
-
-                    <div class="resend-otp">
-                        <span *ngIf="resendCountdown > 0"
-                            >Gửi lại sau {{ resendCountdown }} giây</span
-                        >
-                        <a
-                            *ngIf="resendCountdown === 0"
-                            href="javascript:void(0)"
-                            (click)="resendOTP()"
-                            >Gửi lại mã</a
-                        >
-                    </div>
                 </div>
             </div>
 
@@ -143,8 +138,7 @@
                         [disabled]="!canUpdatePassword()"
                         (click)="updatePassword()"
                     >
-                        <span *ngIf="isUpdating" class="spinner"></span>
-                        <span *ngIf="!isUpdating">Cập nhật mật khẩu</span>
+                        <span>Cập nhật mật khẩu</span>
                     </button>
                 </div>
             </div>

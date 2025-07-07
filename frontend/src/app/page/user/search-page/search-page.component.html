@@ -38,19 +38,21 @@
         <div class="hotel-card">
             <div class="hotel-image">
                 @for (image of hotel.images; track image){
-                <img [src]="'http://localhost:8080/uploads/' + image" [alt]="hotel.name" [routerLink]="[
-                            '/search/accommodation/detail',
-                            hotel.id
-                        ]" [queryParams]="{
+                <img
+                    [src]="'http://localhost:8080/uploads/' + image"
+                    [alt]="hotel.name"
+                    [routerLink]="['/search/accommodation/detail', hotel.id]"
+                    [queryParams]="{
                             name: hotel.name,
                             city: hotel.city,
                             checkIn: checkIn,
                             checkOut: checkOut,
-                        }" />
+                        }"
+                />
                 }
-                <div class="featured-badge">
+                <!-- <div class="featured-badge">
                     <tui-icon icon="@tui.heart"></tui-icon>
-                </div>
+                </div> -->
             </div>
 
             <div class="hotel-content">
@@ -66,7 +68,8 @@
                             city: hotel.city,
                             checkIn: checkIn,
                             checkOut: checkOut,
-                        }">
+                        }"
+                    >
                         {{ hotel.name }}
                         <span class="stars">{{ getStars(hotel.rating) }}</span>
                     </h2>
@@ -104,7 +107,8 @@
                                 city: hotel.city,
                                 checkIn: checkIn,
                                 checkOut: checkOut,
-                            }">
+                            }"
+                        >
                             See availability
                         </button>
                     </div>

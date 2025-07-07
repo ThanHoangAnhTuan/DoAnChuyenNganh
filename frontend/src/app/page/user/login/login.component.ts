@@ -9,10 +9,11 @@ import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { LoaderComponent } from "../../../components/loader/loader.component";
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule],
+    imports: [ReactiveFormsModule, RouterLink, Toast, ButtonModule, LoaderComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
     providers: [MessageService, provideAnimations()],

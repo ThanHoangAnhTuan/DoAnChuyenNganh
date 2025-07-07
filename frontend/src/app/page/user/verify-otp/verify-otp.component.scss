@@ -141,22 +141,73 @@
   margin-bottom: 30px;
 }
 
-.otp-input {
-  width: 45px;
-  height: 55px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
-  color: #495057;
-  transition: all 0.2s ease;
+/* Add to verify-otp.component.scss */
+
+.otp-input-group {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  
+  .tui-otp-input {
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--tui-base-03, #e5e5e5);
+    background-color: var(--tui-base-01, #ffffff);
+    transition: all 0.2s ease;
+    appearance: textfield;
+    -moz-appearance: textfield;
+    
+    /* Remove arrows/spinners */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: var(--tui-primary, #5b8def);
+      box-shadow: 0 0 0 2px rgba(91, 141, 239, 0.2);
+    }
+    
+    /* Make sure the input is fully visible on mobile */
+    @media (max-width: 480px) {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Error state styling */
+.has-error .otp-input-group .tui-otp-input {
+  border-color: var(--tui-error-fill, #f45725);
   
   &:focus {
-    border-color: #4b6cb7;
-    box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.25);
-    outline: none;
+    box-shadow: 0 0 0 2px rgba(244, 87, 37, 0.2);
   }
+}
+
+/* Add animation for focus state */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(91, 141, 239, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0); }
+}
+
+.tui-otp-input:focus {
+  animation: pulse 1.5s infinite;
+}
+
+/* Make sure the inputs are clean with no arrow buttons */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Password section */

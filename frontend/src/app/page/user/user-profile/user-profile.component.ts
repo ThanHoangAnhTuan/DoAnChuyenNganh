@@ -91,7 +91,6 @@ export class UserProfileComponent implements OnInit {
             gender: [Gender.Male],
             birthday: new FormControl(null, []),
         });
-
         this.loadUserData();
     }
 
@@ -156,7 +155,6 @@ export class UserProfileComponent implements OnInit {
                         const checkInDay = Number(dayStr);
                         const checkInMonth = Number(monthStr);
                         const checkInYear = Number(yearStr);
-
                         birthdayDate = new Date(
                             checkInYear,
                             checkInMonth - 1,
@@ -166,7 +164,6 @@ export class UserProfileComponent implements OnInit {
                         // Không có ngày sinh => dùng ngày hiện tại
                         birthdayDate = null
                     }
-
                     this.profileForm.patchValue({
                         username: this.currentUser.username,
                         phone: this.currentUser.phone,
@@ -195,9 +192,7 @@ export class UserProfileComponent implements OnInit {
             this.profileForm.markAllAsTouched();
             return;
         }
-
         this.isSubmitting = true;
-
         const day = String(this.profileForm.value?.birthday.getDate()).padStart(
             2,
             '0'
