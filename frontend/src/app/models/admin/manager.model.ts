@@ -1,4 +1,5 @@
 import { Facility } from "../facility/facility.model";
+import { Pagination } from "../pagination/pagination.model";
 
 export interface Manager {
     id: string;
@@ -56,7 +57,8 @@ export interface GetAccommodationsOfManagerByAdmin {
 export interface GetAccommodationsOfManagerByAdminOutput {
     code: number,
     message: string,
-    data: GetAccommodationsOfManagerByAdmin[]
+    data: GetAccommodationsOfManagerByAdmin[],
+    pagination: Pagination,
 }
 
 export interface VerifyAccommodationInput {

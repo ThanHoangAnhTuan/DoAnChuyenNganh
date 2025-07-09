@@ -73,6 +73,13 @@ func (c *CAdminManager) GetAccommodationsOfManager(ctx *gin.Context) {
 		return
 	}
 
+	if err := ctx.ShouldBindQuery(&params); err != nil {
+		fmt.Printf("GetAccommodationsOfManager binding error: %s\n", err.Error())
+		global.Logger.Error("GetAccommodationsOfManager binding error: ", zap.String("error", err.Error()))
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+		return
+	}
+
 	err := validation.(*validator.Validate).Struct(params)
 	if err != nil {
 		validationErrors := response.FormatValidationErrorsToStruct(err, params)

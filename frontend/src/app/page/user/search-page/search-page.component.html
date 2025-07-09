@@ -116,5 +116,13 @@
             </div>
         </div>
         }
+
+        <div class="load-more">
+            <button
+                class="load-more-button"
+                (click)="loadMoreHotels()"
+                [disabled]="pagination.limit >= pagination.total">
+                Load more hotels
+            </button>
     </div>
 </div>
