@@ -204,19 +204,17 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 		}
 
 		facilities := []vo.FacilityDetailOutput{}
+		allFacilities, err := a.sqlc.GetAccommodationFacilitiesByIds(ctx, facilityIDs)
+		if err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facilities failed: %s", err)
+		}
 
-		for _, facilityID := range facilityIDs {
-			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
-			}
-
+		for _, facility := range allFacilities {
 			facilities = append(facilities, vo.FacilityDetailOutput{
 				ID:   facility.ID,
 				Name: facility.Name,
 			})
 		}
-
 		// TODO: get images of accommodation detail
 		accommodationDetailImages, err := a.sqlc.GetAccommodationDetailImages(ctx, accommodationDetail.ID)
 		if err != nil {

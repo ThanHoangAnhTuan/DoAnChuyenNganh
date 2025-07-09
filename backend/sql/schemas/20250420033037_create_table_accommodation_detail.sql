@@ -16,6 +16,7 @@ CREATE TABLE
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),
+        INDEX `idx_accommodation_id` (`accommodation_id`),
         FOREIGN KEY (`accommodation_id`) REFERENCES `ecommerce_go_accommodation` (`id`) ON DELETE CASCADE,
         FOREIGN KEY (`discount_id`) REFERENCES `ecommerce_go_discount` (`id`) ON DELETE CASCADE,
         UNIQUE KEY `unique_accommodation_detail_id_discount_id` (`id`, `discount_id`)

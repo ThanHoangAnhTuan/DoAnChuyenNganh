@@ -13,6 +13,15 @@ FROM
 WHERE
     `id` = ?;
 
+-- name: GetAccommodationFacilitiesByIds :many
+SELECT
+    `id`,
+    `name`
+FROM
+    `ecommerce_go_accommodation_detail_facility`
+WHERE
+    `id` IN (sqlc.slice ('ids'));
+
 -- name: GetAccommodationFacilityDetail :many
 SELECT
     `id`,

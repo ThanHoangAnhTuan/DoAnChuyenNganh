@@ -158,8 +158,8 @@
                 <!-- iframe hiển thị google map -->
                 <iframe
                         [src]="getSafeUrl(accommodation.google_map)"
-                        width="300"
-                        height="200"
+                        width="100%"
+                        height="100%"
                         style="border: 0"
                         allowfullscreen=""
                         loading="lazy"
@@ -178,7 +178,7 @@
     <div class="description-facilities-container">
         <div class="accommodation-description-facilities-container">
             <div class="description-container">
-                <p class="description-title">Về chỗ ở</p>
+                <!-- <p class="description-title">Về chỗ ở</p> -->
                 <div
                     class="description-content-container"
                     [class.collapsed]="!showFull"
@@ -265,7 +265,7 @@
                         </ng-container>
                     </div>
 
-                    <div
+                    <!-- <div
                         class="some-room-facilities-container"
                         *ngIf="accommodation"
                     >
@@ -297,7 +297,7 @@
                             />
                             <p class="facility-name">{{ facility.name }}</p>
                         </div>
-                    </div>
+                    </div> -->
                 </td>
 
                 <td class="number-of-guests-container">
@@ -365,10 +365,10 @@
                     <ng-container *ngIf="getTotalPrice() > 0">
                         <p>Bạn sẽ được chuyển sang bước kế tiếp</p>
                     </ng-container>
-                    <ul class="sub-content">
+                    <!-- <ul class="sub-content">
                         <li>Chỉ mất có 2 phút</li>
                         <li>Bạn sẽ không bị trừ tiền ngay</li>
-                    </ul>
+                    </ul> -->
                 </td>
             </tr>
 

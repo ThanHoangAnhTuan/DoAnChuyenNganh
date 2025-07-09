@@ -124,7 +124,6 @@ type GetAccommodationsByCityOutput struct {
 
 type GetAccommodationInput struct {
 	ID string `uri:"id"`
-	BasePaginationInput
 }
 
 type GetAccommodationOutput struct {

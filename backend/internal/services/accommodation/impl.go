@@ -500,6 +500,8 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 			Facilities:  facilities,
 			Rules:       rules,
 			Images:      imagePaths,
+			IsVerified:  accommodation.IsVerified,
+			IsDeleted:   accommodation.IsDeleted,
 		})
 	}
 

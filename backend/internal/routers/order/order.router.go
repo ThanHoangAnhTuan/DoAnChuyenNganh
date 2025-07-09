@@ -17,7 +17,7 @@ func (r *OrderRouter) InitOrderRouter(Router *gin.RouterGroup) {
 		orderRouterPrivate.POST("/checkin", controllers.Order.CheckIn)
 		orderRouterPrivate.POST("/checkout", controllers.Order.CheckOut)
 		orderRouterPrivate.GET("/get-order-info-after-payment", controllers.Order.GetOrderInfoAfterPayment)
-		orderRouterPrivate.GET("/get-order-by-manager", controllers.Order.GetOrdersByManager)
-		orderRouterPrivate.GET("/get-order-by-user", controllers.Order.GetOrdersByUser)
+		orderRouterPrivate.GET("/get-orders-by-manager", controllers.Order.GetOrdersByManager)
+		orderRouterPrivate.GET("/get-orders-by-user", controllers.Order.GetOrdersByUser)
 	}
 }
