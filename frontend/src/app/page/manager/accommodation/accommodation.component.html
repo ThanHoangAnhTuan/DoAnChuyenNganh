@@ -1,6 +1,8 @@
 <p-toast></p-toast>
 <app-navbar></app-navbar>
 <main>
+    <div #topList></div>
+
     <button
         size="l"
         tuiButton
@@ -141,6 +143,11 @@
             }
         </tbody>
     </table>
+
+    <div class="pagination-container">
+        <tui-pagination [activePadding]="2" [index]="0" [length]="pagination.total_pages"
+            (indexChange)="onPageChange($event)" />
+    </div>
 
     <ng-template #createForm>
         <form

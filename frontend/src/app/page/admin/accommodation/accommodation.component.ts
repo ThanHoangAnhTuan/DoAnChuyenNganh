@@ -6,6 +6,7 @@ import {
     Injector,
     OnInit,
     QueryList,
+    ViewChild,
     ViewChildren,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -29,6 +30,7 @@ import {
     tuiCreateTimePeriods,
     TuiSelect,
     TuiDataListWrapper,
+    TuiPagination,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import {
@@ -47,6 +49,7 @@ import {
     SetDeletedAccommodationInput,
     VerifyAccommodationInput,
 } from '../../../models/admin/manager.model';
+import { Pagination } from '../../../models/pagination/pagination.model';
 
 @Component({
     standalone: true,
@@ -65,6 +68,7 @@ import {
         TuiSelectModule,
         TuiDataListWrapper,
         NavbarComponent,
+        TuiPagination,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -88,6 +92,7 @@ import {
 })
 export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
+    @ViewChild('topList') topList!: ElementRef;
 
     protected columns: string[] = [
         'ID',
@@ -106,6 +111,12 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected readonly tools = TUI_EDITOR_DEFAULT_TOOLS;
     protected managerId: string = '';
     protected accommodations: GetAccommodationsOfManagerByAdmin[] = [];
+    protected pagination: Pagination = {
+        page: 1,
+        limit: 10,
+        total: 0,
+        total_pages: 0,
+    };
     protected cities: City[] = [];
     protected districts: District[] = [];
     protected cityNames: string[] = [];
@@ -145,7 +156,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private addressService: AddressService,
         private sanitizer: DomSanitizer,
         private route: ActivatedRoute
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.route.params.subscribe((params) => {
@@ -155,6 +166,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 .subscribe((response) => {
                     console.log(response);
                     this.accommodations = response.data;
+                    this.pagination = response.pagination;
+
+                    console.log(this.accommodations);
+                    console.log(this.pagination);
+                    console.log(this.pagination.total_pages);
                 });
         });
 
@@ -281,6 +297,26 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected closeDeleteConfirmModal() {
         this.isModalConfirmDeleteOpen = false;
         this.isUpdateDeleted = false;
+    }
+
+    protected onPageChange(page: number) {
+        console.log('Page changed to:', page + 1);
+
+        this.accommodationService.getAccommodationsOfManagerByAdminWithPage(this.managerId, page + 1).subscribe((response) => {
+            this.accommodations = response.data;
+            this.pagination = response.pagination;
+            this.pagination.page = page;
+            this.scrollToTop();
+
+            console.log(this.accommodations);
+            console.log(this.pagination);
+        })
+    }
+
+    protected scrollToTop() {
+        if (this.topList) {
+            this.topList.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     ngAfterViewInit(): void {
