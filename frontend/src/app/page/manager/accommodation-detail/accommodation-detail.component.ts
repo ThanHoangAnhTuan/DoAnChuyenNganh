@@ -297,6 +297,7 @@ export class AccommodationDetailComponent implements OnInit {
             .createAccommodationDetail(accommodationDetail)
             .subscribe((response) => {
                 this.accommodationDetails.push(response.data);
+                
                 this.formAccommodationDetail.reset();
                 this.formFacilityDetail.reset();
                 this.showToast(

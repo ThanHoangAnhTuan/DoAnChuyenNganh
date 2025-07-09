@@ -6,6 +6,7 @@ import {
     Injector,
     OnInit,
     QueryList,
+    ViewChild,
     ViewChildren,
 } from '@angular/core';
 import {
@@ -45,6 +46,7 @@ import {
     TuiTooltip,
     TuiDataListWrapperComponent,
     TuiDataListWrapper,
+    TuiPagination,
 } from '@taiga-ui/kit';
 import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -64,6 +66,7 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { Pagination } from '../../../models/pagination/pagination.model';
 
 @Component({
     standalone: true,
@@ -91,6 +94,7 @@ import { ButtonModule } from 'primeng/button';
         NavbarComponent,
         Toast,
         ButtonModule,
+        TuiPagination,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -115,8 +119,15 @@ import { ButtonModule } from 'primeng/button';
 })
 export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
-
+    @ViewChild('topList') topList!: ElementRef;
+    
     protected accommodations!: Accommodation[];
+    protected pagination: Pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            total_pages: 0,
+        };
     protected facilities!: Facility[];
     protected columns: string[] = [
         'ID',
@@ -151,6 +162,23 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     private readonly dialogs = inject(TuiDialogService);
 
     protected formAccommodation = new FormGroup({
+        name: new FormControl('', Validators.required),
+        country: new FormControl('Việt Nam'),
+        city: new FormControl('', Validators.required),
+        district: new FormControl(
+            { value: '', disabled: true },
+            Validators.required
+        ),
+        address: new FormControl('', Validators.required),
+        rating: new FormControl(0, [
+            Validators.required,
+            Validators.min(1),
+            Validators.max(5),
+        ]),
+        description: new FormControl('', Validators.required),
+        googleMap: new FormControl('', Validators.required),
+    });
+    protected formAccommodationReset = new FormGroup({
         name: new FormControl('', Validators.required),
         country: new FormControl('Việt Nam'),
         city: new FormControl('', Validators.required),
@@ -214,6 +242,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         this.accommodationService.getAccommodations().subscribe((response) => {
             console.log(response);
             this.accommodations = response.data;
+            this.pagination = response.pagination;
+            this.pagination.page = 1; // Reset to first page on load
         });
 
         this.facilityService.getFacilities().subscribe((response) => {
@@ -392,7 +422,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         this.accommodationService.createAccommodation(accommodation).subscribe({
             next: (response) => {
                 this.accommodations.push(response.data);
-                this.formAccommodation.reset();
+                this.formAccommodation.reset(this.formAccommodationReset.value);
                 this.formFacilities.reset();
                 this.accommodations = [...this.accommodations];
                 this.checkDescriptionOverflow();
@@ -479,6 +509,26 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 }
             });
         });
+    }
+
+    protected onPageChange(page: number) {
+        console.log('Page changed to:', page + 1);
+
+        this.accommodationService.getAccommodationWithPage(page + 1).subscribe((response) => {
+            this.accommodations = response.data;
+            this.pagination = response.pagination;
+            this.pagination.page = page;
+            this.scrollToTop();
+
+            console.log(this.accommodations);
+            console.log(this.pagination);
+        })
+    }
+
+    protected scrollToTop() {
+        if (this.topList) {
+            this.topList.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     ngAfterViewInit(): void {

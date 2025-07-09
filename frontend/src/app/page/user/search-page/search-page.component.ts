@@ -13,6 +13,7 @@ import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AddressService } from '../../../services/address/address.service';
 import { forkJoin, map, switchMap } from 'rxjs';
+import { Pagination } from '../../../models/pagination/pagination.model';
 
 @Component({
     selector: 'app-search-page',
@@ -71,6 +72,12 @@ export class SearchPageComponent implements OnInit {
     // level2AddressNames: string = '';
     error = false; // Có lỗi khi tải dữ liệu không
     filteredHotels: any[] = [];
+    protected pagination: Pagination = {
+        page: 1,
+        limit: 10,
+        total: 0,
+        total_pages: 0,
+    }
 
     constructor(
         private hotelService: HotelService,
@@ -122,21 +129,27 @@ export class SearchPageComponent implements OnInit {
         },
     ];
 
-    page = 1;
-
     loadMoreHotels(): void {
-        this.page++;
-        this.loadHotels()
+        if (this.pagination.limit >= this.pagination.total) {
+            console.log('Đã tải hết tất cả khách sạn');
+            return; // Không tải thêm nếu đã đạt giới hạn
+        } else {
+            this.pagination.limit += 10; // Tăng giới hạn mỗi lần tải thêm
+            this.loadHotels()
+        }
     }
 
     loadHotels(): void {
         this.hotelService
-            .getAccommodationsByCity(this.citySlug, this.page)
+            .getAccommodationsByCityWithLimit(this.citySlug, this.pagination.limit)
             .pipe(
                 switchMap((hotels) => {
                     const hotelList = hotels.data;
+                    this.pagination = hotels.pagination;
+
                     console.log('hotelList', hotels);
-                    
+                    console.log('pagination', this.pagination);
+
                     const hotelWithCityName$ = hotelList.map((hotel) =>
                         this.addressService.getCityBySlug(hotel.city).pipe(
                             map((cityData) => {

@@ -18,4 +18,13 @@ export class HotelService {
             this.apiUrl + '?city=' + city + '&page=' + page,
         );
     }
+
+    getAccommodationsByCityWithLimit(
+        city: string,
+        limit: number
+    ): Observable<GetAccommodationResponse> {
+        return this.http.get<GetAccommodationResponse>(
+            this.apiUrl + '?city=' + city + '&limit=' + limit,
+        );
+    }
 }
