@@ -103,7 +103,6 @@ export class AccommodationDetailComponent implements OnInit {
     } = {};
     avarageRating: number = 0;
     scrollY: number = 0;
-    private readonly alerts = inject(TuiAlertService);
     constructor(
         private accommodationDetailService: AccommodationDetailService,
         private route: ActivatedRoute,
@@ -123,16 +122,6 @@ export class AccommodationDetailComponent implements OnInit {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    protected getAlert(label: string, content: string): void {
-        this.alerts
-            .open(content, {
-                label: label,
-                appearance: 'negative',
-                autoClose: 5000,
-            })
-            .subscribe();
-    }
-    
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,

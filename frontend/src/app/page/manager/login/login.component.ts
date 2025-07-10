@@ -98,12 +98,6 @@ export class LoginComponent implements OnInit {
             },
             complete: () => {
                 this.isLoading = false;
-                const errorMessage =
-                    error.error.message || 'Tải khoản hoặc mật khẩu không đúng';
-                this.formLogin
-                    .get('account')
-                    ?.setErrors({ backend: errorMessage });
-
             },
         });
     }

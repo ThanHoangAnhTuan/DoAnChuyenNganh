@@ -14,7 +14,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AddressService } from '../../../services/address/address.service';
 import { finalize, forkJoin, map, switchMap } from 'rxjs';
 import { LoaderComponent } from '../../../components/loader/loader.component';
-import { forkJoin, map, switchMap } from 'rxjs';
 import { Pagination } from '../../../models/pagination/pagination.model';
 
 

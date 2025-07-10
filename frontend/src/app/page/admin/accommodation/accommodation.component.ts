@@ -55,7 +55,6 @@ import { finalize } from 'rxjs';
 import { LoaderComponent } from '../../../components/loader/loader.component';
 import { Pagination } from '../../../models/pagination/pagination.model';
 
-
 @Component({
     standalone: true,
     selector: 'app-accommodation',
@@ -80,6 +79,7 @@ import { Pagination } from '../../../models/pagination/pagination.model';
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
     providers: [
+        MessageService,
         TuiConfirmService,
         {
             provide: TuiDialogService,
@@ -143,7 +143,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     isLoading: boolean = false;
 
     protected timePeriods = tuiCreateTimePeriods();
-    private readonly alerts = inject(TuiAlertService);
 
     getSafeUrl(url: string): SafeResourceUrl {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -234,7 +233,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             });
     }
 
-    private updateVerify(id: string, status: number) {
+    private updateVerify(id: string, status: boolean) {
         this.isLoading = true;
 
         let newVerify: VerifyAccommodationInput = {
@@ -250,16 +249,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: (response) => {
-                    this.accommodationService
-                        .getAccommodationsOfManagerByAdmin(this.managerId)
-                        .subscribe((res) => {
-                            this.accommodations = res.data;
-                            this.showToast(
-                                'success',
-                                'Thành công',
-                                `Đã cập nhật trạng thái xác minh thành công`
-                            );
-                        });
+                    this.showToast(
+                        'success',
+                        'Thành công',
+                        `Đã cập nhật trạng thái xác minh thành công`
+                    );
                 },
                 error: (error) => {
                     this.showToast(
@@ -280,7 +274,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             .updateDeleted(newDelete)
             .subscribe((response) => {
                 const message = response.message;
-                this.getAlert('Notification', message);
+                // this.getAlert('Notification', message);
             });
     }
 
@@ -381,15 +375,17 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected onPageChange(page: number) {
         console.log('Page changed to:', page + 1);
 
-        this.accommodationService.getAccommodationsOfManagerByAdminWithPage(this.managerId, page + 1).subscribe((response) => {
-            this.accommodations = response.data;
-            this.pagination = response.pagination;
-            this.pagination.page = page;
-            this.scrollToTop();
+        this.accommodationService
+            .getAccommodationsOfManagerByAdminWithPage(this.managerId, page + 1)
+            .subscribe((response) => {
+                this.accommodations = response.data;
+                this.pagination = response.pagination;
+                this.pagination.page = page;
+                this.scrollToTop();
 
-            console.log(this.accommodations);
-            console.log(this.pagination);
-        })
+                console.log(this.accommodations);
+                console.log(this.pagination);
+            });
     }
 
     protected scrollToTop() {
