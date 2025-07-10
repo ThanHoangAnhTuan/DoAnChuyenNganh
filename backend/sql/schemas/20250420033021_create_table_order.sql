@@ -23,6 +23,8 @@ CREATE TABLE
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),
+        INDEX `idx_order_status_checkin_checkout` (`order_status`, `checkin_date`, `checkout_date`),
+        INDEX `idx_order_accommodation_id` (`accommodation_id`),
         FOREIGN KEY (`user_id`) REFERENCES `ecommerce_go_user_base` (`id`) ON DELETE CASCADE,
         FOREIGN KEY (`voucher_id`) REFERENCES `ecommerce_go_voucher` (`id`) ON DELETE CASCADE,
         FOREIGN KEY (`accommodation_id`) REFERENCES `ecommerce_go_accommodation` (`id`) ON DELETE CASCADE

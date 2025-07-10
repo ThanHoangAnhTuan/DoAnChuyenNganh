@@ -118,6 +118,31 @@ WHERE
 LIMIT
     1;
 
+-- name: BatchCountAccommodationRoomAvailable :many
+SELECT
+    ar.accommodation_type AS accommodation_type_id,
+    COUNT(ar.id) AS available_count
+FROM
+    ecommerce_go_accommodation_room ar
+WHERE
+    ar.id NOT IN (
+        SELECT
+            egar.id
+        FROM
+            ecommerce_go_order ego
+            JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
+            JOIN ecommerce_go_accommodation_room egar ON egar.id = egod.accommodation_room_id
+        WHERE
+            sqlc.arg('check_out') > ego.checkin_date
+            AND sqlc.arg('check_in') < ego.checkout_date
+            AND ego.order_status IN ('payment_success', 'checked_in')
+    )
+    AND ar.accommodation_type IN (sqlc.slice('ids'))
+    AND ar.status = 'available'
+    AND ar.is_deleted = 0
+GROUP BY ar.accommodation_type;
+
+
 -- name: CountAccommodationRoomAvailableByManager :one
 SELECT
     COUNT(ar.id)
@@ -126,3 +151,15 @@ FROM
 WHERE
     ar.accommodation_type = sqlc.arg ("accommodation_type_id")
     AND ar.status in ('available') AND `is_deleted` = 0;
+
+-- name: BatchCountAccommodationRoomAvailableByManager :many
+SELECT
+    ar.accommodation_type as accommodation_type_id,
+    COUNT(ar.id) as available_count
+FROM
+    `ecommerce_go_accommodation_room` ar
+WHERE
+    ar.accommodation_type IN (sqlc.slice("accommodation_type_ids"))
+    AND ar.status IN ('available') 
+    AND ar.is_deleted = 0
+GROUP BY ar.accommodation_type;
