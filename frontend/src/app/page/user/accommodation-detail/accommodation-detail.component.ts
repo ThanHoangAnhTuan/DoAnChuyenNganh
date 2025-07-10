@@ -20,31 +20,33 @@ import { GetAccommodationByIdResponse } from '../../../models/manager/accommodat
 import { GetReviewsByAccommodationIdResponse } from '../../../models/user/review.model';
 import { ReviewListModalComponent } from '../../../components/modals/review-list-modal/review-list-modal.component';
 import { PaymentService } from '../../../services/user/payment.service';
-import { TuiAlertService } from '@taiga-ui/core';
 import { AddressService } from '../../../services/address/address.service';
 import { City } from '../../../models/address/address.model';
 import { GetToken } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from "../../../components/loader/loader.component";
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-accommodation-detail',
     imports: [
-        NgIf,
-        NgFor,
-        NgClass,
-        TuiLike,
-        ImageListModalComponent,
-        NavbarComponent,
-        SearchBoxComponent,
-        RoomInformationModalComponent,
-        CommonModule,
-        ReviewListModalComponent,
-        Toast,
-        ButtonModule,
-    ],
+    NgIf,
+    NgFor,
+    NgClass,
+    TuiLike,
+    ImageListModalComponent,
+    NavbarComponent,
+    SearchBoxComponent,
+    RoomInformationModalComponent,
+    CommonModule,
+    ReviewListModalComponent,
+    Toast,
+    ButtonModule,
+    LoaderComponent
+],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
     providers: [MessageService],
@@ -68,6 +70,7 @@ export class AccommodationDetailComponent implements OnInit {
     windowWidth: number = 0;
     showFull: boolean = false;
     isMobile: boolean = false;
+    isLoading: boolean = false;
     bedTypes = [
         {
             key: 'single_bed',
@@ -100,11 +103,7 @@ export class AccommodationDetailComponent implements OnInit {
     } = {};
     avarageRating: number = 0;
     scrollY: number = 0;
-
     private readonly alerts = inject(TuiAlertService);
-
-    
-
     constructor(
         private accommodationDetailService: AccommodationDetailService,
         private route: ActivatedRoute,
@@ -170,8 +169,10 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     getAccommodationById(id: string) {
+        this.isLoading = true;
         this.accommodationDetailService
             .getAccommodationDetailById(id)
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe((data: GetAccommodationByIdResponse) => {
                 if (data) {
                     this.accommodation = data.data;
@@ -187,8 +188,10 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     getRoomByAccommodationId(id: string) {
+        this.isLoading = true;
         this.roomService
             .getRoomDetailByAccommodationId(id, this.checkIn, this.checkOut)
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
                 next: (value) => {
                     this.rooms = value.data;
@@ -204,8 +207,10 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     getReviewByAccommodationId(id: string) {
+        this.isLoading = true;
         this.reviewService
             .getReviewsByAccommodationId(id)
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe((data: GetReviewsByAccommodationIdResponse) => {
                 if (data) {
                     // const sortedReviews = data.data.sort((a, b) => {

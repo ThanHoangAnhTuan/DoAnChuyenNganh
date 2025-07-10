@@ -23,12 +23,13 @@ import {
     FacilityDetail,
 } from '../../../models/facility/facility.model';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
-import type { Observable } from 'rxjs';
+import { finalize, type Observable } from 'rxjs';
 import { FacilityDetailService } from '../../../services/facility-detail/facility-detail.service';
 import { TUI_DIALOGS_CLOSE } from '@taiga-ui/core';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 @Component({
     selector: 'app-facility-detail',
     imports: [
@@ -48,6 +49,7 @@ import { ButtonModule } from 'primeng/button';
         TuiFiles,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './facility-detail.component.html',
     styleUrl: './facility-detail.component.scss',
@@ -57,6 +59,7 @@ export class FacilityDetailComponent implements OnInit {
     protected facilities!: FacilityDetail[];
     protected columns: string[] = ['Id', 'Name', 'Action'];
     protected idFacilityUpdating = '';
+    isLoading: boolean = false;
 
     private readonly dialogs = inject(TuiDialogService);
 
@@ -73,18 +76,25 @@ export class FacilityDetailComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.facilityService.getFacilities().subscribe({
-            next: (response) => {
-                this.facilities = response.data;
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Tải dữ liệu',
-                    `Không thể tải dữ liệu facility. Vui lòng thử lại sau`
-                );
-            },
-        });
+        this.facilityService
+            .getFacilities()
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    if (response.data) {
+                        this.facilities = response.data;
+                    } else {
+                        this.facilities = [];
+                    }
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        `Không thể tải dữ liệu facility. Vui lòng thử lại sau`,
+                        `${error.message || ''}`
+                    );
+                },
+            });
     }
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
@@ -141,27 +151,29 @@ export class FacilityDetailComponent implements OnInit {
         const data = {
             name: nameValue,
         };
-
-        this.facilityService.createFacility(data).subscribe({
-            next: (response) => {
-                if (Array.isArray(response.data)) {
-                    this.facilities.push(...response.data);
-                } else if (response.data) {
+        this.isLoading = true;
+        this.facilityService
+            .createFacility(data)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
                     this.facilities.push(response.data);
-                }
-
-                this.formFacility.reset();
-                this.close$.subscribe();
-                this.showToast('success', 'Cơ sở Đã Được Tạo Thành Công!', '');
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi khi tạo cơ sở',
-                    `${error.message || ''}`
-                );
-            },
-        });
+                    this.formFacility.reset();
+                    this.close$.subscribe();
+                    this.showToast(
+                        'success',
+                        'Cơ sở Đã Được Tạo Thành Công!',
+                        ''
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi tạo cơ sở',
+                        `${error.message || ''}`
+                    );
+                },
+            });
     }
 
     protected updateFacility(): void {
@@ -174,44 +186,69 @@ export class FacilityDetailComponent implements OnInit {
             id: this.idFacilityUpdating,
             name: this.formFacility.get('name')?.value || '',
         };
+        this.isLoading = true;
+        this.facilityService
+            .updateFacility(data)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    const updatedFacility = response.data as Facility;
+                    this.facilities = this.facilities.map((facility) => {
+                        return facility.id === updatedFacility.id
+                            ? updatedFacility
+                            : facility;
+                    });
 
-        this.facilityService.updateFacility(data).subscribe({
-            next: (response) => {
-                const updatedFacility = response.data as Facility;
-                this.facilities = this.facilities.map((facility) => {
-                    return facility.id === updatedFacility.id
-                        ? updatedFacility
-                        : facility;
-                });
+                    // Show success message
 
-                // Show success message
-
-                this.showToast('success', 'Cập nhật Cơ Sở Thành Công', '');
-                // console.log('Cập nhật cơ sở thành công');
-
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Cập nhật Cơ Sở Thất Bại',
-                    `${error.message || ''}`
-                );
-            },
-            complete: () => {
-                this.showToast(
-                    'info',
-                    'Yêu cầu cập nhật cơ sở đã hoàn thành',
-                    ''
-                );
-            },
-        });
+                    this.showToast('success', 'Cập nhật Cơ Sở Thành Công', '');
+                    // console.log('Cập nhật cơ sở thành công');
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Cập nhật Cơ Sở Thất Bại',
+                        `${error.message || ''}`
+                    );
+                },
+                complete: () => {
+                    this.showToast(
+                        'info',
+                        'Yêu cầu cập nhật cơ sở đã hoàn thành',
+                        ''
+                    );
+                },
+            });
     }
     protected deleteFacility(id: string) {
-        this.facilityService.deleteFacility(id).subscribe((_) => {
-            this.facilities = this.facilities.filter(
-                (facility) => facility.id !== id
-            );
-            this.showToast('success', 'Cơ sở đã được xóa thành công', '');
-        });
+        // this.facilityService.deleteFacility(id).subscribe((_) => {
+        //     this.facilities = this.facilities.filter(
+        //         (facility) => facility.id !== id
+        //     );
+        //     this.showToast('success', 'Cơ sở đã được xóa thành công', '');
+        // });
+        this.isLoading = true;
+        this.facilityService
+            .deleteFacility(id)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: () => {
+                    this.facilities = this.facilities.filter(
+                        (facility) => facility.id !== id
+                    );
+                    this.showToast(
+                        'success',
+                        'Cơ sở đã được xóa thành công',
+                        ''
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Xóa Cơ Sở Thất Bại',
+                        `${error.message || ''}`
+                    );
+                },
+            });
     }
 }

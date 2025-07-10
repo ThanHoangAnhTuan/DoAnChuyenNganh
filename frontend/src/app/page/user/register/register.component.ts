@@ -73,30 +73,12 @@ export class RegisterComponent {
                 },
                 error: (error) => {
                     console.log('Error response:', error);
-
-                    // Check if the error indicates an OTP was already sent
-                    if (
-                        error.error?.code === 'OTP_ALREADY_SENT' ||
-                        error.error?.message
-                            ?.toLowerCase()
-                            .includes('OTP đã tồn tại') ||
-                        error.error?.message
-                            ?.toLowerCase()
-                            .includes('đã gửi otp')
-                    ) {
-                        // Navigate to OTP verification page since OTP was already sent
-                        this.router.navigate(['/register/verify-otp'], {
-                            queryParams: { email: this.email },
-                        });
-                    } else {
-                        // Handle other errors
-                        this.showToast(
-                            'error',
-                            'Lỗi gửi OTP',
-                            error.error?.message ||
-                                'Đã xảy ra lỗi khi gửi OTP. Vui lòng thử lại sau.'
-                        );
-                    }
+                    this.showToast(
+                        'error',
+                        'Lỗi gửi OTP',
+                        error.error?.message ||
+                            'Đã xảy ra lỗi khi gửi OTP. Vui lòng thử lại sau.'
+                    );
                 },
             });
     }

@@ -12,8 +12,11 @@ import {
 import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AddressService } from '../../../services/address/address.service';
+import { finalize, forkJoin, map, switchMap } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 import { forkJoin, map, switchMap } from 'rxjs';
 import { Pagination } from '../../../models/pagination/pagination.model';
+
 
 @Component({
     selector: 'app-search-page',
@@ -28,6 +31,7 @@ import { Pagination } from '../../../models/pagination/pagination.model';
         TuiIcon,
         NgIf,
         RouterLink,
+        LoaderComponent,
     ],
     templateUrl: './search-page.component.html',
     standalone: true,
@@ -72,6 +76,7 @@ export class SearchPageComponent implements OnInit {
     // level2AddressNames: string = '';
     error = false; // Có lỗi khi tải dữ liệu không
     filteredHotels: any[] = [];
+    isLoading: boolean = false;
     protected pagination: Pagination = {
         page: 1,
         limit: 10,
@@ -129,6 +134,7 @@ export class SearchPageComponent implements OnInit {
         },
     ];
 
+    //Vinh
     loadMoreHotels(): void {
         if (this.pagination.limit >= this.pagination.total) {
             console.log('Đã tải hết tất cả khách sạn');
@@ -139,7 +145,9 @@ export class SearchPageComponent implements OnInit {
         }
     }
 
+
     loadHotels(): void {
+        this.isLoading = true;
         this.hotelService
             .getAccommodationsByCityWithLimit(this.citySlug, this.pagination.limit)
             .pipe(
@@ -171,6 +179,7 @@ export class SearchPageComponent implements OnInit {
                     return forkJoin(hotelWithCityName$);
                 })
             )
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
                 next: (hotelsWithCity) => {
                     this.hotels = hotelsWithCity;

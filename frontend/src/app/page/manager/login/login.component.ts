@@ -14,6 +14,7 @@ import { SaveTokenToCookie } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-login',
@@ -24,6 +25,7 @@ import { ButtonModule } from 'primeng/button';
         TuiPassword,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
@@ -34,6 +36,7 @@ export class LoginComponent implements OnInit {
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
     });
+    isLoading: boolean = false;
 
     constructor(
         private authSerivce: AuthService,
@@ -71,6 +74,7 @@ export class LoginComponent implements OnInit {
             this.formLogin.markAllAsTouched();
             return;
         }
+        this.isLoading = true;
 
         let managerLogin: ManagerLoginInput = {
             account: this.formLogin.value.account ?? '',
@@ -83,11 +87,23 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/manager/accommodation']);
             },
             error: (error) => {
+                console.error('Login error:', error);
+                this.showToast(
+                    'error',
+                    'Đăng nhập thất bại',
+                    error.error.message ||
+                        'Vui lòng kiểm tra lại thông tin đăng nhập.'
+                );
+                this.isLoading = false;
+            },
+            complete: () => {
+                this.isLoading = false;
                 const errorMessage =
                     error.error.message || 'Tải khoản hoặc mật khẩu không đúng';
                 this.formLogin
                     .get('account')
                     ?.setErrors({ backend: errorMessage });
+
             },
         });
     }
