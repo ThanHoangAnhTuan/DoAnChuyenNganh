@@ -57,18 +57,6 @@ export class ReviewListModalComponent implements OnInit {
     });
     orderIdValue: string = '';
 
-    private readonly alerts = inject(TuiAlertService);
-
-    protected getAlert(label: string, content: string): void {
-        this.alerts
-            .open(content, {
-                label: label,
-                appearance: 'negative',
-                autoClose: 5000,
-            })
-            .subscribe();
-    }
-
     constructor(
         private datePipe: DatePipe,
         private reviewService: ReviewService,

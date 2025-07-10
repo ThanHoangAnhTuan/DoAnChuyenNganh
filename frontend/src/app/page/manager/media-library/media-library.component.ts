@@ -159,15 +159,25 @@ export class MediaLibraryComponent {
                     this.id,
                     this.isDetailMode
                 )
-                .subscribe((response) => {
-                    this.oldImages = response.data;
-                    this.imagesPreview = [];
-                    this.formImages.get('images')?.setValue([]);
-                    this.showToast(
-                        'success',
-                        'Tải ảnh thành công',
-                        'Ảnh đã được tải lên thành công.'
-                    );
+                .subscribe({
+                    next: (response) => {
+                        this.oldImages = response.data;
+                        this.imagesPreview = [];
+                        this.formImages.get('images')?.setValue([]);
+                        this.showToast(
+                            'success',
+                            'Tải ảnh thành công',
+                            'Ảnh đã được tải lên thành công.'
+                        );
+                    },
+                    error: (error) => {
+                        console.error('Upload failed:', error);
+                        this.showToast(
+                            'error',
+                            'Tải ảnh thất bại',
+                            'Đã xảy ra lỗi khi tải ảnh lên. Vui lòng thử lại.'
+                        );
+                    },
                 });
         } else {
             this.showToast(

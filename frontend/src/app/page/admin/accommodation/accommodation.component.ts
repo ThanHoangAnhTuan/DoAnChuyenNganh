@@ -9,7 +9,11 @@ import {
     ViewChildren,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import {
+    DomSanitizer,
+    SafeHtml,
+    SafeResourceUrl,
+} from '@angular/platform-browser';
 import { TuiTable } from '@taiga-ui/addon-table';
 import {
     TuiButton,
@@ -153,9 +157,14 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 });
         });
 
-        this.addressService.getCities().subscribe((res) => {
-            this.cities = res.data;
-            this.cityNames = res.data.map((city) => city.name);
+        this.addressService.getCities().subscribe({
+            next: (res) => {
+                this.cities = res.data;
+                this.cityNames = res.data.map((city) => city.name);
+            },
+            error: (err) => {
+                console.error('Error fetching cities:', err);
+            },
         });
     }
 
@@ -165,12 +174,25 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             status: Number(status),
         };
 
-        this.accommodationService
-            .updateVerified(newVerify)
-            .subscribe((response) => {
-                const message = response.message;
-                this.getAlert('Notification', message);
-            });
+        // this.accommodationService
+        //     .updateVerified(newVerify)
+        //     .subscribe((response) => {
+        //         const message = response.message;
+        //         this.getAlert('Notification', message);
+        //     });
+        this.accommodationService.updateVerified(newVerify).subscribe({
+            next: (response) => {
+                this.accommodationService
+                    .getAccommodationsOfManagerByAdmin(this.managerId)
+                    .subscribe((res) => {
+                        this.accommodations = res.data;
+                        console.log(response);
+                    });
+            },
+            error: (error) => {
+                console.error('Error updating verification:', error);
+            },
+        });
     }
 
     changeCitySlugToName(slug: string): string {

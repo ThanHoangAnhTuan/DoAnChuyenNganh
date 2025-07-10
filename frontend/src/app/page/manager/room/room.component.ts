@@ -216,14 +216,14 @@ export class RoomComponent implements OnInit {
                 this.showToast(
                     'success',
                     'Xoá phòng thành công',
-                    'Bạn có thể xem thông tin trong danh sách'
+                    'Phòng đã được xoá khỏi danh sách'
                 );
             },
             error: (err) => {
                 this.showToast(
                     'error',
                     'Xoá phòng thất bại',
-                    'Xoá phòng thất bại, vui lòng thử lại sau'
+                    err.error.message || 'Vui lòng thử lại sau'
                 );
             },
             complete() {},

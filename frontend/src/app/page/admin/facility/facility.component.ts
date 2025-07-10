@@ -83,7 +83,7 @@ import { ButtonModule } from 'primeng/button';
     ],
 })
 export class FacilityComponent implements OnInit {
-    protected facilities!: Facility[];
+    protected facilities: Facility[] = [];
     protected columns: string[] = ['Id', 'Name', 'Image', 'Action'];
     protected idFacilityUpdating = '';
 
@@ -110,7 +110,11 @@ export class FacilityComponent implements OnInit {
     ngOnInit() {
         this.facilityService.getFacilities().subscribe({
             next: (response) => {
-                this.facilities = response.data;
+                if (response.data) {
+                    this.facilities = response.data;
+                } else {
+                    this.facilities = [];
+                }
             },
             error: (error) => {
                 this.showToast(
@@ -186,12 +190,7 @@ export class FacilityComponent implements OnInit {
 
         this.facilityService.createFacility(formData).subscribe({
             next: (response) => {
-                if (Array.isArray(response.data)) {
-                    this.facilities.push(...response.data);
-                } else if (response.data) {
-                    this.facilities.push(response.data);
-                }
-
+                this.facilities.push(response.data);
                 this.formFacility.reset();
                 if (
                     this.control &&
@@ -277,10 +276,24 @@ export class FacilityComponent implements OnInit {
         return 'assets/images/placeholder.png';
     }
     protected deleteFacility(id: string) {
-        this.facilityService.deleteFacility(id).subscribe((_) => {
-            this.facilities = this.facilities.filter(
-                (facility) => facility.id !== id
-            );
+        // this.facilityService.deleteFacility(id).subscribe((_) => {
+        //     this.facilities = this.facilities.filter(
+        //         (facility) => facility.id !== id
+        //     );
+        // });
+        this.facilityService.deleteFacility(id).subscribe({
+            next: () => {
+                this.facilities = this.facilities.filter(
+                    (facility) => facility.id !== id
+                );
+            },
+            error: (error) => {
+                this.showToast(
+                    'error',
+                    'Lỗi khi xóa cơ sở:',
+                    error.error.message || 'Unknown error'
+                );
+            },
         });
         this.showToast('success', 'Cơ sở đã được xóa thành công', '');
     }

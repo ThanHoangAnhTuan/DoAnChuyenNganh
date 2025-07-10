@@ -14,6 +14,7 @@ import { SaveTokenToCookie } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-login',
@@ -24,6 +25,7 @@ import { ButtonModule } from 'primeng/button';
         TuiPassword,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
@@ -34,13 +36,14 @@ export class LoginComponent {
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
     });
+    isLoading: boolean = false;
 
     constructor(
         private authSerivce: AuthService,
         private router: Router,
         private messageService: MessageService
     ) {}
-    
+
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,
@@ -54,6 +57,7 @@ export class LoginComponent {
             this.formLogin.markAllAsTouched();
             return;
         }
+        this.isLoading = true;
 
         let managerLogin: ManagerLoginInput = {
             account: this.formLogin.value.account ?? '',
@@ -73,6 +77,10 @@ export class LoginComponent {
                     error.error.message ||
                         'Vui lòng kiểm tra lại thông tin đăng nhập.'
                 );
+                this.isLoading = false;
+            },
+            complete: () => {
+                this.isLoading = false;
             },
         });
     }
