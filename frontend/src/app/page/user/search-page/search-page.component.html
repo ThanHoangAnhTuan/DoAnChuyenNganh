@@ -1,5 +1,8 @@
 <app-navbar></app-navbar>
 <app-search-box></app-search-box>
+@if (isLoading) {
+<app-loader text="Loading..." [overlay]="true"></app-loader>
+}
 
 <div class="hotel-booking-container">
     <div class="filter-panel">

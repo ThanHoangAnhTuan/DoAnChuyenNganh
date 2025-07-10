@@ -1,4 +1,7 @@
 <app-navbar></app-navbar>
+@if (isLoading) {
+<app-loader text="Loading..." [overlay]="true"></app-loader>
+}
 <main>
     <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
         <thead>

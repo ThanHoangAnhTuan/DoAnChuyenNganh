@@ -41,6 +41,8 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -64,6 +66,7 @@ import { ButtonModule } from 'primeng/button';
         NavbarComponent,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
@@ -87,6 +90,7 @@ export class AccommodationDetailComponent implements OnInit {
         'Action',
     ];
     protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
+    isLoading: boolean = false;
     protected idAccommodationDetailUpdating = '';
     private readonly dialogs = inject(TuiDialogService);
     protected accommodationId: string = '';
@@ -134,7 +138,7 @@ export class AccommodationDetailComponent implements OnInit {
         private facilityDetailService: FacilityDetailService,
         private messageService: MessageService
     ) {}
-
+    //Vinh
     ngOnInit() {
         this.route.params.subscribe((params) => {
             this.accommodationId = params['id'];
@@ -290,21 +294,14 @@ export class AccommodationDetailComponent implements OnInit {
             this.formAccommodationDetail.markAllAsTouched();
             return;
         }
-
-        // this.accommodationDetailService
-        //     .createAccommodationDetail(accommodationDetail)
-        //     .subscribe((response) => {
-        //         this.accommodationDetails.push(response.data);
-        //         this.formAccommodationDetail.reset();
-        //         this.formFacilityDetail.reset();
-        //         this.showToast(
-        //             'success',
-        //             'Tạo chi tiết chỗ ở thành công',
-        //             'Chi tiết chỗ ở đã được tạo thành công'
-        //         );
-        //     });
+        this.isLoading = true;
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
             .subscribe({
                 next: (response) => {
                     this.accommodationDetails.push(response.data);
@@ -351,27 +348,14 @@ export class AccommodationDetailComponent implements OnInit {
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             facilities: this.getSelectedFacilityIds(),
         };
-
-        // this.accommodationDetailService
-        //     .updateAccommodationDetail(accommodationDetail)
-        //     .subscribe((response) => {
-        //         this.accommodationDetails = this.accommodationDetails.map(
-        //             (accommodationDetail) => {
-        //                 if (accommodationDetail.id === response.data.id) {
-        //                     return response.data;
-        //                 } else {
-        //                     return accommodationDetail;
-        //                 }
-        //             }
-        //         );
-        //         this.showToast(
-        //             'success',
-        //             'Cập nhật chi tiết chỗ ở thành công',
-        //             'Chi tiết chỗ ở đã được cập nhật thành công'
-        //         );
-        //     });
+        this.isLoading = true;
         this.accommodationDetailService
             .updateAccommodationDetail(accommodationDetail)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
             .subscribe({
                 next: (response) => {
                     this.accommodationDetails = this.accommodationDetails.map(
@@ -399,20 +383,14 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     protected deleteAccommodationDetail(id: string) {
-        // this.accommodationDetailService
-        //     .deleteAccommodationDetail(id)
-        //     .subscribe((response) => {
-        //         this.accommodationDetails = this.accommodationDetails.filter(
-        //             (accommodationDetail) => accommodationDetail.id !== id
-        //         );
-        //         this.showToast(
-        //             'success',
-        //             'Xóa chi tiết chỗ ở thành công',
-        //             'Chi tiết chỗ ở đã được xóa thành công'
-        //         );
-        //     });
+        this.isLoading = true;
         this.accommodationDetailService
             .deleteAccommodationDetail(id)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
             .subscribe({
                 next: (response) => {
                     this.accommodationDetails =

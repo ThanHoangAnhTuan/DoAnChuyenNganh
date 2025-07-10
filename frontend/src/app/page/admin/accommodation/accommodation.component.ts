@@ -46,6 +46,10 @@ import {
     GetAccommodationsOfManagerByAdmin,
     VerifyAccommodationInput,
 } from '../../../models/admin/manager.model';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     standalone: true,
@@ -64,6 +68,8 @@ import {
         TuiSelectModule,
         TuiDataListWrapper,
         NavbarComponent,
+        Toast,
+        LoaderComponent,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -121,6 +127,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected updateId: string = '';
     protected isModalConfirmVerifyOpen: boolean = false;
     protected isModalConfirmDeleteOpen: boolean = false;
+    isLoading: boolean = false;
 
     protected timePeriods = tuiCreateTimePeriods();
     private readonly alerts = inject(TuiAlertService);
@@ -129,70 +136,125 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    protected getAlert(label: string, content: string): void {
-        this.alerts
-            .open(content, {
-                label: label,
-                appearance: 'success',
-                autoClose: 5000,
-            })
-            .subscribe();
+    showToast(
+        severity: 'success' | 'info' | 'warn' | 'error',
+        summary: string,
+        detail: string
+    ): void {
+        this.messageService.add({ severity, summary, detail });
     }
 
     constructor(
         private accommodationService: ManagerService,
         private addressService: AddressService,
         private sanitizer: DomSanitizer,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private messageService: MessageService
     ) {}
 
     ngOnInit() {
+        // this.route.params.subscribe((params) => {
+        //     this.managerId = params['id'];
+        //     this.accommodationService
+        //         .getAccommodationsOfManagerByAdmin(this.managerId)
+        //         .subscribe((response) => {
+        //             console.log(response);
+        //             this.accommodations = response.data;
+        //         });
+        // });
+
+        this.isLoading = true;
+
         this.route.params.subscribe((params) => {
             this.managerId = params['id'];
             this.accommodationService
                 .getAccommodationsOfManagerByAdmin(this.managerId)
-                .subscribe((response) => {
-                    console.log(response);
-                    this.accommodations = response.data;
+                .pipe(
+                    finalize(() => {
+                        this.isLoading = false;
+                    })
+                )
+                .subscribe({
+                    next: (response) => {
+                        console.log(response);
+                        this.accommodations = response.data;
+                    },
+                    error: (error) => {
+                        console.error('Error loading accommodations:', error);
+                        this.showToast(
+                            'error',
+                            'Lỗi tải dữ liệu',
+                            'Không thể tải danh sách khách sạn. Vui lòng thử lại sau.'
+                        );
+                    },
                 });
         });
-
-        this.addressService.getCities().subscribe({
-            next: (res) => {
-                this.cities = res.data;
-                this.cityNames = res.data.map((city) => city.name);
-            },
-            error: (err) => {
-                console.error('Error fetching cities:', err);
-            },
-        });
+        // this.addressService.getCities().subscribe({
+        //     next: (res) => {
+        //         this.cities = res.data;
+        //         this.cityNames = res.data.map((city) => city.name);
+        //     },
+        //     error: (err) => {
+        //         console.error('Error fetching cities:', err);
+        //     },
+        // });
+        this.addressService
+            .getCities()
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (res) => {
+                    this.cities = res.data;
+                    this.cityNames = this.cities.map((city) => city.name);
+                },
+                error: (err) => {
+                    console.error('Error fetching cities:', err);
+                    this.showToast(
+                        'error',
+                        'Lỗi tải dữ liệu',
+                        'Không thể tải danh sách thành phố. Vui lòng thử lại sau.'
+                    );
+                },
+            });
     }
 
     private updateVerify(id: string, status: number) {
+        this.isLoading = true;
         let newVerify: VerifyAccommodationInput = {
             accommodation_id: id,
             status: Number(status),
         };
-
-        // this.accommodationService
-        //     .updateVerified(newVerify)
-        //     .subscribe((response) => {
-        //         const message = response.message;
-        //         this.getAlert('Notification', message);
-        //     });
-        this.accommodationService.updateVerified(newVerify).subscribe({
-            next: (response) => {
-                this.accommodationService
-                    .getAccommodationsOfManagerByAdmin(this.managerId)
-                    .subscribe((res) => {
-                        this.accommodations = res.data;
-                        console.log(response);
-                    });
-            },
-            error: (error) => {
-                console.error('Error updating verification:', error);
-            },
-        });
+        this.accommodationService
+            .updateVerified(newVerify)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.accommodationService
+                        .getAccommodationsOfManagerByAdmin(this.managerId)
+                        .subscribe((res) => {
+                            this.accommodations = res.data;
+                            this.showToast(
+                                'success',
+                                'Thành công',
+                                `Đã cập nhật trạng thái xác minh thành công`
+                            );
+                        });
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi',
+                        `Không thể cập nhật trạng thái xác minh: ${error.message}`
+                    );
+                },
+            });
     }
 
     changeCitySlugToName(slug: string): string {
@@ -269,7 +331,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         const id: string = this.updateId;
         const accommodation: any = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            this.getAlert('Notification', 'Update successfully');
+            this.showToast('success', 'Thành công', 'Đã xóa thành công');
         }
 
         this.updateId = '';

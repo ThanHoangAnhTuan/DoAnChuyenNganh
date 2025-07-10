@@ -38,29 +38,31 @@ import type { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from "../../../components/loader/loader.component";
 
 @Component({
     selector: 'app-facility',
     imports: [
-        TuiTable,
-        TuiButton,
-        TuiInputModule,
-        FormsModule,
-        ReactiveFormsModule,
-        TuiTextfield,
-        TuiAppearance,
-        TuiCardLarge,
-        TuiFiles,
-        TuiInputTimeModule,
-        TuiSelect,
-        NavbarComponent,
-        AsyncPipe,
-        FormsModule,
-        TuiFiles,
-        NgIf,
-        Toast,
-        ButtonModule,
-    ],
+    TuiTable,
+    TuiButton,
+    TuiInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiTextfield,
+    TuiAppearance,
+    TuiCardLarge,
+    TuiFiles,
+    TuiInputTimeModule,
+    TuiSelect,
+    NavbarComponent,
+    AsyncPipe,
+    FormsModule,
+    TuiFiles,
+    NgIf,
+    Toast,
+    ButtonModule,
+    LoaderComponent
+],
     templateUrl: './facility.component.html',
     styleUrl: './facility.component.scss',
     providers: [
@@ -86,6 +88,7 @@ export class FacilityComponent implements OnInit {
     protected facilities: Facility[] = [];
     protected columns: string[] = ['Id', 'Name', 'Image', 'Action'];
     protected idFacilityUpdating = '';
+    isLoading: boolean = false;
 
     private readonly dialogs = inject(TuiDialogService);
 
@@ -108,22 +111,30 @@ export class FacilityComponent implements OnInit {
         this.messageService.add({ severity, summary, detail });
     }
     ngOnInit() {
-        this.facilityService.getFacilities().subscribe({
-            next: (response) => {
-                if (response.data) {
-                    this.facilities = response.data;
-                } else {
-                    this.facilities = [];
-                }
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi khi lấy danh sách cơ sở:',
-                    error.error.message || 'Unknown error'
-                );
-            },
-        });
+        this.isLoading = true;
+        this.facilityService
+            .getFacilities()
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    if (response.data) {
+                        this.facilities = response.data;
+                    } else {
+                        this.facilities = [];
+                    }
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi lấy danh sách cơ sở:',
+                        error.error.message || 'Unknown error'
+                    );
+                },
+            });
     }
 
     protected openDialogCreate(content: PolymorpheusContent): void {
@@ -183,31 +194,44 @@ export class FacilityComponent implements OnInit {
             return;
         }
 
+        this.isLoading = true;
+
         const formData = new FormData();
 
         formData.append('name', nameValue);
         formData.append('image', imageControlValue);
 
-        this.facilityService.createFacility(formData).subscribe({
-            next: (response) => {
-                this.facilities.push(response.data);
-                this.formFacility.reset();
-                if (
-                    this.control &&
-                    this.control !== this.formFacility.get('image')
-                ) {
-                    this.control.reset();
-                }
-                this.showToast('success', 'Cơ sở Đã Được Tạo Thành Công!', '');
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi khi tạo cơ sở:',
-                    `${error.message || ''}`
-                );
-            },
-        });
+        this.facilityService
+            .createFacility(formData)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.facilities.push(response.data);
+                    this.formFacility.reset();
+                    if (
+                        this.control &&
+                        this.control !== this.formFacility.get('image')
+                    ) {
+                        this.control.reset();
+                    }
+                    this.showToast(
+                        'success',
+                        'Cơ sở Đã Được Tạo Thành Công!',
+                        ''
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi tạo cơ sở:',
+                        `${error.message || ''}`
+                    );
+                },
+            });
     }
 
     protected updateFacility(): void {
@@ -235,32 +259,39 @@ export class FacilityComponent implements OnInit {
         if (imageFile instanceof File) {
             formData.append('image', imageFile, imageFile.name);
         }
+        this.isLoading = true;
+        this.facilityService
+            .updateFacility(formData)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    const updatedFacility = response.data as Facility;
+                    this.facilities = this.facilities.map((facility) => {
+                        return facility.id === updatedFacility.id
+                            ? updatedFacility
+                            : facility;
+                    });
 
-        this.facilityService.updateFacility(formData).subscribe({
-            next: (response) => {
-                const updatedFacility = response.data as Facility;
-                this.facilities = this.facilities.map((facility) => {
-                    return facility.id === updatedFacility.id
-                        ? updatedFacility
-                        : facility;
-                });
-
-                // Show success message
-                this.showToast(
-                    'success',
-                    'Cập nhật Cơ Sở Thành Công',
-                    'Cơ sở đã được cập nhật thành công'
-                );
-            },
-            error: (error) => {
-                // Handle error
-                this.showToast(
-                    'error',
-                    'Cập nhật Cơ Sở Thất Bại',
-                    `Lỗi khi cập nhật cơ sở: ${error.message || ''}`
-                );
-            },
-        });
+                    // Show success message
+                    this.showToast(
+                        'success',
+                        'Cập nhật Cơ Sở Thành Công',
+                        'Cơ sở đã được cập nhật thành công'
+                    );
+                },
+                error: (error) => {
+                    // Handle error
+                    this.showToast(
+                        'error',
+                        'Cập nhật Cơ Sở Thất Bại',
+                        `Lỗi khi cập nhật cơ sở: ${error.message || ''}`
+                    );
+                },
+            });
     }
 
     protected getCurrentFacilityImageUrl(): string {
@@ -276,25 +307,28 @@ export class FacilityComponent implements OnInit {
         return 'assets/images/placeholder.png';
     }
     protected deleteFacility(id: string) {
-        // this.facilityService.deleteFacility(id).subscribe((_) => {
-        //     this.facilities = this.facilities.filter(
-        //         (facility) => facility.id !== id
-        //     );
-        // });
-        this.facilityService.deleteFacility(id).subscribe({
-            next: () => {
-                this.facilities = this.facilities.filter(
-                    (facility) => facility.id !== id
-                );
-            },
-            error: (error) => {
-                this.showToast(
-                    'error',
-                    'Lỗi khi xóa cơ sở:',
-                    error.error.message || 'Unknown error'
-                );
-            },
-        });
+        this.isLoading = true;
+        this.facilityService
+            .deleteFacility(id)
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.facilities = this.facilities.filter(
+                        (facility) => facility.id !== id
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi xóa cơ sở:',
+                        error.error.message || 'Unknown error'
+                    );
+                },
+            });
         this.showToast('success', 'Cơ sở đã được xóa thành công', '');
     }
     protected get control(): FormControl<TuiFileLike | null> {

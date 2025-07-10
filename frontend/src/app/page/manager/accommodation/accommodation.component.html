@@ -1,5 +1,8 @@
 <p-toast></p-toast>
 <app-navbar></app-navbar>
+@if (isLoading) {
+<app-loader text="Loading..." [overlay]="true"></app-loader>
+}
 <main>
     <button
         size="l"

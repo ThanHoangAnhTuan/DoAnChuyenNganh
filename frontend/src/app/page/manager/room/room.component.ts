@@ -32,6 +32,8 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { RoomService } from '../../../services/manager/room.service';
 import { CreateRoom, Room } from '../../../models/manager/room.model';
+import { LoaderComponent } from '../../../components/loader/loader.component';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-room',
@@ -53,6 +55,7 @@ import { CreateRoom, Room } from '../../../models/manager/room.model';
         NavbarComponent,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './room.component.html',
     styleUrl: './room.component.scss',
@@ -69,7 +72,7 @@ export class RoomComponent implements OnInit {
     protected columns: string[] = ['ID', 'Name', 'Status', 'Action'];
 
     protected status: string[] = ['available', 'unavailable', 'occupied'];
-
+    isLoading: boolean = false;
     private readonly dialogs = inject(TuiDialogService);
 
     protected formCreateRoom = new FormGroup({
@@ -101,10 +104,12 @@ export class RoomComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.isLoading = true;
         this.route.params.subscribe((params) => {
             this.accommodationDetailId = params['id'];
             this.roomService
                 .getAccommodationRooms(params['id'])
+                .pipe(finalize(() => (this.isLoading = false)))
                 .subscribe((response) => {
                     this.rooms = response.data;
                 });
@@ -152,25 +157,29 @@ export class RoomComponent implements OnInit {
             quantity: Number(this.formCreateRoom.get('quantity')?.value) || 0,
             accommodation_type_id: this.accommodationDetailId,
         };
-        this.roomService.createAccommodationRoom(room).subscribe({
-            next: (response) => {
-                this.rooms.push(...response.data);
-                this.formCreateRoom.reset();
-                this.showToast(
-                    'success',
-                    'Phòng đã được tạo thành công',
-                    'Bạn có thể xem chi tiết phòng trong danh sách'
-                );
-            },
-            error: (error) => {
-                console.error('Error creating room:', error);
-                this.showToast(
-                    'error',
-                    'Tạo phòng thất bại',
-                    'Vui lòng thử lại sau'
-                );
-            },
-        });
+        this.isLoading = true;
+        this.roomService
+            .createAccommodationRoom(room)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    this.rooms.push(...response.data);
+                    this.formCreateRoom.reset();
+                    this.showToast(
+                        'success',
+                        'Phòng đã được tạo thành công',
+                        'Bạn có thể xem chi tiết phòng trong danh sách'
+                    );
+                },
+                error: (error) => {
+                    console.error('Error creating room:', error);
+                    this.showToast(
+                        'error',
+                        'Tạo phòng thất bại',
+                        'Vui lòng thử lại sau'
+                    );
+                },
+            });
     }
 
     protected updateRoom() {
@@ -183,50 +192,58 @@ export class RoomComponent implements OnInit {
             name: this.formUpdateRoom.get('name')?.value || '',
             status: this.formUpdateRoom.get('status')?.value || '',
         };
-        this.roomService.updateAccommodationRoom(room).subscribe({
-            next: (response) => {
-                this.rooms = this.rooms.map((room) => {
-                    if (room.id === response.data.id) {
-                        return response.data;
-                    } else {
-                        return room;
-                    }
-                });
-                this.showToast(
-                    'success',
-                    'Cập nhật phòng thành công',
-                    'Bạn có thể xem chi tiết phòng trong danh sách'
-                );
-            },
-            error: (error) => {
-                console.error('Lỗi khi thêm đánh giá:', error);
-                this.showToast(
-                    'error',
-                    'Cập nhật phòng thất bại',
-                    'Cập nhật phòng thất bại, vui lòng thử lại sau'
-                );
-            },
-        });
+        this.isLoading = true;
+        this.roomService
+            .updateAccommodationRoom(room)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    this.rooms = this.rooms.map((room) => {
+                        if (room.id === response.data.id) {
+                            return response.data;
+                        } else {
+                            return room;
+                        }
+                    });
+                    this.showToast(
+                        'success',
+                        'Cập nhật phòng thành công',
+                        'Bạn có thể xem chi tiết phòng trong danh sách'
+                    );
+                },
+                error: (error) => {
+                    console.error('Lỗi khi thêm đánh giá:', error);
+                    this.showToast(
+                        'error',
+                        'Cập nhật phòng thất bại',
+                        'Cập nhật phòng thất bại, vui lòng thử lại sau'
+                    );
+                },
+            });
     }
 
     protected deleteRoom(id: string) {
-        this.roomService.deleteAccommodationRoom(id).subscribe({
-            next: (value) => {
-                this.rooms = this.rooms.filter((room) => room.id !== id);
-                this.showToast(
-                    'success',
-                    'Xoá phòng thành công',
-                    'Phòng đã được xoá khỏi danh sách'
-                );
-            },
-            error: (err) => {
-                this.showToast(
-                    'error',
-                    'Xoá phòng thất bại',
-                    err.error.message || 'Vui lòng thử lại sau'
-                );
-            },
-            complete() {},
-        });
+        this.isLoading = true;
+        this.roomService
+            .deleteAccommodationRoom(id)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (value) => {
+                    this.rooms = this.rooms.filter((room) => room.id !== id);
+                    this.showToast(
+                        'success',
+                        'Xoá phòng thành công',
+                        'Phòng đã được xoá khỏi danh sách'
+                    );
+                },
+                error: (err) => {
+                    this.showToast(
+                        'error',
+                        'Xoá phòng thất bại',
+                        err.error.message || 'Vui lòng thử lại sau'
+                    );
+                },
+                complete() {},
+            });
     }
 }

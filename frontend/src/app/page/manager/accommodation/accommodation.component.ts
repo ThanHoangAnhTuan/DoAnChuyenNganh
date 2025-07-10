@@ -65,6 +65,7 @@ import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { finalize } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     standalone: true,
@@ -92,6 +93,7 @@ import { finalize } from 'rxjs';
         NavbarComponent,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
@@ -117,7 +119,7 @@ import { finalize } from 'rxjs';
 export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChildren('descEl') descEls!: QueryList<ElementRef<HTMLDivElement>>;
 
-    protected isLoading: boolean = false;
+    isLoading: boolean = false;
     protected accommodations!: Accommodation[];
     protected facilities!: Facility[];
     protected columns: string[] = [
@@ -207,6 +209,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             ?.valueChanges.subscribe((selectedDistrict: string | null) => {
                 this.onDistrictSelected(selectedDistrict);
             });
+        //Vinh
+        // this.isLoading = true;
 
         this.addressService.getCities().subscribe((res) => {
             this.cities = res.data;
@@ -390,72 +394,34 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             this.formAccommodation.markAllAsTouched();
             return;
         }
-
-        this.accommodationService.createAccommodation(accommodation).subscribe({
-            next: (response) => {
-                this.accommodations.push(response.data);
-                this.formAccommodation.reset();
-                this.formFacilities.reset();
-                this.accommodations = [...this.accommodations];
-                this.checkDescriptionOverflow();
-                this.showToast(
-                    'success',
-                    'Khách sạn đã được tạo thành công',
-                    'Bạn có thể xem chi tiết khách sạn trong danh sách'
-                );
-            },
-            error: (error) => {
-                console.error('Error creating accommodation:', error);
-                this.showToast(
-                    'error',
-                    'Tạo khách sạn thất bại',
-                    'Vui lòng thử lại sau'
-                );
-            },
-        });
+        this.isLoading = true; // Set loading state
+        this.accommodationService
+            .createAccommodation(accommodation)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    this.accommodations.push(response.data);
+                    this.formAccommodation.reset();
+                    this.formFacilities.reset();
+                    this.accommodations = [...this.accommodations];
+                    this.checkDescriptionOverflow();
+                    this.showToast(
+                        'success',
+                        'Khách sạn đã được tạo thành công',
+                        'Bạn có thể xem chi tiết khách sạn trong danh sách'
+                    );
+                },
+                error: (error) => {
+                    console.error('Error creating accommodation:', error);
+                    this.showToast(
+                        'error',
+                        'Tạo khách sạn thất bại',
+                        'Vui lòng thử lại sau'
+                    );
+                },
+            });
     }
-
-    // protected updateAccommodation() {
-    //     this.isLoading = true;
-    //     const accommodation: UpdateAccommodation = {
-    //         id: this.idAccommodationUpdating,
-    //         name: this.formAccommodation.get('name')?.value || '',
-    //         city: this.citySlug,
-    //         country: 'Việt Nam',
-    //         district: this.districtSlug,
-    //         address: this.formAccommodation.get('address')?.value || '',
-    //         description: this.formAccommodation.get('description')?.value || '',
-    //         google_map: this.formAccommodation.get('googleMap')?.value || '',
-    //         rating: this.formAccommodation.get('rating')?.value || 0,
-    //         facilities: this.getSelectedFacilityIds(),
-    //     };
-
-    //     this.accommodationService
-    //         .updateAccommodation(accommodation)
-    //         .subscribe((response) => {
-    //             this.accommodations = this.accommodations.map(
-    //                 (accommodation) => {
-    //                     if (accommodation.id === response.data.id) {
-    //                         this.showToast(
-    //                             'success',
-    //                             'Cập nhật khách sạn thành công',
-    //                             'Bạn có thể xem chi tiết khách sạn trong danh sách'
-    //                         );
-    //                         return response.data;
-    //                     } else {
-    //                         this.showToast(
-    //                             'error',
-    //                             'Cập nhật khách sạn thất bại',
-    //                             'Cập nhật khách sạn thất bại. Vui lòng thử lại sau'
-    //                         );
-    //                         return accommodation;
-    //                     }
-    //                 }
-    //             );
-    //         });
-    // }
     protected updateAccommodation() {
-        // Optional: Add loading state
         this.isLoading = true;
 
         const accommodation: UpdateAccommodation = {
@@ -475,24 +441,21 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             .updateAccommodation(accommodation)
             .pipe(
                 finalize(() => {
-                    this.isLoading = false; // Reset loading state when complete
+                    this.isLoading = false;
                 })
             )
             .subscribe({
                 next: (response) => {
-                    // Update succeeded
                     this.showToast(
                         'success',
                         'Cập nhật khách sạn thành công',
                         'Bạn có thể xem chi tiết khách sạn trong danh sách'
                     );
-                    // Update the data in the list
                     this.accommodations = this.accommodations.map((item) =>
                         item.id === response.data.id ? response.data : item
                     );
                 },
                 error: (error) => {
-                    // Handle error from API
                     console.error('Error updating accommodation:', error);
                     this.showToast(
                         'error',
@@ -505,26 +468,30 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     protected deleteAccommodation(id: string) {
-        this.accommodationService.deleteAccommodation(id).subscribe({
-            next: () => {
-                this.accommodations = this.accommodations.filter(
-                    (accommodation) => accommodation.id !== id
-                );
-                this.showToast(
-                    'success',
-                    'Xoá khách sạn thành công',
-                    'Xoá khách sạn thành công'
-                );
-            },
-            error: (error) => {
-                console.error('Error deleting accommodation:', error);
-                this.showToast(
-                    'error',
-                    'Xoá khách sạn thất bại',
-                    'Đã xảy ra lỗi khi xoá khách sạn. Vui lòng thử lại sau.'
-                );
-            },
-        });
+        this.isLoading = true;
+        this.accommodationService
+            .deleteAccommodation(id)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: () => {
+                    this.accommodations = this.accommodations.filter(
+                        (accommodation) => accommodation.id !== id
+                    );
+                    this.showToast(
+                        'success',
+                        'Xoá khách sạn thành công',
+                        'Xoá khách sạn thành công'
+                    );
+                },
+                error: (error) => {
+                    console.error('Error deleting accommodation:', error);
+                    this.showToast(
+                        'error',
+                        'Xoá khách sạn thất bại',
+                        'Đã xảy ra lỗi khi xoá khách sạn. Vui lòng thử lại sau.'
+                    );
+                },
+            });
     }
 
     protected toggleDescription(id: string): void {

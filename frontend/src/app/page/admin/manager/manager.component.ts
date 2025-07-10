@@ -24,22 +24,25 @@ import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from "../../../components/loader/loader.component";
 
 @Component({
     selector: 'app-manager',
     imports: [
-        TuiTable,
-        TuiButton,
-        TuiInputModule,
-        TuiSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        TuiTextfield,
-        NavbarComponent,
-        RouterModule,
-        Toast,
-        ButtonModule,
-    ],
+    TuiTable,
+    TuiButton,
+    TuiInputModule,
+    TuiSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiTextfield,
+    NavbarComponent,
+    RouterModule,
+    Toast,
+    ButtonModule,
+    LoaderComponent
+],
     templateUrl: './manager.component.html',
     styleUrl: './manager.component.scss',
     providers: [MessageService],
@@ -55,6 +58,7 @@ export class ManagerComponent implements OnInit {
         'Updated At',
         'Show Accommodation',
     ];
+    isLoading: boolean = false;
 
     protected formCreateManger = new FormGroup(
         {
@@ -99,17 +103,25 @@ export class ManagerComponent implements OnInit {
     }
 
     protected getManagers() {
-        this.managerService.getManagers().subscribe({
-            next: (value) => {
-                this.managers = value.data;
-            },
-            error: (err) => {
-                const message =
-                    err.error?.message ||
-                    'Không thể tải danh sách quản lý. Vui lòng thử lại sau.';
-                this.showToast('error', 'Lỗi tải danh sách quản lý', message);
-            },
-        });
+        this.isLoading = true;
+        this.managerService
+            .getManagers()
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (value) => {
+                    this.managers = value.data;
+                },
+                error: (err) => {
+                    const message =
+                        err.error?.message ||
+                        'Không thể tải danh sách quản lý. Vui lòng thử lại sau.';
+                    this.showToast(
+                        'error',
+                        'Lỗi tải danh sách quản lý',
+                        message
+                    );
+                },
+            });
     }
 
     protected createManager() {
@@ -126,35 +138,44 @@ export class ManagerComponent implements OnInit {
             return;
         }
 
-        this.managerService.createNewManager(manager).subscribe({
-            next: (response) => {
-                console.log(response);
-                this.formCreateManger.reset();
-                this.showToast(
-                    'success',
-                    'Tài khoản Quản Lý Đã Được Tạo Thành Công',
-                    response.message
-                );
-                this.getManagers();
-            },
-            error: (err) => {
-                console.log(err);
-                console.log(err.error.error.length);
+        this.isLoading = true;
 
-                for (let index = 0; index < err.error.error.length; index++) {
-                    this.formCreateManger
-                        .get(err.error.error[index]['field'])
-                        ?.setErrors({
-                            backend: err.error.error[index]['message'],
-                        });
-                }
-                this.showToast(
-                    'error',
-                    'Lỗi khi tạo tài khoản quản lý',
-                    err.error.message
-                );
-            },
-        });
+        this.managerService
+            .createNewManager(manager)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    console.log(response);
+                    this.formCreateManger.reset();
+                    this.showToast(
+                        'success',
+                        'Tài khoản Quản Lý Đã Được Tạo Thành Công',
+                        response.message
+                    );
+                    this.getManagers();
+                },
+                error: (err) => {
+                    console.log(err);
+                    console.log(err.error.error.length);
+
+                    for (
+                        let index = 0;
+                        index < err.error.error.length;
+                        index++
+                    ) {
+                        this.formCreateManger
+                            .get(err.error.error[index]['field'])
+                            ?.setErrors({
+                                backend: err.error.error[index]['message'],
+                            });
+                    }
+                    this.showToast(
+                        'error',
+                        'Lỗi khi tạo tài khoản quản lý',
+                        err.error.message
+                    );
+                },
+            });
     }
 
     protected passwordsMatchValidator(

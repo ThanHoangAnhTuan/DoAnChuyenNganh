@@ -1,6 +1,9 @@
 <p-toast></p-toast>
 <app-navbar />
 <app-search-box />
+@if (isLoading) {
+<app-loader text="Loading..." [overlay]="true"></app-loader>
+}
 
 <main class="main">
     <div class="accommodation-detail-header">

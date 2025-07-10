@@ -12,7 +12,8 @@ import {
 import { HotelService } from '../../../services/user/hotel.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AddressService } from '../../../services/address/address.service';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { finalize, forkJoin, map, switchMap } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-search-page',
@@ -27,6 +28,7 @@ import { forkJoin, map, switchMap } from 'rxjs';
         TuiIcon,
         NgIf,
         RouterLink,
+        LoaderComponent,
     ],
     templateUrl: './search-page.component.html',
     standalone: true,
@@ -71,6 +73,7 @@ export class SearchPageComponent implements OnInit {
     // level2AddressNames: string = '';
     error = false; // Có lỗi khi tải dữ liệu không
     filteredHotels: any[] = [];
+    isLoading: boolean = false;
 
     constructor(
         private hotelService: HotelService,
@@ -121,8 +124,9 @@ export class SearchPageComponent implements OnInit {
             checked: false,
         },
     ];
-
+    //Vinh
     loadHotels(): void {
+        this.isLoading = true;
         this.hotelService
             .getAccommodationsByCity(this.citySlug)
             .pipe(
@@ -149,6 +153,7 @@ export class SearchPageComponent implements OnInit {
                     return forkJoin(hotelWithCityName$);
                 })
             )
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
                 next: (hotelsWithCity) => {
                     this.hotels = hotelsWithCity;

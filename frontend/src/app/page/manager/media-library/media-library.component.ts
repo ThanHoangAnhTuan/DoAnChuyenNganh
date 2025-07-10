@@ -17,6 +17,8 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-media-library',
@@ -28,6 +30,7 @@ import { ButtonModule } from 'primeng/button';
         NavbarComponent,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './media-library.component.html',
     styleUrl: './media-library.component.scss',
@@ -42,6 +45,7 @@ export class MediaLibraryComponent {
     fileInput!: ElementRef<HTMLInputElement>;
     protected id = '';
     protected isDetailMode = false;
+    isLoading: boolean = false;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -61,8 +65,14 @@ export class MediaLibraryComponent {
         this.activatedRoute.params.subscribe((params) => {
             this.isDetailMode = this.router.url.includes('/detail/');
             this.id = params['id'];
+            this.isLoading = true;
             this.imageService
                 .getImages(this.id, this.isDetailMode)
+                .pipe(
+                    finalize(() => {
+                        this.isLoading = false;
+                    })
+                )
                 .subscribe((response) => {
                     this.oldImages = response.data;
                 });
@@ -152,12 +162,18 @@ export class MediaLibraryComponent {
             (formImages && formImages?.length > 0) ||
             this.deleteImages.length > 0
         ) {
+            this.isLoading = true;
             this.imageService
                 .uploadImages(
                     this.deleteImages,
                     formImages ?? [],
                     this.id,
                     this.isDetailMode
+                )
+                .pipe(
+                    finalize(() => {
+                        this.isLoading = false;
+                    })
                 )
                 .subscribe({
                     next: (response) => {
