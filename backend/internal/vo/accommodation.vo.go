@@ -44,6 +44,8 @@ type CreateAccommodationOutput struct {
 	Facilities  []FacilitiesOutput `json:"facilities"`
 	GoogleMap   string             `json:"google_map"`
 	Rules       Rule               `json:"rules"`
+	IsVerified  bool               `json:"is_verified"`
+	IsDeleted   bool               `json:"is_deleted"`
 }
 
 type GetAccommodationsInput struct {
@@ -122,7 +124,6 @@ type GetAccommodationsByCityOutput struct {
 
 type GetAccommodationInput struct {
 	ID string `uri:"id"`
-	BasePaginationInput
 }
 
 type GetAccommodationOutput struct {

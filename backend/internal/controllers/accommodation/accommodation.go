@@ -221,7 +221,7 @@ func (c *Controller) GetAccommodationsByManager(ctx *gin.Context) {
 	}
 
 	var params vo.GetAccommodationsInput
-	if err := ctx.ShouldBind(&params); err != nil {
+	if err := ctx.ShouldBindQuery(&params); err != nil {
 		fmt.Printf("GetAccommodationsByManager binding error: %s\n", err.Error())
 		global.Logger.Error("GetAccommodationsByManager binding error: ", zap.String("error", err.Error()))
 		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)

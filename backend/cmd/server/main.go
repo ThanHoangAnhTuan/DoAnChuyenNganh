@@ -1,10 +1,13 @@
 package main
 
 import (
+	"strconv"
+
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 
 	// _ "github.com/thanhoanganhtuan/DoAnChuyenNganh/docs"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/initializer"
 )
 
@@ -28,5 +31,5 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Run(":8080")
+	r.Run(":" + strconv.Itoa(global.Config.Server.Port))
 }

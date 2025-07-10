@@ -6,7 +6,7 @@
     <div class="login-container">
         <h1 class="login-title">Login</h1>
 
-        <form [formGroup]="formLogin" class="form">
+        <form [formGroup]="formLogin" class="form" (ngSubmit)="handleLogin()">
             <div class="input-group">
                 <tui-textfield>
                     <label tuiLabel>Account</label>
@@ -15,7 +15,15 @@
                 @if(formLogin.get('account')?.invalid &&
                 formLogin.get('account')?.touched) {
                 <div>
-                    <small class="text-red-500">Account is required</small>
+                    @if (formLogin.get('account')?.hasError('required')) {
+                    <small class="text-red-500">
+                        Vui lòng nhập tài khoản
+                    </small>
+                    } @if (formLogin.get('account')?.hasError('backend')) {
+                    <small class="text-red-500">{{
+                        formLogin.get("account")?.errors?.['backend']
+                    }}</small>
+                    }
                 </div>
                 }
             </div>
@@ -32,16 +40,12 @@
                 @if(formLogin.get('password')?.invalid &&
                 formLogin.get('password')?.touched) {
                 <div>
-                    <small class="text-red-500">Password is required</small>
+                    <small class="text-red-500">Vui lòng nhập mật khẩu</small>
                 </div>
                 }
             </div>
+
+            <button type="submit" class="login-button">LOGIN</button>
         </form>
-
-        <div class="forgot-password">
-            <a href="#">Forgot password?</a>
-        </div>
-
-        <button class="login-button" (click)="handleLogin()">LOGIN</button>
     </div>
 </main>

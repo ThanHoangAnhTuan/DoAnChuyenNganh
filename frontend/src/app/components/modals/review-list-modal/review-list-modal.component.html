@@ -79,11 +79,9 @@
                         class="user-avatar"
                         *ngIf="review.image != ''"
                     />
-
-                    <p class="user-name" *ngIf="review.name == ''">Anonymous</p>
-                    <p class="user-name" *ngIf="review.name != ''">
+                    <p class="user-name">
                         {{ review.name }}
-                    </p>
+                    </p>    
                 </div>
 
                 <div class="review-item-content">

@@ -25,10 +25,9 @@ const (
 	ErrCodeGetManagerSuccess = 400002
 
 	// user admin
-	ErrCodeGetAdminFailed        = 500001
-	ErrCodeAdminPasswordNotMatch = 500002
-	ErrCodeAdminLoginSuccess     = 500003
-	ErrCodeAccountAlreadyExists  = 500004
+	ErrCodeGetAdminFailed       = 500001
+	ErrCodeAdminLoginSuccess    = 500002
+	ErrCodeAccountAlreadyExists = 500003
 
 	// user base
 	ErrCodeUserNotFound      = 600001
@@ -160,10 +159,9 @@ var message = map[int]string{
 	ErrCodeGetManagerSuccess: "Tải danh sách quản lý thành công",
 
 	// user admin
-	ErrCodeGetAdminFailed:        "Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau",
-	ErrCodeAdminPasswordNotMatch: "Tải khoản hoặc mật khẩu không đúng",
-	ErrCodeAdminLoginSuccess:     "Đăng nhập thành công",
-	ErrCodeAccountAlreadyExists:  "Tài khoản đã tồn tại. Vui lòng chọn email khác.",
+	ErrCodeGetAdminFailed:       "Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau",
+	ErrCodeAdminLoginSuccess:    "Đăng nhập thành công",
+	ErrCodeAccountAlreadyExists: "Tài khoản đã tồn tại. Vui lòng chọn email khác.",
 
 	// user base
 	ErrCodeUserNotFound:      "Người dùng không tồn tại",

@@ -22,6 +22,7 @@ import { TuiInputModule } from '@taiga-ui/legacy';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { GetToken } from '../../../shared/token/token';
 @Component({
     selector: 'app-review-list-modal',
     imports: [
@@ -68,7 +69,9 @@ export class ReviewListModalComponent implements OnInit {
     }
 
     addReview() {
-        const token = sessionStorage.getItem('token');
+        const token = GetToken();
+        console.log(token);
+
 
         if (!this.newTitle || this.newTitle.trim() === '') {
             this.showToast(
@@ -92,6 +95,7 @@ export class ReviewListModalComponent implements OnInit {
             );
             return;
         } else if (!token) {
+            console.log(token);
             this.showToast(
                 'error',
                 'Yêu cầu xác thực',
@@ -112,10 +116,11 @@ export class ReviewListModalComponent implements OnInit {
             next: (response) => {
                 this.showToast('success', 'Đánh giá của bạn đã được thêm', '');
                 // console.log('Review has been added successfull:', response);
-
+                console.log('Đánh giá đã được thêm thành công:', response.data);
+                
                 // Add the new review to the top of the list
                 setTimeout(() => {
-                    this.reviews.unshift(response);
+                    this.reviews.unshift(response.data);
                 }, 1000);
                 // Update total pages
                 this.totalPages = Math.ceil(this.reviews.length / 10);
@@ -191,7 +196,7 @@ export class ReviewListModalComponent implements OnInit {
 
     submitOrderId(): void {
         const orderId = this.inputForm.value.orderId ?? '';
-        const token = sessionStorage.getItem('token');
+        const token = GetToken();
 
         if (!token) {
             this.showToast(

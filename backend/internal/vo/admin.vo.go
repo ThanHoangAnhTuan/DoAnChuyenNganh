@@ -57,7 +57,12 @@ type GetAccommodationsOfManagerOutput struct {
 
 type VerifyAccommodationInput struct {
 	AccommodationID string `json:"accommodation_id"`
-	Status          uint8  `json:"status"` // 1: verify, 0: unverify
+	Status          bool   `json:"status"` // true: verify, false: unverify
+}
+
+type SetDeletedAccommodationInput struct {
+	AccommodationID string `json:"accommodation_id" validate:"required"`
+	Status          bool   `json:"status"`
 }
 
 type VerifyAccommodationOutput struct {

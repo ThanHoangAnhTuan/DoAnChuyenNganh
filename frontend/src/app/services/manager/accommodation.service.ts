@@ -24,6 +24,10 @@ export class AccommodationService {
         return this.http.get<GetAccommodationResponse>(this.managerUrl);
     }
 
+    getAccommodationWithPage(page: number): Observable<GetAccommodationResponse> {
+        return this.http.get<GetAccommodationResponse>(this.managerUrl + '?page=' + page)
+    };
+
     createAccommodation(
         accommodation: CreateAccommodation
     ): Observable<CreateAccommodationResponse> {
