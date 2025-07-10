@@ -14,16 +14,19 @@ import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { SaveTokenToCookie } from '../../../shared/token/token';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from "../../../components/loader/loader.component";
 @Component({
     selector: 'app-login',
     imports: [
-        TuiTextfield,
-        TuiIcon,
-        ReactiveFormsModule,
-        TuiPassword,
-        Toast,
-        ButtonModule,
-    ],
+    TuiTextfield,
+    TuiIcon,
+    ReactiveFormsModule,
+    TuiPassword,
+    Toast,
+    ButtonModule,
+    LoaderComponent
+],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
     providers: [MessageService],
@@ -33,6 +36,7 @@ export class LoginComponent implements OnInit {
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
     });
+    isLoading: boolean = false;
 
     constructor(
         private authSerivce: AuthService,
@@ -75,19 +79,23 @@ export class LoginComponent implements OnInit {
             account: this.formLogin.value.account ?? '',
             password: this.formLogin.value.password ?? '',
         };
-
-        this.authSerivce.login(adminLogin).subscribe({
-            next: (response) => {
-                SaveTokenToCookie(response.data.token);
-                this.router.navigate(['/admin/manager']);
-            },
-            error: (error) => {
-                const errorMessage =
-                    error.error.message || 'Tải khoản hoặc mật khẩu không đúng';
-                this.formLogin
-                    .get('account')
-                    ?.setErrors({ backend: errorMessage });
-            },
-        });
+        this.isLoading = true;
+        this.authSerivce
+            .login(adminLogin)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    SaveTokenToCookie(response.data.token);
+                    this.router.navigate(['/admin/manager']);
+                },
+                error: (error) => {
+                    const errorMessage =
+                        error.error.message ||
+                        'Tải khoản hoặc mật khẩu không đúng';
+                    this.formLogin
+                        .get('account')
+                        ?.setErrors({ backend: errorMessage });
+                },
+            });
     }
 }

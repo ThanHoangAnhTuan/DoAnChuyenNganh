@@ -8,7 +8,7 @@ export interface Facility {
 export interface CreateFacilityOutput {
     code: number;
     message: string;
-    data: Facility[];
+    data: Facility;
 }
 
 export interface DeleteFacilityResponse {
@@ -39,7 +39,7 @@ export interface FacilityDetail {
 export interface CreateFacilityDetailOutput {
     code: number;
     message: string;
-    data: FacilityDetail[];
+    data: FacilityDetail;
 }
 
 export interface DeleteFacilityDetailOutput {

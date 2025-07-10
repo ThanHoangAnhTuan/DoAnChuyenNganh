@@ -41,6 +41,8 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { finalize } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -64,6 +66,7 @@ import { ButtonModule } from 'primeng/button';
         NavbarComponent,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
@@ -87,6 +90,7 @@ export class AccommodationDetailComponent implements OnInit {
         'Action',
     ];
     protected readonly baseUrl: string = 'http://localhost:8080/uploads/';
+    isLoading: boolean = false;
     protected idAccommodationDetailUpdating = '';
     private readonly dialogs = inject(TuiDialogService);
     protected accommodationId: string = '';
@@ -127,7 +131,6 @@ export class AccommodationDetailComponent implements OnInit {
         TuiContext<string | null>
     > = ({ $implicit: id }) =>
         this.discountItems.find((item) => item.id === id)?.name ?? '';
-
     constructor(
         private route: ActivatedRoute,
         private accommodationDetailService: AccommodationDetailService,
@@ -135,7 +138,7 @@ export class AccommodationDetailComponent implements OnInit {
         private facilityDetailService: FacilityDetailService,
         private messageService: MessageService
     ) {}
-
+    //Vinh
     ngOnInit() {
         this.route.params.subscribe((params) => {
             this.accommodationId = params['id'];
@@ -189,15 +192,15 @@ export class AccommodationDetailComponent implements OnInit {
         }
         return this.facilities
             .filter(
-                (facility) =>
-                    this.formFacilityDetail.get(facility.id)?.value === true
+                (facilities) =>
+                    this.formFacilityDetail.get(facilities.id)?.value === true
             )
-            .map((facility) => facility.id);
+            .map((facilities) => facilities.id);
     }
 
     protected openDialogCreate(content: PolymorpheusContent): void {
         this.formAccommodationDetail.reset(this.resetFormAccommodationDetail);
-
+        this.formFacilityDetail.reset();
         this.dialogs
             .open(content, {
                 label: 'Create Accommodation Detail',
@@ -221,7 +224,6 @@ export class AccommodationDetailComponent implements OnInit {
             name: accommodationDetail.name,
             accommodationId: accommodationDetail.accommodation_id,
             discountId: accommodationDetail.discount_id,
-
             doubleBed: accommodationDetail.beds.double_bed,
             singleBed: accommodationDetail.beds.single_bed,
             largeDoubleBed: accommodationDetail.beds.large_double_bed,
@@ -292,19 +294,34 @@ export class AccommodationDetailComponent implements OnInit {
             this.formAccommodationDetail.markAllAsTouched();
             return;
         }
-
+        this.isLoading = true;
         this.accommodationDetailService
             .createAccommodationDetail(accommodationDetail)
-            .subscribe((response) => {
-                this.accommodationDetails.push(response.data);
-                
-                this.formAccommodationDetail.reset();
-                this.formFacilityDetail.reset();
-                this.showToast(
-                    'success',
-                    'Tạo chi tiết chỗ ở thành công',
-                    'Chi tiết chỗ ở đã được tạo thành công'
-                );
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.accommodationDetails.push(response.data);
+                    this.formAccommodationDetail.reset(
+                        this.resetFormAccommodationDetail
+                    );
+                    this.formFacilityDetail.reset();
+                    this.showToast(
+                        'success',
+                        'Tạo chi tiết chỗ ở thành công',
+                        'Chi tiết chỗ ở đã được tạo thành công'
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi tạo chi tiết chỗ ở',
+                        error.error.message || 'Đã xảy ra lỗi'
+                    );
+                },
             });
     }
 
@@ -331,39 +348,68 @@ export class AccommodationDetailComponent implements OnInit {
             price: `${this.formAccommodationDetail.get('price')?.value || 0}`,
             facilities: this.getSelectedFacilityIds(),
         };
-
+        this.isLoading = true;
         this.accommodationDetailService
             .updateAccommodationDetail(accommodationDetail)
-            .subscribe((response) => {
-                this.accommodationDetails = this.accommodationDetails.map(
-                    (accommodationDetail) => {
-                        if (accommodationDetail.id === response.data.id) {
-                            return response.data;
-                        } else {
-                            return accommodationDetail;
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.accommodationDetails = this.accommodationDetails.map(
+                        (detail) => {
+                            if (detail.id === response.data.id) {
+                                return response.data;
+                            }
+                            return detail;
                         }
-                    }
-                );
-                this.showToast(
-                    'success',
-                    'Cập nhật chi tiết chỗ ở thành công',
-                    'Chi tiết chỗ ở đã được cập nhật thành công'
-                );
+                    );
+                    this.showToast(
+                        'success',
+                        'Cập nhật chi tiết chỗ ở thành công',
+                        'Chi tiết chỗ ở đã được cập nhật thành công'
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi cập nhật chi tiết chỗ ở',
+                        error.error.message || 'Đã xảy ra lỗi'
+                    );
+                },
             });
     }
 
     protected deleteAccommodationDetail(id: string) {
+        this.isLoading = true;
         this.accommodationDetailService
             .deleteAccommodationDetail(id)
-            .subscribe((response) => {
-                this.accommodationDetails = this.accommodationDetails.filter(
-                    (accommodationDetail) => accommodationDetail.id !== id
-                );
-                this.showToast(
-                    'success',
-                    'Xóa chi tiết chỗ ở thành công',
-                    'Chi tiết chỗ ở đã được xóa thành công'
-                );
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.accommodationDetails =
+                        this.accommodationDetails.filter(
+                            (detail) => detail.id !== id
+                        );
+                    this.showToast(
+                        'success',
+                        'Xóa chi tiết chỗ ở thành công',
+                        'Chi tiết chỗ ở đã được xóa thành công'
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi khi xóa chi tiết chỗ ở',
+                        error.error.message || 'Đã xảy ra lỗi'
+                    );
+                },
             });
     }
 }
