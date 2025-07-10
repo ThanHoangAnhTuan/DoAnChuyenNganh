@@ -98,6 +98,15 @@
                 Your Accommodations
             </div>
         </a>
+        <a role="menuitem" tuiOption [routerLink]="['/manager/order']">
+            <div class="menu-item-content">
+                <tui-icon
+                    icon="@tui.layout-dashboard"
+                    class="menu-item-icon"
+                ></tui-icon>
+                Your Orders
+            </div>
+        </a>
         <a role="menuitem" tuiOption (click)="logout()">
             <div class="menu-item-content">
                 <tui-icon icon="@tui.log-out" class="menu-item-icon"></tui-icon>

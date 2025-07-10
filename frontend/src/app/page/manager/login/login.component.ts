@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -31,7 +31,7 @@ import { LoaderComponent } from '../../../components/loader/loader.component';
     styleUrl: './login.component.scss',
     providers: [MessageService],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     protected formLogin = new FormGroup({
         account: new FormControl('', Validators.required),
         password: new FormControl('', Validators.required),
@@ -43,6 +43,23 @@ export class LoginComponent {
         private router: Router,
         private messageService: MessageService
     ) {}
+    ngOnInit(): void {
+        this.formLogin.get('account')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+
+        this.formLogin.get('password')?.valueChanges.subscribe(() => {
+            if (this.formLogin.get('account')?.hasError('backend')) {
+                this.formLogin.get('account')?.setErrors(null);
+                this.formLogin.get('account')?.updateValueAndValidity();
+                this.formLogin.get('password')?.updateValueAndValidity();
+            }
+        });
+    }
 
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',

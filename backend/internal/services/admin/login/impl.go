@@ -36,14 +36,14 @@ func (m *serviceImpl) Login(ctx *gin.Context, in *vo.AdminLoginInput) (codeStatu
 	userAdmin, err := m.sqlc.GetUserAdmin(ctx, in.UserAccount)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return response.ErrCodeForbidden, nil, fmt.Errorf("user admin not found")
+			return response.ErrCodeLoginFailed, nil, fmt.Errorf("user admin not found")
 		}
 		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user admin failed: %s", err)
 	}
 
 	// TODO: check password match
 	if !crypto.CheckPasswordHash(in.UserPassword, userAdmin.Password) {
-		return response.ErrCodeInternalServerError, nil, fmt.Errorf("dose not match password")
+		return response.ErrCodeLoginFailed, nil, fmt.Errorf("dose not match password")
 	}
 
 	// TODO: check two-factor authentication

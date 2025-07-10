@@ -7,7 +7,130 @@ package database
 
 import (
 	"context"
+	"strings"
 )
+
+const batchCountAccommodationRoomAvailable = `-- name: BatchCountAccommodationRoomAvailable :many
+SELECT
+    ar.accommodation_type AS accommodation_type_id,
+    COUNT(ar.id) AS available_count
+FROM
+    ecommerce_go_accommodation_room ar
+WHERE
+    ar.id NOT IN (
+        SELECT
+            egar.id
+        FROM
+            ecommerce_go_order ego
+            JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
+            JOIN ecommerce_go_accommodation_room egar ON egar.id = egod.accommodation_room_id
+        WHERE
+            ? > ego.checkin_date
+            AND ? < ego.checkout_date
+            AND ego.order_status IN ('payment_success', 'checked_in')
+    )
+    AND ar.accommodation_type IN (/*SLICE:ids*/?)
+    AND ar.status = 'available'
+    AND ar.is_deleted = 0
+GROUP BY ar.accommodation_type
+`
+
+type BatchCountAccommodationRoomAvailableParams struct {
+	CheckOut uint64
+	CheckIn  uint64
+	Ids      []string
+}
+
+type BatchCountAccommodationRoomAvailableRow struct {
+	AccommodationTypeID string
+	AvailableCount      int64
+}
+
+func (q *Queries) BatchCountAccommodationRoomAvailable(ctx context.Context, arg BatchCountAccommodationRoomAvailableParams) ([]BatchCountAccommodationRoomAvailableRow, error) {
+	query := batchCountAccommodationRoomAvailable
+	var queryParams []interface{}
+	queryParams = append(queryParams, arg.CheckOut)
+	queryParams = append(queryParams, arg.CheckIn)
+	if len(arg.Ids) > 0 {
+		for _, v := range arg.Ids {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:ids*/?", strings.Repeat(",?", len(arg.Ids))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:ids*/?", "NULL", 1)
+	}
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []BatchCountAccommodationRoomAvailableRow
+	for rows.Next() {
+		var i BatchCountAccommodationRoomAvailableRow
+		if err := rows.Scan(&i.AccommodationTypeID, &i.AvailableCount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const batchCountAccommodationRoomAvailableByManager = `-- name: BatchCountAccommodationRoomAvailableByManager :many
+SELECT
+    ar.accommodation_type as accommodation_type_id,
+    COUNT(ar.id) as available_count
+FROM
+    ` + "`" + `ecommerce_go_accommodation_room` + "`" + ` ar
+WHERE
+    ar.accommodation_type IN (/*SLICE:accommodation_type_ids*/?)
+    AND ar.status IN ('available') 
+    AND ar.is_deleted = 0
+GROUP BY ar.accommodation_type
+`
+
+type BatchCountAccommodationRoomAvailableByManagerRow struct {
+	AccommodationTypeID string
+	AvailableCount      int64
+}
+
+func (q *Queries) BatchCountAccommodationRoomAvailableByManager(ctx context.Context, accommodationTypeIds []string) ([]BatchCountAccommodationRoomAvailableByManagerRow, error) {
+	query := batchCountAccommodationRoomAvailableByManager
+	var queryParams []interface{}
+	if len(accommodationTypeIds) > 0 {
+		for _, v := range accommodationTypeIds {
+			queryParams = append(queryParams, v)
+		}
+		query = strings.Replace(query, "/*SLICE:accommodation_type_ids*/?", strings.Repeat(",?", len(accommodationTypeIds))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:accommodation_type_ids*/?", "NULL", 1)
+	}
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []BatchCountAccommodationRoomAvailableByManagerRow
+	for rows.Next() {
+		var i BatchCountAccommodationRoomAvailableByManagerRow
+		if err := rows.Scan(&i.AccommodationTypeID, &i.AvailableCount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 const checkAccommodationRoomBelongsToManager = `-- name: CheckAccommodationRoomBelongsToManager :one
 SELECT

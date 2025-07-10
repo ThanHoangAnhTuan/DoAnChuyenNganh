@@ -1,7 +1,9 @@
 package manager
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -232,9 +234,16 @@ func (s *serviceImpl) VerifyAccommodation(ctx *gin.Context, in *vo.VerifyAccommo
 	if !accommodationExists {
 		return response.ErrCodeAccommodationNotFound, fmt.Errorf("accommodation not found")
 	}
+	var isVerified uint8
+	isVerified = 0
+	if in.Status {
+		isVerified = 1
+	}
+
+	fmt.Printf("isVerified: %v", isVerified)
 	// TODO: update status of accommodation
 	err = s.sqlc.UpdateStatusAccommodation(ctx, database.UpdateStatusAccommodationParams{
-		IsVerified: in.Status,
+		IsVerified: isVerified,
 		ID:         in.AccommodationID,
 	})
 	if err != nil {
@@ -242,4 +251,56 @@ func (s *serviceImpl) VerifyAccommodation(ctx *gin.Context, in *vo.VerifyAccommo
 	}
 
 	return response.ErrCodeUpdateAccommodationSuccess, nil
+}
+
+func (t *serviceImpl) SetDeletedAccommodation(ctx *gin.Context, in *vo.SetDeletedAccommodationInput) (codeResult int, err error) {
+	// TODO: get userId from context
+	userID, ok := utils.GetUserIDFromGin(ctx)
+	if !ok {
+		return response.ErrCodeUnauthorized, fmt.Errorf("userID not found in context")
+	}
+
+	// TODO: check admin exists in database
+	admin, err := t.sqlc.CheckUserAdminExistsById(ctx, userID)
+	if err != nil {
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get admin: %v", err)
+	}
+
+	if !admin {
+		return response.ErrCodeForbidden, fmt.Errorf("admin not found")
+	}
+
+	// TODO: check accommodation exists in database
+	accommodation, err := t.sqlc.GetAccommodationByIdByAdmin(ctx, in.AccommodationID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeAccommodationNotFound, fmt.Errorf("accommodation not found")
+		}
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for get accommodation: %v", err)
+	}
+
+	// TODO: delete accommodation
+	if in.Status {
+		err = t.sqlc.DeleteAccommodation(ctx, database.DeleteAccommodationParams{
+			ID:        accommodation.ID,
+			UpdatedAt: utiltime.GetTimeNow(),
+		})
+		if err != nil {
+			return response.ErrCodeInternalServerError, fmt.Errorf("delete accommodation failed: %v", err)
+		}
+	} else {
+		err = t.sqlc.RestoreAccommodation(ctx, database.RestoreAccommodationParams{
+			ID:        accommodation.ID,
+			UpdatedAt: utiltime.GetTimeNow(),
+		})
+		if err != nil {
+			return response.ErrCodeInternalServerError, fmt.Errorf("restores accommodation failed: %v", err)
+		}
+	}
+
+	if err != nil {
+		return response.ErrCodeInternalServerError, fmt.Errorf("error for delete accommodation: %s", err)
+	}
+
+	return response.ErrCodeDeleteAccommodationSuccess, nil
 }

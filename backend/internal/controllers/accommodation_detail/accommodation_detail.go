@@ -44,7 +44,7 @@ func (c *Controller) CreateAccommodationDetail(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("CreateAccommodationDetail error: %s\n", err.Error())
 		global.Logger.Error("CreateAccommodationDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus, err)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 

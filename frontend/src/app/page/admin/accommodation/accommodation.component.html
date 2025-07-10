@@ -1,8 +1,11 @@
 <app-navbar></app-navbar>
+<p-toast></p-toast>
 @if (isLoading) {
-<app-loader text="Loading..." [overlay]="true"></app-loader>
+<app-loader text="" [overlay]="true"></app-loader>
 }
 <main>
+    <div #topList></div>
+
     <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
         <thead>
             <tr tuiThGroup></tr>
@@ -25,10 +28,10 @@
                 </td>
                 <td *tuiCell="'District'" tuiTd>
                     {{
-                        changeDistrictSlugToName(
-                            accommodation.city,
-                            accommodation.district
-                        )
+                    changeDistrictSlugToName(
+                    accommodation.city,
+                    accommodation.district
+                    )
                     }}
                 </td>
                 <td *tuiCell="'Address'" tuiTd>
@@ -47,22 +50,15 @@
                     >
                 </td> -->
                 <td *tuiCell="'Description'" tuiTd>
-                    <div
-                        #descEl
-                        [innerHTML]="getDescription(accommodation.description)"
-                        [attr.data-id]="accommodation.id"
-                        [class.collapsed]="!showFullMap[accommodation.id]"
-                    ></div>
+                    <div #descEl [innerHTML]="getDescription(accommodation.description)"
+                        [attr.data-id]="accommodation.id" [class.collapsed]="!showFullMap[accommodation.id]"></div>
 
                     @if(showButtonStates[accommodation.id]) {
-                    <p
-                        (click)="toggleDescription(accommodation.id)"
-                        class="see-more-button"
-                    >
+                    <p (click)="toggleDescription(accommodation.id)" class="see-more-button">
                         {{
-                            isDescriptionShown(accommodation.id)
-                                ? "Thu gọn"
-                                : "Xem thêm"
+                        isDescriptionShown(accommodation.id)
+                        ? "Thu gọn"
+                        : "Xem thêm"
                         }}
                     </p>
                     }
@@ -72,45 +68,25 @@
                     {{ accommodation.rating }}
                 </td>
                 <td class="text-nowrap" *tuiCell="'Google Map'" tuiTd>
-                    <iframe
-                        [src]="getSafeUrl(accommodation.google_map)"
-                        width="300"
-                        height="200"
-                        style="border: 0"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                    ></iframe>
+                    <iframe [src]="getSafeUrl(accommodation.google_map)" width="300" height="200" style="border: 0"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </td>
 
                 <td *tuiCell="'Is Verified'" tuiTd>
                     <div class="has-edit-button">
                         @if(isUpdateVerified && updateId == accommodation.id) {
-                        <select
-                            name="is_verified"
-                            id="is_verified"
-                            [(ngModel)]="accommodation.is_verified"
-                            (blur)="openVerifyConfirmModal()"
-                            class="change-input"
-                        >
-                            <option [value]="1">Yes</option>
-                            <option [value]="0">No</option>
+                        <select name="is_verified" id="is_verified" [(ngModel)]="accommodation.is_verified"
+                            (change)="openVerifyConfirmModal()" (blur)="resetInput()" class="change-input">
+                            <option [ngValue]="true">True</option>
+                            <option [ngValue]="false">False</option>
                         </select>
                         } @else {
-                        {{ accommodation.is_verified ? "Yes" : "No" }}
+                        {{ accommodation.is_verified ? "True" : "False" }}
                         }
 
-                        <button
-                            appearance="primary"
-                            iconStart="@tui.pencil"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            [style.border-radius.%]="100"
-                            [style.background]="'white'"
-                            [style.color]="'blue'"
-                            (click)="changeVerifiedApply(accommodation.id)"
-                        >
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeVerifiedApply(accommodation.id)">
                             Edit
                         </button>
                     </div>
@@ -118,31 +94,18 @@
                 <td *tuiCell="'Is Deleted'" tuiTd>
                     <div class="has-edit-button">
                         @if(isUpdateDeleted && updateId == accommodation.id) {
-                        <select
-                            name="is_deleted"
-                            id="is_deleted"
-                            [(ngModel)]="accommodation.is_verified"
-                            (blur)="openDeleteConfirmModal()"
-                            class="change-input"
-                        >
-                            <option [value]="1">Yes</option>
-                            <option [value]="0">No</option>
+                        <select name="is_deleted" id="is_deleted" [(ngModel)]="accommodation.is_deleted"
+                            (change)="openDeleteConfirmModal()" (blur)="resetInput()" class="change-input">
+                            <option [ngValue]="true">True</option>
+                            <option [ngValue]="false">False</option>
                         </select>
                         } @else {
-                        {{ accommodation.is_deleted ? "Yes" : "No" }}
+                        {{ accommodation.is_deleted ? "True" : "False" }}
                         }
 
-                        <button
-                            appearance="primary"
-                            iconStart="@tui.pencil"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            [style.border-radius.%]="100"
-                            [style.background]="'white'"
-                            [style.color]="'blue'"
-                            (click)="changeDeletedApply(accommodation.id)"
-                        >
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeDeletedApply(accommodation.id)">
                             Edit
                         </button>
                     </div>
@@ -151,15 +114,16 @@
             }
         </tbody>
     </table>
+
+    <div class="pagination-container">
+        <tui-pagination [activePadding]="2" [index]="0" [length]="pagination.total_pages"
+            (indexChange)="onPageChange($event)" />
+    </div>
 </main>
 
 <!-- Confirm Modal -->
 @if(isModalConfirmVerifyOpen) {
-<div
-    class="outside-modal"
-    (click)="$event.stopPropagation()"
-    (click)="closeVerifyConfirmModal()"
->
+<div class="outside-modal" (click)="$event.stopPropagation()" (click)="closeVerifyConfirmModal()">
     <div class="modal">
         <h3>Xác nhận hành động</h3>
         <p>Bạn có chắc chắn muốn xác nhận thay đổi?</p>
@@ -171,11 +135,7 @@
     </div>
 </div>
 } @if(isModalConfirmDeleteOpen) {
-<div
-    class="outside-modal"
-    (click)="$event.stopPropagation()"
-    (click)="closeDeleteConfirmModal()"
->
+<div class="outside-modal" (click)="$event.stopPropagation()" (click)="closeDeleteConfirmModal()">
     <div class="modal">
         <h3>Xác nhận hành động</h3>
         <p>Bạn có chắc chắn muốn xác nhận thay đổi?</p>

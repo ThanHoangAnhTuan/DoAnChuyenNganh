@@ -7,6 +7,8 @@ import {
     CreateManagerOutput,
     GetAccommodationsOfManagerByAdminOutput,
     GetManagerOutput,
+    SetDeletedAccommodationInput,
+    SetDeletedAccommodationOutput,
     VerifyAccommodationInput,
     VerifyAccommodationOutput,
 } from '../../models/admin/manager.model';
@@ -18,7 +20,7 @@ export class ManagerService {
     private apiUrl = `${environment.apiUrl}/manager`;
     private adminUrl = `${environment.apiUrl}/admin`;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     createNewManager(manager: CreateManager): Observable<CreateManagerOutput> {
         return this.http.post<CreateManagerOutput>(
@@ -31,11 +33,15 @@ export class ManagerService {
         return this.http.get<GetManagerOutput>(`${this.adminUrl}/managers`);
     }
 
-    getAccommodationsOfManagerByAdmin(
-        id: string
-    ): Observable<GetAccommodationsOfManagerByAdminOutput> {
+    getAccommodationsOfManagerByAdmin(id: string): Observable<GetAccommodationsOfManagerByAdminOutput> {
         return this.http.get<GetAccommodationsOfManagerByAdminOutput>(
             `${this.adminUrl}/manager/${id}/accommodations`
+        );
+    }
+
+    getAccommodationsOfManagerByAdminWithPage(id: string, page: number): Observable<GetAccommodationsOfManagerByAdminOutput> {
+        return this.http.get<GetAccommodationsOfManagerByAdminOutput>(
+            `${this.adminUrl}/manager/${id}/accommodations?page=${page}`
         );
     }
 
@@ -45,6 +51,18 @@ export class ManagerService {
         return this.http.put<VerifyAccommodationOutput>(
             this.adminUrl + '/verify-accommodation',
             newVerify
+        );
+    }
+
+    updateDeleted(
+        newDeleted: SetDeletedAccommodationInput
+    ): Observable<SetDeletedAccommodationOutput> {
+        console.log("service");
+        console.log(newDeleted);
+
+        return this.http.put<SetDeletedAccommodationOutput>(
+            this.adminUrl + '/set-deleted-accommodation',
+            newDeleted
         );
     }
 }

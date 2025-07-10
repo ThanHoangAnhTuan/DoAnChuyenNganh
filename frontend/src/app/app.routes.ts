@@ -19,6 +19,7 @@ import { StatsComponent } from './page/manager/stats/stats.component';
 import { ManagerComponent } from './page/admin/manager/manager.component';
 import { RoomComponent } from './page/manager/room/room.component';
 import { AccommodationComponent as AdminAccommodationComponent } from './page/admin/accommodation/accommodation.component';
+import { OrderComponent as ManagerOrderComponent} from './page/manager/order/order.component';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,12 @@ export const routes: Routes = [
     {
         path: 'manager/accommodation',
         component: AccommodationComponent,
+        canActivate: [RoleGuard],
+        data: { expectedRole: 'manager' },
+    },
+    {
+        path: 'manager/order',
+        component: ManagerOrderComponent,
         canActivate: [RoleGuard],
         data: { expectedRole: 'manager' },
     },

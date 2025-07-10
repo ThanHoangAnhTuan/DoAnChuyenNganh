@@ -176,100 +176,129 @@ func (a *serviceImpl) DeleteAccommodationDetail(ctx *gin.Context, in *vo.DeleteA
 func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccommodationDetailsInput) (codeStatus int, out []*vo.GetAccommodationDetailsOutput, err error) {
 	out = []*vo.GetAccommodationDetailsOutput{}
 
-	// TODO: check accommodation exists
+	// 1. Lấy thông tin accommodation
 	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return response.ErrCodeAccommodationNotFound, nil, fmt.Errorf("accommodation not found")
 		}
-		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get accommodation: %w", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation failed: %w", err)
 	}
 
-	// TODO: get accommodation details by accommodation id
+	// 2. Lấy danh sách accommodation detail
 	accommodationDetails, err := a.sqlc.GetAccommodationDetails(ctx, accommodation.ID)
 	if err != nil {
-		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get accommodation by id failed: %s", err)
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation details failed: %s", err)
 	}
 
-	for _, accommodationDetail := range accommodationDetails {
-		beds := vo.Beds{}
-		if err := json.Unmarshal(accommodationDetail.Beds, &beds); err != nil {
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling beds: %s", err)
-		}
+	var (
+		allFacilityIDs         []string
+		accommodationDetailIDs []string
+		facilityIDsMap         = make(map[string][]string)
+	)
 
-		// TODO: get facility
+	// 3. Gom facilityIDs và detailIDs
+	for _, detail := range accommodationDetails {
+		accommodationDetailIDs = append(accommodationDetailIDs, detail.ID)
+
 		var facilityIDs []string
-		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		if err := json.Unmarshal(detail.Facilities, &facilityIDs); err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("unmarshal facilities failed: %s", err)
 		}
+		facilityIDsMap[detail.ID] = facilityIDs
+		allFacilityIDs = append(allFacilityIDs, facilityIDs...)
+	}
 
-		facilities := []vo.FacilityDetailOutput{}
+	// 4. Truy vấn batch facility và đưa vào map
+	uniqueFacilityIDs := removeDuplicateStrings(allFacilityIDs)
+	allFacilities, err := a.sqlc.GetAccommodationFacilitiesByIds(ctx, uniqueFacilityIDs)
+	if err != nil {
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facilities failed: %s", err)
+	}
 
-		for _, facilityID := range facilityIDs {
-			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
-			}
-
-			facilities = append(facilities, vo.FacilityDetailOutput{
-				ID:   facility.ID,
-				Name: facility.Name,
-			})
+	facilityMap := make(map[string]vo.FacilityDetailOutput)
+	for _, facility := range allFacilities {
+		facilityMap[facility.ID] = vo.FacilityDetailOutput{
+			ID:   facility.ID,
+			Name: facility.Name,
 		}
+	}
 
-		// TODO: get images of accommodation detail
-		accommodationDetailImages, err := a.sqlc.GetAccommodationDetailImages(ctx, accommodationDetail.ID)
+	// 5. Lấy danh sách ảnh accommodation detail
+	imageMap := make(map[string][]string)
+	for _, detailID := range accommodationDetailIDs {
+		images, err := a.sqlc.GetAccommodationDetailImages(ctx, detailID)
 		if err != nil {
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get images of accommodation failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get images failed: %s", err)
+		}
+		for _, img := range images {
+			imageMap[detailID] = append(imageMap[detailID], img.Image)
+		}
+	}
+
+	// 6. Đếm số lượng phòng còn trống nếu có ngày checkin - checkout
+	availableRoomsMap := make(map[string]int64)
+	if in.CheckIn != "" && in.CheckOut != "" {
+		checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
+		if err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert checkIn failed: %s", err)
+		}
+		checkOut, err := utiltime.ConvertISOToUnixTimestamp(in.CheckOut)
+		if err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert checkOut failed: %s", err)
 		}
 
-		var pathNames []string
-		for _, img := range accommodationDetailImages {
-			pathNames = append(pathNames, img.Image)
+		// Sử dụng batch query
+		results, err := a.sqlc.BatchCountAccommodationRoomAvailable(ctx, database.BatchCountAccommodationRoomAvailableParams{
+			CheckIn:  checkIn,
+			CheckOut: checkOut,
+			Ids:      accommodationDetailIDs,
+		})
+		if err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("batch count available room failed: %s", err)
+		}
+		for _, result := range results {
+			availableRoomsMap[result.AccommodationTypeID] = result.AvailableCount
+		}
+	}
+
+	// 7. Tạo output
+	for _, detail := range accommodationDetails {
+		var beds vo.Beds
+		if err := json.Unmarshal(detail.Beds, &beds); err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("unmarshal beds failed: %s", err)
 		}
 
-		var availableRooms int64
-
-		if in.CheckIn != "" && in.CheckOut != "" {
-			checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
-			}
-
-			checkOut, err := utiltime.ConvertISOToUnixTimestamp(in.CheckOut)
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("convert ISO to Unix failed: %s", err)
-			}
-			// TODO: calculator number of available rooms
-			availableRooms, err = a.sqlc.CountAccommodationRoomAvailable(ctx, database.CountAccommodationRoomAvailableParams{
-				CheckOut:            checkOut,
-				CheckIn:             checkIn,
-				AccommodationTypeID: accommodationDetail.ID,
-			})
-
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("count available room failed: %s", err)
+		// Map facilities
+		var facilities []vo.FacilityDetailOutput
+		for _, fid := range facilityIDsMap[detail.ID] {
+			if f, ok := facilityMap[fid]; ok {
+				facilities = append(facilities, f)
 			}
 		}
+
+		// Available rooms
+		availableRooms := availableRoomsMap[detail.ID]
+
 		out = append(out, &vo.GetAccommodationDetailsOutput{
-			ID:             accommodationDetail.ID,
-			Name:           accommodationDetail.Name,
-			Guests:         accommodationDetail.Guests,
+			ID:             detail.ID,
+			Name:           detail.Name,
+			Guests:         detail.Guests,
 			Beds:           beds,
 			Facilities:     facilities,
 			AvailableRooms: uint8(availableRooms),
-			Price:          accommodationDetail.Price.String(),
-			DiscountID:     accommodationDetail.DiscountID.String,
-			Images:         pathNames,
+			Price:          detail.Price.String(),
+			DiscountID:     detail.DiscountID.String,
+			Images:         imageMap[detail.ID],
 		})
 	}
+
 	return response.ErrCodeGetAccommodationTypeSuccess, out, nil
 }
 
 func (a *serviceImpl) GetAccommodationDetailsByManager(ctx *gin.Context, in *vo.GetAccommodationDetailsByManagerInput) (codeStatus int, out []*vo.GetAccommodationDetailsByManagerOutput, err error) {
 	out = []*vo.GetAccommodationDetailsByManagerOutput{}
 
-	// TODO: check accommodation exists
 	accommodation, err := a.sqlc.GetAccommodationByIdNoVerify(ctx, in.AccommodationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -278,42 +307,81 @@ func (a *serviceImpl) GetAccommodationDetailsByManager(ctx *gin.Context, in *vo.
 		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get accommodation: %w", err)
 	}
 
-	// TODO: get accommodation details by accommodation id
 	accommodationDetails, err := a.sqlc.GetAccommodationDetails(ctx, accommodation.ID)
 	if err != nil {
 		return response.ErrCodeInternalServerError, nil, fmt.Errorf("error for get accommodation by id failed: %s", err)
 	}
 
+	var allFacilityIDs []string
+	var accommodationDetailIDs []string
+	facilityIDsMap := make(map[string][]string) // detail_id -> facility_ids
+
+	for _, detail := range accommodationDetails {
+		accommodationDetailIDs = append(accommodationDetailIDs, detail.ID)
+
+		var facilityIDs []string
+		if err := json.Unmarshal(detail.Facilities, &facilityIDs); err != nil {
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
+		}
+
+		facilityIDsMap[detail.ID] = facilityIDs
+		allFacilityIDs = append(allFacilityIDs, facilityIDs...)
+	}
+
+	// Loại bỏ duplicate facility IDs
+	uniqueFacilityIDs := removeDuplicateStrings(allFacilityIDs)
+
+	// 4. Batch query facilities
+	allFacilities, err := a.sqlc.GetAccommodationFacilitiesByIds(ctx, uniqueFacilityIDs)
+	if err != nil {
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facilities failed: %s", err)
+	}
+
+	// Tạo map để lookup nhanh
+	facilityMap := make(map[string]vo.FacilityDetailOutput)
+	for _, facility := range allFacilities {
+		facilityMap[facility.ID] = vo.FacilityDetailOutput{
+			ID:   facility.ID,
+			Name: facility.Name,
+		}
+	}
+
+	availableRoomsResult, err := a.sqlc.BatchCountAccommodationRoomAvailableByManager(ctx, accommodationDetailIDs)
+	if err != nil {
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("batch count rooms failed: %s", err)
+	}
+
+	// Tạo map để lookup nhanh
+	availableRoomsMap := make(map[string]int64)
+	for _, result := range availableRoomsResult {
+		availableRoomsMap[result.AccommodationTypeID] = result.AvailableCount
+	}
+
+	// Đảm bảo tất cả detail đều có count (set 0 nếu không tìm thấy)
+	for _, detailID := range accommodationDetailIDs {
+		if _, exists := availableRoomsMap[detailID]; !exists {
+			availableRoomsMap[detailID] = 0
+		}
+	}
+
+	// 6. Xử lý và tạo output
 	for _, accommodationDetail := range accommodationDetails {
+		// Unmarshal beds
 		beds := vo.Beds{}
 		if err := json.Unmarshal(accommodationDetail.Beds, &beds); err != nil {
 			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling beds: %s", err)
 		}
 
-		// TODO: get facility
-		var facilityIDs []string
-		if err := json.Unmarshal(accommodationDetail.Facilities, &facilityIDs); err != nil {
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("error unmarshaling facilities: %s", err)
-		}
-
+		// Lấy facilities từ map (không cần query)
 		facilities := []vo.FacilityDetailOutput{}
-
-		for _, facilityID := range facilityIDs {
-			facility, err := a.sqlc.GetAccommodationFacilityDetailById(ctx, facilityID)
-			if err != nil {
-				return response.ErrCodeInternalServerError, nil, fmt.Errorf("get facility failed: %s", err)
+		for _, facilityID := range facilityIDsMap[accommodationDetail.ID] {
+			if facility, exists := facilityMap[facilityID]; exists {
+				facilities = append(facilities, facility)
 			}
-
-			facilities = append(facilities, vo.FacilityDetailOutput{
-				ID:   facility.ID,
-				Name: facility.Name,
-			})
 		}
 
-		availableRooms, err := a.sqlc.CountAccommodationRoomAvailableByManager(ctx, accommodationDetail.ID)
-		if err != nil {
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation room failed: %s", err)
-		}
+		// Lấy available rooms từ map
+		availableRooms := availableRoomsMap[accommodationDetail.ID]
 
 		out = append(out, &vo.GetAccommodationDetailsByManagerOutput{
 			ID:             accommodationDetail.ID,
@@ -451,4 +519,18 @@ func (a *serviceImpl) UpdateAccommodationDetail(ctx *gin.Context, in *vo.UpdateA
 	out.Images = pathNames
 
 	return response.ErrCodeUpdateAccommodationTypeSuccess, out, nil
+}
+
+func removeDuplicateStrings(slice []string) []string {
+	keys := make(map[string]bool)
+	result := []string{}
+
+	for _, item := range slice {
+		if !keys[item] {
+			keys[item] = true
+			result = append(result, item)
+		}
+	}
+
+	return result
 }

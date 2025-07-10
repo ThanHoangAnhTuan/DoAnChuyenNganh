@@ -52,17 +52,17 @@ func (c *Controller) CreateFacilityDetail(ctx *gin.Context) {
 }
 
 func (c *Controller) GetFacilityDetail(ctx *gin.Context) {
-	codeResult, data, err := services.FacilityDetail().GetFacilityDetail(ctx)
+	codeStatus, data, err := services.FacilityDetail().GetFacilityDetail(ctx)
 	if err != nil {
 		fmt.Printf("GetFacilityDetail error: %s\n", err.Error())
 		global.Logger.Error("GetFacilityDetail error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("GetFacilityDetail success\n")
 	global.Logger.Info("GetFacilityDetail success")
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) UpdateFacilityDetail(ctx *gin.Context) {

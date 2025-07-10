@@ -1,0 +1,102 @@
+<p-toast></p-toast>
+<app-navbar></app-navbar>
+<main>
+    <table tuiTable class="table" [columns]="columns" [style.width.%]="100">
+        <thead>
+            <tr tuiThGroup></tr>
+        </thead>
+        <tbody tuiTbody>
+            @for(order of orders; track order.id; let i = $index) {
+            <tr tuiTr>
+                <td *tuiCell="'ID'" tuiTd>
+                    {{ i + 1 }}
+                </td>
+                <td *tuiCell="'Email'" tuiTd>
+                    {{ order.email }}
+                </td>
+                <td *tuiCell="'Username'" tuiTd>
+                    {{ order.username }}
+                </td>
+                <td *tuiCell="'Phone'" tuiTd>
+                    {{ order.phone }}
+                </td>
+                <td *tuiCell="'Accommodation Name'" tuiTd>
+                    {{ order.accommodationName }}
+                </td>
+                <td *tuiCell="'Check In'" tuiTd>
+                    {{ order.checkIn }}
+                </td>
+                <td *tuiCell="'Check Out'" tuiTd>
+                    {{ order.checkOut }}
+                </td>
+                <td *tuiCell="'Final Total'" tuiTd>
+                    {{ order.finalTotal }}  
+                </td>
+                <!-- <td *tuiCell="'Order Status'" tuiTd>
+                    <div class="has-edit-button">
+                        @if(isUpdateVerified && updateId == accommodation.id) {
+                        <select
+                            name="is_verified"
+                            id="is_verified"
+                            [(ngModel)]="accommodation.is_verified"
+                            (change)="openVerifyConfirmModal()"
+                            (blur)="resetInput()"
+                            class="change-input"
+                        >
+                            <option [ngValue]="true">True</option>
+                            <option [ngValue]="false">False</option>
+                        </select>
+                        } @else {
+                        {{ accommodation.is_verified ? "True" : "False" }}
+                        }
+
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            (click)="changeVerifiedApply(accommodation.id)"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </td> -->
+                <td *tuiCell="'Actions'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button
+                            appearance="primary"
+                            iconStart="@tui.pencil"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.background]="'white'"
+                            [style.color]="'blue'"
+                            >
+                            <!-- (click)="" -->
+                            <!-- openDialogUpdate(updateForm, accommodation) -->
+                            Edit
+                        </button>
+                        <button
+                            appearance="action"
+                            iconStart="@tui.trash"
+                            size="xs"
+                            tuiIconButton
+                            type="button"
+                            [style.border-radius.%]="100"
+                            [style.color]="'red'"
+                            >
+                            <!-- (click)="deleteAccommodation(accommodation.id)" -->
+                            Delete
+                        </button>
+                    </span>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</main>

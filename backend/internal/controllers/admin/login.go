@@ -79,15 +79,15 @@ func (c *CAdminLogin) Login(ctx *gin.Context) {
 		return
 	}
 
-	codeResult, data, err := services.AdminLogin().Login(ctx, &params)
+	codeStatus, data, err := services.AdminLogin().Login(ctx, &params)
 	if err != nil {
 		fmt.Printf("Admin login error: %s\n", err.Error())
 		global.Logger.Error("Admin login error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeResult, nil)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	fmt.Printf("Admin login success: %s\n", data.Token)
 	global.Logger.Info("Admin login success: ", zap.String("info", data.Token))
-	response.SuccessResponse(ctx, codeResult, data)
+	response.SuccessResponse(ctx, codeStatus, data)
 }

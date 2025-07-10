@@ -28,6 +28,7 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { finalize } from 'rxjs';
 import { LoaderComponent } from "../../../components/loader/loader.component";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-accommodation-detail',
@@ -102,7 +103,6 @@ export class AccommodationDetailComponent implements OnInit {
     } = {};
     avarageRating: number = 0;
     scrollY: number = 0;
-
     constructor(
         private accommodationDetailService: AccommodationDetailService,
         private route: ActivatedRoute,
@@ -110,11 +110,18 @@ export class AccommodationDetailComponent implements OnInit {
         private reviewService: ReviewService,
         private paymentService: PaymentService,
         private addressService: AddressService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private sanitizer: DomSanitizer,
     ) {
         this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
         this.updateDescription();
     }
+
+    // Method để sanitize URL
+    getSafeUrl(url: string): SafeResourceUrl {
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
     showToast(
         severity: 'success' | 'info' | 'warn' | 'error',
         summary: string,

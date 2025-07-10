@@ -86,8 +86,7 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ?
+    ` + "`" + `manager_id` + "`" + ` = ?
 `
 
 func (q *Queries) CountAccommodationOfManager(ctx context.Context, managerID string) (int64, error) {
@@ -232,6 +231,67 @@ func (q *Queries) GetAccommodationById(ctx context.Context, id string) (GetAccom
 	return i, err
 }
 
+const getAccommodationByIdByAdmin = `-- name: GetAccommodationByIdByAdmin :one
+SELECT
+    ` + "`" + `id` + "`" + `,
+    ` + "`" + `manager_id` + "`" + `,
+    ` + "`" + `country` + "`" + `,
+    ` + "`" + `name` + "`" + `,
+    ` + "`" + `city` + "`" + `,
+    ` + "`" + `district` + "`" + `,
+    ` + "`" + `address` + "`" + `,
+    ` + "`" + `description` + "`" + `,
+    ` + "`" + `facilities` + "`" + `,
+    ` + "`" + `gg_map` + "`" + `,
+    ` + "`" + `rules` + "`" + `,
+    ` + "`" + `rating` + "`" + `,
+    ` + "`" + `is_deleted` + "`" + `,
+    ` + "`" + `is_verified` + "`" + `
+FROM
+    ` + "`" + `ecommerce_go_accommodation` + "`" + `
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+`
+
+type GetAccommodationByIdByAdminRow struct {
+	ID          string
+	ManagerID   string
+	Country     string
+	Name        string
+	City        string
+	District    string
+	Address     string
+	Description string
+	Facilities  json.RawMessage
+	GgMap       string
+	Rules       json.RawMessage
+	Rating      uint8
+	IsDeleted   uint8
+	IsVerified  uint8
+}
+
+func (q *Queries) GetAccommodationByIdByAdmin(ctx context.Context, id string) (GetAccommodationByIdByAdminRow, error) {
+	row := q.db.QueryRowContext(ctx, getAccommodationByIdByAdmin, id)
+	var i GetAccommodationByIdByAdminRow
+	err := row.Scan(
+		&i.ID,
+		&i.ManagerID,
+		&i.Country,
+		&i.Name,
+		&i.City,
+		&i.District,
+		&i.Address,
+		&i.Description,
+		&i.Facilities,
+		&i.GgMap,
+		&i.Rules,
+		&i.Rating,
+		&i.IsDeleted,
+		&i.IsVerified,
+	)
+	return i, err
+}
+
 const getAccommodationByIdNoVerify = `-- name: GetAccommodationByIdNoVerify :one
 SELECT
     ` + "`" + `id` + "`" + `,
@@ -245,7 +305,9 @@ SELECT
     ` + "`" + `facilities` + "`" + `,
     ` + "`" + `gg_map` + "`" + `,
     ` + "`" + `rules` + "`" + `,
-    ` + "`" + `rating` + "`" + `
+    ` + "`" + `rating` + "`" + `,
+    ` + "`" + `is_deleted` + "`" + `,
+    ` + "`" + `is_verified` + "`" + `
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
@@ -266,6 +328,8 @@ type GetAccommodationByIdNoVerifyRow struct {
 	GgMap       string
 	Rules       json.RawMessage
 	Rating      uint8
+	IsDeleted   uint8
+	IsVerified  uint8
 }
 
 func (q *Queries) GetAccommodationByIdNoVerify(ctx context.Context, id string) (GetAccommodationByIdNoVerifyRow, error) {
@@ -284,6 +348,8 @@ func (q *Queries) GetAccommodationByIdNoVerify(ctx context.Context, id string) (
 		&i.GgMap,
 		&i.Rules,
 		&i.Rating,
+		&i.IsDeleted,
+		&i.IsVerified,
 	)
 	return i, err
 }
@@ -684,8 +750,7 @@ SELECT
 FROM
     ` + "`" + `ecommerce_go_accommodation` + "`" + `
 WHERE
-    ` + "`" + `is_deleted` + "`" + ` = 0
-    AND ` + "`" + `manager_id` + "`" + ` = ?
+    ` + "`" + `manager_id` + "`" + ` = ?
 LIMIT
     ?
 OFFSET
@@ -816,6 +881,26 @@ func (q *Queries) GetAccommodationsWithPagination(ctx context.Context, arg GetAc
 		return nil, err
 	}
 	return items, nil
+}
+
+const restoreAccommodation = `-- name: RestoreAccommodation :exec
+UPDATE ` + "`" + `ecommerce_go_accommodation` + "`" + `
+SET
+    ` + "`" + `is_deleted` + "`" + ` = 0,
+    ` + "`" + `updated_at` + "`" + ` = ?
+WHERE
+    ` + "`" + `id` + "`" + ` = ?
+    AND ` + "`" + `is_deleted` + "`" + ` = 1
+`
+
+type RestoreAccommodationParams struct {
+	UpdatedAt uint64
+	ID        string
+}
+
+func (q *Queries) RestoreAccommodation(ctx context.Context, arg RestoreAccommodationParams) error {
+	_, err := q.db.ExecContext(ctx, restoreAccommodation, arg.UpdatedAt, arg.ID)
+	return err
 }
 
 const updateAccommodation = `-- name: UpdateAccommodation :exec

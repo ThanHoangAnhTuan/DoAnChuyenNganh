@@ -8,6 +8,7 @@ CREATE TABLE
         `created_at` BIGINT UNSIGNED NOT NULL COMMENT 'created at',
         `updated_at` BIGINT UNSIGNED NOT NULL COMMENT 'updated at',
         PRIMARY KEY (`id`),
+        INDEX `idx_detail_image_detail_id` (`accommodation_detail_id`),
         FOREIGN KEY (`accommodation_detail_id`) REFERENCES `ecommerce_go_accommodation_detail` (`id`) ON DELETE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'accommodation detail image table';
 

@@ -263,21 +263,13 @@ export class VerifyOtpComponent implements OnInit {
             )
             .subscribe({
                 next: (response) => {
-                    this.showToast(
-                        'success',
-                        'Cập nhật mật khẩu thành công',
-                        'Mật khẩu của bạn đã được cập nhật thành công.'
-                    );
                     // Clear localStorage items that are no longer needed
                     localStorage.removeItem('resetToken');
                     localStorage.removeItem('resetEmail');
 
-                    // Show success toast and navigate after delay to ensure toast is seen
-                    setTimeout(() => {
-                        this.router.navigate(['/login'], {
-                            queryParams: { passwordUpdated: 'success' },
-                        });
-                    }, 2000);
+                    this.router.navigate(['/login'], {
+                        queryParams: { passwordUpdated: 'success' },
+                    });
                 },
                 error: (error) => {
                     this.showToast(
@@ -287,6 +279,9 @@ export class VerifyOtpComponent implements OnInit {
                             'Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại.'
                     );
                     console.error('Error updating password:', error);
+                },
+                complete: () => {
+                    this.isLoading = false;
                 },
             });
     }
