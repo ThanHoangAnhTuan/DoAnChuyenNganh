@@ -20,7 +20,6 @@ import {
     TuiDialogService,
     TuiTextfield,
     TuiAppearance,
-    TuiAlertService,
 } from '@taiga-ui/core';
 import { TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
 import {
@@ -74,6 +73,7 @@ import { LoaderComponent } from '../../../components/loader/loader.component';
     templateUrl: './accommodation.component.html',
     styleUrl: './accommodation.component.scss',
     providers: [
+        MessageService,
         TuiConfirmService,
         {
             provide: TuiDialogService,
@@ -130,7 +130,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     isLoading: boolean = false;
 
     protected timePeriods = tuiCreateTimePeriods();
-    private readonly alerts = inject(TuiAlertService);
 
     getSafeUrl(url: string): SafeResourceUrl {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -333,7 +332,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         if (accommodation) {
             this.showToast('success', 'Thành công', 'Đã xóa thành công');
         }
-
         this.updateId = '';
         this.isUpdateDeleted = false;
     }

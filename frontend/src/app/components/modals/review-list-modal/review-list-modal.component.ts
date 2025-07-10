@@ -7,7 +7,7 @@ import {
     OnInit,
     ViewChild,
 } from '@angular/core';
-import { TuiAlertService, TuiIcon } from '@taiga-ui/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { CreateNewReview } from '../../../models/user/review.model';
 import { ReviewService } from '../../../services/user/review.service';
 import {
