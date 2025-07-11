@@ -362,6 +362,8 @@ func (t *serviceImpl) UpdateAccommodation(ctx *gin.Context, in *vo.UpdateAccommo
 	out.GoogleMap = in.GoogleMap
 	out.Rules = in.Rules
 	out.Rating = accommodation.Rating
+	out.IsDeleted = accommodation.IsDeleted == 1
+	out.IsVerified = accommodation.IsVerified == 1
 
 	return response.ErrCodeUpdateAccommodationSuccess, out, nil
 }

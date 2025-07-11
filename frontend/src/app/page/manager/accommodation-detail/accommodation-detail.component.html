@@ -3,7 +3,7 @@
 @if (isLoading) {
 <app-loader text="Loading..." [overlay]="true"></app-loader>
 }
-<main>
+<main class="container">
     <button
         size="l"
         tuiButton
@@ -203,10 +203,12 @@
                 @if(formAccommodationDetail.get('price')?.invalid &&
                 formAccommodationDetail.get('price')?.touched) {
                 <div>
-                    @if(formAccommodationDetail.get('price')?.errors?.['min']) {
-                    <small class="text-red-500"
-                        >Price must be at least 1 VND</small
-                    >
+                    @if(formAccommodationDetail.get('price')?.errors?.['required'])
+                    {
+                    <small class="text-red-500">Price is required</small>
+                    } @if(formAccommodationDetail.get('price')?.errors?.['min'])
+                    {
+                    <small class="text-red-500">Price must be at least 1</small>
                     }
                 </div>
                 }
@@ -352,7 +354,13 @@
                 @if(formAccommodationDetail.get('price')?.invalid &&
                 formAccommodationDetail.get('price')?.touched) {
                 <div>
+                    @if(formAccommodationDetail.get('price')?.errors?.['required'])
+                    {
                     <small class="text-red-500">Price is required</small>
+                    } @if(formAccommodationDetail.get('price')?.errors?.['min'])
+                    {
+                    <small class="text-red-500">Price must be at least 1</small>
+                    }
                 </div>
                 }
             </tui-textfield>

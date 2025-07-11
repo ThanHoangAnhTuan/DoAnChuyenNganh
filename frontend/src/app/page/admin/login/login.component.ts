@@ -15,18 +15,18 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { SaveTokenToCookie } from '../../../shared/token/token';
 import { finalize } from 'rxjs';
-import { LoaderComponent } from "../../../components/loader/loader.component";
+import { LoaderComponent } from '../../../components/loader/loader.component';
 @Component({
     selector: 'app-login',
     imports: [
-    TuiTextfield,
-    TuiIcon,
-    ReactiveFormsModule,
-    TuiPassword,
-    Toast,
-    ButtonModule,
-    LoaderComponent
-],
+        TuiTextfield,
+        TuiIcon,
+        ReactiveFormsModule,
+        TuiPassword,
+        Toast,
+        ButtonModule,
+        LoaderComponent,
+    ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
     providers: [MessageService],
@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit {
                 error: (error) => {
                     const errorMessage =
                         error.error.message ||
-                        'Tải khoản hoặc mật khẩu không đúng';
+                        'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.';
                     this.formLogin
                         .get('account')
                         ?.setErrors({ backend: errorMessage });

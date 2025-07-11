@@ -3,9 +3,8 @@
 @if (isLoading) {
 <app-loader text="Loading..." [overlay]="true"></app-loader>
 }
-<main>
+<main class="container">
     <button
-        style="margin: 10px 0"
         size="l"
         tuiButton
         type="button"
@@ -114,6 +113,7 @@
                     formControlName="password"
                     placeholder="Password"
                     tuiTextfield
+                    type="password"
                 />
                 @if(formCreateManger.get('password')?.invalid &&
                 formCreateManger.get('password')?.touched) {
@@ -138,6 +138,7 @@
                     formControlName="confirm"
                     placeholder="Confirm"
                     tuiTextfield
+                    type="password"
                 />
                 @if(formCreateManger.get('confirm')?.invalid &&
                 formCreateManger.get('confirm')?.touched) {

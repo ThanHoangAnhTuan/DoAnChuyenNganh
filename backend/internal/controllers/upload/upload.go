@@ -4,40 +4,21 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
 func (c *Controller) UploadImages(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.UploadImages
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UploadImages binding error: %s\n", err.Error())
-		global.Logger.Error("UploadImages binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadImages) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UploadImages validation error: %s\n", validationErrors)
-		global.Logger.Error("UploadImages validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
-
 	codeStatus, data, err := services.Upload().UploadImages(ctx, &params)
 	if err != nil {
 		fmt.Printf("UploadImages error: %s\n", err.Error())
@@ -52,35 +33,13 @@ func (c *Controller) UploadImages(ctx *gin.Context) {
 }
 
 func (c *Controller) GetImages(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("Validation not found")
-		global.Logger.Error("Validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.GetImagesInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		fmt.Printf("GetImages id binding error: %s\n", err.Error())
-		global.Logger.Error("GetImages id binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	if err := ctx.ShouldBindQuery(&params); err != nil {
-		fmt.Printf("GetImages is detail binding error: %s\n", err.Error())
-		global.Logger.Error("GetImages is detail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("GetImages validation error: %s\n", validationErrors)
-		global.Logger.Error("GetImages validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetImagesInput) error {
+		if err := ctx.ShouldBindUri(p); err != nil {
+			return err
+		}
+		return ctx.ShouldBindQuery(p)
+	}); err != nil {
 		return
 	}
 

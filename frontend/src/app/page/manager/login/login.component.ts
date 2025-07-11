@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { LoaderComponent } from '../../../components/loader/loader.component';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -81,24 +82,22 @@ export class LoginComponent implements OnInit {
             password: this.formLogin.value.password ?? '',
         };
 
-        this.authSerivce.login(managerLogin).subscribe({
-            next: (response) => {
-                SaveTokenToCookie(response.data.token);
-                this.router.navigate(['/manager/accommodation']);
-            },
-            error: (error) => {
-                console.error('Login error:', error);
-                this.showToast(
-                    'error',
-                    'Đăng nhập thất bại',
-                    error.error.message ||
-                        'Vui lòng kiểm tra lại thông tin đăng nhập.'
-                );
-                this.isLoading = false;
-            },
-            complete: () => {
-                this.isLoading = false;
-            },
-        });
+        this.authSerivce
+            .login(managerLogin)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+                next: (response) => {
+                    SaveTokenToCookie(response.data.token);
+                    this.router.navigate(['/manager/accommodation']);
+                },
+                error: (error) => {
+                    const errorMessage =
+                        error.error.message ||
+                        'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.';
+                    this.formLogin
+                        .get('account')
+                        ?.setErrors({ backend: errorMessage });
+                },
+            });
     }
 }

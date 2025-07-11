@@ -186,6 +186,17 @@ SELECT
             AND `is_deleted` = 0
     );
 
+-- name: CheckAccommodationExistsByAdmin :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            `ecommerce_go_accommodation`
+        WHERE
+            `id` = ?
+    );
+
 -- name: CountAccommodation :one
 SELECT
     COUNT(*)

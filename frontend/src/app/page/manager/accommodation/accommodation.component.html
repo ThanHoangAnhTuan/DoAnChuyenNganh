@@ -3,7 +3,7 @@
 @if (isLoading) {
 <app-loader text="Loading..." [overlay]="true"></app-loader>
 }
-<main>
+<main class="container">
     <div #topList></div>
 
     <button
@@ -203,13 +203,7 @@
                     new
                     [items]="districtNames"
                 />
-
-                @if (formAccommodation.get('city')?.disabled ||
-                formAccommodation.get('city')?.invalid) {
-                <div>
-                    <small class="text-red-500">Please choose city first</small>
-                </div>
-                } @if (formAccommodation.get('district')?.invalid &&
+                @if (formAccommodation.get('district')?.invalid &&
                 formAccommodation.get('district')?.touched) {
                 <div>
                     <small class="text-red-500">District is required</small>

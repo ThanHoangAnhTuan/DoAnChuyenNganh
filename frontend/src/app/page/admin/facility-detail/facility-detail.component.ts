@@ -143,7 +143,6 @@ export class FacilityDetailComponent implements OnInit {
         const nameValue = this.formFacility.get('name')?.value;
 
         if (!nameValue) {
-            this.showToast('warn', 'Cơ sở Bắt buộc', 'Vui lòng nhập tên cơ sở');
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -162,8 +161,8 @@ export class FacilityDetailComponent implements OnInit {
                     this.close$.subscribe();
                     this.showToast(
                         'success',
-                        'Cơ sở Đã Được Tạo Thành Công!',
-                        ''
+                        'Thành Công',
+                        'Cơ Sở Đã Được Tạo Thành Công'
                     );
                 },
                 error: (error) => {
@@ -178,7 +177,6 @@ export class FacilityDetailComponent implements OnInit {
 
     protected updateFacility(): void {
         if (this.formFacility.invalid) {
-            this.showToast('warn', 'Cơ sở Bắt buộc', 'Vui lòng nhập tên cơ sở');
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -199,34 +197,22 @@ export class FacilityDetailComponent implements OnInit {
                             : facility;
                     });
 
-                    // Show success message
-
-                    this.showToast('success', 'Cập nhật Cơ Sở Thành Công', '');
-                    // console.log('Cập nhật cơ sở thành công');
+                    this.showToast(
+                        'success',
+                        'Thành công',
+                        'Cơ Sở Đã Được Cập Nhật Thành Công'
+                    );
                 },
                 error: (error) => {
                     this.showToast(
                         'error',
-                        'Cập nhật Cơ Sở Thất Bại',
+                        'Thất bại',
                         `${error.message || ''}`
-                    );
-                },
-                complete: () => {
-                    this.showToast(
-                        'info',
-                        'Yêu cầu cập nhật cơ sở đã hoàn thành',
-                        ''
                     );
                 },
             });
     }
     protected deleteFacility(id: string) {
-        // this.facilityService.deleteFacility(id).subscribe((_) => {
-        //     this.facilities = this.facilities.filter(
-        //         (facility) => facility.id !== id
-        //     );
-        //     this.showToast('success', 'Cơ sở đã được xóa thành công', '');
-        // });
         this.isLoading = true;
         this.facilityService
             .deleteFacility(id)
@@ -238,14 +224,14 @@ export class FacilityDetailComponent implements OnInit {
                     );
                     this.showToast(
                         'success',
-                        'Cơ sở đã được xóa thành công',
-                        ''
+                        'Thành Công',
+                        'Cơ Sở Đã Được Xóa Thành Công'
                     );
                 },
                 error: (error) => {
                     this.showToast(
                         'error',
-                        'Xóa Cơ Sở Thất Bại',
+                        'Thất Bại',
                         `${error.message || ''}`
                     );
                 },

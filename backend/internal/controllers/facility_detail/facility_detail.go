@@ -4,37 +4,19 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
 func (c *Controller) CreateFacilityDetail(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("CreateFacilityDetail validation not found\n")
-		global.Logger.Error("CreateFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.CreateFacilityDetailInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateFacilityDetail binding error: %s\n", err.Error())
-		global.Logger.Error("CreateFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("CreateFacilityDetail validation error: %s\n", validationErrors)
-		global.Logger.Error("CreateFacilityDetail validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateFacilityDetailInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
 
@@ -66,28 +48,10 @@ func (c *Controller) GetFacilityDetail(ctx *gin.Context) {
 }
 
 func (c *Controller) UpdateFacilityDetail(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("UpdateFacilityDetail validation not found\n")
-		global.Logger.Error("UpdateFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.UpdateFacilityDetailInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UpdateFacilityDetail binding error: %s\n", err.Error())
-		global.Logger.Error("UpdateFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UpdateFacilityDetail validation error: %s\n", validationErrors)
-		global.Logger.Error("UpdateFacilityDetail validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateFacilityDetailInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
 
@@ -105,28 +69,10 @@ func (c *Controller) UpdateFacilityDetail(ctx *gin.Context) {
 }
 
 func (c *Controller) DeleteFacilityDetail(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("DeleteFacilityDetail validation not found\n")
-		global.Logger.Error("DeleteFacilityDetail validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.DeleteFacilityDetailInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		fmt.Printf("DeleteFacilityDetail binding error: %s\n", err.Error())
-		global.Logger.Error("DeleteFacilityDetail binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("DeleteFacilityDetail validation error: %s\n", validationErrors)
-		global.Logger.Error("DeleteFacilityDetail validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.DeleteFacilityDetailInput) error {
+		return ctx.ShouldBindUri(p)
+	}); err != nil {
 		return
 	}
 

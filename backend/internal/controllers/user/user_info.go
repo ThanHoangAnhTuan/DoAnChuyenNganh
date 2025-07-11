@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
@@ -30,28 +30,10 @@ func (c *CUserInfo) GetUserInfo(ctx *gin.Context) {
 }
 
 func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("UpdateUserInfo validation not found")
-		global.Logger.Error("UpdateUserInfo validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.UpdateUserInfoInput
-	if err := ctx.ShouldBindJSON(&params); err != nil {
-		fmt.Printf("UpdateUserInfo binding error: %s\n", err.Error())
-		global.Logger.Error("UpdateUserInfo binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UpdateUserInfo validation error: %s\n", validationErrors)
-		global.Logger.Error("UpdateUserInfo validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateUserInfoInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); err != nil {
 		return
 	}
 
@@ -69,28 +51,10 @@ func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
 }
 
 func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("UploadUserAvatar validation not found")
-		global.Logger.Error("UploadUserAvatar validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.UploadUserAvatarInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UploadUserAvatar binding error: %s\n", err.Error())
-		global.Logger.Error("UploadUserAvatar binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UploadUserAvatar validation error: %s\n", validationErrors)
-		global.Logger.Error("UploadUserAvatar validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadUserAvatarInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
 

@@ -226,7 +226,7 @@ func (s *serviceImpl) VerifyAccommodation(ctx *gin.Context, in *vo.VerifyAccommo
 		return response.ErrCodeForbidden, fmt.Errorf("user admin not found")
 	}
 	// TODO: check accommodation exists
-	accommodationExists, err := s.sqlc.CheckAccommodationExists(ctx, in.AccommodationID)
+	accommodationExists, err := s.sqlc.CheckAccommodationExistsByAdmin(ctx, in.AccommodationID)
 	if err != nil {
 		return response.ErrCodeInternalServerError, fmt.Errorf("get acommodation failed: %s", err)
 	}

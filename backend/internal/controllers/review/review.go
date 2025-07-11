@@ -4,37 +4,19 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"go.uber.org/zap"
 )
 
 func (c *Controller) CreateReview(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("CreateReview validation not found\n")
-		global.Logger.Error("CreateReview validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.CreateReviewInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateReview binding error: %s\n", err.Error())
-		global.Logger.Error("CreateReview binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("CreateReview validation error: %s\n", validationErrors)
-		global.Logger.Error("CreateReview validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateReviewInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
 
@@ -52,28 +34,10 @@ func (c *Controller) CreateReview(ctx *gin.Context) {
 }
 
 func (c *Controller) GetReviews(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("GetReviews validation not found\n")
-		global.Logger.Error("GetReviews validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
 	var params vo.GetReviewsInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("GetReviews binding error: %s\n", err.Error())
-		global.Logger.Error("GetReviews binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
-
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("GetReviews validation error: %s\n", validationErrors)
-		global.Logger.Error("GetReviews validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetReviewsInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
 		return
 	}
 

@@ -66,10 +66,9 @@ import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { LoaderComponent } from '../../../components/loader/loader.component';
 import { Pagination } from '../../../models/pagination/pagination.model';
-
 
 @Component({
     standalone: true,
@@ -127,11 +126,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     @ViewChild('topList') topList!: ElementRef;
     protected accommodations!: Accommodation[];
     protected pagination: Pagination = {
-            page: 1,
-            limit: 10,
-            total: 0,
-            total_pages: 0,
-        };
+        page: 1,
+        limit: 10,
+        total: 0,
+        total_pages: 0,
+    };
     protected facilities!: Facility[];
     protected columns: string[] = [
         'ID',
@@ -208,7 +207,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         private facilityService: FacilityService,
         private addressService: AddressService,
         private messageService: MessageService,
-        private sanitizer: DomSanitizer,
+        private sanitizer: DomSanitizer
     ) {}
 
     // Method để sanitize URL
@@ -237,24 +236,39 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             ?.valueChanges.subscribe((selectedDistrict: string | null) => {
                 this.onDistrictSelected(selectedDistrict);
             });
-        //Vinh
-        // this.isLoading = true;
+        // Sử dụng forkJoin để chờ tất cả API calls hoàn thành
+        this.isLoading = true;
+        forkJoin({
+            cities: this.addressService.getCities(),
+            accommodations: this.accommodationService.getAccommodations(),
+            facilities: this.facilityService.getFacilities(),
+        }).subscribe({
+            next: (response) => {
+                // Xử lý cities
+                this.cities = response.cities.data;
+                this.cityNames = response.cities.data.map((city) => city.name);
 
-        this.addressService.getCities().subscribe((res) => {
-            this.cities = res.data;
-            this.cityNames = res.data.map((city) => city.name);
-        });
+                // Xử lý accommodations
+                this.accommodations = response.accommodations.data;
+                this.pagination = response.accommodations.pagination;
+                this.pagination.page = 1;
 
-        this.accommodationService.getAccommodations().subscribe((response) => {
-            console.log(response);
-            this.accommodations = response.data;
-            this.pagination = response.pagination;
-            this.pagination.page = 1; // Reset to first page on load
-        });
+                // Xử lý facilities
+                this.facilities = response.facilities.data;
+                this.createFacilityControls();
 
-        this.facilityService.getFacilities().subscribe((response) => {
-            this.facilities = response.data;
-            this.createFacilityControls();
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error loading data:', error);
+                this.isLoading = false;
+                this.showToast(
+                    'error',
+                    'Thất bại',
+                    error.error.message ||
+                        'Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.'
+                );
+            },
         });
     }
 
@@ -408,6 +422,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     protected createAccommodation() {
+        if (this.formAccommodation.invalid) {
+            this.formAccommodation.markAllAsTouched();
+            return;
+        }
+        this.isLoading = true; // Set loading state
         const accommodation: CreateAccommodation = {
             name: this.formAccommodation.get('name')?.value || '',
             city: this.citySlug,
@@ -420,11 +439,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             facilities: this.getSelectedFacilityIds(),
         };
 
-        if (this.formAccommodation.invalid) {
-            this.formAccommodation.markAllAsTouched();
-            return;
-        }
-        this.isLoading = true; // Set loading state
         this.accommodationService
             .createAccommodation(accommodation)
             .pipe(finalize(() => (this.isLoading = false)))
@@ -432,28 +446,34 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 next: (response) => {
                     this.accommodations.push(response.data);
                     this.formAccommodation.reset();
+                    this.formAccommodation.patchValue({ country: 'Việt Nam' });
                     this.formFacilities.reset();
                     this.accommodations = [...this.accommodations];
                     this.checkDescriptionOverflow();
                     this.showToast(
                         'success',
-                        'Khách sạn đã được tạo thành công',
-                        'Bạn có thể xem chi tiết khách sạn trong danh sách'
+                        'Thành công',
+                        'Tạo khách sạn thành công'
                     );
                 },
                 error: (error) => {
                     console.error('Error creating accommodation:', error);
                     this.showToast(
                         'error',
-                        'Tạo khách sạn thất bại',
-                        'Vui lòng thử lại sau'
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi tạo khách sạn. Vui lòng thử lại sau.'
                     );
                 },
             });
     }
     protected updateAccommodation() {
-        this.isLoading = true;
+        if (this.formAccommodation.invalid) {
+            this.formAccommodation.markAllAsTouched();
+            return;
+        }
 
+        this.isLoading = true;
         const accommodation: UpdateAccommodation = {
             id: this.idAccommodationUpdating,
             name: this.formAccommodation.get('name')?.value || '',
@@ -478,8 +498,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                 next: (response) => {
                     this.showToast(
                         'success',
-                        'Cập nhật khách sạn thành công',
-                        'Bạn có thể xem chi tiết khách sạn trong danh sách'
+                        'Thành công',
+                        'Cập nhật khách sạn thành công'
                     );
                     this.accommodations = this.accommodations.map((item) =>
                         item.id === response.data.id ? response.data : item
@@ -489,9 +509,9 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                     console.error('Error updating accommodation:', error);
                     this.showToast(
                         'error',
-                        'Cập nhật khách sạn thất bại',
-                        error?.error?.message ||
-                            'Đã xảy ra lỗi. Vui lòng thử lại sau.'
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi cập nhật khách sạn. Vui lòng thử lại sau.'
                     );
                 },
             });
@@ -509,7 +529,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                     );
                     this.showToast(
                         'success',
-                        'Xoá khách sạn thành công',
+                        'Thành công',
                         'Xoá khách sạn thành công'
                     );
                 },
@@ -517,8 +537,9 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                     console.error('Error deleting accommodation:', error);
                     this.showToast(
                         'error',
-                        'Xoá khách sạn thất bại',
-                        'Đã xảy ra lỗi khi xoá khách sạn. Vui lòng thử lại sau.'
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi xoá khách sạn. Vui lòng thử lại sau.'
                     );
                 },
             });
@@ -547,15 +568,14 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected onPageChange(page: number) {
         console.log('Page changed to:', page + 1);
 
-        this.accommodationService.getAccommodationWithPage(page + 1).subscribe((response) => {
-            this.accommodations = response.data;
-            this.pagination = response.pagination;
-            this.pagination.page = page;
-            this.scrollToTop();
-
-            console.log(this.accommodations);
-            console.log(this.pagination);
-        })
+        this.accommodationService
+            .getAccommodationWithPage(page + 1)
+            .subscribe((response) => {
+                this.accommodations = response.data;
+                this.pagination = response.pagination;
+                this.pagination.page = page;
+                this.scrollToTop();
+            });
     }
 
     protected scrollToTop() {

@@ -38,31 +38,31 @@ import type { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { LoaderComponent } from "../../../components/loader/loader.component";
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-facility',
     imports: [
-    TuiTable,
-    TuiButton,
-    TuiInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TuiTextfield,
-    TuiAppearance,
-    TuiCardLarge,
-    TuiFiles,
-    TuiInputTimeModule,
-    TuiSelect,
-    NavbarComponent,
-    AsyncPipe,
-    FormsModule,
-    TuiFiles,
-    NgIf,
-    Toast,
-    ButtonModule,
-    LoaderComponent
-],
+        TuiTable,
+        TuiButton,
+        TuiInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TuiTextfield,
+        TuiAppearance,
+        TuiCardLarge,
+        TuiFiles,
+        TuiInputTimeModule,
+        TuiSelect,
+        NavbarComponent,
+        AsyncPipe,
+        FormsModule,
+        TuiFiles,
+        NgIf,
+        Toast,
+        ButtonModule,
+        LoaderComponent,
+    ],
     templateUrl: './facility.component.html',
     styleUrl: './facility.component.scss',
     providers: [
@@ -130,8 +130,9 @@ export class FacilityComponent implements OnInit {
                 error: (error) => {
                     this.showToast(
                         'error',
-                        'Lỗi khi lấy danh sách cơ sở:',
-                        error.error.message || 'Unknown error'
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi tải dữ liệu cơ sở. Vui lòng thử lại sau.'
                     );
                 },
             });
@@ -179,17 +180,11 @@ export class FacilityComponent implements OnInit {
         const imageControlValue = this.formFacility.value.image;
 
         if (!nameValue) {
-            this.showToast('warn', 'Cơ sở Bắt buộc', 'Vui lòng nhập tên cơ sở');
             this.formFacility.markAllAsTouched();
             return;
         }
 
         if (!imageControlValue || !(imageControlValue instanceof File)) {
-            this.showToast(
-                'warn',
-                'Cơ sở Bắt buộc',
-                'Vui lòng chọn hình ảnh cho cơ sở'
-            );
             this.formFacility.markAllAsTouched();
             return;
         }
@@ -220,15 +215,16 @@ export class FacilityComponent implements OnInit {
                     }
                     this.showToast(
                         'success',
-                        'Cơ sở Đã Được Tạo Thành Công!',
-                        ''
+                        'Thành Công',
+                        'Cơ sở Đã Được Tạo Thành Công!'
                     );
                 },
                 error: (error) => {
                     this.showToast(
                         'error',
-                        'Lỗi khi tạo cơ sở:',
-                        `${error.message || ''}`
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi tạo cơ sở. Vui lòng thử lại sau.'
                     );
                 },
             });
@@ -279,16 +275,17 @@ export class FacilityComponent implements OnInit {
                     // Show success message
                     this.showToast(
                         'success',
-                        'Cập nhật Cơ Sở Thành Công',
-                        'Cơ sở đã được cập nhật thành công'
+                        'Thành Công',
+                        'Cơ Sở Đã Được Cập Nhật Thành Công'
                     );
                 },
                 error: (error) => {
                     // Handle error
                     this.showToast(
                         'error',
-                        'Cập nhật Cơ Sở Thất Bại',
-                        `Lỗi khi cập nhật cơ sở: ${error.message || ''}`
+                        'Thất bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi cập nhật cơ sở. Vui lòng thử lại sau.'
                     );
                 },
             });
@@ -320,16 +317,21 @@ export class FacilityComponent implements OnInit {
                     this.facilities = this.facilities.filter(
                         (facility) => facility.id !== id
                     );
+                    this.showToast(
+                        'success',
+                        'Thành Công',
+                        'Cơ Sở Đã Được Xóa Thành Công'
+                    );
                 },
                 error: (error) => {
                     this.showToast(
                         'error',
-                        'Lỗi khi xóa cơ sở:',
-                        error.error.message || 'Unknown error'
+                        'Thất Bại',
+                        error.error.message ||
+                            'Đã xảy ra lỗi khi xóa cơ sở. Vui lòng thử lại sau.'
                     );
                 },
             });
-        this.showToast('success', 'Cơ sở đã được xóa thành công', '');
     }
     protected get control(): FormControl<TuiFileLike | null> {
         return this.formFacility.get(

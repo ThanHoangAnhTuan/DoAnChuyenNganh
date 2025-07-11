@@ -1,199 +1,138 @@
 package accommodation_room
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
 	"go.uber.org/zap"
 )
 
 func (c *Controller) CreateAccommodationRoom(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("CreateAccommodationRoom validation not found\n")
-		global.Logger.Error("CreateAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
+	start := utils.NowMs()
 	var params vo.CreateAccommodationRoomInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateAccommodationRoom binding error: %s\n", err.Error())
-		global.Logger.Error("CreateAccommodationRoom binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, err)
-		return
-	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("CreateAccommodationRoom validation error: %s\n", validationErrors)
-		global.Logger.Error("CreateAccommodationRoom validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateAccommodationRoomInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
+		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	codeStatus, data, err := services.AccommodationRoom().CreateAccommodationRoom(ctx, &params)
+	duration := utils.NowMs() - start
+
 	if err != nil {
-		fmt.Printf("CreateAccommodationRoom error: %s\n", err.Error())
-		global.Logger.Error("CreateAccommodationRoom error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, codeStatus, err)
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
+		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		fmt.Printf("CreateAccommodationRoom cannot found userID")
 		global.Logger.Error("CreateAccommodationRoom cannot found userID")
 		userID = consts.UNKNOWN
 	}
-
-	fmt.Printf("CreateAccommodationRoom success: manager: %s, AccommodationTypeID: %s\n", userID, params.AccommodationTypeID)
 	global.Logger.Info("CreateAccommodationRoom success",
 		zap.String("managerId", userID),
 		zap.String("AccommodationTypeID", params.AccommodationTypeID))
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) GetAccommodationRooms(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("GetAccommodationRooms validation not found\n")
-		global.Logger.Error("GetAccommodationRooms validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
+	start := utils.NowMs()
 	var params vo.GetAccommodationRoomsInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		fmt.Printf("GetAccommodationRooms binding error")
-		global.Logger.Error("GetAccommodationRooms binding error")
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("GetAccommodationRooms validation error: %s\n", validationErrors)
-		global.Logger.Error("GetAccommodationRooms validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetAccommodationRoomsInput) error {
+		return ctx.ShouldBindUri(p)
+	}); err != nil {
+		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	codeStatus, data, err := services.AccommodationRoom().GetAccommodationRooms(ctx, &params)
+	duration := utils.NowMs() - start
+
 	if err != nil {
-		fmt.Printf("GetAccommodationRooms error: %s\n", err.Error())
-		global.Logger.Error("GetAccommodationRooms error: ", zap.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("GetAccommodationRooms success: %s", params.AccommodationTypeID)
 	global.Logger.Info("GetAccommodationRooms success", zap.String("AccommodationRoomID", params.AccommodationTypeID))
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) UpdateAccommodationRoom(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("UpdateAccommodationRoom validation not found \n")
-		global.Logger.Error("UpdateAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
+	start := utils.NowMs()
 	var params vo.UpdateAccommodationRoomInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UpdateAccommodationRoom binding error: %s\n", err.Error())
-		global.Logger.Error("UpdateAccommodationRoom binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
-		return
-	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UpdateAccommodationRoomInput validation error: %s\n", validationErrors)
-		global.Logger.Error("UpdateAccommodationRoomInput validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateAccommodationRoomInput) error {
+		return ctx.ShouldBind(p)
+	}); err != nil {
+		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
+		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
 	codeStatus, data, err := services.AccommodationRoom().UpdateAccommodationRoom(ctx, &params)
+	duration := utils.NowMs() - start
+
 	if err != nil {
-		fmt.Printf("UpdateAccommodationRoom error: %s\n", err.Error())
-		global.Logger.Error("UpdateAccommodationRoom error: ", zap.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		fmt.Printf("UpdateAccommodationRoom cannot found userID")
 		global.Logger.Error("UpdateAccommodationRoom cannot found userID")
-		userID = "unknown"
+		userID = consts.UNKNOWN
 	}
-
-	fmt.Printf("UpdateAccommodationRoom success: manager: %s, AccommodationRoomID: %s\n", userID, data.ID)
 	global.Logger.Info("UpdateAccommodationRoom success",
 		zap.String("managerId", userID),
 		zap.String("AccommodationRoomID", data.ID))
-
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) DeleteAccommodationRoom(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("DeleteAccommodationRoom validation not found\n")
-		global.Logger.Error("DeleteAccommodationRoom validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
-
+	start := utils.NowMs()
 	var params vo.DeleteAccommodationRoomInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		fmt.Printf("DeleteAccommodationRoom binding error: %s\n", err.Error())
-		global.Logger.Error("DeleteAccommodationRoom binding error: ", zap.String("error", err.Error()))
+
+	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.DeleteAccommodationRoomInput) error {
+		return ctx.ShouldBindUri(p)
+	}); err != nil {
+		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
 		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("DeleteAccommodationRoom validation error: %s\n", validationErrors)
-		global.Logger.Error("DeleteAccommodationRoom validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
-
 	codeStatus, err := services.AccommodationRoom().DeleteAccommodationRoom(ctx, &params)
+	duration := utils.NowMs() - start
+
 	if err != nil {
-		fmt.Printf("DeleteAccommodationRoom error: %s\n", err.Error())
-		global.Logger.Error("DeleteAccommodationRoom error: ", zap.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
 	userID, ok := utils.GetUserIDFromGin(ctx)
 	if !ok {
-		fmt.Printf("CreateAccommodationRoom cannot found userID")
-		global.Logger.Error("CreateAccommodationRoom cannot found userID")
-		userID = "unknown"
+		global.Logger.Error("DeleteAccommodationRoom cannot found userID")
+		userID = consts.UNKNOWN
 	}
-
-	fmt.Printf("DeleteAccommodationRoom success: manager: %s, AccommodationRoomID: %s\n", userID, params.ID)
 	global.Logger.Info("DeleteAccommodationRoom success",
 		zap.String("managerId", userID),
 		zap.String("AccommodationRoomID", params.ID))
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
