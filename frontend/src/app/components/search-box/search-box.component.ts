@@ -108,6 +108,14 @@ export default class SearchBoxComponent implements OnInit {
             }
         });
 
+        this.activatedRoute.queryParams.subscribe((queryParams) => {
+            const cityParam = queryParams['city'];
+            if (cityParam) {
+                this.city = cityParam;
+                this.searchCityControl.setValue(this.city);
+            }
+        });
+
         this.searchCityControl.valueChanges.subscribe(
             (selectedCityName: string | null) => {
                 const selectedCity = this.cities.find(
