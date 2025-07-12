@@ -21,82 +21,142 @@
                     {{ order.phone }}
                 </td>
                 <td *tuiCell="'Accommodation Name'" tuiTd>
-                    {{ order.accommodationName }}
+                    {{ order.accommodation_name }}
                 </td>
                 <td *tuiCell="'Check In'" tuiTd>
-                    {{ order.checkIn }}
+                    {{ order.check_in }}
                 </td>
                 <td *tuiCell="'Check Out'" tuiTd>
-                    {{ order.checkOut }}
+                    {{ order.check_out }}
                 </td>
                 <td *tuiCell="'Final Total'" tuiTd>
-                    {{ order.finalTotal }}  
+                    {{ order.final_total }}
                 </td>
-                <!-- <td *tuiCell="'Order Status'" tuiTd>
+                <td *tuiCell="'Order Status'" tuiTd>
+                    @if(order.order_status === 'payment_success') {
                     <div class="has-edit-button">
-                        @if(isUpdateVerified && updateId == accommodation.id) {
-                        <select
-                            name="is_verified"
-                            id="is_verified"
-                            [(ngModel)]="accommodation.is_verified"
-                            (change)="openVerifyConfirmModal()"
-                            (blur)="resetInput()"
-                            class="change-input"
-                        >
-                            <option [ngValue]="true">True</option>
-                            <option [ngValue]="false">False</option>
+                        @if(isChangeStatus && updateId == order.id) {
+                        <select name="change_status" id="change_status" [(ngModel)]="order.order_status"
+                            (blur)="closeConfirmModal()" (change)="onChangeStatus($event)" class="change-input">
+                            <option value="checkin">Checked In</option>
+                            <option value="cancel">Canceled</option>
                         </select>
                         } @else {
-                        {{ accommodation.is_verified ? "True" : "False" }}
+                        {{ order.order_status }}
                         }
 
-                        <button
-                            appearance="primary"
-                            iconStart="@tui.pencil"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            [style.border-radius.%]="100"
-                            [style.background]="'white'"
-                            [style.color]="'blue'"
-                            (click)="changeVerifiedApply(accommodation.id)"
-                        >
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeStatusApply(order.id)">
                             Edit
                         </button>
                     </div>
-                </td> -->
-                <td *tuiCell="'Actions'" tuiTd>
-                    <span tuiStatus style="display: flex">
-                        <button
-                            appearance="primary"
-                            iconStart="@tui.pencil"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            [style.border-radius.%]="100"
-                            [style.background]="'white'"
-                            [style.color]="'blue'"
-                            >
-                            <!-- (click)="" -->
-                            <!-- openDialogUpdate(updateForm, accommodation) -->
+                    } @else if (order.order_status === 'checked_in') {
+                        <div class="has-edit-button">
+                        @if(isChangeStatus && updateId == order.id) {
+                        <select name="change_status" id="change_status" [(ngModel)]="order.order_status"
+                            (blur)="closeConfirmModal()" (change)="onChangeStatus($event)" class="change-input">
+                            <option value="checkout">Checked Out</option>
+                            <!-- <option value="cancel">Canceled</option> -->
+                        </select>
+                        } @else {
+                        {{ order.order_status }}
+                        }
+
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                            (click)="changeStatusApply(order.id)">
                             Edit
                         </button>
-                        <button
-                            appearance="action"
-                            iconStart="@tui.trash"
-                            size="xs"
-                            tuiIconButton
-                            type="button"
-                            [style.border-radius.%]="100"
-                            [style.color]="'red'"
-                            >
+                    </div>
+                    } @else if (order.order_status === 'completed') {
+                        <span class="status-completed">
+                            {{ order.order_status }}
+                        </span>
+                    } @else if (order.order_status === 'canceled') {
+                        <span class="status-canceled">
+                            {{ order.order_status }}
+                        </span>
+                    } @else {
+                        <span class="status-unknown">
+                            {{ order.order_status }}
+                        </span>
+                    }
+                </td>
+                <td *tuiCell="'Order Detail'" tuiTd>
+                    <button appearance="primary" iconStart="@tui.eye" size="xs" tuiIconButton type="button"
+                        [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"
+                        (click)="openOrderDetail(order.order_detail)">
+                        View Details
+                    </button>
+                </td>
+                <!-- <td *tuiCell="'Actions'" tuiTd>
+                    <span tuiStatus style="display: flex">
+                        <button appearance="primary" iconStart="@tui.pencil" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.background]="'white'" [style.color]="'blue'"> -->
+                            <!-- (click)="" -->
+                            <!-- openDialogUpdate(updateForm, accommodation) -->
+                            <!-- Edit
+                        </button>
+                        <button appearance="action" iconStart="@tui.trash" size="xs" tuiIconButton type="button"
+                            [style.border-radius.%]="100" [style.color]="'red'"> -->
                             <!-- (click)="deleteAccommodation(accommodation.id)" -->
-                            Delete
+                            <!-- Delete
                         </button>
                     </span>
-                </td>
+                </td> -->
             </tr>
             }
         </tbody>
     </table>
 </main>
+
+<!-- Confirm Modal -->
+@if(isChangeStatusConfirmOpen && updateId) {
+<div class="outside-modal" (click)="$event.stopPropagation()" (click)="closeConfirmModal()">
+    <div class="modal">
+        <h3>Xác nhận hành động</h3>
+        <p>Bạn có chắc chắn muốn xác nhận thay đổi?</p>
+
+        <div class="modal-buttons">
+            <button (click)="changeOrderStatus()">Xác nhận</button>
+            <button (click)="closeConfirmModal()">Hủy</button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- View Details -->
+ @if(isOrderDetailOpen) {
+<div class="outside-modal" (click)="closeOrderDetail()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Order Details</h3>
+
+            <img src="icons/accommodation-detail-icon/close-icon.svg" alt="Close Icon" class="close-icon"
+                (click)="closeOrderDetail()"/>
+        </div>
+        
+        <table tuiTable class="table" [columns]="detailColumns" [style.width.%]="100">
+            <thead>
+                <tr tuiThGroup></tr>
+            </thead>
+            <tbody tuiTbody>
+                @for(detail of orderDetails; track detail.accommodation_detail_id) {
+                <tr tuiTr>
+                    <td *tuiCell="'Accommodation Name'" tuiTd>
+                        {{ detail.accommodation_detail_name }}
+                    </td>
+                    <td *tuiCell="'Total Price'" tuiTd>
+                        {{ detail.price }}
+                    </td>
+                    <td *tuiCell="'Guests'" tuiTd>
+                        {{ detail.guests }}
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+}

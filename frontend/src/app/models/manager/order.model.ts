@@ -4,25 +4,30 @@ export interface GetOrdersByManagerResponse {
     data: Order[] | [];
 }
 
+export interface GetOrderChageStatusResponse {
+    code: number;
+    message: string;
+}
+
 export interface Order {
     id: string;
-    accommodationId: string;
-    accommodationName: string;
-    checkIn: string;
-    checkOut: string;
-    finalTotal: string;
-    orderStatus: string;
-    orderDetail: OrderDetail[] | [];
+    accommodation_id: string;
+    accommodation_name: string;
+    check_in: string;
+    check_out: string;
+    final_total: string;
+    order_status: string;
+    order_detail: OrderDetail[] | [];
     email: string;
     username: string;
     phone: string;
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface OrderDetail {
-    accommodationDetailId: string;
-    accommodationDetailName: string;
-    accommodationDetailPrice: string;
-    accommodationDetailGuests: number;
+    accommodation_detail_id: string;
+    accommodation_detail_name: string;
+    price: string;
+    guests: number;
 }
