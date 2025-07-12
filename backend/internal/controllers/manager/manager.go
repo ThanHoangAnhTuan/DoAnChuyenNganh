@@ -1,55 +1,95 @@
 package manager
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func (c *Controller) Register(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "ManagerRegister",
+		attribute.String("operation", "register"),
+		attribute.String("resource", "manager"),
+	)
+	defer span.End()
+
 	var params vo.ManagerRegisterInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.ManagerRegisterInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.ManagerRegisterInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.ManagerLogin().Register(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("Manager register error: %s\n", err.Error())
-		global.Logger.Error("Manager register error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("Manager register success: %s\n", params.UserAccount)
-	global.Logger.Info("Manager register success: ", zap.String("info", params.UserAccount))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *Controller) Login(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "ManagerLogin",
+		attribute.String("operation", "login"),
+		attribute.String("resource", "manager"),
+	)
+	defer span.End()
+
 	var params vo.ManagerLoginInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.ManagerLoginInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.ManagerLoginInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.ManagerLogin().Login(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("Manager login error: %s\n", err.Error())
-		global.Logger.Error("Manager login error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("Manager login success: %s\n", data.Token)
-	global.Logger.Info("Manager login success: ", zap.String("info", data.Token))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }

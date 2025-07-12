@@ -1,68 +1,100 @@
 package admin
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type CAdminLogin struct{}
 
 func (c *CAdminLogin) Register(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "AdminRegister",
+		attribute.String("operation", "register"),
+		attribute.String("resource", "admin"),
+	)
+	defer span.End()
+
 	var params vo.AdminRegisterInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.AdminRegisterInput) error {
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.AdminRegisterInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.AdminLogin().Register(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
+
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
 
 	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CAdminLogin) Login(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "AdminLogin",
+		attribute.String("operation", "login"),
+		attribute.String("resource", "admin"),
+	)
+	defer span.End()
+
 	var params vo.AdminLoginInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.AdminLoginInput) error {
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.AdminLoginInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.AdminLogin().Login(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	// Create a safe version of response data for logging (exclude sensitive info)
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
 	logData := map[string]interface{}{
 		"userAccount": params.UserAccount,
-		"loginAt":     utils.GetCurrentUTCTimestamp(),
 	}
-
 	controllerutil.HandleStructuredLog(ctx, logData, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }

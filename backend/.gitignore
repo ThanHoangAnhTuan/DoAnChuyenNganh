@@ -2,3 +2,5 @@ docs
 production.yaml
 .vscode/
 storage/
+environment/data
+environment/grafana_data

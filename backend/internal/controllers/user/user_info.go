@@ -1,72 +1,128 @@
 package user
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type CUserInfo struct {
 }
 
 func (c *CUserInfo) GetUserInfo(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetUserInfo",
+		attribute.String("operation", "get"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.UserInfo().GetUserInfo(ctx)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("GetUserInfo error: %s\n", err.Error())
-		global.Logger.Error("GetUserInfo error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, nil, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("GetUserInfo success: %s\n", data.ID)
-	global.Logger.Info("GetUserInfo success: ", zap.String("info", data.ID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, data, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserInfo) UpdateUserInfo(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "UpdateUserInfo",
+		attribute.String("operation", "update"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.UpdateUserInfoInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateUserInfoInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateUserInfoInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.UserInfo().UpdateUserInfo(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("UpdateUserInfo error: %s\n", err.Error())
-		global.Logger.Error("UpdateUserInfo error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("UpdateUserInfo success: %s\n", params.Username)
-	global.Logger.Info("UpdateUserInfo success: ", zap.String("info", params.Username))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "UploadUserAvatar",
+		attribute.String("operation", "upload"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.UploadUserAvatarInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadUserAvatarInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadUserAvatarInput) error {
+		return ctx.ShouldBindQuery(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.UserInfo().UploadUserAvatar(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("UploadUserAvatar error: %s\n", err.Error())
-		global.Logger.Error("UploadUserAvatar error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("UploadUserAvatar success: %s\n", data)
-	global.Logger.Info("UploadUserAvatar success: ", zap.String("info", data))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }

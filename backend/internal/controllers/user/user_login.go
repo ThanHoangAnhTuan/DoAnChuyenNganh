@@ -1,99 +1,184 @@
 package user
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type CUserLogin struct {
 }
 
 func (c *CUserLogin) Register(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "Register",
+		attribute.String("operation", "register"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.RegisterInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.RegisterInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.RegisterInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.UserLogin().Register(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("User register error: %s\n", err.Error())
-		global.Logger.Error("User register error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("User register success: %s\n", params.VerifyKey)
-	global.Logger.Info("User register success: ", zap.String("info", params.VerifyKey))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("email", params.VerifyKey),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CUserLogin) VerifyOTP(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "VerifyOTP",
+		attribute.String("operation", "verify"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.VerifyOTPInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.VerifyOTPInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.VerifyOTPInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.UserLogin().VerifyOTP(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("User verifyOTP error: %s\n", err.Error())
-		global.Logger.Error("User verifyOTP error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("User verifyOTP success: %s\n", params.VerifyKey)
-	global.Logger.Info("User verifyOTP success: ", zap.String("info", params.VerifyKey))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("email", params.VerifyKey),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *CUserLogin) UpdatePasswordRegister(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "UpdatePasswordRegister",
+		attribute.String("operation", "update_password"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.UpdatePasswordRegisterInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdatePasswordRegisterInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdatePasswordRegisterInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.UserLogin().UpdatePasswordRegister(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("User updatePasswordRegister error: %s\n", err.Error())
-		global.Logger.Error("User updatePasswordRegister error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("User updatePasswordRegister success: %s\n", params.Token)
-	global.Logger.Info("User updatePasswordRegister success: ", zap.String("info", params.Token))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("token", params.Token),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *CUserLogin) Login(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "Login",
+		attribute.String("operation", "login"),
+		attribute.String("resource", "user"),
+	)
+	defer span.End()
+
 	var params vo.LoginInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.LoginInput) error {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.LoginInput) error {
 		return ctx.ShouldBindJSON(p)
-	}); err != nil {
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.UserLogin().Login(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("User login error: %s\n", err.Error())
-		global.Logger.Error("User login error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
-	fmt.Printf("User login success: %s\n", data.Token)
-	global.Logger.Info("User login success: ", zap.String("info", data.Token))
+
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("email", params.UserAccount),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }

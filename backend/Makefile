@@ -10,6 +10,9 @@ dev:
 docker-up:
 	docker-compose -p ecommerce_go up -d
 
+docker-up-with-observable:
+	docker-compose -p ecommerce_go -f ./environment/docker-compose-dev.yaml up -d
+
 docker-down:
 	docker-compose -p ecommerce_go down
 

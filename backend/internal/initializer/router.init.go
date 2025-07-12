@@ -23,6 +23,10 @@ func InitRouter() *gin.Engine {
 	r.Use(middlewares.ValidatorMiddleware())
 	r.Use(middlewares.TimezoneMiddleware())
 
+	// Add tracing middleware
+	r.Use(middlewares.TracingMiddleware())
+	r.Use(middlewares.AddSpanToContext())
+
 	r.Static("/uploads/", "./storage/uploads")
 
 	adminRouter := routers.RouterGroupApp.Admin

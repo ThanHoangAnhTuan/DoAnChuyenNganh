@@ -1,138 +1,177 @@
 package accommodation_room
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func (c *Controller) CreateAccommodationRoom(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CreateAccommodationRoom",
+		attribute.String("operation", "create"),
+		attribute.String("resource", "accommodation_room"),
+	)
+	defer span.End()
+
 	var params vo.CreateAccommodationRoomInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateAccommodationRoomInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateAccommodationRoomInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.AccommodationRoom().CreateAccommodationRoom(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	userID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		global.Logger.Error("CreateAccommodationRoom cannot found userID")
-		userID = consts.UNKNOWN
-	}
-	global.Logger.Info("CreateAccommodationRoom success",
-		zap.String("managerId", userID),
-		zap.String("AccommodationTypeID", params.AccommodationTypeID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
 	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) GetAccommodationRooms(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetAccommodationRooms",
+		attribute.String("operation", "list"),
+		attribute.String("resource", "accommodation_room"),
+	)
+	defer span.End()
+
 	var params vo.GetAccommodationRoomsInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetAccommodationRoomsInput) error {
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetAccommodationRoomsInput) error {
 		return ctx.ShouldBindUri(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.AccommodationRoom().GetAccommodationRooms(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	global.Logger.Info("GetAccommodationRooms success", zap.String("AccommodationRoomID", params.AccommodationTypeID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
 	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) UpdateAccommodationRoom(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "UpdateAccommodationRoom",
+		attribute.String("operation", "update"),
+		attribute.String("resource", "accommodation_room"),
+	)
+	defer span.End()
+
 	var params vo.UpdateAccommodationRoomInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateAccommodationRoomInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateAccommodationRoomInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.AccommodationRoom().UpdateAccommodationRoom(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	userID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		global.Logger.Error("UpdateAccommodationRoom cannot found userID")
-		userID = consts.UNKNOWN
-	}
-	global.Logger.Info("UpdateAccommodationRoom success",
-		zap.String("managerId", userID),
-		zap.String("AccommodationRoomID", data.ID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
 	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) DeleteAccommodationRoom(ctx *gin.Context) {
-	start := utils.NowMs()
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "DeleteAccommodationRoom",
+		attribute.String("operation", "delete"),
+		attribute.String("resource", "accommodation_room"),
+	)
+	defer span.End()
+
 	var params vo.DeleteAccommodationRoomInput
 
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.DeleteAccommodationRoomInput) error {
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.DeleteAccommodationRoomInput) error {
 		return ctx.ShouldBindUri(p)
-	}); err != nil {
-		controllerutil.HandleStructuredLog(ctx, params, "error", response.ErrCodeValidator, utils.NowMs()-start, err)
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.AccommodationRoom().DeleteAccommodationRoom(ctx, &params)
-	duration := utils.NowMs() - start
+	duration := time.Since(start)
 
 	if err != nil {
+		span.SetAttributes(attribute.String("error", err.Error()))
 		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	userID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		global.Logger.Error("DeleteAccommodationRoom cannot found userID")
-		userID = consts.UNKNOWN
-	}
-	global.Logger.Info("DeleteAccommodationRoom success",
-		zap.String("managerId", userID),
-		zap.String("AccommodationRoomID", params.ID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+	)
+
 	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }

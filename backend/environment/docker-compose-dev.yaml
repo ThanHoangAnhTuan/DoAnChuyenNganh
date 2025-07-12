@@ -1,0 +1,134 @@
+services:
+  mysql:
+    image: mysql:8.0.42
+    container_name: ecommerce_go_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecommerce_go
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/mysql_data:/var/lib/mysql
+    networks:
+      - ecommerce_go_network
+
+  redis:
+    image: redis:7.0
+    container_name: ecommerce_go_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis_data:/data
+    networks:
+      - ecommerce_go_network
+
+  kafka:
+    image: docker.io/bitnami/kafka:4.0
+    container_name: ecommerce_go_kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: ecommerce_go_kafka_ui
+    ports:
+      - "9091:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ecommerce_go_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "9090:9090"
+    networks:
+      - ecommerce_go_network
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce_go_grafana
+    hostname: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=localhost
+      - GF_LOG_MODE=console file
+      - GF_LOG_FILTERS=alerting.notifier.slack:debug alermanager:debug ngalert:debug
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - ecommerce_go_network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: ecommerce_go_jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # HTTP collector
+      - "14250:14250"  # gRPC collector
+      - "6831:6831/udp"  # UDP collector
+      - "6832:6832/udp"  # UDP collector
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    networks:
+      - ecommerce_go_network
+
+  # app:
+  #     build:
+  #         context: .
+  #         dockerfile: Dockerfile
+  #     container_name: app
+  #     restart: always
+  #     ports:
+  #         - "8080:8080"
+  #     depends_on:
+  #         - mysql
+  #         - redis
+  #     networks:
+  #         - ecommerce_go_network
+
+volumes:
+  mysql_data:
+    name: ecommerce_go_mysql_data
+  redis_data:
+    name: ecommerce_go_redis_data
+  kafka_data:
+    name: ecommerce_go_kafka_data
+    driver: local
+
+networks:
+  ecommerce_go_network:
+    name: ecommerce_go_network
+    driver: bridge

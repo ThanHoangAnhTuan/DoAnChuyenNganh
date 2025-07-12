@@ -1,148 +1,236 @@
 package order
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/consts"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/utils"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func (c *Controller) CancelOrder(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CancelOrder",
+		attribute.String("operation", "cancel"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
 	var params vo.CancelOrderInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CancelOrderInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CancelOrderInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.Order().CancelOrder(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("CancelOrder error: %s\n", err.Error())
-		global.Logger.Error("CancelOrder error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CancelOrder success: orderID: %s\n", params.OrderID)
-	global.Logger.Info("CancelOrder success", zap.String("orderID", params.OrderID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("order.id", params.OrderID),
+	)
 
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *Controller) CheckIn(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CheckIn",
+		attribute.String("operation", "check_in"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
 	var params vo.CheckInInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CheckInInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CheckInInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.Order().CheckIn(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("CheckIn error: %s\n", err.Error())
-		global.Logger.Error("CheckIn error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CheckIn success: orderID: %s\n", params.OrderID)
-	global.Logger.Info("CheckIn success", zap.String("orderID", params.OrderID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("order.id", params.OrderID),
+	)
 
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *Controller) CheckOut(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CheckOut",
+		attribute.String("operation", "check_out"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
 	var params vo.CheckOutInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CheckOutInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CheckOutInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, err := services.Order().CheckOut(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("CheckOut error: %s\n", err.Error())
-		global.Logger.Error("CheckOut error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CheckOut success: orderID: %s\n", params.OrderID)
-	global.Logger.Info("CheckOut success", zap.String("orderID", params.OrderID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("order.id", params.OrderID),
+	)
 
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *Controller) GetOrderInfoAfterPayment(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetOrderInfoAfterPayment",
+		attribute.String("operation", "get_info"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
 	var params vo.GetOrderInfoAfterPaymentInput
-	if err := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetOrderInfoAfterPaymentInput) error {
-		return ctx.ShouldBind(p)
-	}); err != nil {
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetOrderInfoAfterPaymentInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.Order().GetOrderInfoAfterPayment(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("GetOrderInfoAfterPayment error: %s\n", err.Error())
-		global.Logger.Error("GetOrderInfoAfterPayment error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("GetOrderInfoAfterPayment success: orderID: %s\n", data.OrderIDExternal)
-	global.Logger.Info("GetOrderInfoAfterPayment success",
-		zap.String("orderID", data.OrderIDExternal))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("order.id", params.OrderIDExternal),
+	)
 
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) GetOrdersByManager(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetOrdersByManager",
+		attribute.String("operation", "list"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.Order().GetOrdersByManager(ctx)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("GetOrdersByManager error: %s\n", err.Error())
-		global.Logger.Error("GetOrdersByManager error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, nil, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	// TODO: get managerID
-	managerID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		fmt.Printf("GetOrdersByManager cannot found managerID")
-		global.Logger.Error("GetOrdersByManager cannot found managerID")
-		managerID = consts.UNKNOWN
-	}
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.Int("orders.count", len(data)),
+	)
 
-	fmt.Printf("GetOrdersByManager success: %s\n", managerID)
-	global.Logger.Info("GetOrdersByManager success", zap.String("info", managerID))
+	controllerutil.HandleStructuredLog(ctx, nil, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) GetOrdersByUser(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetOrdersByUser",
+		attribute.String("operation", "list"),
+		attribute.String("resource", "order"),
+	)
+	defer span.End()
+
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.Order().GetOrdersByUser(ctx)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("GetOrdersByUser error: %s\n", err.Error())
-		global.Logger.Error("GetOrdersByUser error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, nil, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	// TODO: get managerID
-	managerID, ok := utils.GetUserIDFromGin(ctx)
-	if !ok {
-		fmt.Printf("GetOrdersByUser cannot found managerID")
-		global.Logger.Error("GetOrdersByUser cannot found managerID")
-		managerID = consts.UNKNOWN
-	}
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.Int("orders.count", len(data)),
+	)
 
-	fmt.Printf("GetOrdersByUser success: %s\n", managerID)
-	global.Logger.Info("GetOrdersByUser success", zap.String("info", managerID))
+	controllerutil.HandleStructuredLog(ctx, nil, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
