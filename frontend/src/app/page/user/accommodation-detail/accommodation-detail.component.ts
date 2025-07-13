@@ -7,7 +7,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { AccommodationDetailService } from '../../../services/user/accommodation-detail.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { TuiLike } from '@taiga-ui/kit';
 import { ImageListModalComponent } from '../../../components/modals/image-list-modal/image-list-modal.component';
@@ -26,27 +26,27 @@ import { GetToken } from '../../../shared/token/token';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { finalize } from 'rxjs';
-import { LoaderComponent } from "../../../components/loader/loader.component";
+import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-accommodation-detail',
     imports: [
-    NgIf,
-    NgFor,
-    NgClass,
-    TuiLike,
-    ImageListModalComponent,
-    NavbarComponent,
-    SearchBoxComponent,
-    RoomInformationModalComponent,
-    CommonModule,
-    ReviewListModalComponent,
-    Toast,
-    ButtonModule,
-    LoaderComponent
-],
+        NgIf,
+        NgFor,
+        NgClass,
+        TuiLike,
+        ImageListModalComponent,
+        NavbarComponent,
+        SearchBoxComponent,
+        RoomInformationModalComponent,
+        CommonModule,
+        ReviewListModalComponent,
+        Toast,
+        ButtonModule,
+        LoaderComponent,
+    ],
     templateUrl: './accommodation-detail.component.html',
     styleUrl: './accommodation-detail.component.scss',
     providers: [MessageService],
@@ -112,6 +112,7 @@ export class AccommodationDetailComponent implements OnInit {
         private addressService: AddressService,
         private messageService: MessageService,
         private sanitizer: DomSanitizer,
+        private router: Router
     ) {
         this.windowWidth = window.innerWidth; // Gán giá trị của windowWidth bằng với width của màn hình
         this.updateDescription();
@@ -138,6 +139,7 @@ export class AccommodationDetailComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.accommodationId = this.route.snapshot.paramMap.get('id') ?? ''; // Lấy giá trị name trong url
         this.route.queryParams.subscribe((params) => {
             this.checkIn = params['checkIn'];
@@ -145,9 +147,10 @@ export class AccommodationDetailComponent implements OnInit {
         });
 
         if (this.accommodationId) {
-            this.getAccommodationById(this.accommodationId);
-            this.getRoomByAccommodationId(this.accommodationId);
-            this.getReviewByAccommodationId(this.accommodationId);
+            // this.getAccommodationById(this.accommodationId);
+            // this.getRoomByAccommodationId(this.accommodationId);
+            // this.getReviewByAccommodationId(this.accommodationId);
+            this.loadAllDataAdvanced();
         } else {
             this.showToast(
                 'error',
@@ -157,74 +160,116 @@ export class AccommodationDetailComponent implements OnInit {
         }
     }
 
-    getAccommodationById(id: string) {
-        this.isLoading = true;
-        this.accommodationDetailService
-            .getAccommodationDetailById(id)
-            .pipe(finalize(() => (this.isLoading = false)))
-            .subscribe((data: GetAccommodationByIdResponse) => {
-                if (data) {
-                    this.accommodation = data.data;
-                    this.getCityBySlug(this.accommodation.city);
-                } else {
-                    this.showToast(
-                        'error',
-                        'Lỗi tải dữ liệu',
-                        'Không tìm thấy thông tin chỗ ở.'
-                    );
-                }
-            });
-    }
-
-    getRoomByAccommodationId(id: string) {
-        this.isLoading = true;
-        this.roomService
-            .getRoomDetailByAccommodationId(id, this.checkIn, this.checkOut)
+    loadAllDataAdvanced() {
+        forkJoin({
+            accommodation: this.accommodationDetailService
+                .getAccommodationDetailById(this.accommodationId)
+                .pipe(
+                    catchError((error) => {
+                        console.error('Lỗi API accommodation:', error);
+                        return of(null); // Trả về null thay vì throw error
+                    })
+                ),
+            rooms: this.roomService
+                .getRoomDetailByAccommodationId(
+                    this.accommodationId,
+                    this.checkIn,
+                    this.checkOut
+                )
+                .pipe(
+                    catchError((error) => {
+                        console.error('Lỗi API rooms:', error);
+                        return of(null);
+                    })
+                ),
+            reviews: this.reviewService
+                .getReviewsByAccommodationId(this.accommodationId)
+                .pipe(
+                    catchError((error) => {
+                        console.error('Lỗi API reviews:', error);
+                        return of(null);
+                    })
+                ),
+        })
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
-                next: (value) => {
-                    this.rooms = value.data;
+                next: (results) => {
+                    // Xử lý từng kết quả riêng biệt
+                    if (results.accommodation) {
+                        this.handleAccommodationData(results.accommodation);
+                    } else {
+                        this.showToast(
+                            'error',
+                            'Lỗi',
+                            'Không tải được thông tin chỗ ở.'
+                        );
+                    }
+
+                    if (results.rooms) {
+                        this.handleRoomsData(results.rooms);
+                    } else {
+                        this.showToast(
+                            'error',
+                            'Lỗi',
+                            'Không tải được thông tin phòng.'
+                        );
+                    }
+
+                    if (results.reviews) {
+                        this.handleReviewsData(results.reviews);
+                    } else {
+                        this.showToast(
+                            'info',
+                            'Cảnh báo',
+                            'Không có đánh giá nào.'
+                        );
+                    }
                 },
-                error: (err) => {
-                    this.showToast(
-                        'error',
-                        'Lỗi tải dữ liệu',
-                        'Không tìm thấy thông tin phòng cho chỗ ở này.'
-                    );
+                error: (error) => {
+                    // Trường hợp này hiếm khi xảy ra vì đã catchError ở trên
+                    console.error('Lỗi không mong muốn:', error);
                 },
             });
     }
 
-    getReviewByAccommodationId(id: string) {
-        this.isLoading = true;
-        this.reviewService
-            .getReviewsByAccommodationId(id)
-            .pipe(finalize(() => (this.isLoading = false)))
-            .subscribe((data: GetReviewsByAccommodationIdResponse) => {
-                if (data) {
-                    // const sortedReviews = data.data.sort((a, b) => {
-                    //   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                    // });
+    private handleAccommodationData(data: any) {
+        if (data?.data) {
+            this.accommodation = data.data;
+            this.getCityBySlug(this.accommodation.city);
+        } else {
+            this.showToast(
+                'error',
+                'Lỗi tải dữ liệu',
+                'Không tìm thấy thông tin chỗ ở.'
+            );
+        }
+    }
 
-                    this.reviews = data.data;
+    private handleRoomsData(data: any) {
+        if (data?.data) {
+            this.rooms = data.data;
+        } else {
+            this.showToast(
+                'error',
+                'Lỗi tải dữ liệu',
+                'Không tìm thấy thông tin phòng.'
+            );
+        }
+    }
 
-                    const totalRating = this.reviews.reduce(
-                        (sum: number, review: any) => sum + review.rating,
-                        0
-                    );
-                    this.avarageRating =
-                        Math.floor((totalRating / this.reviews.length) * 10) /
-                        10;
-                } else {
-                    this.reviews = [];
-                    this.avarageRating = 0;
-                    this.showToast(
-                        'info',
-                        'Cảnh báo',
-                        'Không có đánh giá nào cho chỗ ở này.'
-                    );
-                }
-            });
+    private handleReviewsData(data: any) {
+        if (data?.data) {
+            this.reviews = data.data;
+            const totalRating = this.reviews.reduce(
+                (sum: number, review: any) => sum + review.rating,
+                0
+            );
+            this.avarageRating =
+                Math.floor((totalRating / this.reviews.length) * 10) / 10;
+        } else {
+            this.reviews = [];
+            this.avarageRating = 0;
+        }
     }
 
     createPayment() {
@@ -254,11 +299,7 @@ export class AccommodationDetailComponent implements OnInit {
         const token = GetToken();
 
         if (token == null) {
-            this.showToast(
-                'warn',
-                'Cảnh báo',
-                'Vui lòng đăng nhập trước khi thanh toán chỗ ở.'
-            );
+            this.router.navigate(['/login']);
             return;
         }
 
@@ -448,5 +489,28 @@ export class AccommodationDetailComponent implements OnInit {
     changeDateDDMMYYYYToYYYYMMDD(date: string): string {
         const [day, month, year] = date.split('-');
         return `${year}-${month}-${day}`; // yyyy-MM-dd
+    }
+
+    getNumberOfNights(): number {
+        if (!this.checkIn || !this.checkOut) return 0;
+
+        // Nếu ngày có dạng DD-MM-YYYY thì chuyển sang YYYY-MM-DD
+        const formatDate = (dateStr: string) => {
+            if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                const [day, month, year] = dateStr.split('-');
+                return `${year}-${month}-${day}`;
+            }
+            return dateStr;
+        };
+
+        const checkInDate = new Date(formatDate(this.checkIn));
+        const checkOutDate = new Date(formatDate(this.checkOut));
+
+        if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime()))
+            return 0;
+
+        const diffTime = checkOutDate.getTime() - checkInDate.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? diffDays : 1;
     }
 }

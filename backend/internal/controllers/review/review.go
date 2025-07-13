@@ -1,91 +1,98 @@
 package review
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func (c *Controller) CreateReview(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("CreateReview validation not found\n")
-		global.Logger.Error("CreateReview validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CreateReview",
+		attribute.String("operation", "create"),
+		attribute.String("resource", "review"),
+	)
+	defer span.End()
 
 	var params vo.CreateReviewInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateReview binding error: %s\n", err.Error())
-		global.Logger.Error("CreateReview binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateReviewInput) error {
+		return ctx.ShouldBindJSON(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("CreateReview validation error: %s\n", validationErrors)
-		global.Logger.Error("CreateReview validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
+	ctx.Request = ctx.Request.WithContext(spanCtx)
 
 	codeStatus, data, err := services.Review().CreateReview(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("CreateReview error: %s\n", err.Error())
-		global.Logger.Error("CreateReview error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CreateReview success: %s\n", data.ID)
-	global.Logger.Info("CreateReview success", zap.String("info", data.ID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("review.id", data.ID),
+		attribute.String("accommodation.id", params.AccommodationID),
+		attribute.Int("rating", int(params.Rating)),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) GetReviews(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("GetReviews validation not found\n")
-		global.Logger.Error("GetReviews validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetReviews",
+		attribute.String("operation", "list"),
+		attribute.String("resource", "review"),
+	)
+	defer span.End()
 
 	var params vo.GetReviewsInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("GetReviews binding error: %s\n", err.Error())
-		global.Logger.Error("GetReviews binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.GetReviewsInput) error {
+		return ctx.ShouldBindQuery(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("GetReviews validation error: %s\n", validationErrors)
-		global.Logger.Error("GetReviews validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
+	ctx.Request = ctx.Request.WithContext(spanCtx)
 
 	codeStatus, data, pagination, err := services.Review().GetReviews(ctx, &params)
+	duration := time.Since(start)
 	if err != nil {
-		fmt.Printf("GetReviews error: %s\n", err.Error())
-		global.Logger.Error("GetReviews error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("GetReviews success: %s\n", params.AccommodationID)
-	global.Logger.Info("GetReviews success: ", zap.String("info", params.AccommodationID))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("accommodation.id", params.AccommodationID),
+		attribute.Int("reviews.count", len(data)),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, params, "success", codeStatus, duration, nil)
 	response.SuccessResponseWithPagination(ctx, codeStatus, data, pagination)
 }

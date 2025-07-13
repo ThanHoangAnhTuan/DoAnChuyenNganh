@@ -2,7 +2,6 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    inject,
     Injector,
     OnInit,
     QueryList,
@@ -37,7 +36,7 @@ import {
     TUI_EDITOR_DEFAULT_TOOLS,
     TUI_EDITOR_EXTENSIONS,
 } from '@taiga-ui/editor';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TuiInputTimeModule } from '@taiga-ui/legacy';
 import { AddressService } from '../../../services/address/address.service';
 import { City, District } from '../../../models/address/address.model';
@@ -164,16 +163,6 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit() {
-        // this.route.params.subscribe((params) => {
-        //     this.managerId = params['id'];
-        //     this.accommodationService
-        //         .getAccommodationsOfManagerByAdmin(this.managerId)
-        //         .subscribe((response) => {
-        //             console.log(response);
-        //             this.accommodations = response.data;
-        //         });
-        // });
-
         this.isLoading = true;
 
         this.route.params.subscribe((params) => {
@@ -189,6 +178,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
                     next: (response) => {
                         console.log(response);
                         this.accommodations = response.data;
+                        this.pagination = response.pagination;
                     },
                     error: (error) => {
                         console.error('Error loading accommodations:', error);
@@ -233,12 +223,11 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     private updateVerify(id: string, status: boolean) {
-        this.isLoading = true;
-
         let newVerify: VerifyAccommodationInput = {
             accommodation_id: id,
             status: status,
         };
+        console.log("newVerify:", newVerify);
         this.accommodationService
             .updateVerified(newVerify)
             .pipe(
@@ -271,9 +260,26 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         };
         this.accommodationService
             .updateDeleted(newDelete)
-            .subscribe((response) => {
-                const message = response.message;
-                // this.getAlert('Notification', message);
+            .pipe(
+                finalize(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.showToast(
+                        'success',
+                        'Thành công',
+                        `Đã cập nhật trạng thái xóa thành công`
+                    );
+                },
+                error: (error) => {
+                    this.showToast(
+                        'error',
+                        'Lỗi',
+                        `Không thể cập nhật trạng thái xóa: ${error.message}`
+                    );
+                },
             });
     }
 
@@ -322,6 +328,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     protected changeVerifiedFinish() {
+        this.isLoading = true;
         const id: string = this.updateId;
         const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
@@ -352,10 +359,10 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     protected changeDeleteFinish() {
+        this.isLoading = true;
         const id: string = this.updateId;
         const accommodation = this.accommodations.find((a) => a.id === id);
         if (accommodation) {
-            this.showToast('success', 'Thành công', 'Đã xóa thành công');
             this.updateDelete(id, accommodation.is_deleted);
         }
         this.updateId = '';
@@ -372,6 +379,8 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     }
 
     protected onPageChange(page: number) {
+        console.log(page);
+        
         console.log('Page changed to:', page + 1);
 
         this.accommodationService

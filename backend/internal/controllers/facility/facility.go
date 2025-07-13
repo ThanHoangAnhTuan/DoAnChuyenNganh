@@ -1,144 +1,183 @@
 package facility
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
-	"github.com/thanhoanganhtuan/DoAnChuyenNganh/global"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/middlewares"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/services"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/internal/vo"
+	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/controllerutil"
 	"github.com/thanhoanganhtuan/DoAnChuyenNganh/pkg/response"
-	"go.uber.org/zap"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func (c *Controller) CreateFacility(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("CreateFacility validation not found\n")
-		global.Logger.Error("CreateFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "CreateFacility",
+		attribute.String("operation", "create"),
+		attribute.String("resource", "facility"),
+	)
+	defer span.End()
 
 	var params vo.CreateFacilityInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("CreateFacility binding error: %s\n", err.Error())
-		global.Logger.Error("CreateFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateFacilityInput) error {
+		return ctx.ShouldBindQuery(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("CreateFacility validation error: %s\n", validationErrors)
-		global.Logger.Error("CreateFacility validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
+	ctx.Request = ctx.Request.WithContext(spanCtx)
 
 	codeStatus, data, err := services.Facility().CreateFacility(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("CreateFacility error: %s\n", err.Error())
-		global.Logger.Error("CreateFacility error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("CreateFacility success: %s\n", data.ID)
-	global.Logger.Info("CreateFacility success: ", zap.String("info", fmt.Sprintf("create facility success: %s", data.ID)))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("facility.id", data.ID),
+		attribute.String("facility.name", data.Name),
+	)
+
+	logData := map[string]interface{}{
+		"facilityId": data.ID,
+		"name":       data.Name,
+	}
+	controllerutil.HandleStructuredLog(ctx, logData, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) UpdateFacility(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("UpdateFacility validation not found\n")
-		global.Logger.Error("UpdateFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "UpdateFacility",
+		attribute.String("operation", "update"),
+		attribute.String("resource", "facility"),
+	)
+	defer span.End()
 
 	var params vo.UpdateFacilityInput
-	if err := ctx.ShouldBind(&params); err != nil {
-		fmt.Printf("UpdateFacility binding error: %s\n", err.Error())
-		global.Logger.Error("UpdateFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateFacilityInput) error {
+		return ctx.ShouldBindQuery(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("UpdateFacility validation error: %s\n", validationErrors)
-		global.Logger.Error("UpdateFacility validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
+	ctx.Request = ctx.Request.WithContext(spanCtx)
 
 	codeStatus, data, err := services.Facility().UpdateFacility(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("UpdateFacility error: %s\n", err.Error())
-		global.Logger.Error("UpdateFacility error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("UpdateFacility success: %s\n", data.ID)
-	global.Logger.Info("UpdateFacility success: ", zap.String("info", fmt.Sprintf("update facility success: %s", data.ID)))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("facility.id", data.ID),
+		attribute.String("facility.name", data.Name),
+	)
+
+	logData := map[string]interface{}{
+		"facilityId": data.ID,
+		"name":       data.Name,
+	}
+	controllerutil.HandleStructuredLog(ctx, logData, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }
 
 func (c *Controller) DeleteFacility(ctx *gin.Context) {
-	validation, exists := ctx.Get("validation")
-	if !exists {
-		fmt.Printf("DeleteFacility validation not found\n")
-		global.Logger.Error("DeleteFacility validation not found")
-		response.ErrorResponse(ctx, response.ErrCodeInternalServerError, nil)
-		return
-	}
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "DeleteFacility",
+		attribute.String("operation", "delete"),
+		attribute.String("resource", "facility"),
+	)
+	defer span.End()
 
 	var params vo.DeleteFacilityInput
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		fmt.Printf("DeleteFacility binding error: %s\n", err.Error())
-		global.Logger.Error("DeleteFacility binding error: ", zap.String("error", err.Error()))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, nil)
+
+	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.DeleteFacilityInput) error {
+		return ctx.ShouldBindUri(p)
+	}); validationErr != nil {
+		duration := time.Since(start)
+		span.SetAttributes(attribute.String("error", validationErr.Message))
+		controllerutil.HandleValidationError(ctx, params, validationErr, duration)
 		return
 	}
 
-	err := validation.(*validator.Validate).Struct(params)
-	if err != nil {
-		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		fmt.Printf("DeleteFacility validation error: %s\n", validationErrors)
-		global.Logger.Error("DeleteFacility validation error: ", zap.Any("error", validationErrors))
-		response.ErrorResponse(ctx, response.ErrCodeValidator, validationErrors)
-		return
-	}
+	ctx.Request = ctx.Request.WithContext(spanCtx)
 
 	codeStatus, err := services.Facility().DeleteFacility(ctx, &params)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("DeleteFacility error: %s\n", err.Error())
-		global.Logger.Error("DeleteFacility error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, params, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("DeleteFacility success: %s\n", params.ID)
-	global.Logger.Info("DeleteFacility success: ", zap.String("info", fmt.Sprintf("delete facility success: %s", params.ID)))
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.String("facility.id", params.ID),
+	)
+
+	logData := map[string]interface{}{
+		"facilityId": params.ID,
+	}
+	controllerutil.HandleStructuredLog(ctx, logData, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, nil)
 }
 
 func (c *Controller) GetFacilities(ctx *gin.Context) {
+	start := time.Now()
+
+	spanCtx, span := middlewares.StartChildSpan(ctx.Request.Context(), "GetFacilities",
+		attribute.String("operation", "list"),
+		attribute.String("resource", "facility"),
+	)
+	defer span.End()
+
+	ctx.Request = ctx.Request.WithContext(spanCtx)
+
 	codeStatus, data, err := services.Facility().GetFacilities(ctx)
+	duration := time.Since(start)
+
 	if err != nil {
-		fmt.Printf("GetFacilities error: %s\n", err.Error())
-		global.Logger.Error("GetFacilities error: ", zap.String("error", err.Error()))
+		span.SetAttributes(attribute.String("error", err.Error()))
+		controllerutil.HandleStructuredLog(ctx, nil, "error", codeStatus, duration, err)
 		response.ErrorResponse(ctx, codeStatus, nil)
 		return
 	}
 
-	fmt.Printf("GetFacilities success\n")
-	global.Logger.Info("GetFacilities success")
+	span.SetAttributes(
+		attribute.Int("status_code", codeStatus),
+		attribute.Int64("duration_ms", duration.Milliseconds()),
+		attribute.Int("facilities.count", len(data)),
+	)
+
+	controllerutil.HandleStructuredLog(ctx, nil, "success", codeStatus, duration, nil)
 	response.SuccessResponse(ctx, codeStatus, data)
 }

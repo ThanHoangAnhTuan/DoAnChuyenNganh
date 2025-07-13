@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -39,4 +40,16 @@ func GetUserIDFromGin(ctx *gin.Context) (string, bool) {
 func FormatCurrency(amount uint32) string {
 	p := message.NewPrinter(language.Vietnamese)
 	return p.Sprintf("%d", amount)
+}
+
+func GetCurrentUTCTimestamp() string {
+	return time.Now().UTC().Format(time.RFC3339)
+}
+
+func NowMs() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
+func GenerateRequestID() string {
+	return strings.ReplaceAll(uuid.New().String(), "-", "")
 }

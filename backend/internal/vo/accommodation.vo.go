@@ -98,6 +98,8 @@ type UpdateAccommodationOutput struct {
 	Facilities  []FacilitiesOutput `json:"facilities"`
 	GoogleMap   string             `json:"google_map"`
 	Rules       Rule               `json:"rules"`
+	IsVerified  bool               `json:"is_verified"`
+	IsDeleted   bool               `json:"is_deleted"`
 }
 
 type DeleteAccommodationInput struct {

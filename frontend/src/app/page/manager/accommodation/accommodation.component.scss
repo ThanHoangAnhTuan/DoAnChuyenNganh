@@ -1,6 +1,13 @@
-main {
-    margin-top: 20px;
+.container {
+    padding: 24px;
+    height: 100%;
+    background-color: #f9f9f9;
 }
+
+.table {
+    margin: 24px 0;
+}
+
 .flex {
     display: flex;
 }

@@ -11,6 +11,11 @@ logger:
   maxBackups: 3
   maxAge: 28 #days
   compress: true # disabled by default
+tracing:
+  enabled: true
+  serviceName: "doan-chuyen-nganh-api"
+  jaegerEndpoint: "http://localhost:14268/api/traces"
+  sampleRate: 1.0 # 1.0 = 100% sampling
 mysql:
   host: localhost
   port: 3307

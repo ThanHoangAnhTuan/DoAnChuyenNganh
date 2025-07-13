@@ -3,9 +3,8 @@
 @if (isLoading) {
 <app-loader text="Loading..." [overlay]="true"></app-loader>
 }
-<main>
+<main class="container">
     <button
-        style="margin: 10px 0"
         size="l"
         tuiButton
         type="button"
@@ -19,10 +18,10 @@
             <tr tuiThGroup></tr>
         </thead>
         <tbody tuiTbody>
-            @for(facility of facilities; track facility.id) {
+            @for(facility of facilities; track facility.id; let i = $index) {
             <tr tuiTr>
                 <td *tuiCell="'Id'" tuiTd>
-                    {{ facility.id }}
+                    {{ i + 1 }}
                 </td>
                 <td *tuiCell="'Name'" tuiTd>
                     {{ facility.name }}

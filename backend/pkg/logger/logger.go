@@ -63,7 +63,7 @@ func getFileEncoderLog() zapcore.Encoder {
 
 	encodeConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encodeConfig.TimeKey = "time"
-	encodeConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encodeConfig.EncodeLevel = zapcore.LowercaseLevelEncoder // Use lowercase for JSON
 	encodeConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	return zapcore.NewJSONEncoder(encodeConfig)
 }

@@ -82,6 +82,13 @@ export default class SearchBoxComponent implements OnInit {
                 if (fromDay.dayBefore(today) || toDay.dayBefore(today)) {
                     return { minDate: true };
                 }
+                // Kiểm tra ngày kết thúc phải lớn hơn ngày bắt đầu
+                if (fromDay.daySame(toDay)) {
+                    return { sameDate: true };
+                }
+                if (toDay.dayBefore(fromDay)) {
+                    return { invalidRange: true };
+                }
                 return null;
             },
         ]);
@@ -98,6 +105,14 @@ export default class SearchBoxComponent implements OnInit {
             if (cityParam) {
                 this.city = cityParam;
                 this.searchCityControl.setValue(cityParam);
+            }
+        });
+
+        this.activatedRoute.queryParams.subscribe((queryParams) => {
+            const cityParam = queryParams['city'];
+            if (cityParam) {
+                this.city = cityParam;
+                this.searchCityControl.setValue(this.city);
             }
         });
 
@@ -183,9 +198,16 @@ export default class SearchBoxComponent implements OnInit {
      */
     search() {
         if (this.searchCityControl.invalid) {
-            this.searchCityControl.markAllAsTouched(); //Đánh dấu touched để hiển thị lỗi
+            this.searchCityControl.markAllAsTouched();
             return;
         }
+
+        // Kiểm tra date range có hợp lệ không
+        if (this.DayControl.value && this.DayControl.invalid) {
+            this.DayControl.markAllAsTouched();
+            return;
+        }
+
         this.searchChanged.emit(this.searchCityControl.value ?? undefined);
         const city_name = this.searchCityControl.value;
         const slug = this.selectedCitySlug;
@@ -196,7 +218,6 @@ export default class SearchBoxComponent implements OnInit {
             // Định dạng ngày check-in và check-out
             const checkIn = `${this.DayControl.value?.from.formattedDayPart}-${this.DayControl.value?.from.formattedMonthPart}-${this.DayControl.value?.from.formattedYear}`;
             const checkOut = `${this.DayControl.value?.to.formattedDayPart}-${this.DayControl.value?.to.formattedMonthPart}-${this.DayControl.value?.to.formattedYear}`;
-            //Chuyển hướng với thành phố và ngày người dùng đã nhập
             this.router.navigate(['/search', city_name], {
                 queryParams: {
                     slug,
@@ -206,7 +227,6 @@ export default class SearchBoxComponent implements OnInit {
             });
             return;
         }
-        //chuyển hướng chỉ với thành phố
         this.router.navigate(['/search', city_name], {
             queryParams: {
                 slug,

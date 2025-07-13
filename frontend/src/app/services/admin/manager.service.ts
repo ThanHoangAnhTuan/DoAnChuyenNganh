@@ -48,6 +48,7 @@ export class ManagerService {
     updateVerified(
         newVerify: VerifyAccommodationInput
     ): Observable<VerifyAccommodationOutput> {
+        console.log("newVerify:", newVerify);
         return this.http.put<VerifyAccommodationOutput>(
             this.adminUrl + '/verify-accommodation',
             newVerify

@@ -160,14 +160,14 @@
             >
                 <!-- iframe hiển thị google map -->
                 <iframe
-                        [src]="getSafeUrl(accommodation.google_map)"
-                        width="100%"
-                        height="100%"
-                        style="border: 0"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
-                    ></iframe>
+                    [src]="getSafeUrl(accommodation?.google_map)"
+                    width="100%"
+                    height="100%"
+                    style="border: 0"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
                 <!-- Nội dung đè lên google map -->
                 <div class="google-map-overlay">
                     <!-- <img src="icons/accommodation-detail-icon/location-icon.svg" alt="location icon"
@@ -236,7 +236,7 @@
             <tr class="table-header">
                 <th>Loại phòng</th>
                 <th>Số lượng khách</th>
-                <th>Giá cho 1 tuần</th>
+                <th>Giá cho {{ getNumberOfNights() }} đêm</th>
                 <th>Chọn phòng</th>
                 <th></th>
             </tr>
@@ -315,7 +315,10 @@
 
                 <td class="price-container">
                     <p class="original-price">
-                        {{ room.price | number : "1.0-0" }} VND
+                        {{
+                            room.price * getNumberOfNights() | number : "1.0-0"
+                        }}
+                        VND
                     </p>
                 </td>
 
@@ -326,15 +329,13 @@
                         <option [value]="0 + ',' + i">0</option>
                         <option
                             *ngFor="
-                                let index of [].constructor(
-                                    room.available_rooms
-                                );
+                                let index of [].constructor(room.available_rooms);
                                 let i = index
                             "
-                            [value]="room.price * (i + 1) + ',' + (i + 1)"
+                            [value]="room.price * (i + 1) * getNumberOfNights() + ',' + (i + 1)"
                         >
                             {{ i + 1 }} ({{
-                                room.price * (i + 1) | number : "1.0-0"
+                                room.price * (i + 1) * getNumberOfNights() | number : '1.0-0'
                             }}
                             VND)
                         </option>

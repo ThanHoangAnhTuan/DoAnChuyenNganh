@@ -30,6 +30,25 @@ func (q *Queries) CheckAccommodationExists(ctx context.Context, id string) (bool
 	return exists, err
 }
 
+const checkAccommodationExistsByAdmin = `-- name: CheckAccommodationExistsByAdmin :one
+SELECT
+    EXISTS (
+        SELECT
+            1
+        FROM
+            ` + "`" + `ecommerce_go_accommodation` + "`" + `
+        WHERE
+            ` + "`" + `id` + "`" + ` = ?
+    )
+`
+
+func (q *Queries) CheckAccommodationExistsByAdmin(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkAccommodationExistsByAdmin, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const countAccommodation = `-- name: CountAccommodation :one
 SELECT
     COUNT(*)

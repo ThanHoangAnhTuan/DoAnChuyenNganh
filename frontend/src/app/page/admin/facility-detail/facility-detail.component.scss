@@ -1,7 +1,13 @@
+.container {
+    padding: 24px;
+    height: 100%;
+    background-color: #f9f9f9;
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 24px 0;
     font-size: 16px;
     text-align: left;
     border: 1px solid #ddd;
