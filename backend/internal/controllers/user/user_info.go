@@ -98,7 +98,7 @@ func (c *CUserInfo) UploadUserAvatar(ctx *gin.Context) {
 	var params vo.UploadUserAvatarInput
 
 	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadUserAvatarInput) error {
-		return ctx.ShouldBindQuery(p)
+		return ctx.ShouldBind(p)
 	}); validationErr != nil {
 		duration := time.Since(start)
 		span.SetAttributes(attribute.String("error", validationErr.Message))

@@ -237,7 +237,7 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 	}
 
 	// 6. Đếm số lượng phòng còn trống nếu có ngày checkin - checkout
-	availableRoomsMap := make(map[string]int64)
+	availableRoomsMap := make(map[string]uint8)
 	if in.CheckIn != "" && in.CheckOut != "" {
 		checkIn, err := utiltime.ConvertISOToUnixTimestamp(in.CheckIn)
 		if err != nil {
@@ -258,7 +258,7 @@ func (a *serviceImpl) GetAccommodationDetails(ctx *gin.Context, in *vo.GetAccomm
 			return response.ErrCodeInternalServerError, nil, fmt.Errorf("batch count available room failed: %s", err)
 		}
 		for _, result := range results {
-			availableRoomsMap[result.AccommodationTypeID] = result.AvailableCount
+			availableRoomsMap[result.AccommodationTypeID] = uint8(result.AvailableCount)
 		}
 	}
 

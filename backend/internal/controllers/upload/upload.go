@@ -24,7 +24,7 @@ func (c *Controller) UploadImages(ctx *gin.Context) {
 	var params vo.UploadImages
 
 	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UploadImages) error {
-		return ctx.ShouldBindQuery(p)
+		return ctx.ShouldBind(p)
 	}); validationErr != nil {
 		duration := time.Since(start)
 		span.SetAttributes(attribute.String("error", validationErr.Message))

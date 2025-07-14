@@ -13,26 +13,28 @@ import (
 const batchCountAccommodationRoomAvailable = `-- name: BatchCountAccommodationRoomAvailable :many
 SELECT
     ar.accommodation_type AS accommodation_type_id,
-    COUNT(ar.id) AS available_count
+    COUNT(ar.id) - COALESCE(SUM(booked_rooms.total_quantity), 0) AS available_count
 FROM
     ecommerce_go_accommodation_room ar
+LEFT JOIN (
+    SELECT
+        egod.accommodation_room_id,
+        SUM(egod.quantity) AS total_quantity
+    FROM
+        ecommerce_go_order ego
+        JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
+    WHERE
+        ? > ego.checkin_date
+        AND ? < ego.checkout_date
+        AND ego.order_status IN ('payment_success', 'checked_in')
+    GROUP BY egod.accommodation_room_id
+) booked_rooms ON ar.id = booked_rooms.accommodation_room_id
 WHERE
-    ar.id NOT IN (
-        SELECT
-            egar.id
-        FROM
-            ecommerce_go_order ego
-            JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
-            JOIN ecommerce_go_accommodation_room egar ON egar.id = egod.accommodation_room_id
-        WHERE
-            ? > ego.checkin_date
-            AND ? < ego.checkout_date
-            AND ego.order_status IN ('payment_success', 'checked_in')
-    )
-    AND ar.accommodation_type IN (/*SLICE:ids*/?)
+    ar.accommodation_type IN (/*SLICE:ids*/?)
     AND ar.status = 'available'
     AND ar.is_deleted = 0
 GROUP BY ar.accommodation_type
+HAVING available_count > 0
 `
 
 type BatchCountAccommodationRoomAvailableParams struct {
@@ -43,7 +45,7 @@ type BatchCountAccommodationRoomAvailableParams struct {
 
 type BatchCountAccommodationRoomAvailableRow struct {
 	AccommodationTypeID string
-	AvailableCount      int64
+	AvailableCount      int32
 }
 
 func (q *Queries) BatchCountAccommodationRoomAvailable(ctx context.Context, arg BatchCountAccommodationRoomAvailableParams) ([]BatchCountAccommodationRoomAvailableRow, error) {
@@ -186,60 +188,6 @@ func (q *Queries) CheckAccommodationTypeBelongToManager(ctx context.Context, arg
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
-}
-
-const countAccommodationRoomAvailable = `-- name: CountAccommodationRoomAvailable :one
-SELECT
-    COUNT(ar.id)
-FROM
-    ` + "`" + `ecommerce_go_accommodation_room` + "`" + ` ar
-WHERE
-    ar.id NOT IN (
-        SELECT
-            egar.id
-        FROM
-            ` + "`" + `ecommerce_go_order` + "`" + ` ego
-            JOIN ` + "`" + `ecommerce_go_order_detail` + "`" + ` egod ON ego.id = egod.order_id
-            JOIN ` + "`" + `ecommerce_go_accommodation_room` + "`" + ` egar ON egar.id = egod.accommodation_room_id
-        WHERE
-            ? > ego.checkin_date
-            AND ? < ego.checkout_date
-            AND ego.order_status in ('payment_success', 'checked_in')
-    )
-    AND ar.accommodation_type = ?
-    and ar.status in ('available') AND ` + "`" + `is_deleted` + "`" + ` = 0
-LIMIT
-    1
-`
-
-type CountAccommodationRoomAvailableParams struct {
-	CheckOut            uint64
-	CheckIn             uint64
-	AccommodationTypeID string
-}
-
-func (q *Queries) CountAccommodationRoomAvailable(ctx context.Context, arg CountAccommodationRoomAvailableParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countAccommodationRoomAvailable, arg.CheckOut, arg.CheckIn, arg.AccommodationTypeID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const countAccommodationRoomAvailableByManager = `-- name: CountAccommodationRoomAvailableByManager :one
-SELECT
-    COUNT(ar.id)
-FROM
-    ` + "`" + `ecommerce_go_accommodation_room` + "`" + ` ar
-WHERE
-    ar.accommodation_type = ?
-    AND ar.status in ('available') AND ` + "`" + `is_deleted` + "`" + ` = 0
-`
-
-func (q *Queries) CountAccommodationRoomAvailableByManager(ctx context.Context, accommodationTypeID string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countAccommodationRoomAvailableByManager, accommodationTypeID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
 }
 
 const createAccommodationRoom = `-- name: CreateAccommodationRoom :exec

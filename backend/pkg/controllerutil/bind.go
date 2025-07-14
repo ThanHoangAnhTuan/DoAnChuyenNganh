@@ -22,7 +22,7 @@ type ValidationError struct {
 func BindAndValidate[T any](ctx *gin.Context, params *T, bindFunc func(*T) error) *ValidationError {
 	validation, exists := ctx.Get("validation")
 	if !exists {
-		HandleStructuredLog(ctx, nil, "error", response.ErrCodeValidator, 0, fmt.Errorf("Validation middleware not found"))
+		HandleStructuredLog(ctx, nil, "error", response.ErrCodeValidator, 0, fmt.Errorf("validation middleware not found"))
 		return &ValidationError{
 			Type:    "internal_error",
 			Message: "Validation middleware not found",
@@ -30,7 +30,7 @@ func BindAndValidate[T any](ctx *gin.Context, params *T, bindFunc func(*T) error
 	}
 
 	if err := bindFunc(params); err != nil {
-		HandleStructuredLog(ctx, nil, "error", response.ErrCodeValidator, 0, fmt.Errorf("Invalid request format: %s", err.Error()))
+		HandleStructuredLog(ctx, nil, "error", response.ErrCodeValidator, 0, fmt.Errorf("invalid request format: %s", err.Error()))
 		return &ValidationError{
 			Type:    "binding_error",
 			Message: "Invalid request format",
@@ -39,7 +39,7 @@ func BindAndValidate[T any](ctx *gin.Context, params *T, bindFunc func(*T) error
 
 	if err := validation.(*validator.Validate).Struct(params); err != nil {
 		validationErrors := response.FormatValidationErrorsToStruct(err, params)
-		HandleStructuredLog(ctx, validationErrors, "error", response.ErrCodeValidator, 0, fmt.Errorf("Validation failed"))
+		HandleStructuredLog(ctx, validationErrors, "error", response.ErrCodeValidator, 0, fmt.Errorf("validation failed"))
 		return &ValidationError{
 			Type:    "validation_error",
 			Message: "Validation failed",

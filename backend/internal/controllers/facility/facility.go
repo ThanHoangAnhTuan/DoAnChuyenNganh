@@ -24,7 +24,7 @@ func (c *Controller) CreateFacility(ctx *gin.Context) {
 	var params vo.CreateFacilityInput
 
 	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.CreateFacilityInput) error {
-		return ctx.ShouldBindQuery(p)
+		return ctx.ShouldBind(p)
 	}); validationErr != nil {
 		duration := time.Since(start)
 		span.SetAttributes(attribute.String("error", validationErr.Message))
@@ -71,7 +71,7 @@ func (c *Controller) UpdateFacility(ctx *gin.Context) {
 	var params vo.UpdateFacilityInput
 
 	if validationErr := controllerutil.BindAndValidate(ctx, &params, func(p *vo.UpdateFacilityInput) error {
-		return ctx.ShouldBindQuery(p)
+		return ctx.ShouldBind(p)
 	}); validationErr != nil {
 		duration := time.Since(start)
 		span.SetAttributes(attribute.String("error", validationErr.Message))
