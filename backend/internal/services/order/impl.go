@@ -246,10 +246,27 @@ func (o *serviceImpl) GetOrdersByManager(ctx *gin.Context) (codeStatus int, out 
 		}
 		detail := []vo.OrderDetailOutput{}
 		for _, orderDetail := range orderDetails {
+			// TODO: get room bookings for this order detail
+			roomBookings, err := o.sqlc.GetOrderRoomBookingsByOrderDetailIDWithRoomInfo(ctx, orderDetail.OrderDetailID)
+			if err != nil {
+				return response.ErrCodeInternalServerError, nil, fmt.Errorf("get room bookings failed: %s", err)
+			}
+
+			roomBookingsList := []vo.RoomBookingOutput{}
+			for _, roomBooking := range roomBookings {
+				roomBookingsList = append(roomBookingsList, vo.RoomBookingOutput{
+					ID:                  roomBooking.ID,
+					AccommodationRoomID: roomBooking.AccommodationRoomID,
+					RoomName:            roomBooking.RoomName,
+					BookingStatus:       string(roomBooking.BookingStatus),
+				})
+			}
+
 			detail = append(detail, vo.OrderDetailOutput{
 				AccommodationDetailID:   orderDetail.AccommodationDetailID,
 				AccommodationDetailName: orderDetail.AccommodationDetailName,
 				Price:                   orderDetail.Price.String(),
+				RoomBookings:            roomBookingsList,
 			})
 		}
 

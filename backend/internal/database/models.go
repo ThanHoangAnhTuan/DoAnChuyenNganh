@@ -145,6 +145,50 @@ func (ns NullEcommerceGoOrderOrderStatus) Value() (driver.Value, error) {
 	return string(ns.EcommerceGoOrderOrderStatus), nil
 }
 
+type EcommerceGoOrderRoomBookingBookingStatus string
+
+const (
+	EcommerceGoOrderRoomBookingBookingStatusReserved   EcommerceGoOrderRoomBookingBookingStatus = "reserved"
+	EcommerceGoOrderRoomBookingBookingStatusCheckedIn  EcommerceGoOrderRoomBookingBookingStatus = "checked_in"
+	EcommerceGoOrderRoomBookingBookingStatusCheckedOut EcommerceGoOrderRoomBookingBookingStatus = "checked_out"
+	EcommerceGoOrderRoomBookingBookingStatusCanceled   EcommerceGoOrderRoomBookingBookingStatus = "canceled"
+)
+
+func (e *EcommerceGoOrderRoomBookingBookingStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EcommerceGoOrderRoomBookingBookingStatus(s)
+	case string:
+		*e = EcommerceGoOrderRoomBookingBookingStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EcommerceGoOrderRoomBookingBookingStatus: %T", src)
+	}
+	return nil
+}
+
+type NullEcommerceGoOrderRoomBookingBookingStatus struct {
+	EcommerceGoOrderRoomBookingBookingStatus EcommerceGoOrderRoomBookingBookingStatus
+	Valid                                    bool // Valid is true if EcommerceGoOrderRoomBookingBookingStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEcommerceGoOrderRoomBookingBookingStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.EcommerceGoOrderRoomBookingBookingStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EcommerceGoOrderRoomBookingBookingStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEcommerceGoOrderRoomBookingBookingStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EcommerceGoOrderRoomBookingBookingStatus), nil
+}
+
 type EcommerceGoPaymentPaymentMethod string
 
 const (
@@ -512,12 +556,28 @@ type EcommerceGoOrderDetail struct {
 	Quantity uint8
 	// accommodation detail ID
 	AccommodationDetailID string
-	// accommodation room ID
-	AccommodationRoomID string
 	// created at
 	CreatedAt uint64
 	// updated at
 	UpdatedAt uint64
+}
+
+// order room booking management table
+type EcommerceGoOrderRoomBooking struct {
+	// ID
+	ID string
+	// order detail ID
+	OrderDetailID string
+	// accommodation room ID
+	AccommodationRoomID string
+	// booking status for this specific room
+	BookingStatus EcommerceGoOrderRoomBookingBookingStatus
+	// created at
+	CreatedAt uint64
+	// updated at
+	UpdatedAt uint64
+	// soft delete flag
+	IsDeleted bool
 }
 
 // payment table

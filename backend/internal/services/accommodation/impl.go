@@ -409,6 +409,8 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 				GgMap:       acc.GgMap,
 				Facilities:  acc.Facilities,
 				Rules:       acc.Rules,
+				IsVerified:  acc.IsVerified == 1,
+				IsDeleted:   acc.IsDeleted == 1,
 			})
 		}
 	} else {
@@ -443,6 +445,8 @@ func (t *serviceImpl) GetAccommodations(ctx *gin.Context, in *vo.GetAccommodatio
 				GgMap:       acc.GgMap,
 				Facilities:  acc.Facilities,
 				Rules:       acc.Rules,
+				IsVerified:  acc.IsVerified == 1,
+				IsDeleted:   acc.IsDeleted == 1,
 			})
 		}
 	}

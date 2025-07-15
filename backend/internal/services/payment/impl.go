@@ -2,7 +2,6 @@ package payment
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -506,24 +505,25 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 			return response.ErrCodeInternalServerError, nil, err
 		}
 
-		// TODO: get accommodation detail available
-		accommodationRoom, err := p.sqlc.GetAccommodationRoomAvailable(ctx, database.GetAccommodationRoomAvailableParams{
+		// TODO: get available rooms by quantity
+		availableRooms, err := p.sqlc.GetAccommodationRoomsAvailableByQuantity(ctx, database.GetAccommodationRoomsAvailableByQuantityParams{
 			CheckOut:            checkOut,
 			CheckIn:             checkIn,
 			AccommodationTypeID: roomSelected.ID,
+			Limit:               int32(roomSelected.Quantity),
 		})
 
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return response.ErrCodeAccommodationRoomNotFound, nil, fmt.Errorf("accommodation room not found")
-			}
-			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation room failed: %s", err)
+			return response.ErrCodeInternalServerError, nil, fmt.Errorf("get accommodation rooms failed: %s", err)
+		}
+
+		if len(availableRooms) < int(roomSelected.Quantity) {
+			return response.ErrCodeAccommodationRoomNotFound, nil, fmt.Errorf("not enough available rooms: need %d, found %d", roomSelected.Quantity, len(availableRooms))
 		}
 
 		orderDetailID := uuid.NewString()
 		err = p.sqlc.CreateOrderDetail(ctx, database.CreateOrderDetailParams{
 			ID:                    orderDetailID,
-			AccommodationRoomID:   accommodationRoom.ID,
 			OrderID:               orderID,
 			Quantity:              roomSelected.Quantity,
 			Price:                 accommodationDetail.Price.Mul(decimal.NewFromInt(int64(roomSelected.Quantity))),
@@ -534,6 +534,23 @@ func (p *serviceImpl) CreatePaymentURL(ctx *gin.Context, in *vo.CreatePaymentURL
 
 		if err != nil {
 			return response.ErrCodeInternalServerError, nil, err
+		}
+
+		// TODO: create order room booking for each available room
+		for _, availableRoom := range availableRooms {
+			orderRoomBookingID := uuid.NewString()
+			err = p.sqlc.CreateOrderRoomBooking(ctx, database.CreateOrderRoomBookingParams{
+				ID:                  orderRoomBookingID,
+				OrderDetailID:       orderDetailID,
+				AccommodationRoomID: availableRoom.ID,
+				BookingStatus:       database.EcommerceGoOrderRoomBookingBookingStatusReserved,
+				CreatedAt:           createdAt,
+				UpdatedAt:           createdAt,
+			})
+
+			if err != nil {
+				return response.ErrCodeInternalServerError, nil, fmt.Errorf("create order room booking failed: %s", err)
+			}
 		}
 	}
 

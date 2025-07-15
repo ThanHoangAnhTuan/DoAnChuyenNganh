@@ -108,6 +108,7 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) error 
 
 const getOrderDetailsByManager = `-- name: GetOrderDetailsByManager :many
 SELECT
+    egod.id AS order_detail_id,
     egod.accommodation_detail_id AS ` + "`" + `accommodation_detail_id` + "`" + `,
     egod.price AS ` + "`" + `price` + "`" + `,
     egad.name AS ` + "`" + `accommodation_detail_name` + "`" + `
@@ -121,6 +122,7 @@ ORDER BY
 `
 
 type GetOrderDetailsByManagerRow struct {
+	OrderDetailID           string
 	AccommodationDetailID   string
 	Price                   decimal.Decimal
 	AccommodationDetailName string
@@ -135,7 +137,12 @@ func (q *Queries) GetOrderDetailsByManager(ctx context.Context, orderID string) 
 	var items []GetOrderDetailsByManagerRow
 	for rows.Next() {
 		var i GetOrderDetailsByManagerRow
-		if err := rows.Scan(&i.AccommodationDetailID, &i.Price, &i.AccommodationDetailName); err != nil {
+		if err := rows.Scan(
+			&i.OrderDetailID,
+			&i.AccommodationDetailID,
+			&i.Price,
+			&i.AccommodationDetailName,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

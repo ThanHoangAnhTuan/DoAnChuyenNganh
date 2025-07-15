@@ -244,7 +244,9 @@ SELECT
     `address`,
     `gg_map`,
     `rules`,
-    `rating`
+    `rating`,
+    `is_deleted`,
+    `is_verified`
 FROM
     `ecommerce_go_accommodation`
 WHERE
@@ -279,7 +281,9 @@ SELECT
     `address`,
     `gg_map`,
     `rules`,
-    `rating`
+    `rating`,
+    `is_deleted`,
+    `is_verified`
 FROM
     `ecommerce_go_accommodation`
 WHERE
