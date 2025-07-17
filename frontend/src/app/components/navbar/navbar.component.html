@@ -11,7 +11,7 @@
             [tuiDropdown]="content"
         >
             <tui-avatar class="avatar" src="@tui.user" alt="Avatar" />
-            <a class="user-name">{{ userName || "User" }}</a>
+            <a class="user-name">{{ userName || "" }}</a>
         </div>
         } @else if (isManagerLoggedIn) {
         <div
@@ -21,7 +21,7 @@
             [tuiDropdown]="content"
         >
             <tui-avatar class="avatar" src="@tui.user" alt="Avatar" />
-            <a class="user-name">{{ userName || "Manager" }}</a>
+            <a class="user-name">{{ userName }}</a>
         </div>
         } @else if (isAdminLoggedIn) {
         <div
@@ -91,17 +91,14 @@
         </a>
         <a role="menuitem" tuiOption [routerLink]="['/manager/accommodation']">
             <div class="menu-item-content">
-                <tui-icon
-                    icon="@tui.layout-dashboard"
-                    class="menu-item-icon"
-                ></tui-icon>
+                <tui-icon icon="@tui.hotel" class="menu-item-icon"></tui-icon>
                 Your Accommodations
             </div>
         </a>
         <a role="menuitem" tuiOption [routerLink]="['/manager/order']">
             <div class="menu-item-content">
                 <tui-icon
-                    icon="@tui.layout-dashboard"
+                    icon="@tui.house-plus"
                     class="menu-item-icon"
                 ></tui-icon>
                 Your Orders
@@ -136,7 +133,7 @@
         <a role="menuitem" tuiOption [routerLink]="['/admin/manager']">
             <div class="menu-item-content">
                 <tui-icon
-                    icon="@tui.layout-dashboard"
+                    icon="@tui.circle-user-round"
                     class="menu-item-icon"
                 ></tui-icon>
                 Manager Accounts

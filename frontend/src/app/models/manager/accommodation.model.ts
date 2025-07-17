@@ -87,7 +87,7 @@ export interface ManagerLoginOutput {
     data: {
         token: string;
         account: string;
-        userName: string;
+        user_name: string;
     };
 }
 
