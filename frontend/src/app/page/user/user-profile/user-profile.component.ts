@@ -1,8 +1,8 @@
-import {
-    TuiInputDateModule,
-    TuiInputModule,
-    TuiInputPhoneModule,
-} from '@taiga-ui/legacy';
+// import {
+//     TuiInputDateModule,
+//     TuiInputModule,
+//     TuiInputPhoneModule,
+// } from '@taiga-ui/legacy';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
@@ -37,15 +37,12 @@ import { LoaderComponent } from '../../../components/loader/loader.component';
         NavbarComponent,
         ReactiveFormsModule,
         NgIf,
-        TuiInputModule,
-        TuiInputPhoneModule,
         TuiLoader,
         TuiRadio,
         TuiLabel,
         CommonModule,
         TuiButton,
         FormsModule,
-        TuiInputDateModule,
         TuiTextfield,
         DatePicker,
         Toast,

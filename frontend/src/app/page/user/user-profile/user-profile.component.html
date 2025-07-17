@@ -32,11 +32,14 @@
             <!-- Name -->
             <div class="form-group">
                 <label class="field-label">Tên:</label>
-                <tui-input
-                    class="no-padding"
-                    formControlName="username"
-                    placeholder="Tên người dùng"
-                ></tui-input>
+                <tui-textfield class="no-padding">
+                    <input
+                        placeholder="Tên người dùng"
+                        tuiTextfield
+                        formControlName="username"
+                    />
+                </tui-textfield>
+
                 @if(profileForm.get('username')?.invalid &&
                 profileForm.get('username')?.touched) {
                 <div class="error-message">Vui lòng nhập tên</div>
@@ -45,13 +48,13 @@
             <!-- Phone -->
             <div class="form-group phone-field">
                 <label class="field-label">Số điện thoại: </label>
-                <tui-input
-                    class="no-padding-phone"
-                    formControlName="phone"
-                    placeholder="Số điện thoại"
-                >
-                    <input autocomplete="tel" tuiTextfieldLegacy />
-                </tui-input>
+                <tui-textfield class="no-padding-phone">
+                    <input
+                        placeholder="Số điện thoại"
+                        tuiTextfield
+                        formControlName="phone"
+                    />
+                </tui-textfield>
                 @if(profileForm.get('phone')?.invalid &&
                 profileForm.get('phone')?.touched) {
                 <div class="error-message">Vui lòng nhập số điện thoại</div>
