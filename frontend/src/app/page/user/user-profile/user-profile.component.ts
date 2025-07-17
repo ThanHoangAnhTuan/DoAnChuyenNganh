@@ -29,6 +29,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 
 @Component({
     selector: 'app-user-profile',
@@ -49,6 +50,7 @@ import { ButtonModule } from 'primeng/button';
         DatePicker,
         Toast,
         ButtonModule,
+        LoaderComponent,
     ],
     templateUrl: './user-profile.component.html',
     standalone: true,
@@ -68,7 +70,6 @@ export class UserProfileComponent implements OnInit {
     };
 
     isLoading = false;
-    isSubmitting = false;
     notification: { message: string; status: 'success' | 'error' } | null =
         null;
 
@@ -87,55 +88,14 @@ export class UserProfileComponent implements OnInit {
     ngOnInit(): void {
         this.profileForm = this.fb.group({
             username: ['', Validators.required],
-            phone: [''],
-            gender: [Gender.Male],
-            birthday: new FormControl(null, []),
+            phone: ['', Validators.required],
+            gender: [Gender.Male, Validators.required],
+            // birthday: new FormControl(null, []),
+            birthday: new FormControl(null, Validators.required),
         });
         this.loadUserData();
     }
 
-    // loadUserData(): void {
-    //     this.isLoading = true;
-    //     this.userService
-    //         .getUserInfo()
-    //         .pipe(finalize(() => (this.isLoading = false)))
-    //         .subscribe({
-    //             next: (response: UserResponse) => {
-    //                 this.currentUser = response.data;
-
-    //                 console.log('Current User:', this.currentUser);
-
-    //                 const [dayStr, monthStr, yearStr] =
-    //                     this.currentUser.birthday.split('-'); // ["21", "06", "2025"]
-
-    //                 const checkInDay = Number(dayStr); // 21
-    //                 const checkInMonth = Number(monthStr); // 6
-    //                 const checkInYear = Number(yearStr); // 2025
-
-    //                 const birthdayDate = new Date(
-    //                     checkInYear,
-    //                     checkInMonth - 1,
-    //                     checkInDay
-    //                 );
-
-    //                 this.profileForm.patchValue({
-    //                     username: this.currentUser.username,
-    //                     phone: this.currentUser.phone,
-    //                     gender: this.currentUser.gender,
-    //                     birthday: birthdayDate,
-    //                 });
-    //             },
-    //             error: (error) => {
-    //                 this.showToast(
-    //                     'error',
-    //                     'Lỗi tải thông tin người dùng',
-    //                     error.message ||
-    //                         'Đã xảy ra lỗi khi tải thông tin người dùng. Vui lòng thử lại sau.'
-    //                 );
-    //                 // console.error('Error loading user data:', error);
-    //             },
-    //         });
-    // }
     loadUserData(): void {
         this.isLoading = true;
         this.userService
@@ -162,7 +122,7 @@ export class UserProfileComponent implements OnInit {
                         );
                     } else {
                         // Không có ngày sinh => dùng ngày hiện tại
-                        birthdayDate = null
+                        birthdayDate = null;
                     }
                     this.profileForm.patchValue({
                         username: this.currentUser.username,
@@ -192,7 +152,7 @@ export class UserProfileComponent implements OnInit {
             this.profileForm.markAllAsTouched();
             return;
         }
-        this.isSubmitting = true;
+        this.isLoading = true;
         const day = String(this.profileForm.value?.birthday.getDate()).padStart(
             2,
             '0'
@@ -214,7 +174,7 @@ export class UserProfileComponent implements OnInit {
 
         this.userService
             .updateUserInfo(userData)
-            .pipe(finalize(() => (this.isSubmitting = false)))
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
                 next: (response) => {
                     this.currentUser = response.data;

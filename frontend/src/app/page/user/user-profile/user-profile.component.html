@@ -1,6 +1,8 @@
 <p-toast></p-toast>
 <app-navbar></app-navbar>
-
+@if (isLoading) {
+<app-loader text="Loading..."></app-loader>
+}
 <div class="profile-container">
     <h1 class="profile-title">Thông tin cá nhân</h1>
     <p class="profile-subtitle">
@@ -35,17 +37,11 @@
                     formControlName="username"
                     placeholder="Tên người dùng"
                 ></tui-input>
-                <!-- <div
-                    *ngIf="
-                        profileForm.get('username')?.invalid &&
-                        profileForm.get('username')?.touched
-                    "
-                    class="error-message"
-                >
-                    Vui lòng nhập tên
-                </div> -->
+                @if(profileForm.get('username')?.invalid &&
+                profileForm.get('username')?.touched) {
+                <div class="error-message">Vui lòng nhập tên</div>
+                }
             </div>
-
             <!-- Phone -->
             <div class="form-group phone-field">
                 <label class="field-label">Số điện thoại: </label>
@@ -56,6 +52,10 @@
                 >
                     <input autocomplete="tel" tuiTextfieldLegacy />
                 </tui-input>
+                @if(profileForm.get('phone')?.invalid &&
+                profileForm.get('phone')?.touched) {
+                <div class="error-message">Vui lòng nhập số điện thoại</div>
+                }
                 <div class="field-hint">
                     Chỗ nghỉ hoặc địa điểm tham quan bạn đặt sẽ liên lạc với bạn
                     qua số này nếu cần.
@@ -96,6 +96,10 @@
                     formControlName="birthday"
                     dateFormat="dd.mm.yy"
                 ></p-datepicker>
+                @if(profileForm.get('birthday')?.invalid &&
+                profileForm.get('birthday')?.touched) {
+                <div class="error-message">Vui lòng chọn ngày sinh</div>
+                }
             </div>
         </div>
 
@@ -104,7 +108,7 @@
                 tuiButton
                 type="submit"
                 appearance="primary"
-                [disabled]="profileForm.invalid || isSubmitting"
+                [disabled]="profileForm.invalid"
             >
                 Lưu thay đổi
             </button>

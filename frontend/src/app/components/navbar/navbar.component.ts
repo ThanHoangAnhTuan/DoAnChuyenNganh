@@ -1,3 +1,4 @@
+import { UserService } from './../../services/user/user.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
@@ -23,7 +24,7 @@ export class NavbarComponent implements OnInit {
     isUserLoggedIn = false;
     isManagerLoggedIn = false;
     isAdminLoggedIn = false;
-    userName: string | null = null;
+    userName: string = '';
     userAvatar: string | null = null;
 
     protected readonly groups = [
@@ -43,10 +44,29 @@ export class NavbarComponent implements OnInit {
             ],
         },
     ];
-    constructor(private router: Router) {}
+    constructor(private router: Router, private userService: UserService) {}
 
     ngOnInit(): void {
         this.checkLoginStatus();
+        // Get user information if logged in
+        if (this.isUserLoggedIn) {
+            this.getUserInfo();
+        }
+        if (this.isManagerLoggedIn) {
+            this.userName = localStorage.getItem('managerUserName') || '';
+        }
+    }
+    private getUserInfo(): void {
+        this.userService.getUserInfo().subscribe({
+            next: (response) => {
+                // Set username from response
+                this.userName = response.data.username || '';
+            },
+            error: (error) => {
+                console.error('Error fetching user info:', error);
+                this.userName = ''; // Reset on error
+            },
+        });
     }
 
     checkLoginStatus(): void {
@@ -75,7 +95,7 @@ export class NavbarComponent implements OnInit {
         this.isUserLoggedIn = false;
         this.isManagerLoggedIn = false;
         this.isAdminLoggedIn = false;
-        this.userName = null;
+        this.userName = '';
         this.userAvatar = null;
 
         // Navigate dựa vào trạng thái đã lưu

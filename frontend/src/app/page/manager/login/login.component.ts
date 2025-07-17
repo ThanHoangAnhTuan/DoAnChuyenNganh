@@ -88,6 +88,11 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: (response) => {
                     SaveTokenToCookie(response.data.token);
+                    localStorage.setItem(
+                        'managerUserName',
+                        response.data.user_name
+                    );
+
                     this.router.navigate(['/manager/accommodation']);
                 },
                 error: (error) => {
