@@ -27,11 +27,20 @@ type GetOrdersByUserInput struct {
 }
 
 type OrderDetailOutput struct {
-	AccommodationDetailID   string `json:"accommodation_detail_id"`
-	AccommodationDetailName string `json:"accommodation_detail_name"`
-	Price                   string `json:"price"`
-	Guests                  uint8  `json:"guests"`
+	AccommodationDetailID   string              `json:"accommodation_detail_id"`
+	AccommodationDetailName string              `json:"accommodation_detail_name"`
+	Price                   string              `json:"price"`
+	Guests                  uint8               `json:"guests"`
+	RoomBookings            []RoomBookingOutput `json:"room_bookings,omitempty"`
 }
+
+type RoomBookingOutput struct {
+	ID                  string `json:"id"`
+	AccommodationRoomID string `json:"accommodation_room_id"`
+	RoomName            string `json:"room_name"`
+	BookingStatus       string `json:"booking_status"`
+}
+
 type GetOrdersByUserOutput struct {
 	ID                string              `json:"id"`
 	FinalTotal        string              `json:"final_total"`

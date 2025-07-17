@@ -80,77 +80,76 @@ FROM
 WHERE
     ar.id NOT IN (
         SELECT
-            egar.id
+            orb.accommodation_room_id
         FROM
             `ecommerce_go_order` ego
             JOIN `ecommerce_go_order_detail` egod ON ego.id = egod.order_id
-            JOIN `ecommerce_go_accommodation_room` egar ON egar.id = egod.accommodation_room_id
+            JOIN `ecommerce_go_order_room_booking` orb ON orb.order_detail_id = egod.id
         WHERE
             sqlc.arg ("check_out") > ego.checkin_date
             AND sqlc.arg ("check_in") < ego.checkout_date
             AND ego.order_status in ('payment_success', 'checked_in')
+            AND orb.booking_status in ('reserved', 'checked_in')
     )
     AND ar.accommodation_type = sqlc.arg ("accommodation_type_id")
-    and ar.status in ('available')
+    AND ar.status in ('available')
+    AND ar.is_deleted = 0
 LIMIT
     1;
 
--- name: CountAccommodationRoomAvailable :one
+-- name: GetAccommodationRoomsAvailableByQuantity :many
 SELECT
-    COUNT(ar.id)
+    *
 FROM
     `ecommerce_go_accommodation_room` ar
 WHERE
     ar.id NOT IN (
         SELECT
-            egar.id
+            orb.accommodation_room_id
         FROM
             `ecommerce_go_order` ego
             JOIN `ecommerce_go_order_detail` egod ON ego.id = egod.order_id
-            JOIN `ecommerce_go_accommodation_room` egar ON egar.id = egod.accommodation_room_id
+            JOIN `ecommerce_go_order_room_booking` orb ON orb.order_detail_id = egod.id
         WHERE
             sqlc.arg ("check_out") > ego.checkin_date
             AND sqlc.arg ("check_in") < ego.checkout_date
             AND ego.order_status in ('payment_success', 'checked_in')
+            AND orb.booking_status in ('reserved', 'checked_in')
     )
     AND ar.accommodation_type = sqlc.arg ("accommodation_type_id")
-    and ar.status in ('available') AND `is_deleted` = 0
+    AND ar.status in ('available')
+    AND ar.is_deleted = 0
 LIMIT
-    1;
+    ?;
 
 -- name: BatchCountAccommodationRoomAvailable :many
 SELECT
     ar.accommodation_type AS accommodation_type_id,
-    COUNT(ar.id) AS available_count
+    COUNT(ar.id) - COALESCE(booked_rooms.booked_count, 0) AS available_count
 FROM
     ecommerce_go_accommodation_room ar
+LEFT JOIN (
+    SELECT
+        ar_inner.accommodation_type,
+        COUNT(orb.accommodation_room_id) AS booked_count
+    FROM
+        ecommerce_go_order ego
+        JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
+        JOIN ecommerce_go_order_room_booking orb ON orb.order_detail_id = egod.id
+        JOIN ecommerce_go_accommodation_room ar_inner ON ar_inner.id = orb.accommodation_room_id
+    WHERE
+        sqlc.arg('check_out') > ego.checkin_date
+        AND sqlc.arg('check_in') < ego.checkout_date
+        AND ego.order_status IN ('payment_success', 'checked_in')
+        AND orb.booking_status IN ('reserved', 'checked_in')
+    GROUP BY ar_inner.accommodation_type
+) booked_rooms ON ar.accommodation_type = booked_rooms.accommodation_type
 WHERE
-    ar.id NOT IN (
-        SELECT
-            egar.id
-        FROM
-            ecommerce_go_order ego
-            JOIN ecommerce_go_order_detail egod ON ego.id = egod.order_id
-            JOIN ecommerce_go_accommodation_room egar ON egar.id = egod.accommodation_room_id
-        WHERE
-            sqlc.arg('check_out') > ego.checkin_date
-            AND sqlc.arg('check_in') < ego.checkout_date
-            AND ego.order_status IN ('payment_success', 'checked_in')
-    )
-    AND ar.accommodation_type IN (sqlc.slice('ids'))
+    ar.accommodation_type IN (sqlc.slice('ids'))
     AND ar.status = 'available'
     AND ar.is_deleted = 0
-GROUP BY ar.accommodation_type;
-
-
--- name: CountAccommodationRoomAvailableByManager :one
-SELECT
-    COUNT(ar.id)
-FROM
-    `ecommerce_go_accommodation_room` ar
-WHERE
-    ar.accommodation_type = sqlc.arg ("accommodation_type_id")
-    AND ar.status in ('available') AND `is_deleted` = 0;
+GROUP BY ar.accommodation_type
+HAVING available_count > 0;
 
 -- name: BatchCountAccommodationRoomAvailableByManager :many
 SELECT

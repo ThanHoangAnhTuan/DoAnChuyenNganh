@@ -1,7 +1,9 @@
 package login
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -251,7 +253,10 @@ func (u *serviceImpl) Login(ctx *gin.Context, in *vo.LoginInput) (codeStatus int
 	// TODO: get user info
 	userBase, err := u.sqlc.GetUserBaseByAccount(ctx, in.UserAccount)
 	if err != nil {
-		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user info failed: %s", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return response.ErrCodeLoginFailed, nil, fmt.Errorf("user not found")
+		}
+		return response.ErrCodeInternalServerError, nil, fmt.Errorf("get user base failed: %s", err)
 	}
 
 	// TODO: check password match

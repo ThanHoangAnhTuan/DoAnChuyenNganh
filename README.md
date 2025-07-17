@@ -47,3 +47,11 @@ make npm-install
 ```bash
 make dev
 ```
+
+# Cài đặt make trên windows bằng powershell admin
+```bash
+choco install make
+```
+
+# Cài đặt googse
+link: https://github.com/pressly/goose

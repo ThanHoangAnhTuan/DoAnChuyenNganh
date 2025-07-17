@@ -137,6 +137,7 @@ ORDER BY
 
 -- name: GetOrderDetailsByManager :many
 SELECT
+    egod.id AS order_detail_id,
     egod.accommodation_detail_id AS `accommodation_detail_id`,
     egod.price AS `price`,
     egad.name AS `accommodation_detail_name`

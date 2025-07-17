@@ -6,12 +6,11 @@ INSERT INTO
         `price`,
         `quantity`,
         `accommodation_detail_id`,
-        `accommodation_room_id`,
         `created_at`,
         `updated_at`
     )
 VALUES
-    (?, ?, ?, ?, ?, ?, ?, ?);
+    (?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetOrderDetails :many
 SELECT
