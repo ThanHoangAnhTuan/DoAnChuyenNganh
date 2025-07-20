@@ -122,7 +122,7 @@ export default class SearchBoxComponent implements OnInit {
                     (city) => city.name === selectedCityName
                 );
                 if (selectedCity) {
-                    this.selectedCityId = selectedCity.level1_id;
+                    this.selectedCitySlug = selectedCity.slug;
                 }
             }
         );
