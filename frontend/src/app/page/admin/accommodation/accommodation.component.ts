@@ -138,7 +138,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
     protected updateId: string = '';
     protected isModalConfirmVerifyOpen: boolean = false;
     protected isModalConfirmDeleteOpen: boolean = false;
-    isLoading: boolean = false;
+    protected isLoading: boolean = false;
 
     protected timePeriods = tuiCreateTimePeriods();
 
@@ -199,27 +199,20 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
         //         console.error('Error fetching cities:', err);
         //     },
         // });
-        this.addressService
-            .getCities()
-            .pipe(
-                finalize(() => {
-                    this.isLoading = false;
-                })
-            )
-            .subscribe({
-                next: (res) => {
-                    this.cities = res.data;
-                    this.cityNames = this.cities.map((city) => city.name);
-                },
-                error: (err) => {
-                    console.error('Error fetching cities:', err);
-                    this.showToast(
-                        'error',
-                        'Lỗi tải dữ liệu',
-                        'Không thể tải danh sách thành phố. Vui lòng thử lại sau.'
-                    );
-                },
-            });
+        this.addressService.getCities().subscribe({
+            next: (res) => {
+                this.cities = res.data;
+                this.cityNames = this.cities.map((city) => city.name);
+            },
+            error: (err) => {
+                console.error('Error fetching cities:', err);
+                this.showToast(
+                    'error',
+                    'Lỗi tải dữ liệu',
+                    'Không thể tải danh sách thành phố. Vui lòng thử lại sau.'
+                );
+            },
+        });
     }
 
     private updateVerify(id: string, status: boolean) {
@@ -227,7 +220,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
             accommodation_id: id,
             status: status,
         };
-        console.log("newVerify:", newVerify);
+        console.log('newVerify:', newVerify);
         this.accommodationService
             .updateVerified(newVerify)
             .pipe(
@@ -380,7 +373,7 @@ export class AccommodationComponent implements OnInit, AfterViewInit {
 
     protected onPageChange(page: number) {
         console.log(page);
-        
+
         console.log('Page changed to:', page + 1);
 
         this.accommodationService

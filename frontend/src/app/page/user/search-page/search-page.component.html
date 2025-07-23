@@ -40,7 +40,7 @@
         @for (hotel of filteredHotels; track hotel.id){
         <div class="hotel-card">
             <div class="hotel-image">
-                @for (image of hotel.images; track image){
+                @for (image of hotel.images.slice(0, 1); track image){
                 <img
                     [src]="'http://localhost:8080/uploads/' + image"
                     [alt]="hotel.name"
