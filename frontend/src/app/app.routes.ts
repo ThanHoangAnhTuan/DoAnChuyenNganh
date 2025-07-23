@@ -20,6 +20,7 @@ import { ManagerComponent } from './page/admin/manager/manager.component';
 import { RoomComponent } from './page/manager/room/room.component';
 import { AccommodationComponent as AdminAccommodationComponent } from './page/admin/accommodation/accommodation.component';
 import { OrderComponent as ManagerOrderComponent} from './page/manager/order/order.component';
+import { OrderHistoryComponent } from './page/user/order-history/order-history.component';
 
 export const routes: Routes = [
     {
@@ -119,6 +120,10 @@ export const routes: Routes = [
     {
         path: 'user-profile',
         component: UserProfileComponent,
+    },
+    {
+        path: 'order-history',
+        component: OrderHistoryComponent
     },
     {
         path: 'verify-otp',

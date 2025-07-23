@@ -147,6 +147,11 @@
                     <td *tuiCell="'Accommodation Name'" tuiTd>
                         {{ detail.accommodation_detail_name }}
                     </td>
+                    <td *tuiCell="'Room Name'" tuiTd>
+                        @for(room of detail.room_bookings; track room.id) {
+                        <div>{{ room.room_name }}</div>
+                        }
+                    </td>
                     <td *tuiCell="'Total Price'" tuiTd>
                         {{ detail.price }}
                     </td>

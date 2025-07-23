@@ -1,0 +1,31 @@
+<app-navbar />
+<main class="container">
+    <h2>Your Booking History</h2>
+
+    @for(order of orders; track order.id) {
+    <div class="order-card">
+        <div class="order-image">
+            <img [src]="'http://localhost:8080/uploads/' + imagesMap[order.accommodation_id][0]" alt="Order Image">
+        </div>
+        <div class="order-content">
+            <div class="order-header">
+                <h3>{{ order.accommodation_name }}</h3>
+                <span class="status payment_success">{{ order.order_status }}</span>
+            </div>
+            <div class="order-info">
+                <span><strong>Check-in:</strong> {{ order.check_in }}</span>
+                <span><strong>Check-out:</strong> {{ order.check_out }}</span>
+            </div>
+            <div class="total">Total: {{ order.final_total }} VND</div>
+            <ul class="room-list">
+                @for(detail of order.order_detail; track detail.accommodation_detail_id) {
+                    <li>
+                        <span>{{ detail.accommodation_detail_name }} (Guests: {{ detail.guests }})</span>
+                        <span>{{ detail.price }} VND</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    }
+</main>

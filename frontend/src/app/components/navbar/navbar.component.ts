@@ -37,8 +37,8 @@ export class NavbarComponent implements OnInit {
                     icon: '@tui.user',
                 },
                 {
-                    label: 'Bookings & Trips',
-                    routerLink: '/',
+                    label: 'History',
+                    routerLink: '/order-history',
                     icon: '@tui.backpack',
                 },
             ],
