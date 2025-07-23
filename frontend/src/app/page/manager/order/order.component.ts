@@ -51,6 +51,7 @@ export class OrderComponent implements OnInit {
 
     protected detailColumns: string[] = [
         'Accommodation Name',
+        'Room Name',
         'Total Price',
         'Guests',
     ];

@@ -4,6 +4,12 @@ export interface GetOrdersByManagerResponse {
     data: Order[] | [];
 }
 
+export interface GetOrdersByUserResponse {
+    code: number;
+    message: string;
+    data: Order[] | [];
+}
+
 export interface GetOrderChageStatusResponse {
     code: number;
     message: string;
@@ -30,4 +36,12 @@ export interface OrderDetail {
     accommodation_detail_name: string;
     price: string;
     guests: number;
+    room_bookings: RoomBooking[];
+}
+
+export interface RoomBooking {
+    id: string;
+    accommodation_room_id: string;
+    room_name: string;
+    booking_status: string;
 }
